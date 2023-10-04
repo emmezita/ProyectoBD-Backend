@@ -1,3 +1,4 @@
 # Backend | BD I
 
-RestAPI desarrollada en Flask para el proyecto de Bases de Datos I con la prfesora Ana Karina Fernandes.
+RestAPI desarrollada en Flask para el proyecto de Bases de Datos I con la profesora Ana Karina Fernandes.
+SMBD: Postgres.
