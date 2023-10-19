@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>prueba</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+
+    <h1>Prueba de api</h1>
+
+    <p>Esto es una de html para estefany ejje</p>
+
+    <!-- form de usuario -->
+    <form action="http://localhost:5000/api/usuario/add" method="POST" style = "display: flex; flex-direction: column; width: 30%; margin: 0 auto;">
+        <input type="text" name="nombre" placeholder="nombre">
+        <input type="text" name="apellido" placeholder="apellido">
+        <input type="text" name="correo" placeholder="correo">
+        <input type="text" name="contrasena" placeholder="contrasena">
+        <input type="submit" value="enviar">
+    </form>
+
+
+
+    <!-- boton para obtener info de un usuario en especifico -->
+    <input type="text" id="userid"> <button id="buscarUsuario">buscar usuario</button>
+    <!-- informacion del usuario obtenido -->
+    <div>
+        <h2 id="usuarioinfo">
+            vacio...
+        </h2>
+    </div>
+    
+    <script>
+        // funcion para obtener la informacion de un usuario en especifico
+        $("#buscarUsuario").click(function(){
+            var id = $("#userid").val();
+            $.ajax({
+                url: "http://localhost:5000/api/usuario/get/"+id,
+                type: "GET",
+                success: function(data){
+                    console.log(data);
+                    $("#usuarioinfo").html("usuario: "+data.nombre+" "+data.apellido);
+                }
+            });
+        });
+
+        //codeando para elementor wordpress
+        $("#register-button").click(function(){
+            var correo = $("#correo").val();
+            var contrasena = $("#contrasena").val();
+            var nacionalidad = $("#nacionalidad").val();
+            var cedula = $("#cedula").val();
+            var rif = $("#rif").val();
+            var nombre = $("#nombre").val();
+            var apellido = $("#apellido").val();
+            var telefono = $("#telefono").val();
+            var direccionh = $("#direccionh").val();
+            var direcciont = $("#direcciont").val();
+
+            $.ajax({
+                url: "http://localhost:5000/api/usuario/add/",
+                data: {
+                    correo: correo,
+                    contrasena: contrasena,
+                    nacionalidad: nacionalidad,
+                    cedula: cedula,
+                    rif: rif,
+                    nombre: nombre,
+                    apellido: apellido,
+                    telefono: telefono,
+                    direccionh: direccionh,
+                    direcciont: direcciont
+                },
+                type: "POST",
+                success: function(data){
+                    console.log(data);
+                    //$("#usuarioinfo").html("usuario: "+data.nombre+" "+data.apellido);
+                }
+            });
+        });
+        
+    </script>
+    
+</body>
+</html>
