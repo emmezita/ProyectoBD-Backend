@@ -6,4 +6,3 @@ CREATE TABLE Clientes(
     cuenta           INT,
     CONSTRAINT pk_clientes_idClientes PRIMARY KEY (idClientes)
 );
-

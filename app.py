@@ -5,9 +5,8 @@ from flask_cors import CORS # se utiliza la libreria flask_cors para evitar prob
 app = Flask(__name__)
 CORS(app) 
 
-
 # Datos para la conexion a la base de datos pg
-db_name = "ProyectoBDE"
+db_name = "ASORONUCAB"
 db_user = "postgres"
 db_pass = "1234"
 db_host = "localhost"
