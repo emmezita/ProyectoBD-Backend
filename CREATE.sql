@@ -6,7 +6,7 @@ CREATE TABLE Lugar (
   -- Nombre general del lugar.
   lugar_tipo varchar(20) NOT NULL,
   -- Tipo de clasificación a la que corresponde el lugar.
-  fk_lugar serial,
+  fk_lugar integer,
   -- Relación recursiva con la entidad Lugar.
 
   CONSTRAINT pk_lugar_codigo PRIMARY KEY (lugar_codigo),
@@ -34,9 +34,9 @@ CREATE TABLE Persona_Juridica (
   -- URL de la página web de la persona jurídica. 
   persona_jur_capital_disp decimal(10,2) NOT NULL,
   -- Cantidad de capital disponible de la persona jurídica. Debe ser mayor que 0
-  fk_lugar_fiscal serial,
+  fk_lugar_fiscal integer,
   -- Relación de dirección fiscal con la entidad Lugar
-  fk_lugar_fisica serial,
+  fk_lugar_fisica integer,
   -- Relación de dirección fisica con la entidad Lugar
 
   CONSTRAINT pk_persona_jur_codigo PRIMARY KEY (persona_jur_codigo),
@@ -56,7 +56,7 @@ CREATE TABLE Persona_Juridica (
 );
 
 CREATE TABLE Cliente_Juridico (
-  cliente_jur_codigo serial,
+  cliente_jur_codigo integer,
   -- Código identificador de la entidad Cliente Jurídico
   cliente_jur_puntos_acumulados integer NOT NULL,
   -- Cantidad de puntos acumulados del cliente jurídico. Debe ser mayor o igual a 0
@@ -69,7 +69,7 @@ CREATE TABLE Cliente_Juridico (
 );
 
 CREATE TABLE Proveedor (
-  proveedor_codigo serial,
+  proveedor_codigo integer,
   -- Código identificador de la entidad Proveedor
 
   CONSTRAINT pk_proveedor_codigo PRIMARY KEY (proveedor_codigo),
@@ -97,7 +97,7 @@ CREATE TABLE Persona_Natural (
   -- Segundo apellido de la persona natural. 
   persona_nat_fecha_nac date NOT NULL,
   -- Fecha de nacimiento de la persona natural. 
-  fk_lugar serial,
+  fk_lugar integer,
   -- Relación de dirección con la entidad Lugar
 
   CONSTRAINT pk_persona_nat_codigo PRIMARY KEY (persona_nat_codigo),
@@ -116,4 +116,41 @@ CREATE TABLE Persona_Natural (
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_persona_nat_s_apellido CHECK (persona_nat_s_apellido ~ '^[A-Za-z]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
+);
+
+CREATE TABLE Cliente_Natural (
+  cliente_nat_codigo integer,
+  -- Código identificador de la entidad Cliente Natural
+  cliente_nat_puntos_acumulados integer NOT NULL,
+  -- Cantidad de puntos acumulados del cliente natural. Debe ser mayor o igual a 0
+
+  CONSTRAINT pk_cliente_nat_codigo PRIMARY KEY (cliente_nat_codigo),
+  -- Clave primaria de la tabla.
+  CONSTRAINT fk_cliente_nat_persona_natural FOREIGN KEY (cliente_nat_codigo) REFERENCES Persona_Natural (persona_nat_codigo),
+  -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
+  CONSTRAINT ck_cliente_nat_puntos_acumulados CHECK (cliente_nat_puntos_acumulados >= 0)
+);
+
+CREATE TABLE Empleado (
+  empleado_codigo integer,
+  -- Código identificador de la entidad Empleado
+
+  CONSTRAINT pk_empleado_codigo PRIMARY KEY (empleado_codigo),
+  -- Clave primaria de la tabla.
+  CONSTRAINT fk_empleado_persona_natural FOREIGN KEY (empleado_codigo) REFERENCES Persona_Natural (persona_nat_codigo)
+  -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
+);
+
+CREATE TABLE Contacto(
+  fk_persona_natural integer NOT NULL,
+  -- Relación con la entidad Persona Natural
+  fk_persona_juridica integer NOT NULL,
+  -- Relación con la entidad Persona Jurídica
+
+  CONSTRAINT pk_contacto PRIMARY KEY (fk_persona_natural, fk_persona_juridica),
+  -- Clave primaria de la tabla.
+  CONSTRAINT fk_contacto_persona_natural FOREIGN KEY (fk_persona_natural) REFERENCES Persona_Natural (persona_nat_codigo),
+  -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
+  CONSTRAINT fk_contacto_persona_juridica FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo)
+  -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
 );
