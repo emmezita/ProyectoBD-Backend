@@ -12,7 +12,7 @@ CREATE TABLE Lugar (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_lugar_sedivide FOREIGN KEY (fk_lugar) REFERENCES Lugar(lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la misma tabla.  
-  CONSTRAINT ck_lugar_nombre CHECK (lugar_nombre ~ '^[a-zA-Z0-9]+$'),
+  CONSTRAINT ck_lugar_nombre CHECK (lugar_nombre ~ '^[a-zA-Z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales.
   CONSTRAINT ck_lugar_tipo CHECK (lugar_tipo IN ('parroquia', 'municipio', 'estado'))
   -- Constrain. Debe tener tres posibles valores: parroquia, municipio y estado.
@@ -46,7 +46,7 @@ CREATE TABLE Persona_Juridica (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_persona_jur_rif CHECK (persona_jur_rif ~ '^[VEJPG]{1}[0-9]{9}$'),
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
-  CONSTRAINT ck_persona_jur_denom_social CHECK (persona_jur_denom_social ~ '^[A-Za-z0-9-]+$'),
+  CONSTRAINT ck_persona_jur_denom_social CHECK (persona_jur_denom_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales
   CONSTRAINT ck_persona_jur_pagina_web CHECK (persona_jur_pagina_web ~ '^[https://]{1}[w]{1}[w]{1}[.]{1}[a-z0-9-]+[.]{1}[a-z]{2,6}$'),
   -- Constrain.. Debe comenzar con "https://" y tener un dominio válido
@@ -107,13 +107,13 @@ CREATE TABLE Persona_Natural (
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
   CONSTRAINT ck_persona_nat_cedula CHECK (persona_nat_cedula ~ '^[0-9]{8}$'),
   -- Constrain. Debe tener ocho dígitos
-  CONSTRAINT ck_persona_nat_p_nombre CHECK (persona_nat_p_nombre ~ '^[A-Za-z ]+$'),
+  CONSTRAINT ck_persona_nat_p_nombre CHECK (persona_nat_p_nombre ~ '^[A-Za-záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_persona_nat_s_nombre CHECK (persona_nat_s_nombre ~ '^[A-Za-z ]+$'),
+  CONSTRAINT ck_persona_nat_s_nombre CHECK (persona_nat_s_nombre ~ '^[A-Za-záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_persona_nat_p_apellido CHECK (persona_nat_p_apellido ~ '^[A-Za-z ]+$'),
+  CONSTRAINT ck_persona_nat_p_apellido CHECK (persona_nat_p_apellido ~ '^[A-Za-záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_persona_nat_s_apellido CHECK (persona_nat_s_apellido ~ '^[A-Za-z ]+$')
+  CONSTRAINT ck_persona_nat_s_apellido CHECK (persona_nat_s_apellido ~ '^[A-Za-záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -209,7 +209,7 @@ CREATE TABLE Permiso (
 
   CONSTRAINT pk_permiso_codigo PRIMARY KEY (permiso_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_permiso_descripcion CHECK (permiso_descripcion ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_permiso_descripcion CHECK (permiso_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_permiso_tipo CHECK (permiso_tipo ~ '^[a-zA-Z]+$')
   -- Constrain. No debe contener números ni caracteres especiales
@@ -283,7 +283,7 @@ CREATE TABLE Accion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_accion_usuario_realiza FOREIGN KEY (fk_usuario) REFERENCES Usuario (usuario_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Usuario.
-  CONSTRAINT ck_accion_detalle CHECK (accion_detalle ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_accion_detalle CHECK (accion_detalle ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -295,7 +295,7 @@ CREATE TABLE Banco (
 
   CONSTRAINT pk_banco_codigo PRIMARY KEY (banco_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_banco_nombre CHECK (banco_nombre ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_banco_nombre CHECK (banco_nombre ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -375,7 +375,7 @@ CREATE TABLE Efectivo (
 
   CONSTRAINT pk_efectivo_codigo PRIMARY KEY (efectivo_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_efectivo_denominacion CHECK (efectivo_denominacion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_efectivo_denominacion CHECK (efectivo_denominacion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -503,9 +503,9 @@ CREATE TABLE Beneficio (
 
   CONSTRAINT pk_beneficio_codigo PRIMARY KEY (beneficio_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_beneficio_nombre CHECK (beneficio_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_beneficio_nombre CHECK (beneficio_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_beneficio_descripcion CHECK (beneficio_descripcion ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_beneficio_descripcion CHECK (beneficio_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_beneficio_tipo CHECK (beneficio_tipo IN ('mensual', 'semestral', 'anual'))
   -- Constrain. Debe tener tres posibles valores: mensual, semestral y anual.
@@ -571,9 +571,9 @@ CREATE TABLE Departamento (
 
   CONSTRAINT pk_departamento_codigo PRIMARY KEY (departamento_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_departamento_nombre CHECK (departamento_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_departamento_nombre CHECK (departamento_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_departamento_descripcion CHECK (departamento_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_departamento_descripcion CHECK (departamento_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -607,9 +607,9 @@ CREATE TABLE Cargo (
 
   CONSTRAINT pk_cargo_codigo PRIMARY KEY (cargo_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_cargo_nombre CHECK (cargo_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_cargo_nombre CHECK (cargo_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cargo_descripcion CHECK (cargo_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_cargo_descripcion CHECK (cargo_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -645,7 +645,7 @@ CREATE TABLE Color (
 
   CONSTRAINT pk_color_codigo PRIMARY KEY (color_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_color_descripcion CHECK (color_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_color_descripcion CHECK (color_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -657,7 +657,7 @@ CREATE TABLE Fermentacion (
 
   CONSTRAINT pk_fermentacion_codigo PRIMARY KEY (fermentacion_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_fermentacion_metodo CHECK (fermentacion_metodo ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_fermentacion_metodo CHECK (fermentacion_metodo ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -669,7 +669,7 @@ CREATE TABLE Destilacion (
 
   CONSTRAINT pk_destilacion_codigo PRIMARY KEY (destilacion_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_destilacion_metodo CHECK (destilacion_metodo ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_destilacion_metodo CHECK (destilacion_metodo ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -687,9 +687,9 @@ CREATE TABLE Clasificacion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_clasificacion_clasificacion_esclasificada FOREIGN KEY (fk_clasificacion) REFERENCES Clasificacion (clasificacion_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Clasificación.
-  CONSTRAINT ck_clasificacion_nombre CHECK (clasificacion_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_clasificacion_nombre CHECK (clasificacion_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_clasificacion_descripcion CHECK (clasificacion_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_clasificacion_descripcion CHECK (clasificacion_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -707,9 +707,9 @@ CREATE TABLE Categoria (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_categoria_categoria_escategorizada FOREIGN KEY (fk_categoria) REFERENCES Categoria (categoria_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Categoría.
-  CONSTRAINT ck_categoria_nombre CHECK (categoria_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_categoria_nombre CHECK (categoria_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_categoria_descripcion CHECK (categoria_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_categoria_descripcion CHECK (categoria_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -755,13 +755,13 @@ CREATE TABLE Producto (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Proveedor.
   CONSTRAINT fk_producto_lugar_origen FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
-  CONSTRAINT ck_producto_nombre CHECK (producto_nombre ~ '^[a-zA-Z0-9 ]+$'),
+  CONSTRAINT ck_producto_nombre CHECK (producto_nombre ~ '^[a-zA-Z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales
-  CONSTRAINT ck_producto_descripcion CHECK (producto_descripcion ~ '^[a-zA-Z0-9 ]+$'),
+  CONSTRAINT ck_producto_descripcion CHECK (producto_descripcion ~ '^[a-zA-Z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales
   CONSTRAINT ck_producto_grado_alcoholico CHECK (producto_grado_alcoholico > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_producto_color_detalles CHECK (producto_color_detalles ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_producto_color_detalles CHECK (producto_color_detalles ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -787,9 +787,9 @@ CREATE TABLE Cuerpo (
   -- Constrain. Debe tener tres posibles valores: ligero, medio y pesado.
   CONSTRAINT ck_cuerpo_textura CHECK (cuerpo_textura IN ('aguado', 'sedoso', 'cremoso', 'viscoso')),
   -- Constrain. Debe tener cuatro posibles valores: aguado, sedoso, cremoso y viscoso.
-  CONSTRAINT ck_cuerpo_densidad CHECK (cuerpo_densidad ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_cuerpo_densidad CHECK (cuerpo_densidad ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cuerpo_descripcion CHECK (cuerpo_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_cuerpo_descripcion CHECK (cuerpo_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -813,15 +813,15 @@ CREATE TABLE Regusto (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_regusto_producto_dejaun FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
-  CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_evolucion CHECK (regusto_evolucion ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_regusto_evolucion CHECK (regusto_evolucion ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_persistencia CHECK (regusto_persistencia ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_regusto_persistencia CHECK (regusto_persistencia ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_acabado CHECK (regusto_acabado ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_regusto_acabado CHECK (regusto_acabado ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_descripcion CHECK (regusto_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_regusto_descripcion CHECK (regusto_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -833,7 +833,7 @@ CREATE TABLE Aroma (
 
   CONSTRAINT pk_aroma_codigo PRIMARY KEY (aroma_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_aroma_descripcion CHECK (aroma_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_aroma_descripcion CHECK (aroma_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -859,7 +859,7 @@ CREATE TABLE Sabor (
 
   CONSTRAINT pk_sabor_codigo PRIMARY KEY (sabor_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_sabor_descripcion CHECK (sabor_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_sabor_descripcion CHECK (sabor_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -887,9 +887,9 @@ CREATE TABLE Servido (
 
   CONSTRAINT pk_servido_codigo PRIMARY KEY (servido_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_servido_nombre CHECK (servido_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_servido_nombre CHECK (servido_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_servido_descripcion CHECK (servido_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_servido_descripcion CHECK (servido_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -917,9 +917,9 @@ CREATE TABLE Ingrediente (
 
   CONSTRAINT pk_ingrediente_codigo PRIMARY KEY (ingrediente_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_ingrediente_nombre CHECK (ingrediente_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_ingrediente_nombre CHECK (ingrediente_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_ingrediente_descripcion CHECK (ingrediente_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_ingrediente_descripcion CHECK (ingrediente_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -933,9 +933,9 @@ CREATE TABLE Barrica (
 
   CONSTRAINT pk_barrica_codigo PRIMARY KEY (barrica_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_barrica_nombre CHECK (barrica_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_barrica_nombre CHECK (barrica_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_barrica_descripcion CHECK (barrica_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_barrica_descripcion CHECK (barrica_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -959,7 +959,7 @@ CREATE TABLE Anejamiento (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Anejamiento.
   CONSTRAINT ck_anejamiento_tiempo CHECK (anejamiento_tiempo > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_anejamiento_descripcion CHECK (anejamiento_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_anejamiento_descripcion CHECK (anejamiento_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1001,7 +1001,7 @@ CREATE TABLE Botella (
   -- Constrain. Debe ser mayor que 0
   CONSTRAINT ck_botella_ancho CHECK (botella_ancho > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_botella_descripcion CHECK (botella_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_botella_descripcion CHECK (botella_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1017,9 +1017,9 @@ CREATE TABLE Material (
 
   CONSTRAINT pk_material_codigo PRIMARY KEY (material_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_material_nombre CHECK (material_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_material_nombre CHECK (material_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_material_descripcion CHECK (material_descripcion ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_material_descripcion CHECK (material_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_material_tipo CHECK (material_tipo IN ('tapa', 'caja', 'botella'))
   -- Constrain. Debe tener tres posibles valores: tapa, caja y botella.
@@ -1059,7 +1059,7 @@ CREATE TABLE Caja (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Material.
   CONSTRAINT ck_caja_capacidad CHECK (caja_capacidad > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_caja_descripcion CHECK (caja_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_caja_descripcion CHECK (caja_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1075,7 +1075,7 @@ CREATE TABLE Tapa (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_tapa_material_fabricadocon FOREIGN KEY (fk_material) REFERENCES Material (material_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Material.
-  CONSTRAINT ck_tapa_descripcion CHECK (tapa_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_tapa_descripcion CHECK (tapa_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1163,9 +1163,9 @@ CREATE TABLE Evento (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_evento_lugar_ubica FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
-  CONSTRAINT ck_evento_nombre CHECK (evento_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_evento_nombre CHECK (evento_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_evento_descripcion CHECK (evento_descripcion ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_evento_descripcion CHECK (evento_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_evento_num_entradas CHECK (evento_num_entradas >= 0),
   -- Constrain. Debe ser mayor o igual a 0
@@ -1251,15 +1251,15 @@ CREATE TABLE Cata (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT fk_cata_evento_cata FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT ck_cata_nombre CHECK (cata_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_cata_nombre CHECK (cata_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_fase_visual CHECK (cata_fase_visual ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_cata_fase_visual CHECK (cata_fase_visual ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_fase_olfativa CHECK (cata_fase_olfativa ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_cata_fase_olfativa CHECK (cata_fase_olfativa ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_fase_gustativa CHECK (cata_fase_gustativa ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_cata_fase_gustativa CHECK (cata_fase_gustativa ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_nota CHECK (cata_nota ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_cata_nota CHECK (cata_nota ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1273,9 +1273,9 @@ CREATE TABLE Premio (
 
   CONSTRAINT pk_premio_codigo PRIMARY KEY (premio_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_premio_nombre CHECK (premio_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_premio_nombre CHECK (premio_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_premio_descripcion CHECK (premio_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_premio_descripcion CHECK (premio_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1335,9 +1335,9 @@ CREATE TABLE Estatus_Pedido (
 
   CONSTRAINT pk_estatus_pedido_codigo PRIMARY KEY (estatus_pedido_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_estatus_pedido_nombre CHECK (estatus_pedido_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_estatus_pedido_nombre CHECK (estatus_pedido_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_estatus_pedido_descripcion CHECK (estatus_pedido_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_estatus_pedido_descripcion CHECK (estatus_pedido_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1419,9 +1419,9 @@ CREATE TABLE Estatus_Orden (
 
   CONSTRAINT pk_estatus_orden_codigo PRIMARY KEY (estatus_orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_estatus_orden_nombre CHECK (estatus_orden_nombre ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_estatus_orden_nombre CHECK (estatus_orden_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_estatus_orden_descripcion CHECK (estatus_orden_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_estatus_orden_descripcion CHECK (estatus_orden_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
