@@ -1,4 +1,3 @@
-
 CREATE TABLE Lugar (
   lugar_codigo serial,
   -- Código identificador de la entidad Lugar.
@@ -284,7 +283,7 @@ CREATE TABLE Accion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_accion_usuario_realiza FOREIGN KEY (fk_usuario) REFERENCES Usuario (usuario_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Usuario.
-  CONSTRAINT ck_accion_detalle CHECK (accion_descripcion ~ '^[a-zA-Z ]+$')
+  CONSTRAINT ck_accion_detalle CHECK (accion_detalle ~ '^[a-zA-Z ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -324,7 +323,7 @@ CREATE TABLE TDC (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
   CONSTRAINT fk_tdc_persona_juridica_controla FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
-  CONSTRAINT ck_tdc_numero_tarjeta CHECK (tdc_numero ~ '^[0-9]{16}$'),
+  CONSTRAINT ck_tdc_numero_tarjeta CHECK (tdc_numero_tarjeta ~ '^[0-9]{16}$'),
   -- Constrain. Debe tener dieciséis dígitos
   CONSTRAINT ck_tdc_cvv CHECK (tdc_cvv ~ '^[0-9]{3}$')
   -- Constrain. Debe tener tres dígitos
@@ -346,9 +345,9 @@ CREATE TABLE TDD (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_tdd_banco_seemite FOREIGN KEY (fk_banco) REFERENCES Banco (banco_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Banco.
-  CONSTRAINT ck_tdd_numero_tarjeta CHECK (tdd_numero ~ '^[0-9]{16}$'),
+  CONSTRAINT ck_tdd_numero_tarjeta CHECK (tdd_numero_tarjeta ~ '^[0-9]{16}$'),
   -- Constrain. Debe tener dieciséis dígitos
-  CONSTRAINT ck_tdd_cvv CHECK (tdd_cvv ~ '^[0-9]{3}$'),
+  CONSTRAINT ck_tdd_cvv CHECK (tdd_cvv ~ '^[0-9]{3}$')
   -- Constrain. Debe tener tres dígitos
 );
 
@@ -510,7 +509,7 @@ CREATE TABLE Beneficio (
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_beneficio_tipo CHECK (beneficio_tipo IN ('mensual', 'semestral', 'anual'))
   -- Constrain. Debe tener tres posibles valores: mensual, semestral y anual.
-)
+);
 
 CREATE TABLE Contrato_Beneficio (
   cont_bene_monto decimal(10,2) NOT NULL,
@@ -972,7 +971,7 @@ CREATE TABLE Mezclado (
   fk_producto integer,
   -- Relación con la entidad Producto
 
-  CONSTRAINT pk_mezclado PRIMARY KEY (fk_anejamiento, fk_ingredientes, fk_producto),
+  CONSTRAINT pk_mezclado PRIMARY KEY (fk_anejamiento, fk_ingrediente, fk_producto),
   -- Clave primaria de la tabla.
   CONSTRAINT fk_mezclado_anejamiento_agrega FOREIGN KEY (fk_anejamiento) REFERENCES Anejamiento (anejamiento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Anejamiento.
@@ -1096,9 +1095,7 @@ CREATE TABLE Presentacion (
 
   CONSTRAINT pk_presentacion PRIMARY KEY (fk_material_botella_1, fk_material_botella_2, fk_producto),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_presentacion_material_botella_1_contiene FOREIGN KEY (fk_material_botella_1) REFERENCES Material_Botella (fk_material),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Material_Botella.
-  CONSTRAINT fk_presentacion_material_botella_2_contiene FOREIGN KEY (fk_material_botella_2) REFERENCES Material_Botella (fk_botella),
+  CONSTRAINT fk_presentacion_material_botella_contiene FOREIGN KEY (fk_material_botella_1,fk_material_botella_2) REFERENCES Material_Botella (fk_material,fk_botella),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Material_Botella.
   CONSTRAINT fk_presentacion_producto_presentado FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
@@ -1116,7 +1113,7 @@ CREATE TABLE Diario_Ronero (
   diario_fecha date NOT NULL,
   -- Fecha del diario.
 
-  CONSTRAINT pk_diario_edicion PRIMARY KEY (diario_edicion),
+  CONSTRAINT pk_diario_edicion PRIMARY KEY (diario_edicion)
   -- Clave primaria de la tabla.
 );
 
@@ -1134,11 +1131,7 @@ CREATE TABLE Descuento (
 
   CONSTRAINT pk_descuento PRIMARY KEY (fk_presentacion_1, fk_presentacion_2, fk_presentacion_3, fk_diario_ronero),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_descuento_presentacion_1_esseleccionado FOREIGN KEY (fk_presentacion_1) REFERENCES Presentacion (fk_material_botella_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_descuento_presentacion_2_esseleccionado FOREIGN KEY (fk_presentacion_2) REFERENCES Presentacion (fk_material_botella_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_descuento_presentacion_3_esseleccionado FOREIGN KEY (fk_presentacion_3) REFERENCES Presentacion (fk_producto),
+  CONSTRAINT fk_descuento_presentacion_esseleccionado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT fk_descuento_diario_ronero_selecciona FOREIGN KEY (fk_diario_ronero) REFERENCES Diario_Ronero (diario_edicion),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Diario_Ronero.
@@ -1282,7 +1275,7 @@ CREATE TABLE Premio (
   -- Clave primaria de la tabla.
   CONSTRAINT ck_premio_nombre CHECK (premio_nombre ~ '^[a-zA-Z ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_premio_descripcion CHECK (premio_descripcion ~ '^[a-zA-Z ]+$'),
+  CONSTRAINT ck_premio_descripcion CHECK (premio_descripcion ~ '^[a-zA-Z ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1326,15 +1319,11 @@ CREATE TABLE Imagen (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_imagen_evento_ilustra FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_imagen_presentacion_1_refleja FOREIGN KEY (fk_presentacion_1) REFERENCES Presentacion (fk_material_botella_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_imagen_presentacion_2_refleja FOREIGN KEY (fk_presentacion_2) REFERENCES Presentacion (fk_material_botella_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_imagen_presentacion_3_refleja FOREIGN KEY (fk_presentacion_3) REFERENCES Presentacion (fk_producto),
+  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_imagen_nombre CHECK (imagen_nombre ~'^[a-zA-Z]+\.(jpg|png)$')
   -- Constrain. Debe terminar en .jpg o .png
-);
+);                
 
 CREATE TABLE Estatus_Pedido (
   estatus_pedido_codigo serial,
@@ -1388,8 +1377,8 @@ CREATE TABLE Pedido (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
   CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_Empleo (contrato_empleo_codigo),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_Empleo.
+  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT fk_pedido_lugar_enviadoa FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_pedido_subtotal CHECK (pedido_subtotal > 0),
@@ -1450,8 +1439,8 @@ CREATE TABLE Orden_De_Reposicion (
 
   CONSTRAINT pk_orden_codigo PRIMARY KEY (orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_Empleo (contrato_empleo_codigo),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_Empleo.
+  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_orden_subtotal CHECK (orden_subtotal IS NULL OR orden_subtotal > 0),
   -- Constrain. Debe ser mayor que 0
   CONSTRAINT ck_orden_total CHECK (orden_total IS NULL OR orden_total > 0)
@@ -1525,8 +1514,8 @@ CREATE TABLE Factura (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
   CONSTRAINT fk_factura_cliente_juridico_adquiere FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_Empleo (contrato_empleo_codigo),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_Empleo.
+  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_factura_subtotal CHECK (factura_subtotal > 0),
   -- Constrain. Debe ser mayor que 0
   CONSTRAINT ck_factura_total CHECK (factura_total > 0),
@@ -1571,11 +1560,7 @@ CREATE TABLE Inventario_Almacen (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_inventario_almacen_almacen_almacena FOREIGN KEY (fk_almacen) REFERENCES Almacen (almacen_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Almacen.
-  CONSTRAINT fk_inventario_almacen_presentacion_1_esalmacenado FOREIGN KEY (fk_presentacion_1) REFERENCES Presentacion (fk_material_botella_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_inventario_almacen_presentacion_2_esalmacenado FOREIGN KEY (fk_presentacion_2) REFERENCES Presentacion (fk_material_botella_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_inventario_almacen_presentacion_3_esalmacenado FOREIGN KEY (fk_presentacion_3) REFERENCES Presentacion (fk_producto),
+  CONSTRAINT fk_inventario_almacen_presentacion_esalmacenado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_inventario_almacen_cantidad CHECK (inv_almacen_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
@@ -1615,11 +1600,7 @@ CREATE TABLE Inventario_Tienda (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_inventario_tienda_tienda_muestra FOREIGN KEY (fk_tienda) REFERENCES Tienda (tienda_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Tienda.
-  CONSTRAINT fk_inventario_tienda_presentacion_1_esmostrado FOREIGN KEY (fk_presentacion_1) REFERENCES Presentacion (fk_material_botella_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_inventario_tienda_presentacion_2_esmostrado FOREIGN KEY (fk_presentacion_2) REFERENCES Presentacion (fk_material_botella_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_inventario_tienda_presentacion_3_esmostrado FOREIGN KEY (fk_presentacion_3) REFERENCES Presentacion (fk_producto),
+  CONSTRAINT fk_inventario_tienda_presentacion_esmostrado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_inventario_tienda_cantidad CHECK (inv_tienda_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
@@ -1645,13 +1626,7 @@ CREATE TABLE Evento_Lista_Producto (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_evento_lista_producto_evento_vende FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_evento_lista_producto_inventario_almacen_1_vendidoen FOREIGN KEY (fk_inventario_almacen_1) REFERENCES Inventario_Almacen (fk_almacen),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_evento_lista_producto_inventario_almacen_2_vendidoen FOREIGN KEY (fk_inventario_almacen_2) REFERENCES Inventario_Almacen (fk_presentacion_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_evento_lista_producto_inventario_almacen_3_vendidoen FOREIGN KEY (fk_inventario_almacen_3) REFERENCES Inventario_Almacen (fk_presentacion_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_evento_lista_producto_inventario_almacen_4_vendidoen FOREIGN KEY (fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_presentacion_3),
+  CONSTRAINT fk_evento_lista_producto_inventario_almacen_vendidoen FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
   CONSTRAINT ck_evento_lista_producto_precio_unitario CHECK (even_prod_precio_unitario > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1689,21 +1664,9 @@ CREATE TABLE Detalle_Orden_De_Reposicion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_detalle_orden_orden_especifica FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Orden_De_Reposicion.
-  CONSTRAINT fk_detalle_orden_inventario_almacen_1_compra FOREIGN KEY (fk_inventario_almacen_1) REFERENCES Inventario_Almacen (fk_almacen),
+  CONSTRAINT fk_detalle_orden_inventario_almacen_compra FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_orden_inventario_almacen_2_compra FOREIGN KEY (fk_inventario_almacen_2) REFERENCES Inventario_Almacen (fk_presentacion_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_orden_inventario_almacen_3_compra FOREIGN KEY (fk_inventario_almacen_3) REFERENCES Inventario_Almacen (fk_presentacion_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_orden_inventario_almacen_4_compra FOREIGN KEY (fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_presentacion_3),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_orden_inventario_tienda_1_repone FOREIGN KEY (fk_inventario_tienda_1) REFERENCES Inventario_Tienda (fk_tienda),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_orden_inventario_tienda_2_repone FOREIGN KEY (fk_inventario_tienda_2) REFERENCES Inventario_Tienda (fk_presentacion_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_orden_inventario_tienda_3_repone FOREIGN KEY (fk_inventario_tienda_3) REFERENCES Inventario_Tienda (fk_presentacion_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_orden_inventario_tienda_4_repone FOREIGN KEY (fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_presentacion_3),
+  CONSTRAINT fk_detalle_orden_inventario_tienda_repone FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
   CONSTRAINT ck_detalle_orden_cantidad CHECK (detalle_orden_cantidad > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1731,13 +1694,7 @@ CREATE TABLE Detalle_Pedido (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_detalle_pedido_pedido_esprocesado FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pedido.
-  CONSTRAINT fk_detalle_pedido_inventario_almacen_1_procesa FOREIGN KEY (fk_inventario_almacen_1) REFERENCES Inventario_Almacen (fk_almacen),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_pedido_inventario_almacen_2_procesa FOREIGN KEY (fk_inventario_almacen_2) REFERENCES Inventario_Almacen (fk_presentacion_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_pedido_inventario_almacen_3_procesa FOREIGN KEY (fk_inventario_almacen_3) REFERENCES Inventario_Almacen (fk_presentacion_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_pedido_inventario_almacen_4_procesa FOREIGN KEY (fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_presentacion_3)
+  CONSTRAINT fk_detalle_pedido_inventario_almacen_procesa FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
   CONSTRAINT ck_detalle_pedido_cantidad CHECK (detalle_pedido_cantidad > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1770,26 +1727,16 @@ CREATE TABLE Detalle_Factura(
   -- Relación con la entidad Evento_Lista_Producto
   fk_evento_lista_producto_4 integer,
   -- Relación con la entidad Evento_Lista_Producto
+  fk_evento_lista_producto_5 integer,
+  -- Relación con la entidad Evento_Lista_Producto
 
   CONSTRAINT pk_detalle_factura PRIMARY KEY (detalle_factura_codigo, fk_factura),
   -- Clave primaria de la tabla.
   CONSTRAINT fk_detalle_factura_factura_precisa FOREIGN KEY (fk_factura) REFERENCES Factura (factura_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Factura.
-  CONSTRAINT fk_detalle_factura_inventario_tienda_1_expide FOREIGN KEY (fk_inventario_tienda_1) REFERENCES Inventario_Tienda (fk_tienda),
+  CONSTRAINT fk_detalle_factura_inventario_tienda_expide FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_factura_inventario_tienda_2_expide FOREIGN KEY (fk_inventario_tienda_2) REFERENCES Inventario_Tienda (fk_presentacion_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_factura_inventario_tienda_3_expide FOREIGN KEY (fk_inventario_tienda_3) REFERENCES Inventario_Tienda (fk_presentacion_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_factura_inventario_tienda_4_expide FOREIGN KEY (fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_presentacion_3),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_factura_evento_lista_producto_1_remite FOREIGN KEY (fk_evento_lista_producto_1) REFERENCES Evento_Lista_Producto (fk_evento),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Evento_Lista_Producto.
-  CONSTRAINT fk_detalle_factura_evento_lista_producto_2_remite FOREIGN KEY (fk_evento_lista_producto_2) REFERENCES Evento_Lista_Producto (fk_inventario_almacen_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Evento_Lista_Producto.
-  CONSTRAINT fk_detalle_factura_evento_lista_producto_3_remite FOREIGN KEY (fk_evento_lista_producto_3) REFERENCES Evento_Lista_Producto (fk_inventario_almacen_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Evento_Lista_Producto.
-  CONSTRAINT fk_detalle_factura_evento_lista_producto_4_remite FOREIGN KEY (fk_evento_lista_producto_4) REFERENCES Evento_Lista_Producto (fk_inventario_almacen_3)
+  CONSTRAINT fk_detalle_factura_evento_lista_producto_vende FOREIGN KEY (fk_evento_lista_producto_1,fk_evento_lista_producto_2,fk_evento_lista_producto_3,fk_evento_lista_producto_4,fk_evento_lista_producto_5) REFERENCES Evento_Lista_Producto (fk_evento,fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento_Lista_Producto.
   CONSTRAINT ck_detalle_factura_cantidad CHECK (detalle_factura_cantidad > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1809,7 +1756,7 @@ CREATE TABLE Historico_Punto (
   fk_tienda integer NOT NULL,
   -- Relación con la entidad Tienda
 
-  CONSTRAINT pk_punto_codigo PRIMARY KEY (punto_codigo),
+  CONSTRAINT pk_historico_punto_codigo PRIMARY KEY (punto_codigo),
   -- Clave primaria de la tabla.
   CONSTRAINT fk_punto_tienda_consta FOREIGN KEY (fk_tienda) REFERENCES Tienda (tienda_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Tienda.
@@ -1859,11 +1806,7 @@ CREATE TABLE Historico_Precio_Compra (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_precio_compra_tasa_dolar_determina FOREIGN KEY (fk_historico_tasa_dolar) REFERENCES Historico_Tasa_Dolar (tasa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Historico_Tasa_Dolar.
-  CONSTRAINT fk_precio_compra_presentacion_1_implica FOREIGN KEY (fk_presentacion_1) REFERENCES Presentacion (fk_material_botella_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_precio_compra_presentacion_2_implica FOREIGN KEY (fk_presentacion_2) REFERENCES Presentacion (fk_material_botella_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT fk_precio_compra_presentacion_3_implica FOREIGN KEY (fk_presentacion_3) REFERENCES Presentacion (fk_producto),
+  CONSTRAINT fk_precio_compra_presentacion_implica FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_precio_compra_valor CHECK (precio_compra_valor > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1903,21 +1846,9 @@ CREATE TABLE Historico_Precio_Venta (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_precio_venta_tasa_dolar_establece FOREIGN KEY (fk_historico_tasa_dolar) REFERENCES Historico_Tasa_Dolar (tasa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Historico_Tasa_Dolar.
-  CONSTRAINT fk_precio_venta_inventario_almacen_1_asienta FOREIGN KEY (fk_inventario_almacen_1) REFERENCES Inventario_Almacen (fk_almacen),
+  CONSTRAINT fk_precio_venta_inventario_almacen_asienta FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_precio_venta_inventario_almacen_2_asienta FOREIGN KEY (fk_inventario_almacen_2) REFERENCES Inventario_Almacen (fk_presentacion_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_precio_venta_inventario_almacen_3_asienta FOREIGN KEY (fk_inventario_almacen_3) REFERENCES Inventario_Almacen (fk_presentacion_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_precio_venta_inventario_almacen_4_asienta FOREIGN KEY (fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_presentacion_3),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_precio_venta_inventario_tienda_1_consigna FOREIGN KEY (fk_inventario_tienda_1) REFERENCES Inventario_Tienda (fk_tienda),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_precio_venta_inventario_tienda_2_consigna FOREIGN KEY (fk_inventario_tienda_2) REFERENCES Inventario_Tienda (fk_presentacion_1),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_precio_venta_inventario_tienda_3_consigna FOREIGN KEY (fk_inventario_tienda_3) REFERENCES Inventario_Tienda (fk_presentacion_2),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_precio_venta_inventario_tienda_4_consigna FOREIGN KEY (fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_presentacion_3),
+  CONSTRAINT fk_precio_venta_inventario_tienda_consigna FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
   CONSTRAINT ck_precio_venta_valor CHECK (precio_venta_valor > 0),
   -- Constrain. Debe ser mayor que 0
