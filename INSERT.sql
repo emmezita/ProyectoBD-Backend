@@ -1,5 +1,7 @@
+--TABLA LUGAR
+
 -- Estados de Venezuela
-INSERT INTO Lugar(
+INSERT INTO Lugar (
 	lugar_nombre, lugar_tipo, fk_lugar)
 	VALUES
 	('Amazonas', 'estado', null),
@@ -28,10 +30,10 @@ INSERT INTO Lugar(
 	('Zulia', 'estado', null);
 
 --Municipios del Estado Amazonas
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
 	lugar_nombre, lugar_tipo, fk_lugar)
 	VALUES
-	('Alto Orinoco', 'municipio', 1),
+	('Alto Orinoco', 'municipio', 1), 
 	('Atabapo', 'municipio', 1),
 	('Atures', 'municipio', 1),
 	('Autana', 'municipio', 1),
@@ -40,13 +42,13 @@ INSERT INTO public.lugar(
 	('Río Negro', 'municipio', 1);
 
 -- Municipios del Estado Anzoátegui
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
 	lugar_nombre, lugar_tipo, fk_lugar)
 	VALUES
 	('Anaco', 'municipio', 2),
 	('Aragua', 'municipio', 2),
 	('Bolívar', 'municipio', 2),
-	('Bruzual', 'municipio', 2),
+	('Bruzual', 'municipio', 2), 
 	('Cajigal', 'municipio', 2),
 	('Carvajal', 'municipio', 2),
 	('Freites', 'municipio', 2),
@@ -66,7 +68,7 @@ INSERT INTO public.lugar(
 	('Turístico Diego Bautista Urbaneja', 'municipio', 2);
 
 -- Municipios del Estado Apure
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
 	lugar_nombre, lugar_tipo, fk_lugar)
 	VALUES
 	('Achaguas', 'municipio', 3),
@@ -78,7 +80,7 @@ INSERT INTO public.lugar(
 	('San Fernando', 'municipio', 3);
 
 -- Municipios del Estado Aragua
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Alcántara', 'municipio', 4),
@@ -101,7 +103,7 @@ INSERT INTO public.lugar(
     ('Zamora', 'municipio', 4);
 
 -- Municipios del Estado Barinas
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Alberto Arvelo Torrealba', 'municipio', 5),
@@ -118,7 +120,7 @@ INSERT INTO public.lugar(
     ('Sosa', 'municipio', 5);
 
 -- Municipios del Estado Bolívar
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Angostura', 'municipio', 6),
@@ -134,7 +136,7 @@ INSERT INTO public.lugar(
     ('Sucre', 'municipio', 6);
 
 -- Municipios del Estado Carabobo
-INSERT INTO public.lugar(
+INSERT INTO Lugar  (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Bejuma', 'municipio', 7),
@@ -153,7 +155,7 @@ INSERT INTO public.lugar(
     ('Valencia', 'municipio', 7);
 
 -- Municipios del Estado Cojedes
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Anzoátegui', 'municipio', 8),
@@ -167,7 +169,7 @@ INSERT INTO public.lugar(
     ('Tinaquillo', 'municipio', 8);
 
 -- Municipios del Estado Delta Amacuro
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Antonio Díaz', 'municipio', 9),
@@ -176,13 +178,13 @@ INSERT INTO public.lugar(
     ('Tucupita', 'municipio', 9);
 
 -- Municipios del Distrito Capital
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Caracas', 'municipio', 10);
 
 -- Municipios del Estado Falcón
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
     ('Acosta', 'municipio', 11),
@@ -212,7 +214,7 @@ VALUES
     ('Zamora', 'municipio', 11);
 
 -- Municipios del Estado Guárico
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Camaguán', 'municipio', 12),
@@ -232,7 +234,7 @@ INSERT INTO public.lugar(
     ('Zaraza', 'municipio', 12);
 
 -- Municipios del Estado Lara
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Andrés Eloy Blanco', 'municipio', 13),
@@ -246,13 +248,13 @@ INSERT INTO public.lugar(
     ('Urdaneta', 'municipio', 13);
 
 -- Municipios del Estado La Guaira
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Vargas', 'municipio', 14);
 
 -- Municipios del Estado Mérida
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Alberto Adriani', 'municipio', 15),
@@ -280,7 +282,7 @@ INSERT INTO public.lugar(
     ('Zea', 'municipio', 15);
 
 -- Municipios del Estado Miranda
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Acevedo', 'municipio', 16),
@@ -306,7 +308,7 @@ INSERT INTO public.lugar(
     ('Zamora', 'municipio', 16);
 
 -- Municipios del Estado Monagas
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Acosta', 'municipio', 17),
@@ -324,7 +326,7 @@ INSERT INTO public.lugar(
     ('Zamora', 'municipio', 17);
 
 -- Municipios del Estado Nueva Esparta
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Antolín del Campo', 'municipio', 18),
@@ -340,7 +342,7 @@ INSERT INTO public.lugar(
     ('Villalba', 'municipio', 18);
 
 -- Municipios del Estado Portuguesa
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Agua Blanca', 'municipio', 19),
@@ -359,7 +361,7 @@ INSERT INTO public.lugar(
     ('Turén', 'municipio', 19);
 
 -- Municipios del Estado Sucre
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
     lugar_nombre, lugar_tipo, fk_lugar)
     VALUES
     ('Andrés Eloy Blanco', 'municipio', 20),
@@ -379,7 +381,7 @@ INSERT INTO public.lugar(
     ('Valdez', 'municipio', 20);
 
 -- Municipios del Estado Táchira
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
   VALUES
   ('Andrés Bello', 'municipio', 21),
@@ -413,7 +415,7 @@ INSERT INTO public.lugar(
   ('Uribante', 'municipio', 21);
 
 -- Municipios del Estado Trujillo
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
   VALUES
   ('Andrés Bello', 'municipio', 22),
@@ -438,7 +440,7 @@ INSERT INTO public.lugar(
   ('Valera', 'municipio', 22);
 
 -- Municipios del Estado Yaracuy
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
   VALUES
   ('Arístides Bastidas', 'municipio', 23),
@@ -457,7 +459,7 @@ INSERT INTO public.lugar(
   ('Veroes', 'municipio', 23);
 
 -- Municipios del Estado Zulia
-INSERT INTO public.lugar(
+INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
   VALUES
   ('Almirante Padilla', 'municipio', 24),
@@ -481,3 +483,118 @@ INSERT INTO public.lugar(
   ('Simón Bolívar', 'municipio', 24),
   ('Sucre', 'municipio', 24),
   ('Valmore Rodríguez', 'municipio', 24);
+
+  --TABLA PERSONA_JURIDICA
+  INSERT INTO Persona_Juridica (
+   persona_jur_rif,
+   persona_jur_direccion_fiscal,
+   persona_jur_direccion_fisica,
+   persona_jur_denom_social,
+   persona_jur_pagina_web,
+   persona_jur_capital_disp,
+   fk_lugar_fiscal,
+   fk_lugar_fisica
+) VALUES
+   ('J123456789', 'Av. Principal, Edificio Central', 'Calle Comercial, Edif. Plaza', 'ABC Company C.A.', 'https://www.abc-company.com', 100000.00, 1, 2),
+   ('V987654321', 'Calle Empresarial, Torre A', 'Avenida Industrial, Bloque 5', 'XYZ Corporation S.A.', 'https://www.xyz-corp.com', 150000.00, 3, 4),
+   ('G876543210', 'Ruta Empresarial, Edif. Central', 'Plaza Ejecutiva, Piso 10', 'LMN Enterprises C.A.', 'https://www.lmn-enterprises.com', 80000.00, 5, 6),
+   ('E567890123', 'Calle de Negocios, Centro Ejecutivo', 'Avenida Empresarial, Edificio 3', 'PQR Solutions S.A.', 'https://www.pqr-solutions.com', 120000.00, 7, 8),
+   ('P012345678', 'Zona Industrial, Bloque 7', 'Calle del Comercio, Torre B', 'UVW Group C.A.', 'https://www.uvw-group.com', 90000.00, 9, 10),
+   ('J111111111', 'Avenida Principal, Edificio Ejecutivo', 'Calle Empresarial, Edificio 2', 'Alpha Corporation C.A.', 'https://www.alpha-corp.com', 200000.00, 1, 2),
+   ('V222222222', 'Ruta Empresarial, Edif. Plaza', 'Avenida Comercial, Torre A', 'Beta Solutions S.A.', 'https://www.beta-solutions.com', 180000.00, 3, 4),
+   ('G333333333', 'Calle de Negocios, Edif. Ejecutivo', 'Plaza Principal, Piso 8', 'Gamma Trading C.A.', 'https://www.gamma-trading.com', 150000.00, 5, 6),
+   ('E444444444', 'Zona Industrial, Bloque 5', 'Avenida Ejecutiva, Edificio 4', 'Delta Enterprises C.A.', 'https://www.delta-enterprises.com', 120000.00, 7, 8),
+   ('P555555555', 'Calle Empresarial, Edif. Central', 'Calle de Negocios, Torre B', 'Omega Group S.A.', 'https://www.omega-group.com', 250000.00, 9, 10),
+   ('J075601840', 'Estación el Consejo, S.A.', 'Hacienda Santa Teresa, Carretera Panamericana, El Consejo', 'Hacienda Santa Teresa', 'https://haciendasantateresa.com.ve', 250000.00, 9, 10),
+   ('J300215938', 'P-6 Distrito Federal, Caracas', 'Av. San Felipe, Edificio Ctro. Coinaza', 'Diageo Venezuela C.A.', 'https://1481-ve.all.biz', 150000.00, 9, 10),
+   ('J000107912', 'CC Bello monte, Mezzanina, Oficina 3, Caracas', 'Hacienda Altamira, Macarapana, Carupano', 'Carupano.', 'https://www.roncarupano.com', 200000.00, 9, 10),
+   ('J313303305', 'Rones del Caribe Calle 8, Edificio Araguaney', 'Edificio Araguaney, La Urbina, Caracas 1070', 'Ron Roble.', 'https://www.ronroble.com', 250000.00, 9, 10);
+
+--TABLA CLIENTE_JURIDICO
+INSERT INTO Cliente_Juridico (
+   cliente_jur_codigo,
+   cliente_jur_puntos_acumulados
+) VALUES
+   (1, 100),
+   (2, 50),
+   (3, 85),
+   (4, 30),
+   (5, 23),
+   (6, 25),
+   (7, 37),
+   (8, 58),
+   (9, 70),
+   (10, 20);
+
+--TABLA PROVEEDOR
+INSERT INTO Proveedor(
+   proveedor_codigo
+) VALUES
+   (11),
+   (12),
+   (13),
+   (14);
+
+--TABLA PERSONA_NATURAL
+INSERT INTO Persona_Natural (
+   persona_nat_rif,
+   persona_nat_direccion_fiscal,
+   persona_nat_cedula,
+   persona_nat_p_nombre,
+   persona_nat_s_nombre,
+   persona_nat_p_apellido,
+   persona_nat_s_apellido,
+   persona_nat_fecha_nac,
+   fk_lugar
+) VALUES
+   ('V-123456789', 'Av. Principal, Edificio Residencial', '21478963', 'Juan', 'Carlos', 'Pérez', 'Gómez', '1990-05-15', 1),
+   ('V-987654321', 'Calle Empresarial, Edif. Ejecutivo', '28569714', 'María', 'Isabel', 'López', 'González', '1985-12-08', 2),
+   ('V-876543210', 'Ruta Empresarial, Edif. Plaza', '15896374', 'Carlos', NULL, 'Martínez', 'Fernández', '1978-09-23', 3),
+   ('V-567890123', 'Calle de Negocios, Torre A', '20076865', 'Ana', 'Carolina', 'Rodríguez', 'Mendoza', '1982-03-02', 4),
+   ('V-940837293', 'Zona Industrial, Edif. Central', '29097425', 'Luis', NULL, 'Gutiérrez', NULL, '1995-06-10', 5),
+   ('V-274639284', 'Avenida Principal, Edificio Comercial', '8987651', 'Elena', 'María', 'Fernández', 'Pérez', '1987-11-30', 6),
+   ('V-093749273', 'Calle Empresarial, Edif. Ejecutivo', '8098943', 'Miguel', NULL, 'Sánchez', NULL, '1992-08-17', 7),
+   ('V-016384245', 'Ruta Empresarial, Edif. Plaza', '10987654', 'Laura', 'Isabel', 'Gómez', 'Pérez', '1980-02-25', 8),
+   ('V-293847567', 'Calle de Negocios, Torre A', '30980765', 'Pedro', 'Antonio', 'Fernández', 'Martínez', '1989-07-12', 9),
+   ('V-103948203', 'Zona Industrial, Edif. Central', '9542378', 'Mónica', NULL, 'González', NULL, '1984-04-05', 10),
+   ('V-102493728', 'Avenida Principal, Edificio Comercial', '15521768', 'Carlos', 'José', 'Pérez', 'Gómez', '1991-09-20', 11),
+   ('V-294758493', 'Calle Empresarial, Edif. Ejecutivo', '9987095', 'Isabel', 'María', 'Martínez', 'Fernández', '1983-12-03', 12),
+   ('V-101201394', 'Ruta Empresarial, Edif. Plaza', '26987654', 'Francisco', 'Javier', 'Gómez', 'Pérez', '1975-06-18', 13),
+   ('V-302930134', 'Calle de Negocios, Torre A', '29015732', 'Carla', NULL, 'Fernández', NULL, '1994-02-08', 14),
+   ('V-729173650', 'Ruta Empresarial, Edif. Plaza', '27588935', 'Estefany', NULL, 'Torres', 'Mendoza', '2000-11-26', 15),
+   ('V-938467502', 'Av. Principal, Edif. Residencial', '27246584', 'Ricardo', 'Javier', 'Martínez', 'Oliveros', '2000-09-15', 16),
+   ('V-374819203', 'Calle de Negocios, Torre A', '26838242', 'Nadine', 'Nazareth', 'Chancay', 'Malave', '1999-03-08', 17),
+   ('V-289103675', 'Torre Empresarial, Piso 4', '26838242', 'Pedro', 'Nicolás', 'Leal', 'Pacheco', '2001-07-09', 18),
+   ('V-389201374', 'Torre Empresarial, Piso 1', '30136096', 'Leandro', 'Emanuel', 'Andrade', 'Da Silva', '2003-06-08', 19),
+   ('V-493765392', 'Calle de Negocio, Torre B', '30005364', 'Rafael', 'Eduardo', 'Marcano', 'Mora', '2003-04-28', 20);
+
+--TABLA CLIENTE_NATURAL
+INSERT INTO Cliente_Natural (
+   cliente_nat_codigo,
+   cliente_nat_puntos_acumulados
+) VALUES
+   (11, 74),
+   (12, 6),
+   (13, 87),
+   (14, 25),
+   (15, 35),
+   (16, 14),
+   (17, 100),
+   (18, 10),
+   (19, 35),
+   (20, 60);
+
+--TABLA EMPLEADO
+INSERT INTO Empleado (
+    empleado_codigo)
+VALUES
+  (1),
+  (2),
+  (3),
+  (4),
+  (5),
+  (6),
+  (7),
+  (8),
+  (9),
+  (10),
