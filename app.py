@@ -1,6 +1,7 @@
 import http
 from flask import Flask, Response, render_template, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
+from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
 
 app = Flask(__name__)
@@ -85,3 +86,12 @@ def delete_user():
     conn.commit()
     cur.close()
     return "usuario eliminado"
+
+@app.route("/api/usuario/beneficios/all", methods=["GET"])
+def get_all_beneficios():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM beneficio")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
