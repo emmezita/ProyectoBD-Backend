@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+import http
+from flask import Flask, Response, render_template, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
 
 app = Flask(__name__)
-CORS(app) 
+CORS(app)
+
+# correr con flask --debug run
 
 # Datos para la conexion a la base de datos pg
 db_name = "ASORONUCAB"
@@ -27,8 +30,7 @@ def add_user():
 
     print("datos recibidos:")
     usuario = request.get_json() #obtenemos la informacion como un json (mas comodo)
-    print(usuario) #obtenemos la informacion como un json (mas comodo)
-    print(usuario["nombre"])
+    print(usuario)
 
     # cada vez que se hace una consulta a la base de datos se debe crear un cursor
     # cur = conn.cursor()
@@ -36,8 +38,7 @@ def add_user():
     # conn.commit() # el commit guarda los cambios en la base de datos
     # cur.close() # siempre se debe cerrar el cursor
 
-    # return "usuario agregado: " + request.form['nombre'] + " " + request.form['apellido'] + " " + request.form['contrasena'] + " " + request.form['correo']
-    return "usuario agregado"
+    return Response(status=http.HTTPStatus.OK, response="usuario agregado: " + usuario["nombre"] + " " + usuario["correo"])    
 
 @app.route("/api/usuario/get", methods=["GET"])
 def get_user():

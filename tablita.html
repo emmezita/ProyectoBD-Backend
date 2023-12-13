@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/dt-1.12.1/datatables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/journal/bootstrap.min.css" integrity="sha384-QDSPDoVOoSWz2ypaRUidLmLYl4RyoBWI44iA5agn6jHegBxZkNqgm2eHb6yZ5bYs" crossorigin="anonymous">
+</head>
+<style>
+table, th, td {
+  border:1px solid black;
+}
+</style>
+<body>
+
+    <div class="ms-5" style="width: 80%;">
+        <table class="table table-striped" data-id-field="code" data-sort-name="value1" data-sort-order="desc"
+            data-show-chart="true" data-pagination="true" data-show-pagination-switch="true" id="tabla">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Nombre</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+          <tbody>
+              <tr>
+                  <td>Alfreds Futterkiste</td>
+                  <td>Maria Anders</td>
+                  <td>Germany</td>
+                </tr>
+                <tr>
+                    <td>Centro comercial Moctezuma</td>
+                    <td>Francisco Chang</td>
+                    <td>Mexico</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+<script>
+    $(document).ready(function() {
+        $('#tabla').DataTable({
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros por página",
+                "zeroRecords": "No se encontraron resultados en su búsqueda",
+                "searchPlaceholder": "Buscar registros",
+                "info": "Mostrando registros de _START_ al _END_ de un total de _TOTAL_ registros",
+                "infoEmpty": "No existen registros",
+                "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "search": "Buscar:",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Último",
+                    "next": "Siguiente",
+                    "previous": "Anterior",
+                },
+            },
+            "lengthMenu": [ [5, 10, 20, -1], [5, 10, 20, 'Todos'] ],
+            "pagingType": "full_numbers",
+            "order": [[ 0, "desc" ]],
+            "responsive": true,
+            "style": "bootstrap5",
+        });
+    } );
+
+</script>
+
+<script>
+
+    // id = form-field-nombre
+    // id = form-field-correo
+    // id = enviar (boton)
+
+    $(document).ready(function() {
+        $('#enviar').click(function() {
+            var nombre = $('#form-field-nombre').val();
+            var correo = $('#form-field-correo').val();
+            var datos = {
+                "nombre": nombre,
+                "correo": correo
+            };
+            datos = JSON.stringify(datos);
+            $.ajax({
+                type: "POST",
+                url: "localhost:5000/api/usuario/add",
+                data: datos,
+                success: function() {
+                    $('#form-field-nombre').val('');
+                    $('#form-field-correo').val('');
+                    alert("Enviado con exito");
+                },
+                error: function() {
+                    alert("Error al enviar");
+                }
+            });
+            return false;
+        });
+    });
+
+</script>
+
+
+</body>
