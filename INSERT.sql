@@ -598,3 +598,76 @@ VALUES
   (8),
   (9),
   (10),
+  (11),
+  (12),
+  (13),
+  (14),
+  (15),
+  (16),
+  (17),
+  (18),
+  (19),
+  (20);
+
+--TABLA PERMISO
+INSERT INTO Permiso (
+    permiso_descripcion, permiso_tipo)
+VALUES
+  ('Consultar lista de empleados', 'RRHH'),
+  ('Registrar y modificar lista de empleados', 'RRHH'),
+  ('Consultar lista de clientes', 'Clientes'),
+  ('Registrar y modificar lista de clientes', 'Clientes'),
+  ('Consultar lista de proveedores', 'Proveedores'),
+  ('Registrar y modificar lista de proveedores', 'Proveedores'),
+  ('Consultar catálogo de productos', 'Productos'),
+  ('Registrar y modificar catálogo de tienda', 'Productos'),
+  ('Consultar inventario de productos', 'Productos'),
+  ('Registrar y modificar inventario de almacén', 'Productos'),
+  ('Consultar lista de eventos', 'Eventos'),
+  ('Registrar y modificar lista de eventos', 'Eventos'),
+  ('Consultar asistentes a los eventos', 'Eventos'),
+  ('Realizar compra de entradas', 'Eventos'),
+  ('Registrar y modificar notas de cata y premiación', 'Eventos'),
+  ('Realizar venta en línea', 'Ventas'),
+  ('Realizar venta en físico', 'Ventas'),
+  ('Consultar lista de ventas hechas', 'Ventas'),
+  ('Consultar órdenes de compra', 'Compras'),
+  ('Generar y emitir órdenes de compra', 'Compras'),
+  ('Consultar lista de pedidos en línea', 'Pedidos'),
+  ('Procesar ordenes de despacho', 'Pedidos'),
+  ('Procesar ordenes de entrega', 'Pedidos'),
+  ('Realizar afiliación', 'Afiliación'),
+  ('Consultar lista de afiliados y sus recibos de cuotas', 'Afiliación'),
+  ('Consultar lista de permisos', 'Administración'),
+  ('Registrar y modificar lista de permisos', 'Administración'),
+  ('Consultar lista de roles', 'Administración'),
+  ('Registrar y modificar lista de roles', 'Administración'),
+  ('Consultar histórico de puntos', 'Administración'),
+  ('Registrar y modificar histórico de puntos', 'Administración'),
+  ('Consultar histórico tasa de cambio', 'Administración'),
+  ('Registrar y modificar histórico tasa de cambio', 'Administración'),
+  ('Consultar acciones de los usuarios', 'Administración');
+
+--TABLA ROL
+INSERT INTO Rol (
+    rol_nombre)
+VALUES
+  ('Gerente de RRHH'),
+  ('Gerente de compras'),
+  ('Gerente de ventas'),
+  ('Gerente de promociones'),
+  ('Administrador'),
+  ('Gerente de almacén'),
+  ('Repartidor'),
+  ('Cliente jurídico'),
+  ('Cliente natural'),
+  ('Proveedor'),
+  ('Empleado RRHH'),
+  ('Empleado compras'),
+  ('Empleado ventas'),
+  ('Empleado promoción'),
+  ('Empleado administración'),
+  ('Seguridad'),
+  ('Empleado almacén');
+
+  

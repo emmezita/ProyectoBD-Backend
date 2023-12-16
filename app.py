@@ -95,3 +95,12 @@ def get_all_beneficios():
     cur.close()
 
     return jsonify(rows)
+
+@app.route("/api/usuario/cargos/all", methods=["GET"])
+def get_all_cargos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM Cargo")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
