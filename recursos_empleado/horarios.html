@@ -10,14 +10,6 @@
 <body>
 
     <style>   
-    
-        /* Esto se aplicará a todos los elementos */
-        * {
-            font-family: 'Poppins', sans-serif;
-            color: #202020;
-            font-size: 15px; /* Cambia esto al tamaño que desees */
-            font-weight: 300; /* Cambia esto al grosor que desees */
-        }
         
         /* Estilo para el botón de añadir */
         .btn-primary-hor {
@@ -49,7 +41,8 @@
 
         table {
             font-family: 'Hind', sans-serif;
-            font-size: 12px;
+            color: #202020;
+            font-size: 14px;
             font-weight: 400;
             width: 96%;
             border-collapse: collapse;
@@ -141,7 +134,7 @@
                 console.log(data);
                 var horarios = data;
                 horarios.forEach(horario => {
-                    $(".combo-box-hor").append("<option id="+ horario.horario_codigo +">"+horario.horario_dia+ " a " + horario.horario_hora_entrada + " " + horario.horario_hora_salida + "</option>");
+                    $(".combo-box-hor").append("<option id="+ horario.horario_codigo +">"+horario.horario_dia+ " " + horario.horario_hora_entrada + " a " + horario.horario_hora_salida + "</option>");
                 });
             },
             error: function() {
