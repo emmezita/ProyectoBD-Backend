@@ -1,3 +1,4 @@
+import datetime
 import http
 from flask import Flask, Response, render_template, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
@@ -103,4 +104,20 @@ def get_all_cargos():
     rows = cur.fetchall()
     cur.close()
 
+    return jsonify(rows)
+
+@app.route("/api/usuario/horarios/all", methods=["GET"])
+def get_all_horarios():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM Horario")
+    rows = cur.fetchall()
+    
+    # Convertir los objetos de tipo 'time' a cadenas
+    for row in rows:
+        for key, value in row.items():
+            if isinstance(value, datetime.time):
+                row[key] = value.strftime('%H:%M:%S')
+
+    cur.close()
+    
     return jsonify(rows)
