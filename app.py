@@ -4,6 +4,7 @@ from flask import Flask, Response, render_template, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
+from pprint import pprint # se utiliza la libreria pprint para imprimir los datos de una forma mas legible
 
 app = Flask(__name__)
 CORS(app)
@@ -119,5 +120,17 @@ def get_all_horarios():
                 row[key] = value.strftime('%H:%M:%S')
 
     cur.close()
-    
     return jsonify(rows)
+
+@app.route("/api/empleado/registrar", methods=["POST"])
+def registrar_empleado():
+
+    print("datos recibidos:")
+    empleado = request.get_json()
+    pprint(empleado)
+
+    # cur = conn.cursor()
+    # cur.execute("INSERT INTO Empleado (nombre, apellido, cedula, telefono, direccion, id_cargo) VALUES (%s, %s, %s, %s, %s, %s)", (request.form['nombre'], request.form['apellido'], request.form['cedula'], request.form['telefono'], request.form['direccion'], request.form['id_cargo']))
+    # conn.commit()
+    # cur.close()
+    return "empleado registrado"

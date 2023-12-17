@@ -11,7 +11,7 @@
 
     <style>
         /* Esto se aplicará a todos los elementos */
-        * {
+        table {
             font-family: 'Poppins', sans-serif;
             color: #202020;
             font-size: 15px; /* Cambia esto al tamaño que desees */
@@ -160,7 +160,7 @@
         }   
 
         var fila = "<tr><td id="+ beneficioId +">"+beneficio+"</td><td>"+monto+"</td><td><button type='button' class='btn btn-danger-ben' onclick='deleteBenefit(this)'>Eliminar</button></td><td><button type='button' class='btn btn-warning-ben' onclick='editBenefit(this)'>Editar</button></td></tr>";
-        $("body-beneficios#").append(fila);
+        $("#body-beneficios").append(fila);
         //clean inputs
         $(e).parent().parent().find("select").val("");
         $(e).parent().parent().find("input").val("");
