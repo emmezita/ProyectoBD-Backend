@@ -212,7 +212,7 @@
     }
 
     function validateForm(beneficio, monto){
-        if (beneficio == "" || isNaN(monto)){
+        if (beneficio == "" || isNaN(monto) || monto < 1){
             alert("Debe llenar todos los campos");
             return false;
         }
