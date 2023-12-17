@@ -124,7 +124,7 @@
                     <input type="text" class="form-control-ben" placeholder="Monto">
                 </div>
                 <div class="col-2">
-                    <button type="number" class="btn btn-primary-ben" onclick="addBenefit(this)">Añadir</button>
+                    <button class="btn btn-primary-ben" onclick="addBenefit(this, event)">Añadir</button>
                 </div>
             </div>
             <!-- y cuando anadas este se mostrara en una lista -->
@@ -138,14 +138,15 @@
                             <th>Editar</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="body-beneficios">
                     </tbody>
                 </table>
             </div>
         </div>
 
 <script>
-    function addBenefit(e){
+    function addBenefit(e, event){
+        event.preventDefault();
         var beneficio = $(e).parent().parent().find("select").val();
         var beneficioId = $(e).parent().parent().find("select").find(":selected").attr("id");
         var monto = $(e).parent().parent().find("input").val();
@@ -159,7 +160,7 @@
         }   
 
         var fila = "<tr><td id="+ beneficioId +">"+beneficio+"</td><td>"+monto+"</td><td><button type='button' class='btn btn-danger-ben' onclick='deleteBenefit(this)'>Eliminar</button></td><td><button type='button' class='btn btn-warning-ben' onclick='editBenefit(this)'>Editar</button></td></tr>";
-        $("tbody").append(fila);
+        $("body-beneficios#").append(fila);
         //clean inputs
         $(e).parent().parent().find("select").val("");
         $(e).parent().parent().find("input").val("");
@@ -197,7 +198,7 @@
 
     function benefitExists(beneficioId, e) {
         var exists = false;
-        $("table tbody tr").each(function() {
+        $("#body-beneficios tr").each(function() {
             // si existe e es porque se esta editando, por lo que no se debe validar el beneficio que se esta editando
             if (e && $(this).find("td").eq(0).find(".combo-box-ben").val() === $(e).parent().parent().find("td").eq(0).find(".combo-box-ben").val()) {
                 return true;

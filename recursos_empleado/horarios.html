@@ -80,7 +80,7 @@
                     </select>
                 </div>
                 <div class="col-2">
-                    <button type="number" class="btn btn-primary-hor" onclick="addHorario(this)">Añadir</button>
+                    <button class="btn btn-primary-hor" onclick="addHorario(this, event)">Añadir</button>
                 </div>
                 
             </div>
@@ -93,12 +93,16 @@
                             <th>Eliminar</th>
                         </tr>
                     </thead>
+                    <tbody id="body-horarios">
+                        <!-- Se llena con jquery -->
+                    </tbody>
                 </table>
             </div>
         </div>
 
 <script>
-    function addHorario(e){
+    function addHorario(e, event){
+        event.preventDefault();
         var horario = $(e).parent().parent().find("select").val();
         var horarioId = $(e).parent().parent().find("select").find(":selected").attr("id");
         
@@ -108,7 +112,7 @@
             return;
         }   
         var fila = "<tr><td id="+ horarioId +">"+horario+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deleteHorario(this)'>Eliminar</button></td></tr>";
-        $("tbody").append(fila);
+        $("#body-horarios").append(fila);
         //clean inputs
         $(e).parent().parent().find("select").val("");
     }
@@ -118,7 +122,7 @@
    
     function horarioExists(horarioId, e) {
         var exists = false;
-        $("table tbody tr").each(function() {
+        $("#body-horarios tr").each(function() {
             var currentHorarioId = $(this).find("td").eq(0).attr('id');
             if (currentHorarioId === horarioId) {
                 exists = true;
