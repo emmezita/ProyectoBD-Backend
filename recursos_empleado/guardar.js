@@ -1,5 +1,4 @@
-    
-function save() {
+    function save() {
     var ff = "#form-field-"
 
     var horarios = $('#body-horarios tr').map(function () {
@@ -42,6 +41,7 @@ function save() {
         fechanac: fechanac,
         direccion: $(ff+"direccion").val(),
         cargo: $(ff + "cbcargo option:selected").attr('id'),
+        departamento: $(ff + "cbdepa option:selected").attr('id'),
         sueldo: $(ff+"sueldo").val(),
         horarios: horarios,
         beneficios: beneficios,

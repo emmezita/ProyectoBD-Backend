@@ -1,19 +1,19 @@
 <script>
-$(document).ready(function() {
-    $.ajax({
-        type: "GET",
-        url: "http://localhost:5000/api/usuario/cargos/all",
-        success: function(data) {
-            console.log("se carga la data")
-            console.log(data);
-            var cargos = data;
-            cargos.forEach(cargo => {
-                $("#form-field-cbcargo").append("<option id="+ cargo.cargo_codigo +">"+cargo.cargo_nombre+"</option>");
-            });
-        },
-        error: function() {
-            alert("Error al cargar los cargos");
-        }
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/usuario/cargos/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var cargos = data;
+                cargos.forEach(cargo => {
+                    $("#form-field-cbcargo").append("<option id="+ cargo.cargo_codigo +">"+cargo.cargo_nombre+"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los cargos");
+            }
+        });
     });
-});
 </script>

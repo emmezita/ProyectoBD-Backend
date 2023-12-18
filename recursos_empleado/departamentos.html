@@ -1,0 +1,19 @@
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/usuario/departamentos/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var departamentos = data;
+                departamentos.forEach(departamento => {
+                    $("#form-field-cbdepa").append("<option id="+ departamento.departamento_codigo +">"+departamento.departamento_nombre+"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los departamentos");
+            }
+        });
+    });
+</script>
