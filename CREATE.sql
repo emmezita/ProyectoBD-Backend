@@ -12,7 +12,7 @@ CREATE TABLE Lugar (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_lugar_sedivide FOREIGN KEY (fk_lugar) REFERENCES Lugar(lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la misma tabla.  
-  CONSTRAINT ck_lugar_nombre CHECK (lugar_nombre ~ '^[a-zA-Z0-9áéíóúñ ]+$'),
+  CONSTRAINT ck_lugar_nombre CHECK (lugar_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales.
   CONSTRAINT ck_lugar_tipo CHECK (lugar_tipo IN ('parroquia', 'municipio', 'estado'))
   -- Constrain. Debe tener tres posibles valores: parroquia, municipio y estado.
@@ -211,7 +211,7 @@ CREATE TABLE Permiso (
   -- Clave primaria de la tabla.
   CONSTRAINT ck_permiso_descripcion CHECK (permiso_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_permiso_tipo CHECK (permiso_tipo ~ '^[a-zA-Z]+$')
+  CONSTRAINT ck_permiso_tipo CHECK (permiso_tipo IN ('RRHH', 'Clientes', 'Proveedores', 'Productos', 'Eventos', 'Ventas', 'Compras', 'Pedidos', 'Afiliación', 'Administración'))
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -541,7 +541,7 @@ CREATE TABLE Horario (
 
   CONSTRAINT pk_horario_codigo PRIMARY KEY (horario_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_horario_dia CHECK (horario_dia IN ('lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo')),
+  CONSTRAINT ck_horario_dia CHECK (horario_dia IN ('Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo')),
   -- Constrain. Debe tener siete posibles valores: lunes, martes, miercoles, jueves, viernes, sabado y domingo.
   CONSTRAINT ck_horario_hora_salida CHECK (horario_hora_salida > horario_hora_entrada)
   -- Constrain. Debe ser mayor que la hora de entrada
@@ -600,7 +600,7 @@ CREATE TABLE Contrato_Departamento (
 CREATE TABLE Cargo (
   cargo_codigo serial,
   -- Código identificador de la entidad Cargo
-  cargo_nombre varchar(20) NOT NULL UNIQUE,
+  cargo_nombre varchar(30) NOT NULL UNIQUE,
   -- Nombre del cargo.
   cargo_descripcion varchar(50),
   -- Descripción del cargo.

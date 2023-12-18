@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beneficios</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+    <style>
+
+        input[type="text"] {
+            font-family: 'Poppins', sans-serif;
+            color: #202020;
+            font-size: 15px; /* Cambia esto al tamaño que desees */
+            font-weight: 300; /* Cambia esto al grosor que desees */
+        }
+        
+        /* Estilo para el botón de añadir */
+        .btn-primary-ben {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #D1991A;
+            border-color: #D1991A;
+        }
+        .btn-primary-ben:hover {
+            color: #F8F8F8;
+            background-color: #956d11;
+            border-color: #956d11;
+        }
+
+        /* Estilo para el botón de eliminar */
+        .btn-danger-ben {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #FF0000;
+            border-color: #FF0000;
+        }
+        .btn-danger-ben:hover {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            background-color: #b30000;
+            border-color: #b30000;
+        }
+
+        /* Estilo para el botón de editar */
+        .btn-warning-ben {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #0f3b83;
+            border-color: #0f3b83;
+        }
+        .btn-warning-ben:hover {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            background-color: #0c2c66;
+            border-color: #0c2c66;
+        }
+
+        /* Estilo para el botón de guardar */
+        .btn-success-ben {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-success-ben:hover {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            background-color: #1e7e34;
+            border-color: #1e7e34;
+        }
+
+        table {
+            font-family: 'Hind', sans-serif;
+            color: #202020;
+            font-size: 14px;
+            font-weight: 400;
+            width: 96%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+    
+        th, td {
+            border: 1px solid #999;
+            padding: 0.5rem;
+            text-align: left;
+        }
+    
+        th {
+            background-color: #f3f3f3;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+    
+        <!-- 3 componentes, izquierda combobox de beneficios, en el medio input de monto $, a la izquierda boton de anadir -->
+        <div class="ms-5">
+            <div class="row mt-5">
+                <div class="col-5">
+                    <select class="form-select combo-box-ben" aria-label="elige">
+                        <!-- Se llena con jquery -->
+                    </select>
+                </div>
+                <div class="col-5">
+                    <input type="text" class="form-control-ben" placeholder="Monto">
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-primary-ben" onclick="addBenefit(this, event)">Añadir</button>
+                </div>
+            </div>
+            <!-- y cuando anadas este se mostrara en una lista -->
+            <div class="mt-4 ">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Beneficio</th>
+                            <th>Monto</th>
+                            <th>Eliminar</th>
+                            <th>Editar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-beneficios">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+<script>
+    function addBenefit(e, event){
+        event.preventDefault();
+        var beneficio = $(e).parent().parent().find("select").val();
+        var beneficioId = $(e).parent().parent().find("select").find(":selected").attr("id");
+        var monto = $(e).parent().parent().find("input").val();
+        
+        if (!validateForm(beneficio, monto)) return;
+
+        // Check if the benefit already exists
+        if (benefitExists(beneficioId)) {
+            alert("El beneficio ya existe en la tabla.");
+            return;
+        }   
+
+        var fila = "<tr><td id="+ beneficioId +">"+beneficio+"</td><td>"+monto+"</td><td><button type='button' class='btn btn-danger-ben' onclick='deleteBenefit(this)'>Eliminar</button></td><td><button type='button' class='btn btn-warning-ben' onclick='editBenefit(this)'>Editar</button></td></tr>";
+        $("#body-beneficios").append(fila);
+        //clean inputs
+        $(e).parent().parent().find("select").val("");
+        $(e).parent().parent().find("input").val("");
+    }
+    function deleteBenefit(e){
+        $(e).parent().parent().remove();
+    }
+    function editBenefit(e){
+        var beneficio = $(e).parent().parent().find("td").eq(0).html();
+        var beneficioId = $(e).parent().parent().find("td").eq(0).find(":selected").attr("id");
+        var monto = $(e).parent().parent().find("td").eq(1).html();
+        $(e).parent().parent().find("td").eq(0).html($(".combo-box-ben").clone().val(beneficio));
+        $(e).parent().parent().find("td").eq(1).html("<input type='text' value='"+monto+"'>");
+        $(e).parent().parent().find("td").eq(2).html("<button type='button' class='btn btn-danger-ben' onclick='deleteBenefit(this)'>Eliminar</button>");
+        $(e).parent().parent().find("td").eq(3).html("<button type='button' class='btn btn-success-ben' onclick='saveBenefit(this)'>Guardar</button>");
+    }
+    function saveBenefit(e){
+        var beneficio = $(e).parent().parent().find("td").eq(0).find(".combo-box-ben").val();
+        var beneficioId = $(e).parent().parent().find("td").eq(0).find(".combo-box-ben").find(":selected").attr("id");
+        var monto = $(e).parent().parent().find("td").eq(1).find("input").val();
+
+        if (!validateForm(beneficio, monto)) return;
+
+        // Check if the benefit already exists
+        if (benefitExists(beneficioId, e)) {
+            alert("El beneficio ya existe en la tabla.");
+            return;
+        }
+
+        $(e).parent().parent().find("td").eq(0).html(beneficio).attr("id", beneficioId);
+        $(e).parent().parent().find("td").eq(1).html(monto);
+        $(e).parent().parent().find("td").eq(2).html("<button type='button' class='btn btn-danger-ben' onclick='deleteBenefit(this)'>Eliminar</button>");
+        $(e).parent().parent().find("td").eq(3).html("<button type='button' class='btn btn-warning-ben' onclick='editBenefit(this)'>Editar</button>");
+    }
+
+    function benefitExists(beneficioId, e) {
+        var exists = false;
+        $("#body-beneficios tr").each(function() {
+            // si existe e es porque se esta editando, por lo que no se debe validar el beneficio que se esta editando
+            if (e && $(this).find("td").eq(0).find(".combo-box-ben").val() === $(e).parent().parent().find("td").eq(0).find(".combo-box-ben").val()) {
+                return true;
+            }
+            var currentBeneficioId = $(this).find("td").eq(0).attr('id');
+            if (currentBeneficioId === beneficioId) {
+                exists = true;
+                return false; 
+            }
+        });
+            return exists;
+    }
+
+    function validateForm(beneficio, monto){
+        if (beneficio == "" || isNaN(monto) || monto < 1){
+            alert("Debe llenar todos los campos");
+            return false;
+        }
+        if (monto <= 0){
+            alert("El monto debe ser mayor a 0");
+            return false;
+        }
+        return true;        
+    }
+
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/usuario/beneficios/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var beneficios = data;
+                beneficios.forEach(beneficio => {
+                    $(".combo-box-ben").append("<option id="+ beneficio.beneficio_codigo +">"+beneficio.beneficio_nombre+"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los beneficios");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
