@@ -1,7 +1,7 @@
 CREATE TABLE Lugar (
   lugar_codigo serial,
   -- Código identificador de la entidad Lugar.
-  lugar_nombre varchar(20) NOT NULL,
+  lugar_nombre varchar(50) NOT NULL,
   -- Nombre general del lugar.
   lugar_tipo varchar(20) NOT NULL,
   -- Tipo de clasificación a la que corresponde el lugar.
@@ -12,7 +12,7 @@ CREATE TABLE Lugar (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_lugar_sedivide FOREIGN KEY (fk_lugar) REFERENCES Lugar(lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la misma tabla.  
-  CONSTRAINT ck_lugar_nombre CHECK (lugar_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_lugar_nombre CHECK (lugar_nombre ~ '^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ./ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales.
   CONSTRAINT ck_lugar_tipo CHECK (lugar_tipo IN ('parroquia', 'municipio', 'estado'))
   -- Constrain. Debe tener tres posibles valores: parroquia, municipio y estado.
