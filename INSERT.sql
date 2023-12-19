@@ -3036,11 +3036,11 @@ VALUES
 
 INSERT INTO Cargo (cargo_nombre, cargo_descripcion)
 VALUES
-  ('Gerente', 'Encargado')
+  ('Gerente', 'Encargado'),
   ('Administrador', 'Administrador general del negocio'),
   ('Repartidor', 'Responsable de la entrega de productos'),
   ('Empleado', 'Asistente'),
-  ('Seguridad', 'Asistente de administración')
+  ('Seguridad', 'Asistente de administración');
 
 INSERT INTO Beneficio (beneficio_nombre, beneficio_descripcion, beneficio_tipo)
 VALUES
