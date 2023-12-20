@@ -163,7 +163,9 @@ def registrar_empleado():
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING persona_nat_codigo;
     """
     cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia))
-    empleado_codigo = cur.fetchone()[0]
+    
+    result = cur.fetchone()
+    empleado_codigo = result[0] if result is not None else None
     
     sql_correo = """ 
         INSERT INTO Correo (
@@ -214,8 +216,9 @@ def registrar_empleado():
         VALUES (%s, %s, %s) RETURNING contrato_codigo;
     """   
     cur.execute(sql_contrato, (datetime.datetime.now(), None, empleado_codigo))
-    contrato_codigo = cur.fetchone()[0]
-    
+    result = cur.fetchone()
+    contrato_codigo = result[0] if result is not None else None
+
     sql_departamento = """ 
         INSERT INTO Contrato_Departamento (
             cont_depant_fecha_inicio, cont_depant_fecha_cierre, fk_contrato_empleo, fk_departamento
