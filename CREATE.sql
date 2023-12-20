@@ -80,11 +80,11 @@ CREATE TABLE Proveedor (
 CREATE TABLE Persona_Natural (
   persona_nat_codigo serial,
   -- Código identificador de la entidad Persona Natural
-  persona_nat_rif varchar(11) NOT NULL,
+  persona_nat_rif varchar(11) NOT NULL UNIQUE,
   -- Rif de la persona natural.
   persona_nat_direccion_fiscal varchar(30) NOT NULL,
   -- Dirección fiscal de la persona natural.
-  persona_nat_cedula varchar(8) NOT NULL,
+  persona_nat_cedula varchar(8) NOT NULL UNIQUE,
   -- Cédula de la persona natural. 
   persona_nat_p_nombre varchar(15) NOT NULL,
   -- Primer nombre de la persona natural.
@@ -105,7 +105,7 @@ CREATE TABLE Persona_Natural (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_persona_nat_rif CHECK (persona_nat_rif ~ '^[VEJPG]{1}[0-9]{9}$'),
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
-  CONSTRAINT ck_persona_nat_cedula CHECK (persona_nat_cedula ~ '^[0-9]{8}$'),
+  CONSTRAINT ck_persona_nat_cedula CHECK (persona_nat_cedula ~ '^[0-9]{7-8}$'),
   -- Constrain. Debe tener ocho dígitos
   CONSTRAINT ck_persona_nat_p_nombre CHECK (persona_nat_p_nombre ~ '^[A-Za-záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
