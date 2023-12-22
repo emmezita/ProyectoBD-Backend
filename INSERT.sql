@@ -1113,1165 +1113,1165 @@ VALUES
 --Parroquias del municipio Libertador, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('U TOCUYITO', 'parroquia', 108),
-  ('U INDEPENDENCIA', 'parroquia', 108);
+  ('U TOCUYITO', 'parroquia', 106),
+  ('U INDEPENDENCIA', 'parroquia', 106);
 
 --Parroquias del municipio Los Guayos, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('U LOS GUAYOS', 'parroquia', 109);
+  ('U LOS GUAYOS', 'parroquia', 107);
 
 -- Parroquia del municipio Miranda, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MIRANDA', 'parroquia', 110);
+  ('MIRANDA', 'parroquia', 108);
 
 --Parroquia del municipio Montalban, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MONTALBAN', 'parroquia', 111);
+  ('MONTALBAN', 'parroquia', 109);
 
 --Parroquia del municipio NAguanagua, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('NAGUANAGUA', 'parroquia', 112);
+  ('NAGUANAGUA', 'parroquia', 110);
 
 -- Parroquias del municipio Puerto Cabello, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('DEMOCRACIA', 'parroquia', 113),
-  ('FRATERNIDAD', 'parroquia', 113),
-  ('GOAIGOAZA', 'parroquia', 113),
-  ('JUAN JOSE FLORES', 'parroquia', 113),
-  ('BARTOLOME SALOM', 'parroquia', 113),
-  ('UNION', 'parroquia', 113),
-  ('BORBURATA', 'parroquia', 113),
-  ('PATANEMO', 'parroquia', 113);
+  ('DEMOCRACIA', 'parroquia', 111),
+  ('FRATERNIDAD', 'parroquia', 111),
+  ('GOAIGOAZA', 'parroquia', 111),
+  ('JUAN JOSE FLORES', 'parroquia', 111),
+  ('BARTOLOME SALOM', 'parroquia', 111),
+  ('UNION', 'parroquia', 111),
+  ('BORBURATA', 'parroquia', 111),
+  ('PATANEMO', 'parroquia', 111);
 
 -- Parroquia del municipio San Diego, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('URB SAN DIEGO', 'parroquia', 114);
+  ('URB SAN DIEGO', 'parroquia', 112);
 
 --PArroquia del municipio San Joaquin, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN JOAQUIN', 'parroquia', 115);
+  ('SAN JOAQUIN', 'parroquia', 113);
 
 --PArroquias del municipio Valencia, Carabobo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CANDELARIA', 'parroquia', 116),
-  ('CATEDRAL', 'parroquia', 116),
-  ('EL SOCORRO', 'parroquia', 116),
-  ('MIGUEL PEÑA', 'parroquia', 116),
-  ('SAN BLAS', 'parroquia', 116),
-  ('SAN JOSE', 'parroquia', 116),
-  ('SANTA ROSA', 'parroquia', 116),
-  ('RAFAEL URDANETA', 'parroquia', 116),
-  ('NEGRO PRIMERO', 'parroquia', 116);
+  ('CANDELARIA', 'parroquia', 114),
+  ('CATEDRAL', 'parroquia', 114),
+  ('EL SOCORRO', 'parroquia', 114),
+  ('MIGUEL PEÑA', 'parroquia', 114),
+  ('SAN BLAS', 'parroquia', 114),
+  ('SAN JOSE', 'parroquia', 114),
+  ('SANTA ROSA', 'parroquia', 114),
+  ('RAFAEL URDANETA', 'parroquia', 114),
+  ('NEGRO PRIMERO', 'parroquia', 114);
 
 -- Parroquias del municipio Anzoategui, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('COJEDES', 'parroquia', 117),
-  ('JUAN DE MATA SUAREZ', 'parroquia', 117);
+  ('COJEDES', 'parroquia', 115),
+  ('JUAN DE MATA SUAREZ', 'parroquia', 115);
 
 --PArroquias del municipio San Carlos, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN CARLOS DE AUSTRIA', 'parroquia', 118),
-  ('JUAN ANGEL BRAVO', 'parroquia', 118),
-  ('MANUEL MANRIQUE', 'parroquia', 118);
+  ('SAN CARLOS DE AUSTRIA', 'parroquia', 116),
+  ('JUAN ANGEL BRAVO', 'parroquia', 116),
+  ('MANUEL MANRIQUE', 'parroquia', 116);
 
 
 --PArroquias del municipio Girardot, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('EL BAUL', 'parroquia', 119),
-  ('SUCRE', 'parroquia', 119);
+  ('EL BAUL', 'parroquia', 117),
+  ('SUCRE', 'parroquia', 117);
 
 --Parroquias del municipio Lima Blanco, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MACAPO', 'parroquia', 120),
-  ('LA AGUADITA', 'parroquia', 120);
+  ('MACAPO', 'parroquia', 118),
+  ('LA AGUADITA', 'parroquia', 118);
 
 --PArroquias del municipio PAo de San Juan Bautista, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('EL PAO', 'parroquia', 121);
+  ('EL PAO', 'parroquia', 119);
 
 --Parroquias del municipio Ricaurte, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('LIBERTAD DE COJEDES', 'parroquia', 122),
-  ('EL AMPARO', 'parroquia', 122);
+  ('LIBERTAD DE COJEDES', 'parroquia', 120),
+  ('EL AMPARO', 'parroquia', 120);
   
 --Parroquia del municipio Romulo Gallegos, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ROMULO GALLEGOS', 'parroquia', 123);
+  ('ROMULO GALLEGOS', 'parroquia', 121);
 
 -- Parroquia del municipio Tinaco, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('GRL/JEFE JOSE L SILVA', 'parroquia', 124);
+  ('GRL/JEFE JOSE L SILVA', 'parroquia', 122);
 
 -- PArroquia del municipio Tinaquillo, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('TINAQUILLO', 'parroquia', 125);
+  ('TINAQUILLO', 'parroquia', 123);
 
 -- Parroquias del municipio ANdres Diaz, Delta Amacura
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CURIAPO', 'parroquia', 126),
-  ('SANTOS DE ABELGAS', 'parroquia', 126),
-  ('MANUEL RENAUD', 'parroquia', 126),
-  ('PADRE BARRAL', 'parroquia', 126),
-  ('ANICETO LUGO', 'parroquia', 126),
-  ('ALMIRANTE LUIS BRION', 'parroquia', 126);
+  ('CURIAPO', 'parroquia', 124),
+  ('SANTOS DE ABELGAS', 'parroquia', 124),
+  ('MANUEL RENAUD', 'parroquia', 124),
+  ('PADRE BARRAL', 'parroquia', 124),
+  ('ANICETO LUGO', 'parroquia', 124),
+  ('ALMIRANTE LUIS BRION', 'parroquia', 124);
 
 -- Parroquias del municipio Casacoima, Delta Amacuro
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('IMATACA', 'parroquia', 127),
-  ('ROMULO GALLEGOS', 'parroquia', 127),
-  ('JUAN BAUTISTA ARISMEN', 'parroquia', 127),
-  ('MANUEL PIAR', 'parroquia', 127),
-  ('5 DE JULIO', 'parroquia', 127);
+  ('IMATACA', 'parroquia', 125),
+  ('ROMULO GALLEGOS', 'parroquia', 125),
+  ('JUAN BAUTISTA ARISMEN', 'parroquia', 125),
+  ('MANUEL PIAR', 'parroquia', 125),
+  ('5 DE JULIO', 'parroquia', 125);
 
 -- Parroquias del municipio Pedernales, Delta Amacuro
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('PEDERNALES', 'parroquia', 128),
-  ('LUIS B PRIETO FIGUERO', 'parroquia', 128);
+  ('PEDERNALES', 'parroquia', 126),
+  ('LUIS B PRIETO FIGUERO', 'parroquia', 126);
 
 -- Parroquia del municipio Tucupita, Delta Amacuro
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN JOSE', 'parroquia', 129),
-  ('VIRGEN DEL VALLE', 'parroquia', 129),
-  ('SAN RAFAEL', 'parroquia', 129),
-  ('JOSE VIDAL MARCANO', 'parroquia', 129),
-  ('LEONARDO RUIZ PINEDA', 'parroquia', 129),
-  ('MONS. ARGIMIRO GARCIA', 'parroquia', 129),
-  ('MCL.ANTONIO J DE SUCRE', 'parroquia', 129),
-  ('JUAN MILLAN', 'parroquia', 129);
+  ('SAN JOSE', 'parroquia', 127),
+  ('VIRGEN DEL VALLE', 'parroquia', 127),
+  ('SAN RAFAEL', 'parroquia', 127),
+  ('JOSE VIDAL MARCANO', 'parroquia', 127),
+  ('LEONARDO RUIZ PINEDA', 'parroquia', 127),
+  ('MONS. ARGIMIRO GARCIA', 'parroquia', 127),
+  ('MCL.ANTONIO J DE SUCRE', 'parroquia', 127),
+  ('JUAN MILLAN', 'parroquia', 127);
 
 -- Parroquias del municipio Distrito Capital, Caracas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ALTAGRACIA', 'parroquia', 130),
-  ('CANDELARIA', 'parroquia', 130),
-  ('CATEDRAL', 'parroquia', 130),
-  ('LA PASTORA', 'parroquia', 130),
-  ('SAN AGUSTIN', 'parroquia', 130),
-  ('SAN JOSE', 'parroquia', 130),
-  ('SAN JUAN', 'parroquia', 130),
-  ('SANTA ROSALIA', 'parroquia', 130),
-  ('SANTA TERESA', 'parroquia', 130),
-  ('SUCRE', 'parroquia', 130),
-  ('23 DE ENERO', 'parroquia', 130),
-  ('ANTIMANO', 'parroquia', 130),
-  ('EL RECREO', 'parroquia', 130),
-  ('EL VALLE', 'parroquia', 130),
-  ('LA VEGA', 'parroquia', 130),
-  ('MACARAO', 'parroquia', 130),
-  ('CARICUAO', 'parroquia', 130),
-  ('EL JUNQUITO', 'parroquia', 130),
-  ('COCHE', 'parroquia', 130),
-  ('SAN PEDRO', 'parroquia', 130),
-  ('SAN BERNARDINO', 'parroquia', 130),
-  ('EL PARAISO', 'parroquia', 130);
+  ('ALTAGRACIA', 'parroquia', 128),
+  ('CANDELARIA', 'parroquia', 128),
+  ('CATEDRAL', 'parroquia', 128),
+  ('LA PASTORA', 'parroquia', 128),
+  ('SAN AGUSTIN', 'parroquia', 128),
+  ('SAN JOSE', 'parroquia', 128),
+  ('SAN JUAN', 'parroquia', 128),
+  ('SANTA ROSALIA', 'parroquia', 128),
+  ('SANTA TERESA', 'parroquia', 128),
+  ('SUCRE', 'parroquia', 128),
+  ('23 DE ENERO', 'parroquia', 128),
+  ('ANTIMANO', 'parroquia', 128),
+  ('EL RECREO', 'parroquia', 128),
+  ('EL VALLE', 'parroquia', 128),
+  ('LA VEGA', 'parroquia', 128),
+  ('MACARAO', 'parroquia', 128),
+  ('CARICUAO', 'parroquia', 128),
+  ('EL JUNQUITO', 'parroquia', 128),
+  ('COCHE', 'parroquia', 128),
+  ('SAN PEDRO', 'parroquia', 128),
+  ('SAN BERNARDINO', 'parroquia', 128),
+  ('EL PARAISO', 'parroquia', 128);
 
 -- Parroquiasd el municipio Acosta, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN JUAN DE LOS CAYOS', 'parroquia', 131),
-  ('CAPADARE', 'parroquia', 131),
-  ('LA PASTORA', 'parroquia', 131),
-  ('LIBERTADOR', 'parroquia', 131);
+  ('SAN JUAN DE LOS CAYOS', 'parroquia', 129),
+  ('CAPADARE', 'parroquia', 129),
+  ('LA PASTORA', 'parroquia', 129),
+  ('LIBERTADOR', 'parroquia', 129);
 
 -- Parroquias del municipio Bolivar, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN LUIS', 'parroquia', 132),
-  ('ARACUA', 'parroquia', 132),
-  ('LA PEÑA', 'parroquia', 132);
+  ('SAN LUIS', 'parroquia', 130),
+  ('ARACUA', 'parroquia', 130),
+  ('LA PEÑA', 'parroquia', 130);
 
 -- Parroquias del municipio Buchivacoa, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CAPATARIDA', 'parroquia', 133),
-  ('BOROJO', 'parroquia', 133),
-  ('SEQUE', 'parroquia', 133),
-  ('ZAZARIDA', 'parroquia', 133),
-  ('BARIRO', 'parroquia', 133),
-  ('GUAJIRO', 'parroquia', 133);
+  ('CAPATARIDA', 'parroquia', 131),
+  ('BOROJO', 'parroquia', 131),
+  ('SEQUE', 'parroquia', 131),
+  ('ZAZARIDA', 'parroquia', 131),
+  ('BARIRO', 'parroquia', 131),
+  ('GUAJIRO', 'parroquia', 131);
 
 -- Parroquias del municipio Carirubana, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('NORTE', 'parroquia', 134),
-  ('CARIRUBANA', 'parroquia', 134),
-  ('PUNTA CARDON', 'parroquia', 134),
-  ('SANTA ANA', 'parroquia', 134);
+  ('NORTE', 'parroquia', 132),
+  ('CARIRUBANA', 'parroquia', 132),
+  ('PUNTA CARDON', 'parroquia', 132),
+  ('SANTA ANA', 'parroquia', 132);
 
 -- Parroquias del municipio COlina, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('LA VELA DE CORO', 'parroquia', 135),
-  ('ACURIGUA', 'parroquia', 135),
-  ('GUAIBACOA', 'parroquia', 135),
-  ('MACORUCA', 'parroquia', 135),
-  ('LAS CALDERAS', 'parroquia', 135);
+  ('LA VELA DE CORO', 'parroquia', 133),
+  ('ACURIGUA', 'parroquia', 133),
+  ('GUAIBACOA', 'parroquia', 133),
+  ('MACORUCA', 'parroquia', 133),
+  ('LAS CALDERAS', 'parroquia', 133);
 
 -- Parroquia del municipio Dabajuro, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. DABAJURO', 'parroquia', 136);
+  ('CM. DABAJURO', 'parroquia', 134);
 
 -- Parroquias del municipio Democracia
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('PEDREGAL', 'parroquia', 137),
-  ('AGUA CLARA', 'parroquia', 137),
-  ('AVARIA', 'parroquia', 137),
-  ('PIEDRA GRANDE', 'parroquia', 137),
-  ('PURURECHE', 'parroquia', 137);
+  ('PEDREGAL', 'parroquia', 135),
+  ('AGUA CLARA', 'parroquia', 135),
+  ('AVARIA', 'parroquia', 135),
+  ('PIEDRA GRANDE', 'parroquia', 135),
+  ('PURURECHE', 'parroquia', 135);
 
 --Parroquias del municipio Falcon, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('PUEBLO NUEVO', 'parroquia', 138),
-  ('ADICORA', 'parroquia', 138),
-  ('BARAIVED', 'parroquia', 138),
-  ('BUENA VISTA', 'parroquia', 138),
-  ('JADACAQUIVA', 'parroquia', 138),
-  ('MORUY', 'parroquia', 138),
-  ('EL VINCULO', 'parroquia', 138),
-  ('EL HATO', 'parroquia', 138),
-  ('ADAURE', 'parroquia', 138);
+  ('PUEBLO NUEVO', 'parroquia', 136),
+  ('ADICORA', 'parroquia', 136),
+  ('BARAIVED', 'parroquia', 136),
+  ('BUENA VISTA', 'parroquia', 136),
+  ('JADACAQUIVA', 'parroquia', 136),
+  ('MORUY', 'parroquia', 136),
+  ('EL VINCULO', 'parroquia', 136),
+  ('EL HATO', 'parroquia', 136),
+  ('ADAURE', 'parroquia', 136);
 
 -- Parroquias del municipio Federacion, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CHURUGUARA', 'parroquia', 139),
-  ('AGUA LARGA', 'parroquia', 139),
-  ('INDEPENDENCIA', 'parroquia', 139),
-  ('MAPARARI', 'parroquia', 139),
-  ('EL PAUJI', 'parroquia', 139);
+  ('CHURUGUARA', 'parroquia', 137),
+  ('AGUA LARGA', 'parroquia', 137),
+  ('INDEPENDENCIA', 'parroquia', 137),
+  ('MAPARARI', 'parroquia', 137),
+  ('EL PAUJI', 'parroquia', 137);
 
 --Parroquias del municipio Iturriza, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CHICHIRIVICHE', 'parroquia', 140),
-  ('BOCA DE TOCUYO', 'parroquia', 140),
-  ('TOCUYO DE LA COSTA', 'parroquia', 140);
+  ('CHICHIRIVICHE', 'parroquia', 138),
+  ('BOCA DE TOCUYO', 'parroquia', 138),
+  ('TOCUYO DE LA COSTA', 'parroquia', 138);
 
 --Parroquias del municipio JAcura, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('JACURA', 'parroquia', 141);
-  ('AGUA LINDA', 'parroquia', 141),
-  ('ARAURIMA', 'parroquia', 141);
+  ('JACURA', 'parroquia', 139);
+  ('AGUA LINDA', 'parroquia', 139),
+  ('ARAURIMA', 'parroquia', 139);
 
 -- Parroquias del municipio Los Taques, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('LOS TAQUES', 'parroquia', 142),
-  ('JUDIBANA', 'parroquia', 142);
+  ('LOS TAQUES', 'parroquia', 140),
+  ('JUDIBANA', 'parroquia', 140);
 
 -- Parroquia del minicipio Manaure, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. YARACAL', 'parroquia', 143);
+  ('CM. YARACAL', 'parroquia', 141);
 
 -- Parroquias del municipio Mauroa, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MENE DE MAUROA', 'parroquia', 144),
-  ('CASIGUA', 'parroquia', 144),
-  ('SAN FELIX', 'parroquia', 144);
+  ('MENE DE MAUROA', 'parroquia', 142),
+  ('CASIGUA', 'parroquia', 142),
+  ('SAN FELIX', 'parroquia', 142);
 
 
 -- Parroquias del municipio Miranda, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN ANTONIO', 'parroquia', 145),
-  ('SAN GABRIEL', 'parroquia', 145),
-  ('SANTA ANA', 'parroquia', 145),
-  ('GUZMAN GUILLERMO', 'parroquia', 145),
-  ('MITARE', 'parroquia', 145),
-  ('SABANETA', 'parroquia', 145),
-  ('RIO SECO', 'parroquia', 145);
+  ('SAN ANTONIO', 'parroquia', 143),
+  ('SAN GABRIEL', 'parroquia', 143),
+  ('SANTA ANA', 'parroquia', 143),
+  ('GUZMAN GUILLERMO', 'parroquia', 143),
+  ('MITARE', 'parroquia', 143),
+  ('SABANETA', 'parroquia', 143),
+  ('RIO SECO', 'parroquia', 143);
 
 --Parroquia del municipio Palmasola, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. PALMA SOLA', 'parroquia', 146);
+  ('CM. PALMA SOLA', 'parroquia', 144);
 
 -- Parroquias del municipio Petit, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CABURE', 'parroquia', 147),
-  ('CURIMAGUA', 'parroquia', 147),
-  ('COLINA', 'parroquia', 147);
+  ('CABURE', 'parroquia', 145),
+  ('CURIMAGUA', 'parroquia', 145),
+  ('COLINA', 'parroquia', 145);
 
 --Parroquias del municipio Piritu, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('PIRITU', 'parroquia', 148),
-  ('SAN JOSE DE LA COSTA', 'parroquia', 148);
+  ('PIRITU', 'parroquia', 146),
+  ('SAN JOSE DE LA COSTA', 'parroquia', 146);
 
 --PArroquia del municipio San Francisco, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. MIRIMIRE', 'parroquia', 149);
+  ('CM. MIRIMIRE', 'parroquia', 147);
 
 --Parroquias del municipio Sucre, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SUCRE', 'parroquia', 150),
-  ('PECAYA', 'parroquia', 150);
+  ('SUCRE', 'parroquia', 148),
+  ('PECAYA', 'parroquia', 148);
 
 -- Parroquias del municipio Silva, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('TUCACAS', 'parroquia', 151),
-  ('BOCA DE AROA', 'parroquia', 151);
+  ('TUCACAS', 'parroquia', 149),
+  ('BOCA DE AROA', 'parroquia', 149);
 
 -- Parroquia del municipio Tocopero, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. TOCOPERO', 'parroquia', 152);
+  ('CM. TOCOPERO', 'parroquia', 150);
 
 -- Parroquias del municipio Union
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('STA.CRUZ DE BUCARAL', 'parroquia', 153),
-  ('EL CHARAL', 'parroquia', 153),
-  ('LAS VEGAS DEL TUY', 'parroquia', 153);
+  ('STA.CRUZ DE BUCARAL', 'parroquia', 151),
+  ('EL CHARAL', 'parroquia', 151),
+  ('LAS VEGAS DEL TUY', 'parroquia', 151);
 
 --PArroquias del municipio Urumaco, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('URUMACO', 'parroquia', 154),
-  ('BRUZUAL', 'parroquia', 154);
+  ('URUMACO', 'parroquia', 152),
+  ('BRUZUAL', 'parroquia', 152);
 
 --PArroquias del municipio Zamora, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('PUERTO CUMAREBO', 'parroquia', 155),
-  ('LA CIENAGA', 'parroquia', 155),
-  ('LA SOLEDAD', 'parroquia', 155),
-  ('PUEBLO CUMAREBO', 'parroquia', 155),
-  ('ZAZARIDA', 'parroquia', 155);
+  ('PUERTO CUMAREBO', 'parroquia', 153),
+  ('LA CIENAGA', 'parroquia', 153),
+  ('LA SOLEDAD', 'parroquia', 153),
+  ('PUEBLO CUMAREBO', 'parroquia', 153),
+  ('ZAZARIDA', 'parroquia', 153);
 
 --Parroquias del municipio Camaguan, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CAMAGUAN', 'parroquia', 156),
-  ('PUERTO MIRANDA', 'parroquia', 156),
-  ('UVERITO', 'parroquia', 156);
+  ('CAMAGUAN', 'parroquia', 154),
+  ('PUERTO MIRANDA', 'parroquia', 154),
+  ('UVERITO', 'parroquia', 154);
 
 -- Parroquia del municipio Chaguaramas, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CHAGUARAMAS', 'parroquia', 157);
+  ('CHAGUARAMAS', 'parroquia', 155);
 
 --PArroquias del municipio El Socorro, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('EL SOCORRO', 'parroquia', 158);
+  ('EL SOCORRO', 'parroquia', 156);
 
 -- Parroquias del municipio Frnacisco de Miranda, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CALABOZO', 'parroquia', 159),
-  ('EL CALVARIO', 'parroquia', 159),
-  ('EL RASTRO', 'parroquia', 159),
-  ('GUARDATINAJAS', 'parroquia', 159);
+  ('CALABOZO', 'parroquia', 157),
+  ('EL CALVARIO', 'parroquia', 157),
+  ('EL RASTRO', 'parroquia', 157),
+  ('GUARDATINAJAS', 'parroquia', 157);
 
 -- Parroquias del municipio Jose Felix Ribas, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('TUCUPIDO', 'parroquia', 160),
-  ('SAN RAFAEL DE LAYA', 'parroquia', 160);
+  ('TUCUPIDO', 'parroquia', 158),
+  ('SAN RAFAEL DE LAYA', 'parroquia', 158);
 
   
 -- Parroquias del municicpio Jose Tadeo Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ALTAGRACIA DE ORITUCO', 'parroquia', 161);
-  ('LEZAMA', 'parroquia', 161),
-  ('LIBERTAD DE ORITUCO', 'parroquia', 161),
-  ('SAN FCO DE MACAIRA', 'parroquia', 161),
-  ('SAN RAFAEL DE ORITUCO', 'parroquia', 161),
-  ('SOUBLETTE', 'parroquia', 161),
-  ('PASO REAL DE MACAIRA', 'parroquia', 161);
+  ('ALTAGRACIA DE ORITUCO', 'parroquia', 159);
+  ('LEZAMA', 'parroquia', 159),
+  ('LIBERTAD DE ORITUCO', 'parroquia', 159),
+  ('SAN FCO DE MACAIRA', 'parroquia', 159),
+  ('SAN RAFAEL DE ORITUCO', 'parroquia', 159),
+  ('SOUBLETTE', 'parroquia', 159),
+  ('PASO REAL DE MACAIRA', 'parroquia', 159);
 
 --Parroquias del municipio Juan Roman Roscio
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN JUAN DE LOS MORROS', 'parroquia', 162),
-  ('PARAPARA', 'parroquia', 162),
-  ('CANTAGALLO', 'parroquia', 162);
+  ('SAN JUAN DE LOS MORROS', 'parroquia', 160),
+  ('PARAPARA', 'parroquia', 160),
+  ('CANTAGALLO', 'parroquia', 160);
 
 --Parroquias del municipio Juan Jose Rondon, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('LAS MERCEDES', 'parroquia', 163),
-  ('STA RITA DE MANAPIRE', 'parroquia', 163),
-  ('CABRUTA', 'parroquia', 163);
+  ('LAS MERCEDES', 'parroquia', 161),
+  ('STA RITA DE MANAPIRE', 'parroquia', 161),
+  ('CABRUTA', 'parroquia', 161);
 
 --Parroquias del municipio Julian Mellado, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('EL SOMBRERO', 'parroquia', 164),
-  ('SOSA', 'parroquia', 164);
+  ('EL SOMBRERO', 'parroquia', 162),
+  ('SOSA', 'parroquia', 162);
 
 --Parroquias del municipio Leonardo Infante, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('VALLE DE LA PASCUA', 'parroquia', 165),
-  ('ESPINO', 'parroquia', 165);
+  ('VALLE DE LA PASCUA', 'parroquia', 163),
+  ('ESPINO', 'parroquia', 163);
 
 --Parroquias del municipio Ortiz, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ORTIZ', 'parroquia', 166),
-  ('SAN FCO. DE TIZNADOS', 'parroquia', 166),
-  ('SAN JOSE DE TIZNADOS', 'parroquia', 166),
-  ('S LORENZO DE TIZNADOS', 'parroquia', 166);
+  ('ORTIZ', 'parroquia', 164),
+  ('SAN FCO. DE TIZNADOS', 'parroquia', 164),
+  ('SAN JOSE DE TIZNADOS', 'parroquia', 164),
+  ('S LORENZO DE TIZNADOS', 'parroquia', 164);
 
 -- Parroquias del municipio San Geronimo de Guayabal, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('GUAYABAL', 'parroquia', 167),
-  ('CAZORLA', 'parroquia', 167);
+  ('GUAYABAL', 'parroquia', 165),
+  ('CAZORLA', 'parroquia', 165);
 
 --Parroquias del municipio San Jose de Guaribe
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN JOSE DE GUARIBE', 'parroquia', 168);
+  ('SAN JOSE DE GUARIBE', 'parroquia', 166);
 
 -- Parroquias del municipio Santa Maria de Ipire, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SANTA MARIA DE IPIRE', 'parroquia', 169),
-  ('ALTAMIRA', 'parroquia', 169);
+  ('SANTA MARIA DE IPIRE', 'parroquia', 167),
+  ('ALTAMIRA', 'parroquia', 167);
 
 -- Parroquias del municipio Zaraza, Guarico
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ZARAZA', 'parroquia', 170),
-  ('SAN JOSE DE UNARE', 'parroquia', 170);
+  ('ZARAZA', 'parroquia', 168),
+  ('SAN JOSE DE UNARE', 'parroquia', 168);
 
 -- Parroquias del municipio Andres Eloy Blanco, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('PIO TAMAYO', 'parroquia', 171),
-  ('YACAMBU', 'parroquia', 171),
-  ('QBDA. HONDA DE GUACHE', 'parroquia', 171);
+  ('PIO TAMAYO', 'parroquia', 169),
+  ('YACAMBU', 'parroquia', 169),
+  ('QBDA. HONDA DE GUACHE', 'parroquia', 169);
 
 -- Parroquias del municipio Crespo, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('FREITEZ', 'parroquia', 172),
-  ('JOSE MARIA BLANCO', 'parroquia', 172);
+  ('FREITEZ', 'parroquia', 170),
+  ('JOSE MARIA BLANCO', 'parroquia', 170);
 
 -- Parroquias del municipio Iribarren
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CATEDRAL', 'parroquia', 173),
-  ('LA CONCEPCION', 'parroquia', 173),
-  ('SANTA ROSA', 'parroquia', 173),
-  ('UNION', 'parroquia', 173),
-  ('EL CUJI', 'parroquia', 173),
-  ('TAMACA', 'parroquia', 173),
-  ('JUAN DE VILLEGAS', 'parroquia', 173),
-  ('AGUEDO F. ALVARADO', 'parroquia', 173),
-  ('BUENA VISTA', 'parroquia', 173),
-  ('JUAREZ', 'parroquia', 173);
+  ('CATEDRAL', 'parroquia', 171),
+  ('LA CONCEPCION', 'parroquia', 171),
+  ('SANTA ROSA', 'parroquia', 171),
+  ('UNION', 'parroquia', 171),
+  ('EL CUJI', 'parroquia', 171),
+  ('TAMACA', 'parroquia', 171),
+  ('JUAN DE VILLEGAS', 'parroquia', 171),
+  ('AGUEDO F. ALVARADO', 'parroquia', 171),
+  ('BUENA VISTA', 'parroquia', 171),
+  ('JUAREZ', 'parroquia', 171);
 
 -- Parroquias del municipio Jimenez, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('JUAN B RODRIGUEZ', 'parroquia', 174),
-  ('DIEGO DE LOZADA', 'parroquia', 174),
-  ('SAN MIGUEL', 'parroquia', 174),
-  ('CUARA', 'parroquia', 174),
-  ('PARAISO DE SAN JOSE', 'parroquia', 174),
-  ('TINTORERO', 'parroquia', 174),
-  ('JOSE BERNARDO DORANTE', 'parroquia', 174),
-  ('CRNEL. MARIANO PERAZA', 'parroquia', 174);
+  ('JUAN B RODRIGUEZ', 'parroquia', 172),
+  ('DIEGO DE LOZADA', 'parroquia', 172),
+  ('SAN MIGUEL', 'parroquia', 172),
+  ('CUARA', 'parroquia', 172),
+  ('PARAISO DE SAN JOSE', 'parroquia', 172),
+  ('TINTORERO', 'parroquia', 172),
+  ('JOSE BERNARDO DORANTE', 'parroquia', 172),
+  ('CRNEL. MARIANO PERAZA', 'parroquia', 172);
 
 -- Parroquias del municipio Moran, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('BOLIVAR', 'parroquia', 175),
-  ('ANZOATEGUI', 'parroquia', 175),
-  ('GUARICO', 'parroquia', 175),
-  ('HUMOCARO ALTO', 'parroquia', 175),
-  ('HUMOCARO BAJO', 'parroquia', 175),
-  ('MORAN', 'parroquia', 175),
-  ('HILARIO LUNA Y LUNA', 'parroquia', 175),
-  ('LA CANDELARIA', 'parroquia', 175);
+  ('BOLIVAR', 'parroquia', 173),
+  ('ANZOATEGUI', 'parroquia', 173),
+  ('GUARICO', 'parroquia', 173),
+  ('HUMOCARO ALTO', 'parroquia', 173),
+  ('HUMOCARO BAJO', 'parroquia', 173),
+  ('MORAN', 'parroquia', 173),
+  ('HILARIO LUNA Y LUNA', 'parroquia', 173),
+  ('LA CANDELARIA', 'parroquia', 173);
 
 -- Parroquias del municipio Palavecino, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CABUDARE', 'parroquia', 176),
-  ('JOSE G. BASTIDAS', 'parroquia', 176),
-  ('AGUA VIVA', 'parroquia', 176);
+  ('CABUDARE', 'parroquia', 174),
+  ('JOSE G. BASTIDAS', 'parroquia', 174),
+  ('AGUA VIVA', 'parroquia', 174);
 
 -- Parroquias del municipio Simon Planas, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SARARE', 'parroquia', 177),
-  ('GUSTAVO VEGAS LEON', 'parroquia', 177),
-  ('BURIA', 'parroquia', 177);
+  ('SARARE', 'parroquia', 175),
+  ('GUSTAVO VEGAS LEON', 'parroquia', 175),
+  ('BURIA', 'parroquia', 175);
 
 -- Parroquias del municipio Torres, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('TRINIDAD SAMUEL', 'parroquia', 178),
-  ('ANTONIO DIAZ', 'parroquia', 178),
-  ('CAMACARO', 'parroquia', 178),
-  ('CASTAÑEDA', 'parroquia', 178),
-  ('CHIQUINQUIRA', 'parroquia', 178),
-  ('ESPINOZA LOS MONTEROS', 'parroquia', 178),
-  ('LARA', 'parroquia', 178),
-  ('MANUEL MORILLO', 'parroquia', 178),
-  ('MONTES DE OCA', 'parroquia', 178),
-  ('TORRES', 'parroquia', 178),
-  ('EL BLANCO', 'parroquia', 178),
-  ('MONTA A VERDE', 'parroquia', 178),
-  ('HERIBERTO ARROYO', 'parroquia', 178),
-  ('LAS MERCEDES', 'parroquia', 178),
-  ('CECILIO ZUBILLAGA', 'parroquia', 178),
-  ('REYES VARGAS', 'parroquia', 178),
-  ('ALTAGRACIA', 'parroquia', 178);
+  ('TRINIDAD SAMUEL', 'parroquia', 176),
+  ('ANTONIO DIAZ', 'parroquia', 176),
+  ('CAMACARO', 'parroquia', 176),
+  ('CASTAÑEDA', 'parroquia', 176),
+  ('CHIQUINQUIRA', 'parroquia', 176),
+  ('ESPINOZA LOS MONTEROS', 'parroquia', 176),
+  ('LARA', 'parroquia', 176),
+  ('MANUEL MORILLO', 'parroquia', 176),
+  ('MONTES DE OCA', 'parroquia', 176),
+  ('TORRES', 'parroquia', 176),
+  ('EL BLANCO', 'parroquia', 176),
+  ('MONTA A VERDE', 'parroquia', 176),
+  ('HERIBERTO ARROYO', 'parroquia', 176),
+  ('LAS MERCEDES', 'parroquia', 176),
+  ('CECILIO ZUBILLAGA', 'parroquia', 176),
+  ('REYES VARGAS', 'parroquia', 176),
+  ('ALTAGRACIA', 'parroquia', 176);
 
 -- Parroquias del municipio Urdaneta, Lara
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SIQUISIQUE', 'parroquia', 179),
-  ('SAN MIGUEL', 'parroquia', 179),
-  ('XAGUAS', 'parroquia', 179),
-  ('MOROTURO', 'parroquia', 179);
+  ('SIQUISIQUE', 'parroquia', 177),
+  ('SAN MIGUEL', 'parroquia', 177),
+  ('XAGUAS', 'parroquia', 177),
+  ('MOROTURO', 'parroquia', 177);
 
 -- Parroquias del municipio Vargas, La Guaira
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CARABALLEDA', 'parroquia', 180),
-  ('CARAYACA', 'parroquia', 180),
-  ('CARUAO', 'parroquia', 180),
-  ('CATIA LA MAR', 'parroquia', 180),
-  ('LA GUAIRA', 'parroquia', 180),
-  ('MACUTO', 'parroquia', 180),
-  ('MAIQUETIA', 'parroquia', 180),
-  ('NAIGUATA', 'parroquia', 180),
-  ('EL JUNKO', 'parroquia', 180),
-  ('PQ RAUL LEONI', 'parroquia', 180),
-  ('PQ CARLOS SOUBLETTE', 'parroquia', 180);
+  ('CARABALLEDA', 'parroquia', 178),
+  ('CARAYACA', 'parroquia', 178),
+  ('CARUAO', 'parroquia', 178),
+  ('CATIA LA MAR', 'parroquia', 178),
+  ('LA GUAIRA', 'parroquia', 178),
+  ('MACUTO', 'parroquia', 178),
+  ('MAIQUETIA', 'parroquia', 178),
+  ('NAIGUATA', 'parroquia', 178),
+  ('EL JUNKO', 'parroquia', 178),
+  ('PQ RAUL LEONI', 'parroquia', 178),
+  ('PQ CARLOS SOUBLETTE', 'parroquia', 178);
 
 -- Parroquias del municipio Alberto Adriani, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('GABRIEL PICON G.', 'parroquia', 181),
-  ('HECTOR AMABLE MORA', 'parroquia', 181),
-  ('JOSE NUCETE SARDI', 'parroquia', 181),
-  ('PULIDO MENDEZ', 'parroquia', 181),
-  ('PTE. ROMULO GALLEGOS', 'parroquia', 181),
-  ('PRESIDENTE BETANCOURT', 'parroquia', 181),
-  ('PRESIDENTE PAEZ', 'parroquia', 181);
+  ('GABRIEL PICON G.', 'parroquia', 179),
+  ('HECTOR AMABLE MORA', 'parroquia', 179),
+  ('JOSE NUCETE SARDI', 'parroquia', 179),
+  ('PULIDO MENDEZ', 'parroquia', 179),
+  ('PTE. ROMULO GALLEGOS', 'parroquia', 179),
+  ('PRESIDENTE BETANCOURT', 'parroquia', 179),
+  ('PRESIDENTE PAEZ', 'parroquia', 179);
 
 -- Parroquia del municipio Andres Bello, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. LA AZULITA', 'parroquia', 182);
+  ('CM. LA AZULITA', 'parroquia', 180);
 
 -- Parroquias del municipio Antonio pinto Salinas, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. STA CRUZ DE MORA', 'parroquia', 183),
-  ('MESA BOLIVAR', 'parroquia', 183),
-  ('MESA DE LAS PALMAS', 'parroquia', 183);
+  ('CM. STA CRUZ DE MORA', 'parroquia', 181),
+  ('MESA BOLIVAR', 'parroquia', 181),
+  ('MESA DE LAS PALMAS', 'parroquia', 181);
 
 -- Parroquias del municipio Aricagua, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. ARICAGUA', 'parroquia', 184),
-  ('SAN ANTONIO', 'parroquia', 184);
+  ('CM. ARICAGUA', 'parroquia', 182),
+  ('SAN ANTONIO', 'parroquia', 182);
 
 
 -- Parroquias del municipio Arzobispo Chacon, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. CANAGUA', 'parroquia', 185),
-  ('CAPURI', 'parroquia', 185),
-  ('CHACANTA', 'parroquia', 185),
-  ('EL MOLINO', 'parroquia', 185),
-  ('GUAIMARAL', 'parroquia', 185),
-  ('MUCUTUY', 'parroquia', 185),
-  ('MUCUCHACHI', 'parroquia', 185);
+  ('CM. CANAGUA', 'parroquia', 183),
+  ('CAPURI', 'parroquia', 183),
+  ('CHACANTA', 'parroquia', 183),
+  ('EL MOLINO', 'parroquia', 183),
+  ('GUAIMARAL', 'parroquia', 183),
+  ('MUCUTUY', 'parroquia', 183),
+  ('MUCUCHACHI', 'parroquia', 183);
 
 
 -- Parroquias del municipio Campo Elias, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ACEQUIAS', 'parroquia', 186),
-  ('JAJI', 'parroquia', 186),
-  ('LA MESA', 'parroquia', 186),
-  ('SAN JOSE', 'parroquia', 186),
-  ('MONTALBAN', 'parroquia', 186),
-  ('MATRIZ', 'parroquia', 186),
-  ('FERNANDEZ PEÑA', 'parroquia', 186);
+  ('ACEQUIAS', 'parroquia', 184),
+  ('JAJI', 'parroquia', 184),
+  ('LA MESA', 'parroquia', 184),
+  ('SAN JOSE', 'parroquia', 184),
+  ('MONTALBAN', 'parroquia', 184),
+  ('MATRIZ', 'parroquia', 184),
+  ('FERNANDEZ PEÑA', 'parroquia', 184);
 
 -- Parroquias del municipio Caracciolo Parra Olmedo, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. TUCANI', 'parroquia', 187),
-  ('FLORENCIO RAMIREZ', 'parroquia', 187);
+  ('CM. TUCANI', 'parroquia', 185),
+  ('FLORENCIO RAMIREZ', 'parroquia', 185);
 
 -- Parroquias del municipio Cardenal Quintero, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. SANTO DOMINGO', 'parroquia', 188),
-  ('LAS PIEDRAS', 'parroquia', 188);
+  ('CM. SANTO DOMINGO', 'parroquia', 186),
+  ('LAS PIEDRAS', 'parroquia', 186);
 
 -- Parroquias del municipio Guaraque, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. GUARAQUE', 'parroquia', 189),
-  ('MESA DE QUINTERO', 'parroquia', 189),
-  ('RIO NEGRO', 'parroquia', 189);
+  ('CM. GUARAQUE', 'parroquia', 187),
+  ('MESA DE QUINTERO', 'parroquia', 187),
+  ('RIO NEGRO', 'parroquia', 187);
 
 
 -- Parroquias del municipio Julio Cesar Salas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. ARAPUEY', 'parroquia', 190),
-  ('PALMIRA', 'parroquia', 190);
+  ('CM. ARAPUEY', 'parroquia', 188),
+  ('PALMIRA', 'parroquia', 188);
 
 -- Parroquias del municipio Justo Briceño, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. TORONDOY', 'parroquia', 191),
-  ('SAN CRISTOBAL DE T', 'parroquia', 191);
+  ('CM. TORONDOY', 'parroquia', 189),
+  ('SAN CRISTOBAL DE T', 'parroquia', 189);
 
 -- Parroquias del municipio Libertador, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ARIAS', 'parroquia', 192),
-  ('SAGRARIO', 'parroquia', 192),
-  ('MILLA', 'parroquia', 192),
-  ('EL LLANO', 'parroquia', 192),
-  ('JUAN RODRIGUEZ SUAREZ', 'parroquia', 192),
-  ('JACINTO PLAZA', 'parroquia', 192),
-  ('DOMINGO PEÑA', 'parroquia', 192),
-  ('GONZALO PICON FEBRES', 'parroquia', 192),
-  ('OSUNA RODRIGUEZ', 'parroquia', 192),
-  ('LASSO DE LA VEGA', 'parroquia', 192),
-  ('CARACCIOLO PARRA P', 'parroquia', 192),
-  ('MARIANO PICON SALAS', 'parroquia', 192),
-  ('ANTONIO SPINETTI DINI', 'parroquia', 192),
-  ('EL MORRO', 'parroquia', 192),
-  ('LOS NEVADOS', 'parroquia', 192);
+  ('ARIAS', 'parroquia', 190),
+  ('SAGRARIO', 'parroquia', 190),
+  ('MILLA', 'parroquia', 190),
+  ('EL LLANO', 'parroquia', 190),
+  ('JUAN RODRIGUEZ SUAREZ', 'parroquia', 190),
+  ('JACINTO PLAZA', 'parroquia', 190),
+  ('DOMINGO PEÑA', 'parroquia', 190),
+  ('GONZALO PICON FEBRES', 'parroquia', 190),
+  ('OSUNA RODRIGUEZ', 'parroquia', 190),
+  ('LASSO DE LA VEGA', 'parroquia', 190),
+  ('CARACCIOLO PARRA P', 'parroquia', 190),
+  ('MARIANO PICON SALAS', 'parroquia', 190),
+  ('ANTONIO SPINETTI DINI', 'parroquia', 190),
+  ('EL MORRO', 'parroquia', 190),
+  ('LOS NEVADOS', 'parroquia', 190);
 
 --Parroquias del municipio Miranda, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. TIMOTES', 'parroquia', 193),
-  ('ANDRES ELOY BLANCO', 'parroquia', 193),
-  ('PIÑANGO', 'parroquia', 193),
-  ('LA VENTA', 'parroquia', 193);
+  ('CM. TIMOTES', 'parroquia', 191),
+  ('ANDRES ELOY BLANCO', 'parroquia', 191),
+  ('PIÑANGO', 'parroquia', 191),
+  ('LA VENTA', 'parroquia', 191);
 
 -- Parroquias del municipio Obispo Ramos de Lora, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. STA ELENA DE ARENALES', 'parroquia', 194),
-  ('ELOY PAREDES', 'parroquia', 194),
-  ('PQ R DE ALCAZAR', 'parroquia', 194);
+  ('CM. STA ELENA DE ARENALES', 'parroquia', 192),
+  ('ELOY PAREDES', 'parroquia', 192),
+  ('PQ R DE ALCAZAR', 'parroquia', 192);
 
 -- Parroquias del municipio Padre Noguera, MErida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. STA MARIA DE CAPARO', 'parroquia', 195);
+  ('CM. STA MARIA DE CAPARO', 'parroquia', 193);
 
 -- PArroquia del municipio Pueblo Llano, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. PUEBLO LLANO', 'parroquia', 196);
+  ('CM. PUEBLO LLANO', 'parroquia', 194);
 
 -- Parroquias del municipio Rangel, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. MUCUCHIES', 'parroquia', 197),
-  ('MUCURUBA', 'parroquia', 197),
-  ('SAN RAFAEL', 'parroquia', 197),
-  ('CACUTE', 'parroquia', 197),
-  ('LA TOMA', 'parroquia', 197);
+  ('CM. MUCUCHIES', 'parroquia', 195),
+  ('MUCURUBA', 'parroquia', 195),
+  ('SAN RAFAEL', 'parroquia', 195),
+  ('CACUTE', 'parroquia', 195),
+  ('LA TOMA', 'parroquia', 195);
 
 -- Parroquias del municipio Rivas Davila, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. BAILADORES', 'parroquia', 198),
-  ('GERONIMO MALDONADO', 'parroquia', 198);
+  ('CM. BAILADORES', 'parroquia', 196),
+  ('GERONIMO MALDONADO', 'parroquia', 196);
 
 -- PArroquias del municipio Santos MArquina, MErida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. TABAY', 'parroquia', 199);
+  ('CM. TABAY', 'parroquia', 197);
 
 -- Parroquias del municipio Sucre, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. LAGUNILLAS', 'parroquia', 200),
-  ('CHIGUARA', 'parroquia', 200),
-  ('ESTANQUES', 'parroquia', 200),
-  ('SAN JUAN', 'parroquia', 200),
-  ('PUEBLO NUEVO DEL SUR', 'parroquia', 200),
-  ('LA TRAMPA', 'parroquia', 200);
+  ('CM. LAGUNILLAS', 'parroquia', 198),
+  ('CHIGUARA', 'parroquia', 198),
+  ('ESTANQUES', 'parroquia', 198),
+  ('SAN JUAN', 'parroquia', 198),
+  ('PUEBLO NUEVO DEL SUR', 'parroquia', 198),
+  ('LA TRAMPA', 'parroquia', 198);
 
 -- PArroquias del municipio Tovar, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('EL LLANO', 'parroquia', 201),
-  ('TOVAR', 'parroquia', 201),
-  ('EL AMPARO', 'parroquia', 201),
-  ('SAN FRANCISCO', 'parroquia', 201);
+  ('EL LLANO', 'parroquia', 199),
+  ('TOVAR', 'parroquia', 199),
+  ('EL AMPARO', 'parroquia', 199),
+  ('SAN FRANCISCO', 'parroquia', 199);
 
 -- Parroquias del municipio Tulio Febres Cordero, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. NUEVA BOLIVIA', 'parroquia', 202),
-  ('INDEPENDENCIA', 'parroquia', 202),
-  ('MARIA C PALACIOS', 'parroquia', 202),
-  ('SANTA APOLONIA', 'parroquia', 202);
+  ('CM. NUEVA BOLIVIA', 'parroquia', 200),
+  ('INDEPENDENCIA', 'parroquia', 200),
+  ('MARIA C PALACIOS', 'parroquia', 200),
+  ('SANTA APOLONIA', 'parroquia', 200);
 
 -- Parroquias del municipio Zea, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. ZEA', 'parroquia', 203),
-  ('CAÑO EL TIGRE', 'parroquia', 203);
+  ('CM. ZEA', 'parroquia', 201),
+  ('CAÑO EL TIGRE', 'parroquia', 201);
 
 -- PArroquias del municipio Acevedo, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CAUCAGUA', 'parroquia', 204),
-  ('ARAGUITA', 'parroquia', 204),
-  ('AREVALO GONZALEZ', 'parroquia', 204),
-  ('CAPAYA', 'parroquia', 204),
-  ('PANAQUIRE', 'parroquia', 204),
-  ('RIBAS', 'parroquia', 204),
-  ('EL CAFE', 'parroquia', 204),
-  ('MARIZAPA', 'parroquia', 204);
+  ('CAUCAGUA', 'parroquia', 202),
+  ('ARAGUITA', 'parroquia', 202),
+  ('AREVALO GONZALEZ', 'parroquia', 202),
+  ('CAPAYA', 'parroquia', 202),
+  ('PANAQUIRE', 'parroquia', 202),
+  ('RIBAS', 'parroquia', 202),
+  ('EL CAFE', 'parroquia', 202),
+  ('MARIZAPA', 'parroquia', 202);
 
 -- Parroquias del municipio Andres BEllo, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN JOSE DE BARLOVENTO', 'parroquia', 205),
-  ('CUMBO', 'parroquia', 205);
+  ('SAN JOSE DE BARLOVENTO', 'parroquia', 203),
+  ('CUMBO', 'parroquia', 203);
 
 -- PArroquias del municipio Baruta, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('BARUTA', 'parroquia', 206),
-  ('EL CAFETAL', 'parroquia', 206),
-  ('LAS MINAS DE BARUTA', 'parroquia', 206);
+  ('BARUTA', 'parroquia', 204),
+  ('EL CAFETAL', 'parroquia', 204),
+  ('LAS MINAS DE BARUTA', 'parroquia', 204);
 
 -- Parroquias del municipio Bolivar, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN FCO DE YARE', 'parroquia', 207),
-  ('S ANTONIO DE YARE', 'parroquia', 207);
+  ('SAN FCO DE YARE', 'parroquia', 205),
+  ('S ANTONIO DE YARE', 'parroquia', 205);
 
 -- Parroquias del municipio Brion, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('HIGUEROTE', 'parroquia', 208),
-  ('CURIEPE', 'parroquia', 208),
-  ('TACARIGUA', 'parroquia', 208);
+  ('HIGUEROTE', 'parroquia', 206),
+  ('CURIEPE', 'parroquia', 206),
+  ('TACARIGUA', 'parroquia', 206);
 
 -- PArroquia del municipio Buroz, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MAMPORAL', 'parroquia', 209);
+  ('MAMPORAL', 'parroquia', 207);
 
 
 -- Parroquia del municipio Carrizal, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CARRIZAL', 'parroquia', 210);
+  ('CARRIZAL', 'parroquia', 208);
 
 -- Parroquia del municipio Chacao, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CHACAO', 'parroquia', 211);
+  ('CHACAO', 'parroquia', 209);
 
 -- Parroquias del municipio Cristobal Rojas, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CHARALLAVE', 'parroquia', 212),
-  ('LAS BRISAS', 'parroquia', 212);
+  ('CHARALLAVE', 'parroquia', 210),
+  ('LAS BRISAS', 'parroquia', 210);
 
 -- Parroquia del municipio El Hatillo
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('EL HATILLO', 'parroquia', 213);
+  ('EL HATILLO', 'parroquia', 211);
 
 -- Parroquias del municipio Guaicaipuro, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('LOS TEQUES', 'parroquia', 214),
-  ('CECILIO ACOSTA', 'parroquia', 214),
-  ('PARACOTOS', 'parroquia', 214),
-  ('SAN PEDRO', 'parroquia', 214),
-  ('TACATA', 'parroquia', 214),
-  ('EL JARILLO', 'parroquia', 214),
-  ('ALTAGRACIA DE LA M', 'parroquia', 214);
+  ('LOS TEQUES', 'parroquia', 212),
+  ('CECILIO ACOSTA', 'parroquia', 212),
+  ('PARACOTOS', 'parroquia', 212),
+  ('SAN PEDRO', 'parroquia', 212),
+  ('TACATA', 'parroquia', 212),
+  ('EL JARILLO', 'parroquia', 212),
+  ('ALTAGRACIA DE LA M', 'parroquia', 212);
 
 -- PArroquias del municipio Gual, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CUPIRA', 'parroquia', 215),
-  ('MACHURUCUTO', 'parroquia', 215);
+  ('CUPIRA', 'parroquia', 213),
+  ('MACHURUCUTO', 'parroquia', 213);
 
 -- Parroquias del municipio Independencia, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('STA TERESA DEL TUY', 'parroquia', 216),
-  ('EL CARTANAL', 'parroquia', 216);
+  ('STA TERESA DEL TUY', 'parroquia', 214),
+  ('EL CARTANAL', 'parroquia', 214);
 
 -- Parroquias del municipio Lander, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('OCUMARE DEL TUY', 'parroquia', 217),
-  ('LA DEMOCRACIA', 'parroquia', 217),
-  ('SANTA BARBARA', 'parroquia', 217);
+  ('OCUMARE DEL TUY', 'parroquia', 215),
+  ('LA DEMOCRACIA', 'parroquia', 215),
+  ('SANTA BARBARA', 'parroquia', 215);
 
 -- Parroquia del municipio Los Salias, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SAN ANTONIO LOS ALTOS', 'parroquia', 218);
+  ('SAN ANTONIO LOS ALTOS', 'parroquia', 216);
 
 -- Parroquias del municipio Paez, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('RIO CHICO', 'parroquia', 219),
-  ('EL GUAPO', 'parroquia', 219),
-  ('TACARIGUA DE LA LAGUNA', 'parroquia', 219),
-  ('PAPARO', 'parroquia', 219),
-  ('SN FERNANDO DEL GUAPO', 'parroquia', 219);
+  ('RIO CHICO', 'parroquia', 217),
+  ('EL GUAPO', 'parroquia', 217),
+  ('TACARIGUA DE LA LAGUNA', 'parroquia', 217),
+  ('PAPARO', 'parroquia', 217),
+  ('SN FERNANDO DEL GUAPO', 'parroquia', 217);
 
 -- Parroquia del municipio Paz Castillo, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('SANTA LUCIA', 'parroquia', 220);
+  ('SANTA LUCIA', 'parroquia', 218);
 
 -- PArroquia del municipio Plaza, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('GUARENAS', 'parroquia', 221);
+  ('GUARENAS', 'parroquia', 219);
 
 -- PArroquias del municipio Sucre, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('PETARE', 'parroquia', 222),
-  ('LEONCIO MARTINEZ', 'parroquia', 222),
-  ('CAUCAGUITA', 'parroquia', 222),
-  ('FILAS DE MARICHES', 'parroquia', 222),
-  ('LA DOLORITA', 'parroquia', 222);
+  ('PETARE', 'parroquia', 220),
+  ('LEONCIO MARTINEZ', 'parroquia', 220),
+  ('CAUCAGUITA', 'parroquia', 220),
+  ('FILAS DE MARICHES', 'parroquia', 220),
+  ('LA DOLORITA', 'parroquia', 220);
 
 -- Parroquias del municipio Urdaneta, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CUA', 'parroquia', 223),
-  ('NUEVA CUA', 'parroquia', 223);
+  ('CUA', 'parroquia', 221),
+  ('NUEVA CUA', 'parroquia', 221);
 
 -- Parroquias del municipio Zamora, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('GUATIRE', 'parroquia', 224),
-  ('ARAIRA', 'parroquia', 224);
+  ('GUATIRE', 'parroquia', 222),
+  ('ARAIRA', 'parroquia', 222);
 
 -- Parroquias del municipio Acosta, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. SAN ANTONIO', 'parroquia', 225),
-  ('SAN FRANCISCO', 'parroquia', 225);
+  ('CM. SAN ANTONIO', 'parroquia', 223),
+  ('SAN FRANCISCO', 'parroquia', 223);
 
 
 -- Parroquia del municipio Aguasay
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. AGUASAY', 'parroquia', 226);
+  ('CM. AGUASAY', 'parroquia', 224);
 
 -- Parroquia del municipio Bolivar, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. CARIPITO', 'parroquia', 227);
+  ('CM. CARIPITO', 'parroquia', 225);
 
 --PArroquias del municipio Caripe, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. CARIPE', 'parroquia', 228),
-  ('TERESEN', 'parroquia', 228),
-  ('EL GUACHARO', 'parroquia', 228),
-  ('SAN AGUSTIN', 'parroquia', 228),
-  ('LA GUANOTA', 'parroquia', 228),
-  ('SABANA DE PIEDRA', 'parroquia', 228);
+  ('CM. CARIPE', 'parroquia', 226),
+  ('TERESEN', 'parroquia', 226),
+  ('EL GUACHARO', 'parroquia', 226),
+  ('SAN AGUSTIN', 'parroquia', 226),
+  ('LA GUANOTA', 'parroquia', 226),
+  ('SABANA DE PIEDRA', 'parroquia', 226);
 
 -- Parroquias del municipio Cedeño, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. CAICARA', 'parroquia', 229),
-  ('AREO', 'parroquia', 229),
-  ('SAN FELIX', 'parroquia', 229),
-  ('VIENTO FRESCO', 'parroquia', 229);
+  ('CM. CAICARA', 'parroquia', 227),
+  ('AREO', 'parroquia', 227),
+  ('SAN FELIX', 'parroquia', 227),
+  ('VIENTO FRESCO', 'parroquia', 227);
 
 -- Parroquias del municipio Libertador, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. TEMBLADOR', 'parroquia', 230),
-  ('TABASCA', 'parroquia', 230),
-  ('LAS ALHUACAS', 'parroquia', 230),
-  ('CHAGUARAMAS', 'parroquia', 230);
+  ('CM. TEMBLADOR', 'parroquia', 228),
+  ('TABASCA', 'parroquia', 228),
+  ('LAS ALHUACAS', 'parroquia', 228),
+  ('CHAGUARAMAS', 'parroquia', 228);
 
 -- Parroquias del municipio MAturin, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('EL FURRIAL', 'parroquia', 231),
-  ('JUSEPIN', 'parroquia', 231),
-  ('EL COROZO', 'parroquia', 231),
-  ('SAN VICENTE', 'parroquia', 231),
-  ('LA PICA', 'parroquia', 231),
-  ('ALTO DE LOS GODOS', 'parroquia', 231),
-  ('BOQUERON', 'parroquia', 231),
-  ('LAS COCUIZAS', 'parroquia', 231),
-  ('SANTA CRUZ', 'parroquia', 231),
-  ('SAN SIMON', 'parroquia', 231);
+  ('EL FURRIAL', 'parroquia', 229),
+  ('JUSEPIN', 'parroquia', 229),
+  ('EL COROZO', 'parroquia', 229),
+  ('SAN VICENTE', 'parroquia', 229),
+  ('LA PICA', 'parroquia', 229),
+  ('ALTO DE LOS GODOS', 'parroquia', 229),
+  ('BOQUERON', 'parroquia', 229),
+  ('LAS COCUIZAS', 'parroquia', 229),
+  ('SANTA CRUZ', 'parroquia', 229),
+  ('SAN SIMON', 'parroquia', 229);
 
 -- Parroquias del municipio Piar
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. ARAGUA', 'parroquia', 232),
-  ('CHAGUARAMAL', 'parroquia', 232),
-  ('GUANAGUANA', 'parroquia', 232),
-  ('APARICIO', 'parroquia', 232),
-  ('TAGUAYA', 'parroquia', 232),
-  ('EL PINTO', 'parroquia', 232),
-  ('LA TOSCANA', 'parroquia', 232);
+  ('CM. ARAGUA', 'parroquia', 230),
+  ('CHAGUARAMAL', 'parroquia', 230),
+  ('GUANAGUANA', 'parroquia', 230),
+  ('APARICIO', 'parroquia', 230),
+  ('TAGUAYA', 'parroquia', 230),
+  ('EL PINTO', 'parroquia', 230),
+  ('LA TOSCANA', 'parroquia', 230);
 
 -- Parroquias del municipio Punceres, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. QUIRIQUIRE', 'parroquia', 233),
-  ('CACHIPO', 'parroquia', 233);
+  ('CM. QUIRIQUIRE', 'parroquia', 231),
+  ('CACHIPO', 'parroquia', 231);
 
 -- Parroquias del municipio Santa Barbara, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MORON', 'parroquia', 234),
-  ('CM. SANTA BARBARA', 'parroquia', 234);
+  ('MORON', 'parroquia', 232),
+  ('CM. SANTA BARBARA', 'parroquia', 232);
 
 -- Parroquias del municipio Sotillo, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. BARRANCAS', 'parroquia', 235),
-  ('LOS BARRANCOS DE FAJARDO', 'parroquia', 235);
+  ('CM. BARRANCAS', 'parroquia', 233),
+  ('LOS BARRANCOS DE FAJARDO', 'parroquia', 233);
 
 -- Parroquias del municipio Uracoa, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. URACOA', 'parroquia', 236);
+  ('CM. URACOA', 'parroquia', 234);
 
 -- Parroquias del municipio Zamora, Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. PUNTA DE MATA', 'parroquia', 237),
-  ('EL TEJERO', 'parroquia', 237);
+  ('CM. PUNTA DE MATA', 'parroquia', 235),
+  ('EL TEJERO', 'parroquia', 235);
 
 -- Parroquia del municipio Antolin del CAmpo, Nueva esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ANTOLIN DEL CAMPO', 'parroquia', 238),
-  ('CM.LA PLAZA DE PARAGUACHI', 'parroquia', 238);
+  ('ANTOLIN DEL CAMPO', 'parroquia', 236),
+  ('CM.LA PLAZA DE PARAGUACHI', 'parroquia', 236);
 
 -- Parroquias del municipio Antonio Diaz, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. SAN JUAN BAUTISTA', 'parroquia', 239),
-  ('ZABALA', 'parroquia', 239);
+  ('CM. SAN JUAN BAUTISTA', 'parroquia', 237),
+  ('ZABALA', 'parroquia', 237);
 
 -- Parroquia del muncicipio Arismendi, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ARISMENDI', 'parroquia', 240),
-  ('CM. LA ASUNCION', 'parroquia', 240);
+  ('ARISMENDI', 'parroquia', 238),
+  ('CM. LA ASUNCION', 'parroquia', 238);
 
 -- PArroquias del municipio GArcia, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. VALLE ESP SANTO', 'parroquia', 241),
-  ('FRANCISCO FAJARDO', 'parroquia', 241);
+  ('CM. VALLE ESP SANTO', 'parroquia', 239),
+  ('FRANCISCO FAJARDO', 'parroquia', 239);
 
 -- Parroquias del municipio Gomez, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. SANTA ANA', 'parroquia', 242),
-  ('GUEVARA', 'parroquia', 242),
-  ('MATASIETE', 'parroquia', 242),
-  ('BOLIVAR', 'parroquia', 242),
-  ('SUCRE', 'parroquia', 242);
+  ('CM. SANTA ANA', 'parroquia', 240),
+  ('GUEVARA', 'parroquia', 240),
+  ('MATASIETE', 'parroquia', 240),
+  ('BOLIVAR', 'parroquia', 240),
+  ('SUCRE', 'parroquia', 240);
 
 -- Parroquias del municipio Macanao, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. BOCA DEL RIO', 'parroquia', 243),
-  ('SAN FRANCISCO', 'parroquia', 243);
+  ('CM. BOCA DEL RIO', 'parroquia', 241),
+  ('SAN FRANCISCO', 'parroquia', 241);
 
 -- Parroquias del municipio MAneiro, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. PAMPATAR', 'parroquia', 244),
-  ('AGUIRRE', 'parroquia', 244);
+  ('CM. PAMPATAR', 'parroquia', 242),
+  ('AGUIRRE', 'parroquia', 242);
 
 -- PArroquia del municipio Marcano, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. JUAN GRIEGO', 'parroquia', 245),
-  ('ADRIAN', 'parroquia', 245);
+  ('CM. JUAN GRIEGO', 'parroquia', 243),
+  ('ADRIAN', 'parroquia', 243);
 
 -- Parroquias del municipio Mariño, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MARIÑO', 'parroquia', 246),
-  ('CM. PORLAMAR', 'parroquia', 246);
+  ('MARIÑO', 'parroquia', 244),
+  ('CM. PORLAMAR', 'parroquia', 244);
 
 -- Parroquias del municipio Tubores, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. PUNTA DE PIEDRAS', 'parroquia', 247),
-  ('LOS BARALES', 'parroquia', 247);
+  ('CM. PUNTA DE PIEDRAS', 'parroquia', 245),
+  ('LOS BARALES', 'parroquia', 245);
 
 
 -- Parroquias del municipio Villalba, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. SAN PEDRO DE COCHE', 'parroquia', 248),
-  ('VICENTE FUENTES', 'parroquia', 248);
+  ('CM. SAN PEDRO DE COCHE', 'parroquia', 246),
+  ('VICENTE FUENTES', 'parroquia', 246);
 
 -- Parroquia del municipio Agua Blanca, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. AGUA BLANCA', 'parroquia', 249);
+  ('CM. AGUA BLANCA', 'parroquia', 247);
 
 
 -- Parroquias del municipio Araure, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. ARAURE', 'parroquia', 250),
-  ('RIO ACARIGUA', 'parroquia', 250);
+  ('CM. ARAURE', 'parroquia', 248),
+  ('RIO ACARIGUA', 'parroquia', 248);
 
 
 -- Parroquias del municipio Esteller, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. PIRITU', 'parroquia', 251),
-  ('UVERAL', 'parroquia', 251);
+  ('CM. PIRITU', 'parroquia', 249),
+  ('UVERAL', 'parroquia', 249);
 
 -- Parroquias del municipio Guanare, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. GUANARE', 'parroquia', 252),
-  ('CORDOBA', 'parroquia', 252),
-  ('SAN JUAN GUANAGUANARE', 'parroquia', 252),
-  ('VIRGEN DE LA COROMOTO', 'parroquia', 252),
-  ('SAN JOSE DE LA MONTAÑA', 'parroquia', 252);
+  ('CM. GUANARE', 'parroquia', 250),
+  ('CORDOBA', 'parroquia', 250),
+  ('SAN JUAN GUANAGUANARE', 'parroquia', 250),
+  ('VIRGEN DE LA COROMOTO', 'parroquia', 250),
+  ('SAN JOSE DE LA MONTAÑA', 'parroquia', 250);
 
 -- Parroquias del municipio Guanarito, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. GUANARITO', 'parroquia', 253),
-  ('TRINIDAD DE LA CAPILLA', 'parroquia', 253),
-  ('DIVINA PASTORA', 'parroquia', 253);
+  ('CM. GUANARITO', 'parroquia', 251),
+  ('TRINIDAD DE LA CAPILLA', 'parroquia', 251),
+  ('DIVINA PASTORA', 'parroquia', 251);
 
 -- Parroquias del municipio Jose Vicente de Unda, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. CHABASQUEN', 'parroquia', 254),
-  ('PEÑA BLANCA', 'parroquia', 254);
+  ('CM. CHABASQUEN', 'parroquia', 252),
+  ('PEÑA BLANCA', 'parroquia', 252);
 
 -- Parroquias del municipio OSpino, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. OSPINO', 'parroquia', 255),
-  ('APARICION', 'parroquia', 255),
-  ('LA ESTACION', 'parroquia', 255);
+  ('CM. OSPINO', 'parroquia', 253),
+  ('APARICION', 'parroquia', 253),
+  ('LA ESTACION', 'parroquia', 253);
 
 -- Parroquias del municipio Paez, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. ACARIGUA', 'parroquia', 256),
-  ('PAYARA', 'parroquia', 256),
-  ('PIMPINELA', 'parroquia', 256),
-  ('RAMON PERAZA', 'parroquia', 256);
+  ('CM. ACARIGUA', 'parroquia', 254),
+  ('PAYARA', 'parroquia', 254),
+  ('PIMPINELA', 'parroquia', 254),
+  ('RAMON PERAZA', 'parroquia', 254);
 
 -- Parroquias del municipio Papelon, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. PAPELON', 'parroquia', 257),
-  ('CAÑO DELGADITO', 'parroquia', 257);
+  ('CM. PAPELON', 'parroquia', 255),
+  ('CAÑO DELGADITO', 'parroquia', 255);
 
 -- Parroquias del municipio San Genaro de Boconoito, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. BOCONOITO', 'parroquia', 258),
-  ('ANTOLIN TOVAR AQUINO', 'parroquia', 258);
+  ('CM. BOCONOITO', 'parroquia', 256),
+  ('ANTOLIN TOVAR AQUINO', 'parroquia', 256);
 
 -- Parroquias del municipio San Rafael de Onoto, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. SAN RAFAEL DE ONOTO', 'parroquia', 259),
-  ('SANTA FE', 'parroquia', 259),
-  ('THERMO MORLES', 'parroquia', 259);
+  ('CM. SAN RAFAEL DE ONOTO', 'parroquia', 257),
+  ('SANTA FE', 'parroquia', 257),
+  ('THERMO MORLES', 'parroquia', 257);
 
 -- Parroquias del municipio Santa Rosalia, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. EL PLAYON', 'parroquia', 260),
-  ('FLORIDA', 'parroquia', 260);
+  ('CM. EL PLAYON', 'parroquia', 258),
+  ('FLORIDA', 'parroquia', 258);
 
 
 -- Parroquias del municipio Sucre, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. BISCUCUY', 'parroquia', 261),
-  ('CONCEPCION', 'parroquia', 261),
-  ('SAN RAFAEL PALO ALZADO', 'parroquia', 261),
-  ('UVENCIO A VELASQUEZ', 'parroquia', 261),
-  ('SAN JOSE DE SAGUAZ', 'parroquia', 261),
-  ('VILLA ROSA', 'parroquia', 261);
+  ('CM. BISCUCUY', 'parroquia', 259),
+  ('CONCEPCION', 'parroquia', 259),
+  ('SAN RAFAEL PALO ALZADO', 'parroquia', 259),
+  ('UVENCIO A VELASQUEZ', 'parroquia', 259),
+  ('SAN JOSE DE SAGUAZ', 'parroquia', 259),
+  ('VILLA ROSA', 'parroquia', 259);
 
 -- PArroquias del municipio Turen, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('CM. VILLA BRUZUAL', 'parroquia', 262),
-  ('CANELONES', 'parroquia', 262),
-  ('SANTA CRUZ', 'parroquia', 262),
-  ('SAN ISIDRO LABRADOR', 'parroquia', 262);
+  ('CM. VILLA BRUZUAL', 'parroquia', 260),
+  ('CANELONES', 'parroquia', 260),
+  ('SANTA CRUZ', 'parroquia', 260),
+  ('SAN ISIDRO LABRADOR', 'parroquia', 260);
 
 -- Parroquias del municipio Andres Eloy Blanco, Sucre
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('MARIÑO', 'parroquia', 263),
-  ('ROMULO GALLEGOS', 'parroquia', 263);
+  ('MARIÑO', 'parroquia', 261),
+  ('ROMULO GALLEGOS', 'parroquia', 261);
 
 -- Parroquias del municipio Andres Mata, Sucre
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
