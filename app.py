@@ -238,7 +238,7 @@ def registrar_empleado():
         print(f"An error occurred: {e}\n{tb}")
         conn.rollback()   
         cur.close()
-        return Response(status=500, response="Error al registrar el empleado")
+        return Response(status=500, response=str(e))
 
     cur.close()
     

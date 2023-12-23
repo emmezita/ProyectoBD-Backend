@@ -177,8 +177,8 @@ $(document).ready(function() {
                 row += '<td>' + data[i].cargo + '</td>';
                 row += '<td>' + data[i].departamento + '</td>';
                 // Botones
-                row += '<td> <button type="button" class="btn btn-warning-ben" data-employee-id="' + data[i].cedula + '">Editar</button> </td>';
-                row += '<td> <button type="button" class="btn btn-danger-ben" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
+                row += '<td> <button type="button" id="edit-employee-button" class="btn btn-warning-ben" data-employee-id="' + data[i].cedula + '">Editar</button> </td>';
+                row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger-ben" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
                 row += '</tr>';
                 $('#body-empleados').append(row);
             }
@@ -235,6 +235,11 @@ $('#delete-employee-button').click(function() {
             alert('Hubo un error eliminando el empleado');
         }
     });
+});
+
+$('#edit-employee-button').click(function() {
+    var employeeId = $(this).data('employee-id');
+    window.location.href = 'http://dilodev.co/formulario-editar-empleado?cedula=' + employeeId;
 });
 
 </script>

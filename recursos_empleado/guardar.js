@@ -1,3 +1,5 @@
+var reset = false;
+
     function save() {
     var ff = "#form-field-"
 
@@ -48,8 +50,6 @@
     };
     console.log(data);
 
-
-
     $.ajax({
         type: "POST",
         url: "http://localhost:5000/api/empleado/registrar",
@@ -59,10 +59,13 @@
         data: JSON.stringify(data),
         success: function (data) {
             alert("Empleado registrado exitosamente");
-            // window.location.href = "index.php";
+            reset = true;
+            //hay que resetear tablas
+            $('.elementor-form').reset();
         },
         error: function (data) {
-            alert("Error al registrar empleado");
+            reset = false;
+            alert(data.responseJSON.message);
         }
     });
 }
@@ -71,6 +74,13 @@ $(document).ready(function() {
     $('#crearEmpleado').submit(function(event) {
         event.preventDefault(); // Prevent form submission
         save(); // Call the save function
-        event.preventDefault(); // Prevent form submission
     });
 });
+
+$(document).on('reset', (e) => { 
+    if (reset) {
+        reset = false;
+        return;
+    }
+    e.preventDefault() 
+})
