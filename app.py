@@ -144,9 +144,11 @@ def registrar_empleado():
     parroquia = empleado.get("parroquia")
     parroquia = int(parroquia)
     departamento = empleado.get("departamento")
-    departamento = int(departamento)
+    if departamento:
+        departamento = int(departamento)
     cargo = empleado.get("cargo")
-    cargo = int(cargo)
+    if cargo:
+        cargo = int(cargo)
     sueldo = empleado.get("sueldo")
     if sueldo:
         sueldo = sueldo.replace(",", ".")
