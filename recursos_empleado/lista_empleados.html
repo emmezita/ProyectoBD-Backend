@@ -89,23 +89,55 @@
             border: none;
         }
     </style>
-    
-    <div class="mt-4 mx-auto">
-        <table id="table-empleados" class="table table-striped ">
-            <thead>
-                <tr>
-                    <th>Cedula</th>
-                    <th>Nombre</th>
-                    <th>Fecha Ingreso</th>
-                    <th>Cargo</th>
-                    <th>Departamento</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="body-empleados">
-            </tbody>
-        </table>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="tabs" role="tablist">
+        <li class="nav-item" role="empleados">
+          <button class="nav-link active" id="empleados-tab" data-bs-toggle="tab" data-bs-target="#empleados" type="button" role="tab" aria-controls="empleados" aria-selected="true">Empleados</button>
+        </li>
+        <li class="nav-item" role="cargo">
+          <button class="nav-link" id="cargo-tab" data-bs-toggle="tab" data-bs-target="#cargo" type="button" role="tab" aria-controls="cargo" aria-selected="false">Cargo</button>
+        </li>
+        <li class="nav-item" role="departamento">
+          <button class="nav-link" id="departamento-tab" data-bs-toggle="tab" data-bs-target="#departamento" type="button" role="tab" aria-controls="departamento" aria-selected="false">Departamento</button>
+        </li>
+        <li class="nav-item" role="beneficios">
+          <button class="nav-link" id="beneficios-tab" data-bs-toggle="tab" data-bs-target="#beneficios" type="button" role="tab" aria-controls="beneficios" aria-selected="false">Beneficios</button>
+        </li>
+        <li class="nav-item" role="es">
+          <button class="nav-link" id="es-tab" data-bs-toggle="tab" data-bs-target="#es" type="button" role="tab" aria-controls="es" aria-selected="false">Entradas/Salidas</button>
+        </li>
+    </ul>
+
+    <!-- Contenido -->
+    <div class="tab-content" id="content">
+    <div class="tab-pane fade show active" id="empleados" role="tabpanel" aria-labelledby="empleados-tab">
+        <div class="mt-4 mx-auto">
+            <table id="table-empleados" class="table table-striped ">
+                <thead>
+                    <tr>
+                        <th>Cedula</th>
+                        <th>Nombre</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Cargo</th>
+                        <th>Departamento</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="body-empleados">
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="cargo" role="tabpanel" aria-labelledby="cargo-tab">
+    </div>
+    <div class="tab-pane fade" id="departamento" role="tabpanel" aria-labelledby="departamento-tab">
+    </div>
+    <div class="tab-pane fade" id="beneficios" role="tabpanel" aria-labelledby="beneficios-tab">
+    </div>
+    <div class="tab-pane fade" id="es" role="tabpanel" aria-labelledby="es-tab">
+    </div>
     </div>
 
     <!-- Modal -->
@@ -196,6 +228,7 @@ $('#delete-employee-button').click(function() {
         url: 'http://localhost:5000/api/empleado/' + employeeId,
         type: 'DELETE',
         success: function() {
+            alert('Empleado eliminado exitosamente');
             location.reload();
         },
         error: function() {

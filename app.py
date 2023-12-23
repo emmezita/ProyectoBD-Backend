@@ -1,7 +1,8 @@
 import datetime
 import http
 import json
-from flask import Flask, Response, render_template, request, jsonify
+import traceback
+from flask import Flask, Response, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
@@ -152,8 +153,10 @@ def registrar_empleado():
         sueldo = float(sueldo)
     else:
         sueldo = None
-    beneficios = [[item['id'], item['monto']] for item in empleado.get('beneficios', [])]
-    horarios = [int(item) for item in empleado.get('horarios', [])]
+    beneficios = empleado.get("beneficios")
+    # beneficios = [[item['id'], item['monto']] for item in empleado.get('beneficios', [])]
+    horarios = empleado.get("horarios")
+    # horarios = [int(item) for item in empleado.get('horarios', [])]
 
     # # Insertar empleado
     cur = conn.cursor()
@@ -202,41 +205,42 @@ def registrar_empleado():
         cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia))
         result = cur.fetchone()
         empleado_codigo = result[0] if result is not None else None
-        print(empleado_codigo)
         cur.execute(sql_correo, (correo, empleado_codigo, None))
         if correo_alt:
             cur.execute(sql_correo, (correo_alt, empleado_codigo, None))
         cur.execute(sql_telefono, (cod_area, telefono, empleado_codigo, None))
         if cod_area_alt and telefono_alt:
             cur.execute(sql_telefono, (cod_area_alt, telefono_alt, empleado_codigo, None))
-        cur.execute(sql_empleado, (empleado_codigo))
+        cur.execute(sql_empleado, (empleado_codigo,))
         cur.execute(sql_contrato, (datetime.datetime.now(), None, empleado_codigo))
         result = cur.fetchone()
         contrato_codigo = result[0] if result is not None else None
         cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
         cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
-        for horario in horarios:
-            # Preparar la consulta SQL
-            sql_horario = "INSERT INTO Contrato_Horario (fk_contrato_empleo, fk_horario) VALUES (%s, %s);"
-            data = int(horario)
-            # Ejecutar la consulta
-            cur.execute(sql_horario, (contrato_codigo, data))
+        
         for beneficio in beneficios:
-            # Preparar la consulta SQL
+            if beneficio.get('id') is None or beneficio.get('monto') is None:
+                continue
             sql_beneficio = "INSERT INTO Contrato_Beneficio (cont_bene_monto, fk_contrato_empleo, fk_beneficio) VALUES (%s, %s, %s);"
-            data = (beneficio[0], beneficio[1])
-            # Ejecutar la consulta
-            cur.execute(sql_beneficio, (float(data[1]), contrato_codigo, int(data[0])))        
-    except Exception as e:
-        print(e)
-        conn.rollback()   
-    finally:
+            cur.execute(sql_beneficio, (float(beneficio.get('monto')), contrato_codigo, int(beneficio.get('id')))) 
+
+        for horario in horarios:
+            if horario is None:
+                continue
+            sql_horario = "INSERT INTO Contrato_Horario (fk_contrato_empleo, fk_horario) VALUES (%s, %s);"
+            cur.execute(sql_horario, (contrato_codigo, int(horario)))
+        
         conn.commit() 
-    
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response="Error al registrar el empleado")
+
     cur.close()
-    conn.close()
     
-    return "empleado registrado"
+    return Response(status=200, response="Empleado registrado exitosamente")
 
 @app.route("/api/empleado/all", methods=["GET"])
 def get_all_empleados():

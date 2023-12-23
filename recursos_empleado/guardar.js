@@ -71,5 +71,6 @@ $(document).ready(function() {
     $('#crearEmpleado').submit(function(event) {
         event.preventDefault(); // Prevent form submission
         save(); // Call the save function
+        event.preventDefault(); // Prevent form submission
     });
 });
