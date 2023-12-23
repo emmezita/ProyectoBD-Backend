@@ -1374,7 +1374,7 @@ VALUES
 --Parroquias del municipio JAcura, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('JACURA', 'parroquia', 139);
+  ('JACURA', 'parroquia', 139),
   ('AGUA LINDA', 'parroquia', 139),
   ('ARAURIMA', 'parroquia', 139);
 
@@ -1505,7 +1505,7 @@ VALUES
 -- Parroquias del municicpio Jose Tadeo Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ALTAGRACIA DE ORITUCO', 'parroquia', 161);
+  ('ALTAGRACIA DE ORITUCO', 'parroquia', 161),
   ('LEZAMA', 'parroquia', 161),
   ('LIBERTAD DE ORITUCO', 'parroquia', 161),
   ('SAN FCO DE MACAIRA', 'parroquia', 161),

@@ -105,7 +105,7 @@ CREATE TABLE Persona_Natural (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_persona_nat_rif CHECK (persona_nat_rif ~ '^[VEJPG]{1}[0-9]{9}$'),
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
-  CONSTRAINT ck_persona_nat_cedula CHECK (persona_nat_cedula ~ '^[0-9]{7-8}$'),
+  CONSTRAINT ck_persona_nat_cedula CHECK (persona_nat_cedula ~ '^[0-9]{7,8}$'),
   -- Constrain. Debe tener ocho dígitos
   CONSTRAINT ck_persona_nat_p_nombre CHECK (persona_nat_p_nombre ~ '^[A-Za-záéíóúñ ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
@@ -170,7 +170,7 @@ CREATE TABLE Correo (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
   CONSTRAINT fk_correo_persona_juridica_administra FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
-  CONSTRAINT ck_correo_direccion CHECK (correo_direccion ~ '^[a-zA-Z0-9]+[@]{1}[a-z]+[.]{1}[a-z]{2,3}$')
+  CONSTRAINT ck_correo_direccion CHECK (correo_direccion ~ '^[a-zA-Z0-9._]+[@]{1}[a-z]+[.]{1}[a-z]{2,3}$')
   -- Constrain. Debe tener un formato válido
 );
 

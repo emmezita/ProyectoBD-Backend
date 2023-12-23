@@ -125,9 +125,9 @@ def registrar_empleado():
     empleado = request.get_json() 
     pprint(empleado)
     p_nombre = empleado.get("pnombre")
-    s_nombre = empleado.get("snombre")
+    s_nombre = empleado.get("snombre") if empleado.get("snombre") else None
     p_apellido = empleado.get("papellido")
-    s_apellido = empleado.get("sapellido")
+    s_apellido = empleado.get("sapellido") if empleado.get("sapellido") else None
     cedula = empleado.get("cedula")
     nacionalidad = empleado.get("nacionalidad")
     rif = empleado.get("rif")
@@ -141,8 +141,11 @@ def registrar_empleado():
     fecha_nacimiento = empleado.get("fechanac")
     direccion = empleado.get("direccion")
     parroquia = empleado.get("parroquia")
+    parroquia = int(parroquia)
     departamento = empleado.get("departamento")
+    departamento = int(departamento)
     cargo = empleado.get("cargo")
+    cargo = int(cargo)
     sueldo = empleado.get("sueldo")
     if sueldo:
         sueldo = sueldo.replace(",", ".")
@@ -159,100 +162,79 @@ def registrar_empleado():
         INSERT INTO Persona_Natural (
             persona_nat_rif, persona_nat_direccion_fiscal, persona_nat_cedula, persona_nat_p_nombre, persona_nat_s_nombre,
             persona_nat_p_apellido, persona_nat_s_apellido, persona_nat_fecha_nac, fk_lugar
-        ) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING persona_nat_codigo;
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING persona_nat_codigo;
     """
-    cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia))
-    
-    result = cur.fetchone()
-    empleado_codigo = result[0] if result is not None else None
-    
     sql_correo = """ 
         INSERT INTO Correo (
             correo_direccion, fk_persona_natural, fk_persona_juridica
-        )
-        VALUES (%s, %s, %s);
-    """
-    cur.execute(sql_correo, (correo, empleado_codigo, None))
-    
-    if correo_alt:
-        sql_correo_alt = """ 
-            INSERT INTO Correo (
-                correo_direccion, fk_persona_natural, fk_persona_juridica
-            )
-            VALUES (%s, %s, %s);
-        """
-        cur.execute(sql_correo_alt, (correo_alt, empleado_codigo, None))
-    
+        ) VALUES (%s, %s, %s);
+    """     
     sql_telefono = """ 
         INSERT INTO Telefono (
             telefono_codigo_area, telefono_numero, fk_persona_natural, fk_persona_juridica
-        )
-        VALUES (%s, %s, %s, %s);
+        ) VALUES (%s, %s, %s, %s);
     """
-    cur.execute(sql_telefono, (cod_area, telefono, empleado_codigo, None))
-    
-    if cod_area_alt:
-        sql_telefono_alt = """ 
-            INSERT INTO Telefono (
-                telefono_codigo_area, telefono_numero, fk_persona_natural, fk_persona_juridica
-            )
-            VALUES (%s, %s, %s, %s);
-        """
-        cur.execute(sql_telefono_alt, (cod_area_alt, telefono_alt, empleado_codigo, None))
-    
     sql_empleado = """
         INSERT INTO Empleado (
             empleado_codigo
         )
         VALUES (%s);
     """
-    cur.execute(sql_empleado, (empleado_codigo))
-
     sql_contrato = """
         INSERT INTO Contrato_De_Empleo (
             contrato_fecha_ingreso, contrato_fecha_salida, fk_empleado
         )
         VALUES (%s, %s, %s) RETURNING contrato_codigo;
-    """   
-    cur.execute(sql_contrato, (datetime.datetime.now(), None, empleado_codigo))
-    result = cur.fetchone()
-    contrato_codigo = result[0] if result is not None else None
-
+    """
     sql_departamento = """ 
         INSERT INTO Contrato_Departamento (
             cont_depant_fecha_inicio, cont_depant_fecha_cierre, fk_contrato_empleo, fk_departamento
         )
         VALUES (%s, %s, %s, %s);
     """
-    cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
-    
     sql_cargo = """
         INSERT INTO Contrato_Cargo (
             cont_carg_fecha_inicio, cont_carg_fecha_cierre, cont_carg_sueldo_mensual, fk_contrato_empleo, fk_cargo
         )
         VALUES (%s, %s, %s, %s, %s);
     """
-    cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
+    try:
+        cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia))
+        result = cur.fetchone()
+        empleado_codigo = result[0] if result is not None else None
+        print(empleado_codigo)
+        cur.execute(sql_correo, (correo, empleado_codigo, None))
+        if correo_alt:
+            cur.execute(sql_correo, (correo_alt, empleado_codigo, None))
+        cur.execute(sql_telefono, (cod_area, telefono, empleado_codigo, None))
+        if cod_area_alt and telefono_alt:
+            cur.execute(sql_telefono, (cod_area_alt, telefono_alt, empleado_codigo, None))
+        cur.execute(sql_empleado, (empleado_codigo))
+        cur.execute(sql_contrato, (datetime.datetime.now(), None, empleado_codigo))
+        result = cur.fetchone()
+        contrato_codigo = result[0] if result is not None else None
+        cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
+        cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
+        for horario in horarios:
+            # Preparar la consulta SQL
+            sql_horario = "INSERT INTO Contrato_Horario (fk_contrato_empleo, fk_horario) VALUES (%s, %s);"
+            data = int(horario)
+            # Ejecutar la consulta
+            cur.execute(sql_horario, (contrato_codigo, data))
+        for beneficio in beneficios:
+            # Preparar la consulta SQL
+            sql_beneficio = "INSERT INTO Contrato_Beneficio (cont_bene_monto, fk_contrato_empleo, fk_beneficio) VALUES (%s, %s, %s);"
+            data = (beneficio[0], beneficio[1])
+            # Ejecutar la consulta
+            cur.execute(sql_beneficio, (float(data[1]), contrato_codigo, int(data[0])))        
+    except Exception as e:
+        print(e)
+        conn.rollback()   
+    finally:
+        conn.commit() 
     
-    for horario in horarios:
-        # Preparar la consulta SQL
-        sql_horario = "INSERT INTO Contrato_Horario (fk_contrato_empleo, fk_horario) VALUES (%s, %s);"
-        data = (horario)
-
-        # Ejecutar la consulta
-        cur.execute(sql_horario, (contrato_codigo, data))
-        
-    for beneficio in beneficios:
-        # Preparar la consulta SQL
-        sql_beneficio = "INSERT INTO Contrato_Beneficio (cont_bene_monto, fk_contrato_empleo, fk_beneficio) VALUES (%s, %s, %s);"
-        data = (beneficio[0], beneficio[1])
-
-        # Ejecutar la consulta
-        cur.execute(sql_beneficio, (data[1], contrato_codigo, data[0]))        
-
-    conn.commit()
     cur.close()
+    conn.close()
     
     return "empleado registrado"
 
