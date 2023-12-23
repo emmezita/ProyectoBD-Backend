@@ -87,6 +87,13 @@
         }
         #table-empleados, #table-empleados th, #table-empleados td {
             border: none;
+        } .nav-link {
+            color: #7a7a7a;
+            font-weight: bold;
+        } .nav-link.active {
+            color: #D1991A !important;
+        } .nav-link:hover {
+            color: #A5141A !important;
         }
     </style>
 
@@ -111,33 +118,37 @@
 
     <!-- Contenido -->
     <div class="tab-content" id="content">
-    <div class="tab-pane fade show active" id="empleados" role="tabpanel" aria-labelledby="empleados-tab">
-        <div class="mt-4 mx-auto">
-            <table id="table-empleados" class="table table-striped ">
-                <thead>
-                    <tr>
-                        <th>Cedula</th>
-                        <th>Nombre</th>
-                        <th>Fecha Ingreso</th>
-                        <th>Cargo</th>
-                        <th>Departamento</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="body-empleados">
-                </tbody>
-            </table>
+        <div class="tab-pane fade show active" id="empleados" role="tabpanel" aria-labelledby="empleados-tab">
+            <div class="mt-4 mx-auto">
+                <table id="table-empleados" class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Cedula</th>
+                            <th>Nombre</th>
+                            <th>Fecha Ingreso</th>
+                            <th>Cargo</th>
+                            <th>Departamento</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-empleados">
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    <div class="tab-pane fade" id="cargo" role="tabpanel" aria-labelledby="cargo-tab">
-    </div>
-    <div class="tab-pane fade" id="departamento" role="tabpanel" aria-labelledby="departamento-tab">
-    </div>
-    <div class="tab-pane fade" id="beneficios" role="tabpanel" aria-labelledby="beneficios-tab">
-    </div>
-    <div class="tab-pane fade" id="es" role="tabpanel" aria-labelledby="es-tab">
-    </div>
+        <div class="tab-pane fade" id="cargo" role="tabpanel" aria-labelledby="cargo-tab">
+            por hacer
+        </div>
+        <div class="tab-pane fade" id="departamento" role="tabpanel" aria-labelledby="departamento-tab">
+            por hacer
+        </div>
+        <div class="tab-pane fade" id="beneficios" role="tabpanel" aria-labelledby="beneficios-tab">
+            sexo
+        </div>
+        <div class="tab-pane fade" id="es" role="tabpanel" aria-labelledby="es-tab">
+            por hacer
+        </div>
     </div>
 
     <!-- Modal -->
@@ -177,7 +188,7 @@ $(document).ready(function() {
                 row += '<td>' + data[i].cargo + '</td>';
                 row += '<td>' + data[i].departamento + '</td>';
                 // Botones
-                row += '<td> <button type="button" id="edit-employee-button" class="btn btn-warning-ben" data-employee-id="' + data[i].cedula + '">Editar</button> </td>';
+                row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning-ben" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
                 row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger-ben" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
                 row += '</tr>';
                 $('#body-empleados').append(row);
@@ -213,7 +224,6 @@ $(document).ready(function() {
 });    
 
 $('#deleteEmployeeModal').on('show.bs.modal', function (event) {
-    console.log('show.modal');
     var button = $(event.relatedTarget) // Button that triggered the modal
     var employeeId = button.data('employee-id') // Extract info from data-* attributes
     var employeeName = button.data('employee-name') // Extract info from data-* attributes
@@ -223,6 +233,7 @@ $('#deleteEmployeeModal').on('show.bs.modal', function (event) {
 })
 
 $('#delete-employee-button').click(function() {
+    console.log('delete');
     var employeeId = $(this).data('employee-id');
     $.ajax({
         url: 'http://localhost:5000/api/empleado/' + employeeId,
@@ -237,10 +248,10 @@ $('#delete-employee-button').click(function() {
     });
 });
 
-$('#edit-employee-button').click(function() {
-    var employeeId = $(this).data('employee-id');
-    window.location.href = 'http://dilodev.co/formulario-editar-empleado?cedula=' + employeeId;
-});
+function editEmployee(cedula){
+    console.log('edit');
+    window.location.href = 'http://dilodev.co/formulario-editar-empleado?cedula=' + cedula;
+}
 
 </script>
 </body>
