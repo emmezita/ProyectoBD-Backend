@@ -23,9 +23,9 @@ CREATE TABLE Persona_Juridica (
   -- Código identificador de la entidad Persona Jurídica
   persona_jur_rif varchar(11) NOT NULL,
   -- Rif de la persona jurídica. 
-  persona_jur_direccion_fiscal varchar(30) NOT NULL,
+  persona_jur_direccion_fiscal varchar(100) NOT NULL,
   -- Dirección fiscal de la persona jurídica.
-  persona_jur_direccion_fisica varchar(30) NOT NULL,
+  persona_jur_direccion_fisica varchar(100) NOT NULL,
   -- Dirección física de la persona jurídica.
   persona_jur_denom_social varchar(15) NOT NULL,
   -- Denominación social de la persona jurídica. 
@@ -82,7 +82,7 @@ CREATE TABLE Persona_Natural (
   -- Código identificador de la entidad Persona Natural
   persona_nat_rif varchar(11) NOT NULL UNIQUE,
   -- Rif de la persona natural.
-  persona_nat_direccion_fiscal varchar(30) NOT NULL,
+  persona_nat_direccion_fiscal varchar(100) NOT NULL,
   -- Dirección fiscal de la persona natural.
   persona_nat_cedula varchar(8) NOT NULL UNIQUE,
   -- Cédula de la persona natural. 
@@ -157,7 +157,7 @@ CREATE TABLE Contacto (
 CREATE TABLE Correo (
   correo_codigo serial,
   -- Código identificador de la entidad Correo
-  correo_direccion varchar(30) NOT NULL UNIQUE,
+  correo_direccion varchar(100) NOT NULL UNIQUE,
   -- Dirección de correo electrónico del contacto.
   fk_persona_natural integer,
   -- Relación con la entidad Persona Natural
@@ -1152,7 +1152,7 @@ CREATE TABLE Evento (
   -- Fecha de inicio del evento.
   evento_fecha_cierre date NOT NULL,
   -- Fecha de cierre del evento.
-  evento_direccion varchar(30) NOT NULL,
+  evento_direccion varchar(100) NOT NULL,
   -- Dirección del evento.
   evento_num_cupos integer NOT NULL,
   -- Número de cupos del evento. Debe ser mayor 0
@@ -1346,7 +1346,7 @@ CREATE TABLE Pedido (
   -- Código identificador de la entidad Pedido
   pedido_fecha date NOT NULL,
   -- Fecha del pedido.
-  pedido_direccion varchar(30) NOT NULL,
+  pedido_direccion varchar(100) NOT NULL,
   -- Dirección del pedido.
   pedido_subtotal decimal(10,2) NOT NULL,
   -- Subtotal del pedido. Debe ser mayor que 0
@@ -1531,7 +1531,7 @@ CREATE TABLE Almacen (
   -- Código identificador de la entidad Almacen
   almacen_capacidad integer NOT NULL,
   -- Capacidad del almacén en botellas. Debe ser mayor que 0  
-  almacen_direccion varchar(30) NOT NULL,
+  almacen_direccion varchar(100) NOT NULL,
   -- Dirección del almacén.
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar
@@ -1571,7 +1571,7 @@ CREATE TABLE Tienda (
   -- Código identificador de la entidad Tienda
   tienda_capacidad integer NOT NULL,
   -- Capacidad de la tienda en botellas. Debe ser mayor que 0
-  tienda_direccion varchar(30) NOT NULL,
+  tienda_direccion varchar(100) NOT NULL,
   -- Dirección de la tienda.
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar
