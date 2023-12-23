@@ -1374,9 +1374,9 @@ VALUES
 --Parroquias del municipio JAcura, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('JACURA', 'parroquia', 141);
-  ('AGUA LINDA', 'parroquia', 141),
-  ('ARAURIMA', 'parroquia', 141);
+  ('JACURA', 'parroquia', 139);
+  ('AGUA LINDA', 'parroquia', 139),
+  ('ARAURIMA', 'parroquia', 139);
 
 -- Parroquias del municipio Los Taques, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
