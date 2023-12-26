@@ -3049,3 +3049,9 @@ VALUES
   ('DíaLibreAdicional', 'Un día libre adicional al mes', 'mensual'),
   ('BonoDesempeño', 'Bono por desempeño excepcional', 'semestral'),
   ('SeguroSalud', 'Cobertura de seguro médico', 'anual');
+
+INSERT INTO  Evento(evento_nombre, evento_num_entradas, evento_fecha_inicio, evento_fecha_cierre, evento_direccion, evento_num_cupos, fk_lugar)
+VALUES
+  ('Chacao Run Festival', 1000, '2024/12/03', '2024/12/05', 'CHACAO', 1700, 209),
+  ('Venezuela Run Festival', 2000, '2024/02/17', '2024/02/20', 'Caracas', 3000, 128),
+  ('Saca el pecho Fest', 5000, '2024/03/15')

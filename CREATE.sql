@@ -1142,7 +1142,7 @@ CREATE TABLE Descuento (
 CREATE TABLE Evento (
   evento_codigo serial,
   -- Código identificador de la entidad Evento
-  evento_nombre varchar(20) NOT NULL UNIQUE,
+  evento_nombre varchar(30) NOT NULL UNIQUE,
   -- Nombre del evento.
   evento_descripcion varchar(50),
   -- Descripción del evento.
