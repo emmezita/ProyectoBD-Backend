@@ -445,7 +445,7 @@ CREATE TABLE Contrato_De_Empleo (
 
   CONSTRAINT pk_contrato_codigo PRIMARY KEY (contrato_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_empleado_seestipula FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo),
+  CONSTRAINT fk_contrato_empleado_seestipula FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Empleado.
   CONSTRAINT ck_contrato_fecha_salida CHECK (contrato_fecha_salida IS NULL OR contrato_fecha_salida > contrato_fecha_ingreso)
   -- Constrain. Debe ser mayor que la fecha de ingreso
@@ -465,7 +465,7 @@ CREATE TABLE Vacacion (
 
   CONSTRAINT pk_vacacion_codigo PRIMARY KEY (vacacion_codigo, fk_contrato_empleo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_vacacion_contrato_empleo_toma FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_vacacion_contrato_empleo_toma FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT ck_vacacion_fecha_cierre CHECK (vacacion_fecha_cierre IS NULL OR vacacion_fecha_cierre > vacacion_fecha_inicio),
   -- Constrain. Debe ser mayor que la fecha de inicio
@@ -485,7 +485,7 @@ CREATE TABLE Empleado_Entrada_Salida (
 
   CONSTRAINT pk_emp_ent_sal_codigo PRIMARY KEY (emp_ent_sal_codigo, fk_contrato_empleo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_emp_ent_sal_contrato_empleo_cumple FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_emp_ent_sal_contrato_empleo_cumple FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT ck_emp_ent_sal_fecha_hora_salida CHECK (emp_ent_sal_fecha_hora_salida > emp_ent_sal_fecha_hora_entrada)
   -- Constrain. Debe ser mayor que la fecha de entrada
@@ -521,7 +521,7 @@ CREATE TABLE Contrato_Beneficio (
 
   CONSTRAINT pk_contrato_beneficio PRIMARY KEY (fk_contrato_empleo, fk_beneficio),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_beneficio_contrato_empleo_goza FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_beneficio_contrato_empleo_goza FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_beneficio_beneficio_ayuda FOREIGN KEY (fk_beneficio) REFERENCES Beneficio (beneficio_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Beneficio.
@@ -555,7 +555,7 @@ CREATE TABLE Contrato_Horario (
 
   CONSTRAINT pk_contrato_horario PRIMARY KEY (fk_contrato_empleo, fk_horario),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_horario_contrato_empleo_acata FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_horario_contrato_empleo_acata FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_horario_horario_esacatado FOREIGN KEY (fk_horario) REFERENCES Horario (horario_codigo)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Horario.
@@ -578,22 +578,24 @@ CREATE TABLE Departamento (
 );
 
 CREATE TABLE Contrato_Departamento (
-  cont_depant_fecha_inicio date NOT NULL,
+  cont_depart_codigo serial,
+  -- Código identificador de la entidad Contrato de Departamento
+  cont_depart_fecha_inicio date NOT NULL,
   -- Fecha de inicio del contrato del departamento.
-  cont_depant_fecha_cierre date,
+  cont_depart_fecha_cierre date,
   -- Fecha de cierre del contrato del departamento.
-  fk_contrato_empleo integer,
+  fk_contrato_empleo integer NOT NULL,
   -- Relación con la entidad Contrato de Empleo
-  fk_departamento integer,
+  fk_departamento integer NOT NULL,
   -- Relación con la entidad Departamento
 
-  CONSTRAINT pk_contrato_departamento PRIMARY KEY (fk_contrato_empleo, fk_departamento),
+  CONSTRAINT pk_contrato_departamento PRIMARY KEY (cont_depart_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_departamento_contrato_empleo_trabaja FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_departamento_contrato_empleo_trabaja FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_departamento_departamento_trabaja FOREIGN KEY (fk_departamento) REFERENCES Departamento (departamento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Departamento.
-  CONSTRAINT ck_cont_depant_fecha_cierre CHECK (cont_depant_fecha_cierre IS NULL OR cont_depant_fecha_cierre > cont_depant_fecha_inicio)
+  CONSTRAINT ck_cont_depart_fecha_cierre CHECK (cont_depart_fecha_cierre IS NULL OR cont_depart_fecha_cierre > cont_depart_fecha_inicio)
   -- Constrain. Debe ser mayor que la fecha de inicio
 );
 
@@ -614,20 +616,22 @@ CREATE TABLE Cargo (
 );
 
 CREATE TABLE Contrato_Cargo (
+  cont_carg_codigo serial,
+  -- Código identificador de la entidad Contrato de Cargo
   cont_carg_fecha_inicio date NOT NULL,
   -- Fecha de inicio del contrato del cargo.
   cont_carg_fecha_cierre date,
   -- Fecha de cierre del contrato del cargo.
   cont_carg_sueldo_mensual decimal(10,2) NOT NULL,
   -- Sueldo mensual del cargo. Debe ser mayor que 0
-  fk_contrato_empleo integer,
+  fk_contrato_empleo integer NOT NULL,
   -- Relación con la entidad Contrato de Empleo
-  fk_cargo integer,
+  fk_cargo integer NOT NULL,
   -- Relación con la entidad Cargo
 
-  CONSTRAINT pk_contrato_cargo PRIMARY KEY (fk_contrato_empleo, fk_cargo),
+  CONSTRAINT pk_contrato_cargo PRIMARY KEY (cont_carg_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_cargo_contrato_empleo_desempena FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_cargo_contrato_empleo_desempena FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_cargo_cargo_esdesempenado FOREIGN KEY (fk_cargo) REFERENCES Cargo (cargo_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cargo.
@@ -1362,7 +1366,7 @@ CREATE TABLE Pedido (
   -- Relación con la entidad Cliente_Natural
   fk_cliente_juridico integer,
   -- Relación con la entidad Cliente_Juridico
-  fk_contrato_empleo integer NOT NULL,
+  fk_contrato_empleo integer, -- Se quito el NOT NULL para que se pueda eliminar al empleado correctamente
   -- Relación con la entidad Contrato_Empleo
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar
@@ -1434,7 +1438,7 @@ CREATE TABLE Orden_De_Reposicion (
   -- Subtotal de la orden de reposición. Debe ser mayor que 0
   orden_total decimal(10,2),
   -- Total de la orden de reposición. Debe ser mayor que 0
-  fk_contrato_empleo integer NOT NULL,
+  fk_contrato_empleo integer, -- Se quito el NOT NULL para que se pueda eliminar al empleado correctamente
   -- Relación con la entidad Contrato_Empleo
 
   CONSTRAINT pk_orden_codigo PRIMARY KEY (orden_codigo),
@@ -1495,7 +1499,7 @@ CREATE TABLE Factura (
   -- Relación con la entidad Cliente_Natural
   fk_cliente_juridico integer,
   -- Relación con la entidad Cliente_Juridico
-  fk_contrato_empleo integer NOT NULL,
+  fk_contrato_empleo integer, -- Se quito el NOT NULL para que se pueda eliminar al empleado correctamente
   -- Relación con la entidad Contrato_Empleo
 
   CONSTRAINT pk_factura_codigo PRIMARY KEY (factura_codigo),

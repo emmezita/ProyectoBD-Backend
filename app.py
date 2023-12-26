@@ -134,7 +134,7 @@ def registrar_empleado():
     rif = empleado.get("rif")
     nacionalidad_rif = nacionalidad + rif if nacionalidad and rif else None
     correo = empleado.get("correo")
-    correo_alt = empleado.get("correoalt")
+    correo_alt = empleado.get("correoalt") if empleado.get("correoalt") else None
     cod_area = empleado.get("telefono")[:4] if empleado.get("telefono") else None
     telefono = empleado.get("telefono")[-7:] if empleado.get("telefono") else None
     cod_area_alt = empleado.get("telefonoalt")[:4] if empleado.get("telefonoalt") else None
@@ -156,9 +156,7 @@ def registrar_empleado():
     else:
         sueldo = None
     beneficios = empleado.get("beneficios")
-    # beneficios = [[item['id'], item['monto']] for item in empleado.get('beneficios', [])]
     horarios = empleado.get("horarios")
-    # horarios = [int(item) for item in empleado.get('horarios', [])]
 
     # # Insertar empleado
     cur = conn.cursor()
@@ -247,7 +245,7 @@ def registrar_empleado():
 @app.route("/api/empleado/all", methods=["GET"])
 def get_all_empleados():
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
+    cur.execute('''SELECT persona_nat_codigo as codigo, persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
                 contrato_fecha_ingreso as fecha_ingreso, contrato_fecha_salida as fecha_salida, cargo_nombre as cargo, departamento_nombre as departamento
                 FROM persona_natural pn, empleado e, contrato_de_empleo ce, contrato_cargo cc, cargo c, contrato_departamento cd, departamento d
                 where pn.persona_nat_codigo = e.empleado_codigo and e.empleado_codigo = ce.fk_empleado
@@ -274,14 +272,165 @@ def get_empleado(id):
     pprint(rows)
     return jsonify(rows)
 
-@app.route("/api/empleado/<int:cedula>", methods=["DELETE"])
-def delete_empleado(cedula):
+@app.route("/api/empleado/editar/<int:id>", methods=["PUT"])
+def editar_empleado(id):
+    
+    # Obtener los datos del empleado
+    print("datos recibidos:")
+    empleado = request.get_json() 
+    pprint(empleado)
+    p_nombre = empleado.get("pnombre")
+    s_nombre = empleado.get("snombre") if empleado.get("snombre") else None
+    p_apellido = empleado.get("papellido")
+    s_apellido = empleado.get("sapellido") if empleado.get("sapellido") else None
+    cedula = empleado.get("cedula")
+    nacionalidad = empleado.get("nacionalidad")
+    rif = empleado.get("rif")
+    nacionalidad_rif = nacionalidad + rif if nacionalidad and rif else None
+    correo = empleado.get("correo")
+    correo_alt = empleado.get("correoalt") if empleado.get("correoalt") else None
+    cod_area = empleado.get("telefono")[:4] if empleado.get("telefono") else None
+    telefono = empleado.get("telefono")[-7:] if empleado.get("telefono") else None
+    cod_area_alt = empleado.get("telefonoalt")[:4] if empleado.get("telefonoalt") else None
+    telefono_alt = empleado.get("telefonoalt")[-7:] if empleado.get("telefonoalt") else None
+    fecha_nacimiento = empleado.get("fechanac")
+    direccion = empleado.get("direccion")
+    parroquia = empleado.get("parroquia")
+    parroquia = int(parroquia)
+    departamento = empleado.get("departamento")
+    if departamento:
+        departamento = int(departamento)
+    cargo = empleado.get("cargo")
+    if cargo:
+        cargo = int(cargo)
+    sueldo = empleado.get("sueldo")
+    if sueldo:
+        sueldo = sueldo.replace(",", ".")
+        sueldo = float(sueldo)
+    else:
+        sueldo = None
+    beneficios = empleado.get("beneficios")
+    horarios = empleado.get("horarios")
+    
+    # # Editar empleado
+    cur = conn.cursor()
+    
+    sql_persona = """
+        UPDATE Persona_Natural 
+        SET persona_nat_rif = %s, persona_nat_direccion_fiscal = %s, persona_nat_cedula = %s, persona_nat_p_nombre = %s, persona_nat_s_nombre = %s,
+            persona_nat_p_apellido = %s, persona_nat_s_apellido = %s, persona_nat_fecha_nac = %s, fk_lugar = %s
+        WHERE persona_nat_codigo = %s;
+    """
+    sql_obtener_contrato = """
+        SELECT contrato_codigo FROM Contrato_De_Empleo WHERE fk_empleado = %s;
+    """
+    sql_obtener_cargo = """
+        SELECT fk_cargo FROM Contrato_Cargo WHERE fk_contrato_empleo = %s and cont_carg_fecha_cierre is null;    
+    """
+    sql_obtener_departamento = """
+        SELECT fk_departamento FROM Contrato_Departamento WHERE fk_contrato_empleo = %s and cont_depant_fecha_cierre is null;
+    """
+    sql_eliminar = """
+        DELETE FROM Correo WHERE fk_persona_natural = %s;
+        DELETE FROM Telefono WHERE fk_persona_natural = %s;
+        DELETE FROM Contrato_Beneficio WHERE fk_contrato_empleo = %s;
+        DELETE FROM Contrato_Horario WHERE fk_contrato_empleo = %s;
+    """
+    sql_correo = """
+        INSERT INTO Correo (
+            correo_direccion, fk_persona_natural, fk_persona_juridica
+        ) VALUES (%s, %s, %s);
+    """
+    sql_telefono = """
+        INSERT INTO Telefono (
+            telefono_codigo_area, telefono_numero, fk_persona_natural, fk_persona_juridica
+        ) VALUES (%s, %s, %s, %s);
+    """
+    sql_departamento_viejo = """
+        UPDATE Contrato_Departamento SET cont_depant_fecha_cierre = %s WHERE fk_contrato_empleo = %s and cont_depant_fecha_cierre is null;
+    """
+    sql_departamento = """
+        INSERT INTO Contrato_Departamento (
+            cont_depant_fecha_inicio, cont_depant_fecha_cierre, fk_contrato_empleo, fk_departamento
+        )
+        VALUES (%s, %s, %s, %s);
+    """
+    sql_cargo_viejo = """
+        UPDATE Contrato_Cargo SET cont_carg_fecha_cierre = %s WHERE fk_contrato_empleo = %s and cont_carg_fecha_cierre is null;
+    """
+    sql_cargo = """
+        INSERT INTO Contrato_Cargo (
+            cont_carg_fecha_inicio, cont_carg_fecha_cierre, cont_carg_sueldo_mensual, fk_contrato_empleo, fk_cargo
+        )
+        VALUES (%s, %s, %s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia, id))
+        cur.execute(sql_obtener_contrato, (id,))
+        result = cur.fetchone()
+        contrato_codigo = result[0] if result is not None else None
+        cur.execute(sql_eliminar, (id, id, contrato_codigo, contrato_codigo))
+        cur.execute(sql_correo, (correo, id, None))
+        if correo_alt:
+            cur.execute(sql_correo, (correo_alt, id, None))
+        cur.execute(sql_telefono, (cod_area, telefono, id, None))
+        if cod_area_alt and telefono_alt:
+            cur.execute(sql_telefono, (cod_area_alt, telefono_alt, id, None))
+        cur.execute(sql_obtener_cargo, (contrato_codigo,))
+        result = cur.fetchone()
+        cargo_actual = result[0] if result is not None else None
+        cur.execute(sql_obtener_departamento, (contrato_codigo,))
+        result = cur.fetchone()
+        departamento_actual = result[0] if result is not None else None
+        if departamento_actual != departamento:
+            cur.execute(sql_departamento_viejo, (datetime.datetime.now(), contrato_codigo))
+            cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
+        if cargo_actual != cargo:
+            cur.execute(sql_cargo_viejo, (datetime.datetime.now(), contrato_codigo))
+            cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
+        for beneficio in beneficios:
+            if beneficio.get('id') is None or beneficio.get('monto') is None:
+                continue
+            sql_beneficio = "INSERT INTO Contrato_Beneficio (cont_bene_monto, fk_contrato_empleo, fk_beneficio) VALUES (%s, %s, %s);"
+            cur.execute(sql_beneficio, (float(beneficio.get('monto')), contrato_codigo, int(beneficio.get('id')))) 
+
+        for horario in horarios:
+            if horario is None:
+                continue
+            sql_horario = "INSERT INTO Contrato_Horario (fk_contrato_empleo, fk_horario) VALUES (%s, %s);"
+            cur.execute(sql_horario, (contrato_codigo, int(horario)))
+        
+        conn.commit() 
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Empleado editado exitosamente")
+
+@app.route("/api/empleado/delete/<int:id>", methods=["DELETE"])
+def delete_empleado(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
 
-    # cur.execute("DELETE FROM empleado WHERE empleado_cedula = %s", (cedula,))
-    # faltaaaa
+    cur.execute("DELETE FROM empleado WHERE empleado_codigo = %s", (id,))
 
     conn.commit()
     cur.close()
 
-    return "empleado eliminado"
+    return "Empleado Eliminado"
+
+@app.route("/api/empleado/deactivate/<int:id>", methods=["PUT"])
+def deactivate_empleado(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    cur.execute("UPDATE contrato_de_empleo SET contrato_fecha_salida = %s WHERE fk_empleado = %s", (datetime.datetime.now(), id))
+
+    conn.commit()
+    cur.close()
+
+    return "Empleado Desactivado"
