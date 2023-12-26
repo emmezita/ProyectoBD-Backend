@@ -189,7 +189,7 @@ def registrar_empleado():
     """
     sql_departamento = """ 
         INSERT INTO Contrato_Departamento (
-            cont_depant_fecha_inicio, cont_depant_fecha_cierre, fk_contrato_empleo, fk_departamento
+            cont_depart_fecha_inicio, cont_depart_fecha_cierre, fk_contrato_empleo, fk_departamento
         )
         VALUES (%s, %s, %s, %s);
     """
@@ -409,7 +409,7 @@ def editar_empleado(id):
         SELECT fk_cargo FROM Contrato_Cargo WHERE fk_contrato_empleo = %s and cont_carg_fecha_cierre is null;    
     """
     sql_obtener_departamento = """
-        SELECT fk_departamento FROM Contrato_Departamento WHERE fk_contrato_empleo = %s and cont_depant_fecha_cierre is null;
+        SELECT fk_departamento FROM Contrato_Departamento WHERE fk_contrato_empleo = %s and cont_depart_fecha_cierre is null;
     """
     sql_eliminar = """
         DELETE FROM Correo WHERE fk_persona_natural = %s;
@@ -428,11 +428,11 @@ def editar_empleado(id):
         ) VALUES (%s, %s, %s, %s);
     """
     sql_departamento_viejo = """
-        UPDATE Contrato_Departamento SET cont_depant_fecha_cierre = %s WHERE fk_contrato_empleo = %s and cont_depant_fecha_cierre is null;
+        UPDATE Contrato_Departamento SET cont_depart_fecha_cierre = %s WHERE fk_contrato_empleo = %s and cont_depart_fecha_cierre is null;
     """
     sql_departamento = """
         INSERT INTO Contrato_Departamento (
-            cont_depant_fecha_inicio, cont_depant_fecha_cierre, fk_contrato_empleo, fk_departamento
+            cont_depart_fecha_inicio, cont_depart_fecha_cierre, fk_contrato_empleo, fk_departamento
         )
         VALUES (%s, %s, %s, %s);
     """
