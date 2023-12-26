@@ -447,7 +447,7 @@ CREATE TABLE Contrato_De_Empleo (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_contrato_empleado_seestipula FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Empleado.
-  CONSTRAINT ck_contrato_fecha_salida CHECK (contrato_fecha_salida IS NULL OR contrato_fecha_salida > contrato_fecha_ingreso)
+  CONSTRAINT ck_contrato_fecha_salida CHECK (contrato_fecha_salida IS NULL OR contrato_fecha_salida >= contrato_fecha_ingreso)
   -- Constrain. Debe ser mayor que la fecha de ingreso
 );
 
@@ -595,7 +595,7 @@ CREATE TABLE Contrato_Departamento (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_departamento_departamento_trabaja FOREIGN KEY (fk_departamento) REFERENCES Departamento (departamento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Departamento.
-  CONSTRAINT ck_cont_depart_fecha_cierre CHECK (cont_depart_fecha_cierre IS NULL OR cont_depart_fecha_cierre > cont_depart_fecha_inicio)
+  CONSTRAINT ck_cont_depart_fecha_cierre CHECK (cont_depart_fecha_cierre IS NULL OR cont_depart_fecha_cierre >= cont_depart_fecha_inicio)
   -- Constrain. Debe ser mayor que la fecha de inicio
 );
 
@@ -637,7 +637,7 @@ CREATE TABLE Contrato_Cargo (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cargo.
   CONSTRAINT ck_cont_carg_sueldo_mensual CHECK (cont_carg_sueldo_mensual > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_cont_carg_fecha_cierre CHECK (cont_carg_fecha_cierre IS NULL OR cont_carg_fecha_cierre > cont_carg_fecha_inicio)
+  CONSTRAINT ck_cont_carg_fecha_cierre CHECK (cont_carg_fecha_cierre IS NULL OR cont_carg_fecha_cierre >= cont_carg_fecha_inicio)
   -- Constrain. Debe ser mayor que la fecha de inicio
 );
 
