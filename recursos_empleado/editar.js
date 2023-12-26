@@ -5,7 +5,7 @@ var EMP = null;
 function llenarHorarios(horarios) {
     horarios.forEach(horario => {
         var nombre = horario.horario_dia + " " + horario.horario_hora_entrada + " a " + horario.horario_hora_salida;
-        $('#body-horarios').append("<tr><td id="+ horario.horario_codigo +">"+horario.horario_dia+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deleteHorario(this)'>Eliminar</button></td></tr>");
+        $('#body-horarios').append("<tr><td id="+ horario.horario_codigo +">"+nombre+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deleteHorario(this)'>Eliminar</button></td></tr>");
     });
 }
 
@@ -104,7 +104,8 @@ $(document).ready(function() {
             $(ff+"direccion").val(data.persona.persona_nat_direccion_fiscal)
             $(ff+"cbcargo").val(data.cargo.cargo_nombre)
             $(ff+"cbdepa").val(data.departamento.departamento_nombre)
-            $(ff+"sueldo").val(parseFloat(data.cargo.cont_cargo_sueldo_mensual))
+            
+            $(ff+"sueldo").val(parseFloat(data.cargo.cont_carg_sueldo_mensual))
 
             
             llenarEMP(data.lugar.estado); //id de estado
