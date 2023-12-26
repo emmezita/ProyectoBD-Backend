@@ -11,6 +11,24 @@
 </style>
 
 <script>
+
+function llenarEMP(estado, municipio, parroquia) { 
+    // llenar los cb de estado, municipio y parroquia
+    $("#form-field-estado").val(estado);
+    $("#form-field-municipio").empty();
+    $("#form-field-parroquia").empty();
+
+    $.each(EMP.municipios[estado], function(i, municipio) {
+        $("#form-field-municipio").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+    });
+    $("#form-field-municipio").val(municipio);
+
+    $.each(EMP.parroquias[municipio], function(i, parroquia) {
+        $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+    });
+    $("#form-field-parroquia").val(parroquia);    
+}
+
 document.getElementById('buscar').addEventListener('click', function() {
     // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón
     var cedula = document.getElementById('cedula').value;
@@ -49,8 +67,14 @@ document.getElementById('buscar').addEventListener('click', function() {
                     let formattedFecha = fecha.getFullYear() + '-' + ('0' + (fecha.getMonth() + 1)).slice(-2) + '-' + ('0' + fecha.getDate()).slice(-2);
                     $(ff+"fechanac").val(formattedFecha).prop('disabled', true);
                     $(ff+"direccion").val(data.persona.persona_nat_direccion_fiscal).prop('disabled', true);
+
+                    llenarEMP(data.lugar.estado, data.lugar.municipio, data.lugar.parroquia); 
+
                 }
             },
+            error: function(data) {
+                alert(data.responseText);
+            }
         });
     });   
 });

@@ -117,10 +117,19 @@ def formatear_ubicaciones(ubicaciones):
 @app.route("/api/personanatural/empleado/<cedula>", methods=["GET"])
 def get_persona_natural(cedula):
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT * FROM persona_natural WHERE persona_nat_cedula = %s AND persona_nat_codigo NOT IN (SELECT empleado_codigo FROM empleado)", (cedula,))
+    cur.execute("SELECT * FROM persona_natural WHERE persona_nat_cedula = %s", (cedula,))
     persona = cur.fetchone()
+
     if persona is None:
-        return Response(status=404, response="Empleado ya existe")
+        return Response(status=409, response="La persona no existe")
+
+    cur.execute("SELECT * FROM empleado WHERE empleado_codigo = %s", (persona['persona_nat_codigo'],))
+    empleado = cur.fetchone()
+
+    # AND persona_nat_codigo NOT IN (SELECT empleado_codigo FROM empleado)
+    if empleado is not None:
+        return Response(status=409, response="El empleado ya existe")
+
     sql_correo = """ 
         SELECT * FROM Correo WHERE fk_persona_natural = %s
     """
@@ -131,11 +140,23 @@ def get_persona_natural(cedula):
     """
     cur.execute(sql_telefono, (persona['persona_nat_codigo'],))
     telefonos = cur.fetchall()
+
+    sql_lugar = """
+        SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
+        FROM lugar AS p
+        JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
+        JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
+        WHERE p.lugar_codigo = %s
+    """
+    cur.execute(sql_lugar, (persona['fk_lugar'],))
+    lugar = cur.fetchone()
+
     cur.close()
     datos = {
         'persona': persona,
         'correos': correos,
-        'telefonos': telefonos
+        'telefonos': telefonos,
+        'lugar': lugar
     }
     pprint(datos)
     return jsonify(datos)

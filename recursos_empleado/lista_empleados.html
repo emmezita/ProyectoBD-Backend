@@ -218,13 +218,13 @@ $(document).ready(function() {
                 row += '<td>' + data[i].nombre + '</td>';
                 row += '<td>' + data[i].cargo + '</td>';
                 row += '<td>' + data[i].departamento + '</td>';
-                var fechaIngreso = new Date(data[i].fecha_ingreso.toISOString().split('T')[0]);
-                row += '<td>' + fechaIngreso.toLocaleDateString('es-VE') + '</td>';
+                var fechaIngreso = formatDate(data[i].fecha_ingreso);
+                row += '<td>' + fechaIngreso + '</td>';
+                var fechaSalida = formatDate(data[i].fecha_salida);
                 if (data[i].fecha_salida == null) {
                     row += '<td> Activo </td>';
                 } else {
-                    var fechaSalida = new Date(data[i].fecha_salida.toISOString().split('T')[0]);
-                    row += '<td>' + fechaSalida.toLocaleDateString('es-VE') + '</td>';
+                    row += '<td>' + fechaSalida + '</td>';
                 }
                 // Botones
                 if (data[i].fecha_salida == null) {
@@ -334,6 +334,24 @@ $('#deactivate-employee-button').click(function() {
 function editEmployee(id){
     console.log('edit');
     window.location.href = 'http://dilodev.co/formulario-editar-empleado?id=' + id;
+}
+
+// como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
+//le sumamos 5 horas por para pasar de dia al correcto
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [day, month, year].join('/');
 }
 
 </script>
