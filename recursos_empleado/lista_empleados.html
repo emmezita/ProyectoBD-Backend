@@ -17,49 +17,49 @@
             color: #202020;
             font-size: 15px; /* Cambia esto al tamaño que desees */
             font-weight: 300; /* Cambia esto al grosor que desees */
-        }.btn-primary-ben {
+        }.btn-primary {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 16px;
             font-weight: 600;
-            background-color: #D1991A;
-            border-color: #D1991A;
-        }.btn-primary-ben:hover {
+            background-color: #A5141A;
+            border-color: #A5141A;
+        }.btn-primary:hover {
             color: #F8F8F8;
-            background-color: #956d11;
-            border-color: #956d11;
-        }.btn-danger-ben {
+            background-color: #800f12;
+            border-color: #800f12;
+        }.btn-danger {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 15px;
             font-weight: 600;
             background-color: #FF0000;
             border-color: #FF0000;
-        }.btn-danger-ben:hover {
+        }.btn-danger:hover {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             background-color: #b30000;
             border-color: #b30000;
-        }.btn-warning-ben {
+        }.btn-warning {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 15px;
             font-weight: 600;
             background-color: #0f3b83;
             border-color: #0f3b83;
-        }.btn-warning-ben:hover {
+        }.btn-warning:hover {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             background-color: #0c2c66;
             border-color: #0c2c66;
-        }.btn-success-ben {
+        }.btn-success {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 15px;
             font-weight: 600;
             background-color: #28a745;
             border-color: #28a745;
-        }.btn-success-ben:hover {
+        }.btn-success:hover {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             background-color: #1e7e34;
@@ -120,6 +120,18 @@
     <div class="tab-content" id="content">
         <div class="tab-pane fade show active" id="empleados" role="tabpanel" aria-labelledby="empleados-tab">
             <div class="mt-4 mx-auto">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Toggle para filtrar empleados -->
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="filter-toggle" onclick="filtrarEmpleados()">
+                        <label class="form-check-label" for="filter-toggle"> Mostrar solo empleados activos</label>
+                    </div>
+
+                    <!-- Botón para añadir empleado -->
+                    <button type="button" class="btn btn-primary mb-3" id="add-employee-button" onclick="window.location.href='https://dilodev.co/formulario-registrar-empleado/'">Añadir Empleado</button>
+                </div>
+
                 <table id="table-empleados" class="table table-striped ">
                     <thead>
                         <tr>
@@ -173,12 +185,22 @@
 
 $(document).ready(function() {
     var data = null;
+    var filter = $('#filter-toggle').prop('checked');
     $.ajax({
         url: 'http://localhost:5000/api/empleado/all',
         type: 'GET',
         dataType: 'json',
         success: function(d) {
             data = d;
+
+            // Filtrar empleados
+            if (filter) {
+                // Falta
+            } else {
+                // Falta
+            }
+
+
             for (var i = 0; i < data.length; i++) {
                 var row = '<tr>';
                 row += '<td>' + data[i].cedula + '</td>';
@@ -188,8 +210,8 @@ $(document).ready(function() {
                 row += '<td>' + data[i].cargo + '</td>';
                 row += '<td>' + data[i].departamento + '</td>';
                 // Botones
-                row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning-ben" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
-                row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger-ben" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
+                row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
+                row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
                 row += '</tr>';
                 $('#body-empleados').append(row);
             }

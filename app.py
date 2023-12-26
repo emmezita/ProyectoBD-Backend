@@ -248,11 +248,11 @@ def registrar_empleado():
 def get_all_empleados():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('''SELECT persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
-                contrato_fecha_ingreso as fecha_ingreso, cargo_nombre as cargo, departamento_nombre as departamento
+                contrato_fecha_ingreso as fecha_ingreso, contrato_fecha_salida as fecha_salida, cargo_nombre as cargo, departamento_nombre as departamento
                 FROM persona_natural pn, empleado e, contrato_de_empleo ce, contrato_cargo cc, cargo c, contrato_departamento cd, departamento d
                 where pn.persona_nat_codigo = e.empleado_codigo and e.empleado_codigo = ce.fk_empleado
                 and ce.contrato_codigo = cc.fk_contrato_empleo and cc.fk_cargo = c.cargo_codigo and ce.contrato_codigo = cd.fk_contrato_empleo
-                and cd.fk_departamento = d.departamento_codigo and ce.contrato_fecha_salida is null
+                and cd.fk_departamento = d.departamento_codigo 
                 ''')
     rows = cur.fetchall()
     cur.close()
