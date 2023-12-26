@@ -207,7 +207,7 @@ function cargarEmpleados() {
 
                     // Filtrar empleados
                     if (filter) {
-                        if (data[i].fecha_salida){
+                        if (data[i].fecha_salida == null){
                             var row = '<tr>';
                             row += '<td>' + data[i].cedula + '</td>';
                             row += '<td>' + data[i].nombre + '</td>';
@@ -217,12 +217,12 @@ function cargarEmpleados() {
                             row += '<td>' + data[i].departamento + '</td>';
                             // Botones
                             row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
-                            row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
+                            row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Desactivar</button></td>';
                             row += '</tr>';
                             $('#body-empleados').append(row);
                         }
                     } else {
-                        if(data[i].fecha_salida = null){
+                        if(data[i].fecha_salida){
                             var row = '<tr>';
                             row += '<td>' + data[i].cedula + '</td>';
                             row += '<td>' + data[i].nombre + '</td>';
