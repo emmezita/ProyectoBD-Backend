@@ -15,22 +15,21 @@ function llenarBeneficios(beneficios) {
     });
 }
 
-function llenarEMP(codigo) { // codigo de estado
+function llenarEMP(estado, municipio, parroquia) { 
     // llenar los cb de estado, municipio y parroquia
-    var estado = EMP.estados[codigo-1];
-    var municipio = EMP.municipios[estado.id][0];
-    var parroquia = EMP.parroquias[municipio.id][0];
-    $("#form-field-estado").val(estado.id);
+    $("#form-field-estado").val(estado);
     $("#form-field-municipio").empty();
     $("#form-field-parroquia").empty();
-    $.each(EMP.municipios[estado.id], function(i, municipio) {
+
+    $.each(EMP.municipios[estado], function(i, municipio) {
         $("#form-field-municipio").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
     });
-    $("#form-field-municipio").val(municipio.id);
-    $.each(EMP.parroquias[municipio.id], function(i, parroquia) {
+    $("#form-field-municipio").val(municipio);
+
+    $.each(EMP.parroquias[municipio], function(i, parroquia) {
         $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
     });
-    $("#form-field-parroquia").val(parroquia.id);    
+    $("#form-field-parroquia").val(parroquia);    
 }
 
 $(document).ready(function() {
@@ -107,8 +106,7 @@ $(document).ready(function() {
             
             $(ff+"sueldo").val(parseFloat(data.cargo.cont_carg_sueldo_mensual))
 
-            
-            llenarEMP(data.lugar.estado); //id de estado
+            llenarEMP(data.lugar.estado, data.lugar.municipio, data.lugar.parroquia); 
             llenarHorarios(data.horarios);
             llenarBeneficios(data.beneficios);
         },
