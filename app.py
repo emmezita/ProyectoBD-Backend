@@ -1,6 +1,5 @@
 import datetime
-import http
-import json
+from re import L
 import traceback
 from flask import Flask, Response, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
@@ -262,17 +261,100 @@ def get_all_empleados():
 @app.route("/api/empleado/<int:id>", methods=["GET"])
 def get_empleado(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
-                contrato_fecha_ingreso as fecha_ingreso, cargo_nombre as cargo, departamento_nombre as departamento
-                FROM persona_natural pn, empleado e, contrato_de_empleo ce, contrato_cargo cc, cargo c, contrato_departamento cd, departamento d
-                where pn.persona_nat_codigo = e.empleado_codigo and e.empleado_codigo = ce.fk_empleado
-                and ce.contrato_codigo = cc.fk_contrato_empleo and cc.fk_cargo = c.cargo_codigo and ce.contrato_codigo = cd.fk_contrato_empleo
-                and cd.fk_departamento = d.departamento_codigo and ce.contrato_fecha_salida is null and persona_nat_codigo = %s
-                ''', (id,))
-    rows = cur.fetchall()
+
+    # esto deberia ser un solo query, pero es mas facil hacerlo asi
+    
+    sql_persona = """
+        SELECT * FROM Persona_Natural pn WHERE persona_nat_codigo = %s 
+    """
+
+    sql_lugar = """
+        SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
+        FROM lugar AS p
+        JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
+        JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
+        WHERE p.lugar_codigo = %s
+    """
+
+    sql_correo = """ 
+        SELECT * FROM Correo WHERE fk_persona_natural = %s
+    """
+    sql_telefono = """ 
+        SELECT * FROM Telefono WHERE fk_persona_natural = %s
+    """
+    sql_departamento = """ 
+        SELECT d.departamento_nombre
+        FROM departamento d
+        JOIN Contrato_Departamento cd ON d.departamento_codigo = cd.fk_departamento 
+        JOIN contrato_de_empleo ce ON cd.fk_contrato_empleo = ce.contrato_codigo 
+        WHERE ce.fk_empleado = %s
+    """
+    sql_cargo = """
+        SELECT c.cargo_nombre, cc.cont_carg_sueldo_mensual
+        FROM cargo c
+        JOIN Contrato_Cargo cc ON c.cargo_codigo = cc.fk_cargo
+        JOIN contrato_de_empleo ce ON cc.fk_contrato_empleo = ce.contrato_codigo
+        WHERE ce.fk_empleado = %s
+        """
+    
+    sql_beneficios = """
+        SELECT b.beneficio_codigo, b.beneficio_nombre, cb.cont_bene_monto 
+        FROM beneficio b
+        JOIN Contrato_Beneficio cb ON b.beneficio_codigo = cb.fk_beneficio
+        JOIN contrato_de_empleo ce ON cb.fk_contrato_empleo = ce.contrato_codigo
+        WHERE ce.fk_empleado = %s
+    """
+
+    sql_horarios = """
+        SELECT h.*
+        FROM horario h
+        JOIN Contrato_Horario ch ON h.horario_codigo = ch.fk_horario
+        JOIN contrato_de_empleo ce ON ch.fk_contrato_empleo = ce.contrato_codigo
+        WHERE ce.fk_empleado = %s
+    """
+    
+    cur.execute(sql_persona, (id,))
+    persona = cur.fetchone()
+    
+    if persona is None:
+        return Response(status=404, response="Empleado no encontrado")
+    
+    cur.execute(sql_lugar, (persona['fk_lugar'],))
+    lugar = cur.fetchone()
+    cur.execute(sql_correo, (id,))
+    correos = cur.fetchall()
+    cur.execute(sql_telefono, (id,))
+    telefonos = cur.fetchall()
+    cur.execute(sql_departamento, (id,))
+    departamento = cur.fetchone()
+    cur.execute(sql_cargo, (id,))
+    cargo = cur.fetchone()
+    cur.execute(sql_beneficios, (id,))
+    beneficios = cur.fetchall()
+    cur.execute(sql_horarios, (id,))
+    horarios = cur.fetchall()
+    
+    for horario in horarios:
+            for key, value in horario.items():
+                if isinstance(value, datetime.time):
+                    horario[key] = value.strftime('%H:%M:%S')
+    
     cur.close()
-    pprint(rows)
-    return jsonify(rows)
+
+    datos = jsonify({
+        'persona': persona,
+        'correos': correos,
+        'telefonos': telefonos,
+        'departamento': departamento,
+        'cargo': cargo,
+        'beneficios': beneficios,
+        'horarios': horarios,
+        'lugar': lugar
+    })
+    
+    pprint(datos)
+
+    return datos
 
 @app.route("/api/empleado/<int:cedula>", methods=["DELETE"])
 def delete_empleado(cedula):
