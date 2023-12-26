@@ -12,6 +12,8 @@
 
 <script>
 
+var existePersona = false;
+
 function llenarEMP(estado, municipio, parroquia) { 
     // llenar los cb de estado, municipio y parroquia
     $("#form-field-estado").val(estado);
@@ -46,6 +48,7 @@ document.getElementById('buscar').addEventListener('click', function() {
                     alert('No se encontró a la persona');
                     return;
                 } else {
+                    existePersona = true;
                     ff = '#form-field-';
                     $(ff+"pnombre").val(data.persona.persona_nat_p_nombre).prop('disabled', true);
                     $(ff+"snombre").val(data.persona.persona_nat_s_nombre).prop('disabled', true);
@@ -81,6 +84,7 @@ document.getElementById('buscar').addEventListener('click', function() {
 
 document.getElementById('reset').addEventListener('click', function() {
     // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón de reset
+    existePersona = false;
     var ff = '#form-field-';
     $(ff+"pnombre").val('').prop('disabled', false);
     $(ff+"snombre").val('').prop('disabled', false);

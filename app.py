@@ -171,6 +171,7 @@ def registrar_empleado():
     print("datos recibidos:")
     empleado = request.get_json() 
     pprint(empleado)
+    existePersona = empleado.get("persona")
     p_nombre = empleado.get("pnombre")
     s_nombre = empleado.get("snombre") if empleado.get("snombre") else None
     p_apellido = empleado.get("papellido")
@@ -248,15 +249,20 @@ def registrar_empleado():
         VALUES (%s, %s, %s, %s, %s);
     """
     try:
-        cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia))
-        result = cur.fetchone()
-        empleado_codigo = result[0] if result is not None else None
-        cur.execute(sql_correo, (correo, empleado_codigo, None))
-        if correo_alt:
-            cur.execute(sql_correo, (correo_alt, empleado_codigo, None))
-        cur.execute(sql_telefono, (cod_area, telefono, empleado_codigo, None))
-        if cod_area_alt and telefono_alt:
-            cur.execute(sql_telefono, (cod_area_alt, telefono_alt, empleado_codigo, None))
+        if (not existePersona):
+            cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia))
+            result = cur.fetchone()
+            empleado_codigo = result[0] if result is not None else None
+            cur.execute(sql_correo, (correo, empleado_codigo, None))
+            if correo_alt:
+                cur.execute(sql_correo, (correo_alt, empleado_codigo, None))
+            cur.execute(sql_telefono, (cod_area, telefono, empleado_codigo, None))
+            if cod_area_alt and telefono_alt:
+                cur.execute(sql_telefono, (cod_area_alt, telefono_alt, empleado_codigo, None))
+        else:
+            cur.execute("SELECT persona_nat_codigo FROM persona_natural WHERE persona_nat_cedula = %s", (cedula,))
+            empleado_codigo = cur.fetchone()
+
         cur.execute(sql_empleado, (empleado_codigo,))
         cur.execute(sql_contrato, (datetime.datetime.now(), None, empleado_codigo))
         result = cur.fetchone()
