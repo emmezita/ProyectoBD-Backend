@@ -21,8 +21,9 @@ db_port = "5432"
 # Conexion a la base de datos
 conn = psycopg2.connect(database=db_name, user=db_user, password=db_pass, host=db_host, port=db_port)
 
-
-# RUTAS DEL FORMULARIO PARA REGISTRAR UN EMPLEADO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA REALIZAR EL CRUD DE EMPLEADO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # Ruta para obtener todos los beneficios de la base de datos
 @app.route("/api/empleado/beneficios/all", methods=["GET"])
@@ -113,7 +114,8 @@ def formatear_ubicaciones(ubicaciones):
         'municipios': municipios,
         'parroquias': parroquias
     }
-    
+
+# Ruta para buscar los datos de una persona que no se ha registrado como empleado
 @app.route("/api/personanatural/empleado/<cedula>", methods=["GET"])
 def get_persona_natural(cedula):
     cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -286,6 +288,7 @@ def registrar_empleado():
     
     return Response(status=200, response="Empleado registrado exitosamente")
 
+# Ruta para obtener todos los empleados de la base de datos
 @app.route("/api/empleado/all", methods=["GET"])
 def get_all_empleados():
     cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -301,6 +304,7 @@ def get_all_empleados():
     pprint(rows)
     return jsonify(rows)
 
+# Ruta para obtener los datos de un empleado de la base de datos
 @app.route("/api/empleado/<int:id>", methods=["GET"])
 def get_empleado(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -399,6 +403,7 @@ def get_empleado(id):
 
     return datos
 
+# Ruta para editar los datos de un empleado de la base de datos
 @app.route("/api/empleado/editar/<int:id>", methods=["PUT"])
 def editar_empleado(id):
     
@@ -540,6 +545,7 @@ def editar_empleado(id):
     
     return Response(status=200, response="Empleado editado exitosamente")
 
+# Ruta para eliminar un empleado de la base de datos
 @app.route("/api/empleado/delete/<int:id>", methods=["DELETE"])
 def delete_empleado(id):
     cur = conn.cursor()
@@ -551,6 +557,7 @@ def delete_empleado(id):
 
     return "Empleado Eliminado"
 
+# Ruta para desactivar un empleado de la base de datos
 @app.route("/api/empleado/deactivate/<int:id>", methods=["PUT"])
 def deactivate_empleado(id):
     cur = conn.cursor()
@@ -561,3 +568,8 @@ def deactivate_empleado(id):
     cur.close()
 
     return "Empleado Desactivado"
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA REALIZAR EL CRUD DE CLIENTE
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
