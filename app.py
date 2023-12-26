@@ -25,7 +25,7 @@ conn = psycopg2.connect(database=db_name, user=db_user, password=db_pass, host=d
 # RUTAS DEL FORMULARIO PARA REGISTRAR UN EMPLEADO
 
 # Ruta para obtener todos los beneficios de la base de datos
-@app.route("/api/usuario/beneficios/all", methods=["GET"])
+@app.route("/api/empleado/beneficios/all", methods=["GET"])
 def get_all_beneficios():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT * FROM beneficio")
@@ -35,7 +35,7 @@ def get_all_beneficios():
     return jsonify(rows)
 
 # Ruta para obtener todos los cargos de la base de datos
-@app.route("/api/usuario/cargos/all", methods=["GET"])
+@app.route("/api/empleado/cargos/all", methods=["GET"])
 def get_all_cargos():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT * FROM Cargo")
@@ -45,7 +45,7 @@ def get_all_cargos():
     return jsonify(rows)
 
 # Ruta para obtener todos los departamentos de la base de datos
-@app.route("/api/usuario/departamentos/all", methods=["GET"])
+@app.route("/api/empleado/departamentos/all", methods=["GET"])
 def get_all_departamentos():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT * FROM Departamento")
@@ -55,7 +55,7 @@ def get_all_departamentos():
     return jsonify(rows)
 
 # Ruta para obtener todos los horarios de la base de datos
-@app.route("/api/usuario/horarios/all", methods=["GET"])
+@app.route("/api/empleado/horarios/all", methods=["GET"])
 def get_all_horarios():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT * FROM Horario")
@@ -113,7 +113,6 @@ def formatear_ubicaciones(ubicaciones):
         'municipios': municipios,
         'parroquias': parroquias
     }
-    
 
 # Ruta para registrar el empleado en la base de datos
 @app.route("/api/empleado/registrar", methods=["POST"])

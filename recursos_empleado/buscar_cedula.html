@@ -1,0 +1,29 @@
+<div style="display: flex; justify-content: center; align-items: center;">
+    <input type="text" id="cedula" placeholder="Ingrese la cédula" style="font-size: 15px;" />
+    <button type="button" id="buscar">Buscar</button>
+</div>
+
+<style>
+    #cedula::placeholder { /* Selects the placeholder text of the input with id "cedula" */
+        font-size: 15px; /* Changes the font size */
+    }
+</style>
+
+<script>
+document.getElementById('buscar').addEventListener('click', function() {
+    // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón
+    var cedula = document.getElementById('cedula').value;
+    console.log('Cédula: ' + cedula);
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/personanat/' + cedula,
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+
+        });
+    });   
+});
+</script>
