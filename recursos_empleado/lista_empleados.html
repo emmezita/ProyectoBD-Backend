@@ -218,12 +218,12 @@ $(document).ready(function() {
                 row += '<td>' + data[i].nombre + '</td>';
                 row += '<td>' + data[i].cargo + '</td>';
                 row += '<td>' + data[i].departamento + '</td>';
-                var fechaIngreso = new Date(data[i].fecha_ingreso);
+                var fechaIngreso = new Date(data[i].fecha_ingreso.toISOString().split('T')[0]);
                 row += '<td>' + fechaIngreso.toLocaleDateString('es-VE') + '</td>';
-                var fechaSalida = new Date(data[i].fecha_salida);
                 if (data[i].fecha_salida == null) {
                     row += '<td> Activo </td>';
                 } else {
+                    var fechaSalida = new Date(data[i].fecha_salida.toISOString().split('T')[0]);
                     row += '<td>' + fechaSalida.toLocaleDateString('es-VE') + '</td>';
                 }
                 // Botones

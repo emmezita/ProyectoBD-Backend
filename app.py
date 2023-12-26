@@ -113,6 +113,32 @@ def formatear_ubicaciones(ubicaciones):
         'municipios': municipios,
         'parroquias': parroquias
     }
+    
+@app.route("/api/personanatural/empleado/<cedula>", methods=["GET"])
+def get_persona_natural(cedula):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM persona_natural WHERE persona_nat_cedula = %s AND persona_nat_codigo NOT IN (SELECT empleado_codigo FROM empleado)", (cedula,))
+    persona = cur.fetchone()
+    if persona is None:
+        return Response(status=404, response="Empleado ya existe")
+    sql_correo = """ 
+        SELECT * FROM Correo WHERE fk_persona_natural = %s
+    """
+    cur.execute(sql_correo, (persona['persona_nat_codigo'],))
+    correos = cur.fetchall()
+    sql_telefono = """ 
+        SELECT * FROM Telefono WHERE fk_persona_natural = %s
+    """
+    cur.execute(sql_telefono, (persona['persona_nat_codigo'],))
+    telefonos = cur.fetchall()
+    cur.close()
+    datos = {
+        'persona': persona,
+        'correos': correos,
+        'telefonos': telefonos
+    }
+    pprint(datos)
+    return jsonify(datos)
 
 # Ruta para registrar el empleado en la base de datos
 @app.route("/api/empleado/registrar", methods=["POST"])
@@ -495,7 +521,7 @@ def editar_empleado(id):
 
 @app.route("/api/empleado/delete/<int:id>", methods=["DELETE"])
 def delete_empleado(id):
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
 
     cur.execute("DELETE FROM empleado WHERE empleado_codigo = %s", (id,))
 
@@ -506,7 +532,7 @@ def delete_empleado(id):
 
 @app.route("/api/empleado/deactivate/<int:id>", methods=["PUT"])
 def deactivate_empleado(id):
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
 
     cur.execute("UPDATE contrato_de_empleo SET contrato_fecha_salida = %s WHERE fk_empleado = %s", (datetime.datetime.now(), id))
 
