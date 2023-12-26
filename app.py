@@ -1,5 +1,4 @@
 import datetime
-from re import L
 import traceback
 from flask import Flask, Response, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
