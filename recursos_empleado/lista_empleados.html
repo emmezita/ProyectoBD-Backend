@@ -124,7 +124,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <!-- Toggle para filtrar empleados -->
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="filter-toggle" onclick="cargarEmpleados()">
+                        <input class="form-check-input" type="checkbox" id="filter-toggle" onclick="filtrarActivos()">
                         <label class="form-check-label" for="filter-toggle"> Mostrar solo empleados activos</label>
                     </div>
 
@@ -137,10 +137,11 @@
                         <tr>
                             <th>Cedula</th>
                             <th>Nombre</th>
-                            <th>Fecha Ingreso</th>
                             <th>Cargo</th>
                             <th>Departamento</th>
-                            <th></th>
+                            <th>Fecha Ingreso</th>
+                            <th>Fecha de Salida</th>
+                            <th></th> <!-- no ordenar estas columnas -->
                             <th></th>
                         </tr>
                     </thead>
@@ -182,93 +183,84 @@
     </div>
 
 <script>
+$(document).ready(function() {
+    var data = null;
+    $.ajax({
+        url: 'http://localhost:5000/api/empleado/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
 
-function cargarEmpleados() {
-    $(document).ready(function() {
-        var data = null;
-        var filter = $('#filter-toggle').prop('checked');
-        $.ajax({
-            url: 'http://localhost:5000/api/empleado/all',
-            type: 'GET',
-            dataType: 'json',
-            success: function(d) {
-                data = d;
-
-                // Verificar si la tabla ya ha sido inicializada
-                if ($.fn.DataTable.isDataTable('#table-empleados')) {
-                    // Si la tabla ya ha sido inicializada, destruir la instancia anterior
-                    $('#table-empleados').DataTable().destroy();
+            for (var i = 0; i < data.length; i++) {
+                // Filtrar empleados
+                var row = '<tr>';
+                row += '<td>' + data[i].cedula + '</td>';
+                row += '<td>' + data[i].nombre + '</td>';
+                row += '<td>' + data[i].cargo + '</td>';
+                row += '<td>' + data[i].departamento + '</td>';
+                var fechaIngreso = new Date(data[i].fecha_ingreso);
+                row += '<td>' + fechaIngreso.toLocaleDateString('es-VE') + '</td>';
+                var fechaSalida = new Date(data[i].fecha_salida);
+                if (data[i].fecha_salida == null) {
+                    row += '<td> Activo </td>';
+                } else {
+                    row += '<td>' + fechaSalida.toLocaleDateString('es-VE') + '</td>';
                 }
-
-                // Vaciar el cuerpo de la tabla antes de agregar las nuevas filas
-                $('#body-empleados').empty();
-
-                for (var i = 0; i < data.length; i++) {
-
-                    // Filtrar empleados
-                    if (filter) {
-                        if (data[i].fecha_salida == null){
-                            var row = '<tr>';
-                            row += '<td>' + data[i].cedula + '</td>';
-                            row += '<td>' + data[i].nombre + '</td>';
-                            var fechaIngreso = new Date(data[i].fecha_ingreso);
-                            row += '<td>' + fechaIngreso.toLocaleDateString('es-VE') + '</td>';
-                            row += '<td>' + data[i].cargo + '</td>';
-                            row += '<td>' + data[i].departamento + '</td>';
-                            // Botones
-                            row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
-                            row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Desactivar</button></td>';
-                            row += '</tr>';
-                            $('#body-empleados').append(row);
-                        }
-                    } else {
-                        if(data[i].fecha_salida){
-                            var row = '<tr>';
-                            row += '<td>' + data[i].cedula + '</td>';
-                            row += '<td>' + data[i].nombre + '</td>';
-                            var fechaIngreso = new Date(data[i].fecha_ingreso);
-                            row += '<td>' + fechaIngreso.toLocaleDateString('es-VE') + '</td>';
-                            row += '<td>' + data[i].cargo + '</td>';
-                            row += '<td>' + data[i].departamento + '</td>';
-                            // Botones
-                            row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
-                            row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
-                            row += '</tr>';
-                            $('#body-empleados').append(row);
-                        }
-                    }
+                // Botones
+                if (data[i].fecha_salida == null) {
+                    row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
+                    row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Desactivar</button></td>';
+                } else {
+                    row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].cedula +') class="btn btn-warning inactive-edit" data-employee-id="' + data[i].cedula + '">Editar</button></td>';
+                    row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
                 }
-
-                $('#table-empleados').DataTable({
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ registros por página",
-                        "zeroRecords": "No se encontraron resultados",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "No hay registros disponibles",
-                        "search": "Buscar:",
-                        "paginate": {
-                            "first": "Primero",
-                            "last": "Último",
-                            "next": "Siguiente",
-                            "previous": "Anterior"
-                        },
-                    },
-                    "lengthMenu": [5, 10, 20, 50, 100],
-                    "pagingType": "full_numbers",
-                    "order": [[ 0, "asc" ]],
-                    "columnDefs": [
-                        { "orderable": false, "targets": 3 }
-                    ],
-                    "stateSave": true
-                });
-            },
-            error: function() {
-                alert('Hubo un error obteniendo los empleados');
+                row += '</tr>';
+                $('#body-empleados').append(row);
             }
-        });
-    });       
-}
 
+            $('.inactive-edit').prop('disabled', true);
+
+            $('#table-empleados').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                },
+                "lengthMenu": [5, 10, 20, 50, 100],
+                "pagingType": "full_numbers",
+                "order": [[ 0, "asc" ]],
+                "columnDefs": [
+                    { "orderable": false, "targets": 3 }
+                ],
+                "stateSave": true
+            });
+        },
+        error: function() {
+            alert('Hubo un error obteniendo los empleados');
+        }
+    });
+});       
+
+function filtrarActivos() {
+    var table = $('#table-empleados').DataTable();
+
+    if ($('#filter-toggle').is(':checked')) {
+        // esconde solo los empleados Activos
+        table.column(5).search('Activo').draw();
+    } else {
+        // muestra todos los empleados
+        table.column(5).search('').draw();
+    }
+}
 
 $('#deleteEmployeeModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
