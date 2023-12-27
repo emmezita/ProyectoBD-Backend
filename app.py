@@ -579,3 +579,26 @@ def deactivate_empleado(id):
 # RUTAS PARA REALIZAR EL CRUD DE CLIENTE
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# Ruta para obtener el catalogo de bancos de la base de datos
+@app.route("/api/bancos/all", methods=["GET"])
+def get_all_bancos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM Banco")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener a un cliente de la base de datos
+@app.route("/api/cliente/<int:id>", methods=["GET"])
+def get_cliente(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # cur.execute("SELECT * FROM cliente WHERE cliente_codigo = %s", (id,))
+    # Falta la logica
+    # debe ser al estilo @app.route("/api/empleado/<int:id>", methods=["GET"]) 
+
+    rows = cur.fetchone()
+    cur.close()
+
+    return jsonify(rows)
