@@ -27,7 +27,9 @@ CREATE TABLE Persona_Juridica (
   -- Dirección fiscal de la persona jurídica.
   persona_jur_direccion_fisica varchar(100) NOT NULL,
   -- Dirección física de la persona jurídica.
-  persona_jur_denom_social varchar(15) NOT NULL,
+  persona_jur_denom_comercial varchar(30) NOT NULL,
+  -- Denominación comercial de la persona jurídica. 
+  persona_jur_razon_social varchar(30) NOT NULL,
   -- Denominación social de la persona jurídica. 
   persona_jur_pagina_web varchar(70) NOT NULL,
   -- URL de la página web de la persona jurídica. 
@@ -46,7 +48,9 @@ CREATE TABLE Persona_Juridica (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_persona_jur_rif CHECK (persona_jur_rif ~ '^[VEJPG]{1}[0-9]{9}$'),
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
-  CONSTRAINT ck_persona_jur_denom_social CHECK (persona_jur_denom_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
+  CONSTRAINT ck_persona_jur_denom_comercial CHECK (persona_jur_denom_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
+  -- Constrain. No debe contener caracteres especiales
+  CONSTRAINT ck_persona_jur_razon_social CHECK (persona_jur_razon_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales
   CONSTRAINT ck_persona_jur_pagina_web CHECK (persona_jur_pagina_web ~ '^[https://]{1}[w]{1}[w]{1}[.]{1}[a-z0-9-]+[.]{1}[a-z]{2,6}$'),
   -- Constrain.. Debe comenzar con "https://" y tener un dominio válido
@@ -1366,7 +1370,7 @@ CREATE TABLE Pedido (
   -- Relación con la entidad Cliente_Natural
   fk_cliente_juridico integer,
   -- Relación con la entidad Cliente_Juridico
-  fk_contrato_empleo integer, -- Se quito el NOT NULL para que se pueda eliminar al empleado correctamente
+  fk_contrato_empleo integer NOT NULL,
   -- Relación con la entidad Contrato_Empleo
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar
@@ -1381,7 +1385,7 @@ CREATE TABLE Pedido (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
   CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT fk_pedido_lugar_enviadoa FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
@@ -1438,12 +1442,12 @@ CREATE TABLE Orden_De_Reposicion (
   -- Subtotal de la orden de reposición. Debe ser mayor que 0
   orden_total decimal(10,2),
   -- Total de la orden de reposición. Debe ser mayor que 0
-  fk_contrato_empleo integer, -- Se quito el NOT NULL para que se pueda eliminar al empleado correctamente
+  fk_contrato_empleo integer NOT NULL,
   -- Relación con la entidad Contrato_Empleo
 
   CONSTRAINT pk_orden_codigo PRIMARY KEY (orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_orden_subtotal CHECK (orden_subtotal IS NULL OR orden_subtotal > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1499,7 +1503,7 @@ CREATE TABLE Factura (
   -- Relación con la entidad Cliente_Natural
   fk_cliente_juridico integer,
   -- Relación con la entidad Cliente_Juridico
-  fk_contrato_empleo integer, -- Se quito el NOT NULL para que se pueda eliminar al empleado correctamente
+  fk_contrato_empleo integer NOT NULL,
   -- Relación con la entidad Contrato_Empleo
 
   CONSTRAINT pk_factura_codigo PRIMARY KEY (factura_codigo),
@@ -1518,7 +1522,7 @@ CREATE TABLE Factura (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
   CONSTRAINT fk_factura_cliente_juridico_adquiere FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_factura_subtotal CHECK (factura_subtotal > 0),
   -- Constrain. Debe ser mayor que 0

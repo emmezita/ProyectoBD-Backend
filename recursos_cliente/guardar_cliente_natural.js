@@ -2,18 +2,6 @@ var reset = false;
 
 function save() {
     var ff = "#form-field-"
-
-    var horarios = $('#body-horarios tr').map(function () {
-        return $(this).find('td:first').attr('id');
-    }).get(); //obtenemos tdos los ids de los horarios
-
-    var beneficios = $('#body-beneficios tr').map(function () {
-        return {
-            id: $(this).find('td:first').attr('id'),
-            monto: $(this).find('td:nth-child(2)').text(),
-        }
-    }).get(); //obtenemos tdos los ids de los beneficios
-
     var fechanac = $(ff+"fechanac").val() // 2023-12-07
     // validar que sea mayor de edad
     var hoy = new Date();
@@ -24,7 +12,7 @@ function save() {
         edad--;
     }
     if (edad < 18) {
-        alert("El empleado debe ser mayor de edad");
+        alert("El cliente debe ser mayor de edad");
         return;
     }
 
@@ -42,23 +30,19 @@ function save() {
         telefonoalt: $(ff+"codareaalt").val() + $(ff+"telefonoalt").val(),
         fechanac: fechanac,
         direccion: $(ff+"direccion").val(),
-        cargo: $(ff + "cbcargo option:selected").attr('id'),
-        departamento: $(ff + "cbdepa option:selected").attr('id'),
-        sueldo: $(ff+"sueldo").val(),
-        horarios: horarios,
-        beneficios: beneficios,
+        tarjetas: getTDCs(),
     };
     console.log(data);
 
     $.ajax({
         type: "POST",
-        url: "http://localhost:5000/api/empleado/registrar",
+        url: "http://localhost:5000/api/cliente/natural/registrar",
         headers: {
             'Content-Type': 'application/json'
         },
         data: JSON.stringify(data),
         success: function (data) {
-            alert("Empleado registrado exitosamente");
+            alert("Cliente natural registrado exitosamente");
             reset = true;
             //hay que resetear tablas
             $('.elementor-form').reset();
@@ -69,18 +53,3 @@ function save() {
         }
     });
 }
-
-$(document).ready(function() {
-    $('#crearEmpleado').submit(function(event) {
-        event.preventDefault(); // Prevent form submission
-        save(); // Call the save function
-    });
-});
-
-$(document).on('reset', (e) => { 
-    if (reset) {
-        reset = false;
-        return;
-    }
-    e.preventDefault() 
-})

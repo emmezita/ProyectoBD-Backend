@@ -231,7 +231,7 @@ $(document).ready(function() {
                     row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].codigo +') class="btn btn-warning">Editar</button></td>';
                     row += '<td> <button type="button" id="deactivate-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deactivateEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].codigo + '">Desactivar</button></td>';
                 } else {
-                    row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].codigo +') class="btn btn-warning inactive-edit">Editar</button></td>';
+                    row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].codigo +') class="btn btn-warning inactive-edit">Activar</button></td>';
                     row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].codigo + '">Eliminar</button></td>';
                 }
                 row += '</tr>';
