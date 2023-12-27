@@ -235,6 +235,7 @@
             var bancoId = $(this).find("td").eq(0).attr("id");
             var numero = $(this).find("td").eq(1).html();
             var vencimiento = $(this).find("td").eq(2).html();
+            vencimiento = "01" + "/" + vencimiento;
             var cvv = $(this).find("td").eq(3).html();
             TDCs.push({
                 banco: bancoId,
