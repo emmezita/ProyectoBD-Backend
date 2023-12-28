@@ -309,7 +309,7 @@ CREATE TABLE Banco (
 
   CONSTRAINT pk_banco_codigo PRIMARY KEY (banco_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_banco_nombre CHECK (banco_nombre ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_banco_nombre CHECK (banco_nombre ~ '^[a-zA-Z0-9áéíóúñ% ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 

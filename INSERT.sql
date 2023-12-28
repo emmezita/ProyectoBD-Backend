@@ -3049,7 +3049,7 @@ VALUES
 INSERT INTO Beneficio (beneficio_nombre, beneficio_descripcion, beneficio_tipo)
 VALUES
   ('Bono por hijos', 'Beneficio dado para los trabajadores que tienen hijos', 'semestral'),
-  ('Bono por antigüedad', 'Beneficio dado para los trabajadores que tienen antiguedad', 'anual'),
+  ('Bono por antiguedad', 'Beneficio dado para los trabajadores que tienen antiguedad', 'anual'),
   ('Bono por desempeño', 'Beneficio dado para los trabajadores que tienen buen desempeño', 'anual'),
   ('Bono por asistencia', 'Beneficio dado para los trabajadores que tienen buena asistencia', 'anual'),
   ('Bono por puntualidad', 'Beneficio dado para los trabajadores que tienen buena puntualidad', 'anual'),
