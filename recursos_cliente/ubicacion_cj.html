@@ -14,6 +14,9 @@
 <select id="form-field-parroquia" name="parroquia"></select>
 
 <script>
+
+var EMP = null;
+
     $(document).ready(function() {
         var data = null;
         $.ajax({
@@ -22,6 +25,7 @@
             dataType: 'json',
             success: function(d) {
                 data = d;
+                EMP = data;
                 console.log(data);
                 // Llena el campo estado con los datos del JSON
                 data.estados.forEach(estado => {
@@ -80,7 +84,7 @@
             }
         });
     });
-    </script>    
+</script>    
     
-    </body>
-    </html>
+</body>
+</html>

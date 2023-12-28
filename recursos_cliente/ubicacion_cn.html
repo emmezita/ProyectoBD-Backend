@@ -14,6 +14,25 @@
 <select id="form-field-parroquia" name="parroquia"></select>
 
 <script>
+var EMP = null;
+
+function llenarEMP(estado, municipio, parroquia) { 
+    // llenar los cb de estado, municipio y parroquia
+    $("#form-field-estado").val(estado);
+    $("#form-field-municipio").empty();
+    $("#form-field-parroquia").empty();
+
+    $.each(EMP.municipios[estado], function(i, municipio) {
+        $("#form-field-municipio").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+    });
+    $("#form-field-municipio").val(municipio);
+
+    $.each(EMP.parroquias[municipio], function(i, parroquia) {
+        $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+    });
+    $("#form-field-parroquia").val(parroquia);    
+}
+
     $(document).ready(function() {
         var data = null;
         $.ajax({
@@ -22,6 +41,7 @@
             dataType: 'json',
             success: function(d) {
                 data = d;
+                EMP = data;
                 console.log(data);
                 // Llena el campo estado con los datos del JSON
                 data.estados.forEach(estado => {
@@ -56,7 +76,7 @@
             }
         });
     });
-    </script>    
-    
-    </body>
-    </html>
+</script>
+ 
+</body>
+</html>

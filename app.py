@@ -919,9 +919,11 @@ def delete_cliente_natural(id):
 
 @app.route("/api/personajuridica/cliente/<rif>", methods=["GET"])
 def get_persona_juridica_cliente(rif):
+    print(rif)
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT * FROM persona_juridica WHERE persona_jur_rif = %s", (rif,))
     persona = cur.fetchone()
+    pprint(persona)
 
     if persona is None:
         return Response(status=409, response="La persona no existe")
@@ -956,18 +958,19 @@ def get_persona_juridica_cliente(rif):
     lugar_fisica = cur.fetchone()
     
     sql_tdc = """
-        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, banco_nombre
         FROM TDC
+        JOIN Banco ON TDC.fk_banco = Banco.banco_codigo
         WHERE fk_persona_juridica = %s
     """
     cur.execute(sql_tdc, (persona['persona_jur_codigo'],))
-    tdc = cur.fetchone()
+    tdc = cur.fetchall()
     
     sql_contacto = """
         SELECT * FROM Contacto WHERE fk_persona_juridica = %s
     """
     cur.execute(sql_contacto, (persona['persona_jur_codigo'],))
-    contactos = cur.fetchone()
+    contactos = cur.fetchall()
     
     cur.close()
     datos = {
