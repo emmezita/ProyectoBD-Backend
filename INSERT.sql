@@ -3029,23 +3029,53 @@ VALUES
 INSERT INTO Horario (horario_hora_entrada, horario_hora_salida, horario_dia)
 VALUES
   ('08:00:00', '17:00:00', 'Lunes'),
-  ('09:30:00', '18:30:00', 'Miércoles'),
-  ('07:00:00', '15:45:00', 'Viernes'),
   ('10:00:00', '19:00:00', 'Martes'),
-  ('11:30:00', '20:15:00', 'Jueves');
+  ('09:30:00', '18:30:00', 'Miércoles'),
+  ('11:30:00', '20:15:00', 'Jueves'),
+  ('07:00:00', '15:45:00', 'Viernes');
 
 INSERT INTO Cargo (cargo_nombre, cargo_descripcion)
 VALUES
   ('Gerente', 'Encargado'),
   ('Administrador', 'Administrador general del negocio'),
   ('Repartidor', 'Responsable de la entrega de productos'),
-  ('Empleado', 'Asistente'),
-  ('Seguridad', 'Asistente de administración');
+  ('Empleado', 'Empleado general del negocio'),
+  ('Seguridad', 'Encargado de la seguridad del negocio'),
+  ('Cajero', 'Encargado de la caja'),
+  ('Vendedor', 'Encargado de la venta de productos'),
+  ('Almacenista', 'Encargado del almacén de productos'),
+  ('Promotor', 'Encargado de promociones y eventos');
 
 INSERT INTO Beneficio (beneficio_nombre, beneficio_descripcion, beneficio_tipo)
 VALUES
-  ('BonoNavidad', 'Bono especial de Navidad', 'anual'),
-  ('ValeComida', 'Beneficio para alimentos', 'mensual'),
-  ('DíaLibreAdicional', 'Un día libre adicional al mes', 'mensual'),
-  ('BonoDesempeño', 'Bono por desempeño excepcional', 'semestral'),
-  ('SeguroSalud', 'Cobertura de seguro médico', 'anual');
+  ('Bono por hijos', 'Beneficio dado para los trabajadores que tienen hijos', 'semestral'),
+  ('Bono por antigüedad', 'Beneficio dado para los trabajadores que tienen antigüedad', 'anual'),
+  ('Bono por desempeño', 'Beneficio dado para los trabajadores que tienen buen desempeño', 'anual'),
+  ('Bono por asistencia', 'Beneficio dado para los trabajadores que tienen buena asistencia', 'anual'),
+  ('Bono por puntualidad', 'Beneficio dado para los trabajadores que tienen buena puntualidad', 'anual'),
+  ('Bono por vacaciones', 'Beneficio dado para los trabajadores que tienen vacaciones', 'anual'),
+  ('Bono por navidad', 'Beneficio dado para los trabajadores en navidad', 'anual'),
+  ('Seguro social', 'Cobertura de seguro médico', 'anual');
+
+INSERT INTO Banco (banco_nombre)
+VALUES
+  ('Banco Venezolano de Crédito'),
+  ('100% Banco')
+  ('Bancamiga')
+  ('Banco Activo')
+  ('Banco Bicentenario'),
+  ('Banco Caroní'),
+  ('Banco de la Fuerza Armada Nacional'),
+  ('Banco de Venezuela'),
+  ('Banco del Caribe'),
+  ('Banco del Tesoro'),
+  ('Banco Exterior'),
+  ('Banco Mercantil'),
+  ('Banco Nacional de Crédito'),
+  ('Banco Plaza'),
+  ('Banco Provincial'),
+  ('Banco Sofitasa')
+  ('Bancrecer'),
+  ('Banesco'),
+  ('Banplus'),
+  ('Banco Fondo Común');

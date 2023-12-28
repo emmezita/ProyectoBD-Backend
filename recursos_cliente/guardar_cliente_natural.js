@@ -29,8 +29,9 @@ function save() {
         telefono: $(ff+"codarea").val() + $(ff+"telefono").val(), 
         telefonoalt: $(ff+"codareaalt").val() + $(ff+"telefonoalt").val(),
         fechanac: fechanac,
+        parroquia: $(ff+"parroquia option:selected").attr('value'),
         direccion: $(ff+"direccion").val(),
-        tarjetas: getTDCs(),
+        tdc: getTDCs(),
     };
     console.log(data);
 

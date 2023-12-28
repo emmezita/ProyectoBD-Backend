@@ -45,6 +45,7 @@ function save() {
         cargo: $(ff + "cbcargo option:selected").attr('id'),
         departamento: $(ff + "cbdepa option:selected").attr('id'),
         sueldo: $(ff+"sueldo").val(),
+        parroquia: $(ff+"parroquia option:selected").attr('value'),
         horarios: horarios,
         beneficios: beneficios,
     };

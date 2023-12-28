@@ -593,7 +593,7 @@ def deactivate_empleado(id):
 # RUTAS PARA REALIZAR EL CRUD DE CLIENTE NATURAL
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-# Ruta para buscar los datos de una persona que no se ha registrado como empleado
+# Ruta para buscar los datos de una persona que no se ha registrado como cliente
 @app.route("/api/personanatural/cliente/<cedula>", methods=["GET"])
 def get_persona_natural_cliente(cedula):
     cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -629,13 +629,22 @@ def get_persona_natural_cliente(cedula):
     """
     cur.execute(sql_lugar, (persona['fk_lugar'],))
     lugar = cur.fetchone()
+    
+    sql_tdc = """
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        FROM TDC
+        WHERE fk_persona_natural = %s
+    """
+    cur.execute(sql_tdc, (persona['persona_nat_codigo'],))
+    tdc = cur.fetchone()
 
     cur.close()
     datos = {
         'persona': persona,
         'correos': correos,
         'telefonos': telefonos,
-        'lugar': lugar
+        'lugar': lugar,
+        'tdc': tdc
     }
     pprint(datos)
     return jsonify(datos)
@@ -664,6 +673,7 @@ def registrar_cliente_natural():
     direccion = cliente.get("direccion")
     parroquia = cliente.get("parroquia")
     parroquia = int(parroquia)
+    tdc = cliente.get("tdc")
     
      # # Insertar empleado
     cur = conn.cursor()
@@ -689,6 +699,11 @@ def registrar_cliente_natural():
 	        cliente_nat_codigo, cliente_nat_puntos_acumulados)
 	    VALUES (%s, %s);
     """
+    sql_tdc = """
+        INSERT INTO TDC(
+            tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural, fk_persona_juridica)
+        VALUES (%s, %s, %s, %s, %s, %s);
+    """
     try:
         cur.execute("SELECT * FROM persona_natural WHERE persona_nat_cedula = %s", (cedula,))
         existePersona = cur.fetchone()
@@ -705,6 +720,12 @@ def registrar_cliente_natural():
         else:
             cur.execute("SELECT persona_nat_codigo FROM persona_natural WHERE persona_nat_cedula = %s", (cedula,))
             cliente_codigo = cur.fetchone()
+        
+        cur.execute("SELECT * FROM TDC WHERE fk_persona_natural = %s", (cliente_codigo,))
+        existeTDC = cur.fetchone()
+        if (not existeTDC):
+            for tarjeta in tdc:
+                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], cliente_codigo, None))
         
         cur.execute(sql_cliente, (cliente_codigo, 0))
         
@@ -725,9 +746,10 @@ def registrar_cliente_natural():
 def get_all_clientes_naturales():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('''SELECT persona_nat_codigo as codigo, persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
-                cliente_nat_puntos_acumulados as puntos_acumulados
-                FROM persona_natural pn, cliente_natural cn
+                cliente_nat_puntos_acumulados as puntos_acumulados, afiliacion_numero as afiliacion
+                FROM persona_natural pn, cliente_natural cn, ficha_afiliacion fa
                 where pn.persona_nat_codigo = cn.cliente_nat_codigo
+                and fa.fk_cliente_natural = cn.cliente_nat_codigo
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -761,6 +783,11 @@ def get_cliente_natural(id):
     sql_telefono = """ 
         SELECT * FROM Telefono WHERE fk_persona_natural = %s
     """
+    sql_tdc = """
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        FROM TDC
+        WHERE fk_persona_natural = %s
+    """
     
     cur.execute(sql_persona, (id,))
     persona = cur.fetchone()
@@ -775,6 +802,8 @@ def get_cliente_natural(id):
     correos = cur.fetchall()
     cur.execute(sql_telefono, (id,))
     telefonos = cur.fetchall()
+    cur.execute(sql_tdc, (id,))
+    tdc = cur.fetchone()
     
     cur.close()
 
@@ -783,7 +812,8 @@ def get_cliente_natural(id):
         'cliente': cliente,
         'correos': correos,
         'telefonos': telefonos,
-        'lugar': lugar
+        'lugar': lugar,
+        'tdc': tdc
     })
     
     pprint(datos)
@@ -814,6 +844,7 @@ def editar_cliente_natural(id):
     direccion = cliente.get("direccion")
     parroquia = cliente.get("parroquia")
     parroquia = int(parroquia)
+    tdc = cliente.get("tdc")
     
     sql_persona = """
         UPDATE Persona_Natural 
@@ -824,6 +855,7 @@ def editar_cliente_natural(id):
     sql_eliminar = """
         DELETE FROM Correo WHERE fk_persona_natural = %s;
         DELETE FROM Telefono WHERE fk_persona_natural = %s;
+        DELETE FROM TDC WHERE fk_persona_natural = %s;
     """
     sql_correo = """
         INSERT INTO Correo (
@@ -835,15 +867,22 @@ def editar_cliente_natural(id):
             telefono_codigo_area, telefono_numero, fk_persona_natural, fk_persona_juridica
         ) VALUES (%s, %s, %s, %s);
     """
+    sql_tdc = """
+        INSERT INTO TDC(
+            tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural, fk_persona_juridica)
+        VALUES (%s, %s, %s, %s, %s, %s);
+    """
     try:
         cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia, id))
-        cur.execute(sql_eliminar, (id, id))
+        cur.execute(sql_eliminar, (id, id, id))
         cur.execute(sql_correo, (correo, id, None))
         if correo_alt:
             cur.execute(sql_correo, (correo_alt, id, None))
         cur.execute(sql_telefono, (cod_area, telefono, id, None))
         if cod_area_alt and telefono_alt:
             cur.execute(sql_telefono, (cod_area_alt, telefono_alt, id, None))
+        for tarjeta in tdc:
+            cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], id, None))
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -872,105 +911,402 @@ def delete_cliente_natural(id):
 # RUTAS PARA REALIZAR EL CRUD DE CLIENTE JURIDICO
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-# @app.route("/api/personajuridica/cliente/<rif>", methods=["GET"])
-# def get_persona_juridica_cliente(rif):
-#     cur = conn.cursor(cursor_factory=RealDictCursor)
-#     cur.execute("SELECT * FROM persona_juridica WHERE persona_jur_rif = %s", (rif,))
-#     persona = cur.fetchone()
+@app.route("/api/personajuridica/cliente/<rif>", methods=["GET"])
+def get_persona_juridica_cliente(rif):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM persona_juridica WHERE persona_jur_rif = %s", (rif,))
+    persona = cur.fetchone()
 
-#     if persona is None:
-#         return Response(status=409, response="La persona no existe")
+    if persona is None:
+        return Response(status=409, response="La persona no existe")
 
-#     cur.execute("SELECT * FROM cliente_juridico WHERE cliente_jur_codigo = %s", (persona['persona_jur_codigo'],))
-#     cliente = cur.fetchone()
+    cur.execute("SELECT * FROM cliente_juridico WHERE cliente_jur_codigo = %s", (persona['persona_jur_codigo'],))
+    cliente = cur.fetchone()
 
-#     if cliente is not None:
-#         return Response(status=409, response="El cliente juridico ya existe")
+    if cliente is not None:
+        return Response(status=409, response="El cliente juridico ya existe")
 
-#     sql_correo = """ 
-#         SELECT * FROM Correo WHERE fk_persona_juridica = %s
-#     """
-#     cur.execute(sql_correo, (persona['persona_jur_codigo'],))
-#     correos = cur.fetchall()
-#     sql_telefono = """ 
-#         SELECT * FROM Telefono WHERE fk_persona_juridica = %s
-#     """
-#     cur.execute(sql_telefono, (persona['persona_jur_codigo'],))
-#     telefonos = cur.fetchall()
+    sql_correo = """ 
+        SELECT * FROM Correo WHERE fk_persona_juridica = %s
+    """
+    cur.execute(sql_correo, (persona['persona_jur_codigo'],))
+    correos = cur.fetchall()
+    sql_telefono = """ 
+        SELECT * FROM Telefono WHERE fk_persona_juridica = %s
+    """
+    cur.execute(sql_telefono, (persona['persona_jur_codigo'],))
+    telefonos = cur.fetchall()
 
-#     sql_lugar = """
-#         SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
-#         FROM lugar AS p
-#         JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
-#         JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
-#         WHERE p.lugar_codigo = %s
-#     """
-#     cur.execute(sql_lugar, (persona['fk_lugar'],))
-#     lugar = cur.fetchone()
-
-#     cur.close()
-#     datos = {
-#         'persona': persona,
-#         'cliente': cliente,
-#         'correos': correos,
-#         'telefonos': telefonos,
-#         'lugar': lugar
-#     }
-#     pprint(datos)
-#     return jsonify(datos)
-
-# # Ruta para registrar el cliente juridico en la base de datos
-# @app.route("/api/cliente/juridico/registrar", methods=["POST"])
-# def registrar_cliente_juridico():
-#     cur = conn.cursor()
-#     cliente = request.get_json()
-#     pprint(cliente)
-#     nacionalidad = cliente.get("nacionalidad")
-#     rif = cliente.get("rif")
-#     nacionalidad_rif = nacionalidad + rif if nacionalidad and rif else None
-#     direccion_fiscal = cliente.get("direccionfiscal")
-#     direccion_fisica = cliente.get("direccionfisica")
-#     denom_social = cliente.get("denomsocial")
-#     pagina_web = cliente.get("paginaweb")
-#     capital_disp = cliente.get("capitaldisp")
-#     capital_disp = capital_disp.replace(",", ".")
-#     parroquia_fiscal = cliente.get("parroquiafiscal")
-#     parroquia_fisica = cliente.get("parroquiafisica")
+    sql_lugar = """
+        SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
+        FROM lugar AS p
+        JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
+        JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
+        WHERE p.lugar_codigo = %s
+    """
+    cur.execute(sql_lugar, (persona['fk_lugar'],))
+    lugar = cur.fetchone()
     
-#      # # Insertar empleado
-#     cur = conn.cursor()
+    sql_tdc = """
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        FROM TDC
+        WHERE fk_persona_juridica = %s
+    """
+    cur.execute(sql_tdc, (persona['persona_jur_codigo'],))
+    tdc = cur.fetchone()
+
+    cur.close()
+    datos = {
+        'persona': persona,
+        'cliente': cliente,
+        'correos': correos,
+        'telefonos': telefonos,
+        'lugar': lugar,
+        'tdc': tdc
+    }
+    pprint(datos)
+    return jsonify(datos)
+
+# Ruta para registrar el cliente juridico en la base de datos
+@app.route("/api/cliente/juridico/registrar", methods=["POST"])
+def registrar_cliente_juridico():
+    cur = conn.cursor()
+    cliente = request.get_json()
+    pprint(cliente)
+    cjnacionalidad = cliente.get("cjnacionalidad")
+    cjrif = cliente.get("cjrif")
+    cj_nacionalidad_rif = cjnacionalidad + cjrif if cjnacionalidad and cjrif else None
+    cjcapital = cliente.get("cjcapital")
+    cjdenom = cliente.get("cjdenom")
+    cjrazon = cliente.get("cjrazon")
+    cjcorreo = cliente.get("cjcorreo")
+    cjcorreoalt = cliente.get("cjcorreoalt") if cliente.get("cjcorreoalt") else None
+    cjcodarea = cliente.get("cjtelefono")[:4] if cliente.get("cjtelefono") else None
+    cjtelefono = cliente.get("cjtelefono")[-7:] if cliente.get("cjtelefono") else None
+    cjcodareaalt = cliente.get("cjtelefonoalt")[:4] if cliente.get("cjtelefonoalt") else None
+    cjtelefonoalt = cliente.get("cjtelefonoalt")[-7:] if cliente.get("cjtelefonoalt") else None
+    cjparroquiafisica = cliente.get("cjparroquiafisica")
+    cjparroquiafisica = int(cjparroquiafisica)
+    cjdireccionfisica = cliente.get("cjdireccionfisica")
+    cjparroquiafiscal = cliente.get("cjparroquiafiscal")
+    cjparroquiafiscal = int(cjparroquiafiscal)
+    cjdireccionfiscal = cliente.get("cjdireccionfiscal")
+    cjpaginaweb = cliente.get("cjpaginaweb")
+    cjtdc = cliente.get("cjtdc")
+    pnpnombre = cliente.get("pnpnombre")
+    pnsnombre = cliente.get("pnsnombre") if cliente.get("pnsnombre") else None
+    pnpapellido = cliente.get("pnpapellido")
+    pnsapellido = cliente.get("pnsapellido") if cliente.get("pnsapellido") else None
+    pncedula = cliente.get("pncedula")
+    pnnacionalidad = cliente.get("pnnacionalidad")
+    pnrif = cliente.get("pnrif")
+    pnnacionalidad_rif = pnnacionalidad + pnrif if pnnacionalidad and pnrif else None
+    pncorreo = cliente.get("pncorreo")
+    pncorreoalt = cliente.get("pncorreoalt") if cliente.get("pncorreoalt") else None
+    pncodarea = cliente.get("pncodarea")[:4] if cliente.get("pncodarea") else None
+    pntelefono = cliente.get("pntelefono")[-7:] if cliente.get("pntelefono") else None
+    pncodareaalt = cliente.get("pncodareaalt")[:4] if cliente.get("pncodareaalt") else None
+    pntelefonoalt = cliente.get("pntelefonoalt")[-7:] if cliente.get("pntelefonoalt") else None
+    pnparroquia = cliente.get("pnparroquia")
+    pnparroquia = int(pnparroquia)
+    pnfechanac = cliente.get("pnfechanac")
+    pndireccion = cliente.get("pndireccion")
     
-#     sql_persona = """
-#         INSERT INTO Persona_Juridica(
-# 	        persona_jur_rif, persona_jur_direccion_fiscal, persona_jur_direccion_fisica, persona_jur_denom_social, persona_jur_pagina_web, persona_jur_capital_disp, fk_lugar_fiscal, fk_lugar_fisica)
-# 	    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING persona_jur_codigo);
-#     """
-#     sql_correo = """ 
-#         INSERT INTO Correo (
-#             correo_direccion, fk_persona_natural, fk_persona_juridica
-#         ) VALUES (%s, %s, %s);
-#     """     
-#     sql_telefono = """ 
-#         INSERT INTO Telefono (
-#             telefono_codigo_area, telefono_numero, fk_persona_natural, fk_persona_juridica
-#         ) VALUES (%s, %s, %s, %s);
-#     """
-#     sql_cliente = """
-#         INSERT INTO Cliente_Juridico(
-#             cliente_jur_codigo, cliente_jur_puntos_acumulados)
-#         VALUES (%s, %s);
-#     """
-#     try:
-#         cur.execute("SELECT * FROM persona_juridica WHERE persona_jur_rif = %s", (nacionalidad_rif,))
-#         existePersona = cur.fetchone()
-#         if (not existePersona):
-#             cur.execute(sql_persona, (nacionalidad_rif, direccion_fiscal, direccion_fisica, denom_social, pagina_web, capital_disp, parroquia_fiscal, parroquia_fisica))
-#             result = cur.fetchone()
-#             cliente_codigo = result[0] if result is not None else None
-#             cur.execute(sql_correo, (correo, None, cliente_codigo))
-#             if correo_alt:
-#                 cur.execute(sql_correo, (correo_alt, None, cliente_codigo))
-#             cur.execute(sql_telefono, (cod_area, telefono, None, cliente_codigo))
-#             if cod_area_alt and telefono_alt:
-#                 cur.execute(sql_telefono, (cod_area_alt, telefono_alt, None, cliente_codigo))
+    sql_persona_juridica = """
+        INSERT INTO Persona_Juridica (
+             persona_jur_rif, persona_jur_direccion_fiscal, persona_jur_direccion_fisica, persona_jur_denom_social, persona_jur_razon_social, 
+             persona_jur_pagina_web, persona_jur_capital_disp, fk_lugar_fiscal, fk_lugar_fisica
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING persona_jur_codigo;
+    """
+    sql_persona_natural = """
+        INSERT INTO Persona_Natural (
+            persona_nat_rif, persona_nat_direccion_fiscal, persona_nat_cedula, persona_nat_p_nombre, persona_nat_s_nombre,
+            persona_nat_p_apellido, persona_nat_s_apellido, persona_nat_fecha_nac, fk_lugar
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING persona_nat_codigo;
+    """
+    sql_contacto = """
+        INSERT INTO Contacto(
+	        fk_persona_natural, fk_persona_juridica)
+	    VALUES (%s, %s);
+    """        
+    sql_telefono = """
+        INSERT INTO Telefono (
+            telefono_codigo_area, telefono_numero, fk_persona_natural, fk_persona_juridica
+        ) VALUES (%s, %s, %s, %s);
+    """
+    sql_correo = """
+        INSERT INTO Correo (
+            correo_direccion, fk_persona_natural, fk_persona_juridica
+        ) VALUES (%s, %s, %s);
+    """
+    sql_cliente = """
+        INSERT INTO Cliente_Juridico(
+            cliente_jur_codigo, cliente_jur_puntos_acumulados)
+        VALUES (%s, %s);
+    """
+    sql_tdc = """
+        INSERT INTO TDC(
+            tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural, fk_persona_juridica)
+        VALUES (%s, %s, %s, %s, %s, %s);
+    """
+    try:
+        cur.execute("SELECT * FROM persona_juridica WHERE persona_jur_rif = %s", (cj_nacionalidad_rif,))
+        existePersona = cur.fetchone()
+        if (not existePersona):
+            cur.execute(sql_persona_juridica, (cj_nacionalidad_rif, cjdireccionfiscal, cjdireccionfisica, cjdenom, cjrazon, cjpaginaweb, cjcapital, cjparroquiafiscal, cjparroquiafisica))
+            result = cur.fetchone()
+            persona_jur_codigo = result[0] if result is not None else None
+            cur.execute(sql_correo, (cjcorreo, None, persona_jur_codigo))
+            if cjcorreoalt:
+                cur.execute(sql_correo, (cjcorreoalt, None, persona_jur_codigo))
+            cur.execute(sql_telefono, (cjcodarea, cjtelefono, None, persona_jur_codigo))
+            if cjcodareaalt and cjtelefonoalt:
+                cur.execute(sql_telefono, (cjcodareaalt, cjtelefonoalt, None, persona_jur_codigo))
+        else:
+            cur.execute("SELECT persona_jur_codigo FROM persona_juridica WHERE persona_jur_rif = %s", (cj_nacionalidad_rif,))
+            persona_jur_codigo = cur.fetchone()
+        
+        cur.execute("SELECT * FROM TDC WHERE fk_persona_juridica = %s", (persona_jur_codigo,))
+        existeTDC = cur.fetchone()
+        if (not existeTDC):
+            for tarjeta in cjtdc:
+                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, persona_jur_codigo))
+        
+        cur.execute("SELECT * FROM persona_natural WHERE persona_nat_cedula = %s", (pncedula,))
+        existePersona = cur.fetchone()
+        if (not existePersona):
+            cur.execute(sql_persona_natural, (pnnacionalidad_rif, pndireccion, pncedula, pnpnombre, pnsnombre, pnpapellido, pnsapellido, pnfechanac, pnparroquia))
+            result = cur.fetchone()
+            persona_nat_codigo = result[0] if result is not None else None
+            cur.execute(sql_correo, (pncorreo, persona_nat_codigo, None))
+            if pncorreoalt:
+                cur.execute(sql_correo, (pncorreoalt, persona_nat_codigo, None))
+            cur.execute(sql_telefono, (pncodarea, pntelefono, persona_nat_codigo, None))
+            if pncodareaalt and pntelefonoalt:
+                cur.execute(sql_telefono, (pncodareaalt, pntelefonoalt, persona_nat_codigo, None))
+        else:
+            cur.execute("SELECT persona_nat_codigo FROM persona_natural WHERE persona_nat_cedula = %s", (pncedula,))
+            persona_nat_codigo = cur.fetchone()
             
+        cur.execute(sql_contacto, (persona_nat_codigo, persona_jur_codigo))
+        cur.execute(sql_cliente, (persona_jur_codigo, 0))
+        
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Cliente registrado exitosamente")
+
+# Ruta para obtener todos los clientes juridicos de la base de datos
+@app.route("/api/cliente/juridico/all", methods=["GET"])
+def get_all_clientes_juridicos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''SELECT persona_jur_codigo as codigo, persona_jur_rif as rif, persona_jur_denom_social as denom, 
+                 persona_jur_capital_disp as capital, cliente_jur_puntos_acumulados as puntos_acumulados, afiliacion_numero as afiliacion
+                FROM persona_juridica pj, cliente_juridico cj, ficha_afiliacion fa
+                where pj.persona_jur_codigo = cj.cliente_jur_codigo
+                and fa.fk_cliente_juridico = cj.cliente_jur_codigo
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para obtener los datos de un cliente juridico de la base de datos
+@app.route("/api/cliente/juridico/<int:id>", methods=["GET"])
+def get_cliente_juridico(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    sql_persona_juridica = """
+        SELECT * FROM Persona_Juridica pj WHERE persona_jur_codigo = %s 
+    """
+    
+    sql_persona_natural = """
+        SELECT * FROM Persona_Natural pn WHERE persona_nat_codigo = %s 
+    """
+    
+    sql_contacto = """
+        SELECT * FROM Contacto WHERE fk_persona_juridica = %s
+    """
+    
+    sql_lugar = """
+        SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
+        FROM lugar AS p
+        JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
+        JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
+        WHERE p.lugar_codigo = %s
+    """
+
+    sql_correo = """ 
+        SELECT * FROM Correo WHERE fk_persona_juridica = %s
+    """
+    sql_telefono = """ 
+        SELECT * FROM Telefono WHERE fk_persona_juridica = %s
+    """
+    sql_tdc = """
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        FROM TDC
+        WHERE fk_persona_juridica = %s
+    """
+    
+    cur.execute(sql_persona_juridica, (id,))
+    persona_juridica = cur.fetchone()
+    cur.execute(sql_persona_natural, (id,))
+    persona_natural = cur.fetchone()
+    cur.execute(sql_contacto, (id,))
+    contacto = cur.fetchone()
+    if contacto is None:
+        return Response(status=404, response="Cliente no encontrado")
+    
+    cur.execute(sql_lugar, (persona_juridica['fk_lugar_fiscal'],))
+    lugar_fiscal = cur.fetchone()
+    cur.execute(sql_lugar, (persona_juridica['fk_lugar_fisica'],))
+    lugar_fisica = cur.fetchone()
+    cur.execute(sql_correo, (id,))
+    correos = cur.fetchall()
+    cur.execute(sql_telefono, (id,))
+    telefonos = cur.fetchall()
+    cur.execute(sql_tdc, (id,))
+    tdc = cur.fetchone()
+    
+    cur.close()
+
+    datos = jsonify({
+        'persona_juridica': persona_juridica,
+        'persona_natural': persona_natural,
+        'contacto': contacto,
+        'correos': correos,
+        'telefonos': telefonos,
+        'lugar_fiscal': lugar_fiscal,
+        'lugar_fisica': lugar_fisica,
+        'tdc': tdc
+    })
+    
+    pprint(datos)
+    
+    return datos
+
+# Ruta para editar los datos de un cliente juridico de la base de datos
+@app.route("/api/cliente/juridico/editar/<int:id>", methods=["PUT"])
+def editar_cliente_juridico(id):
+    cur = conn.cursor()
+    cliente = request.get_json()
+    pprint(cliente)
+    cjnacionalidad = cliente.get("cjnacionalidad")
+    cjrif = cliente.get("cjrif")
+    cj_nacionalidad_rif = cjnacionalidad + cjrif if cjnacionalidad and cjrif else None
+    cjcapital = cliente.get("cjcapital")
+    cjdenom = cliente.get("cjdenom")
+    cjrazon = cliente.get("cjrazon")
+    cjcorreo = cliente.get("cjcorreo")
+    cjcorreoalt = cliente.get("cjcorreoalt") if cliente.get("cjcorreoalt") else None
+    cjcodarea = cliente.get("cjtelefono")[:4] if cliente.get("cjtelefono") else None
+    cjtelefono = cliente.get("cjtelefono")[-7:] if cliente.get("cjtelefono") else None
+    cjcodareaalt = cliente.get("cjtelefonoalt")[:4] if cliente.get("cjtelefonoalt") else None
+    cjtelefonoalt = cliente.get("cjtelefonoalt")[-7:] if cliente.get("cjtelefonoalt") else None
+    cjparroquiafisica = cliente.get("cjparroquiafisica")
+    cjparroquiafisica = int(cjparroquiafisica)
+    cjdireccionfisica = cliente.get("cjdireccionfisica")
+    cjparroquiafiscal = cliente.get("cjparroquiafiscal")
+    cjparroquiafiscal = int(cjparroquiafiscal)
+    cjdireccionfiscal = cliente.get("cjdireccionfiscal")
+    cjpaginaweb = cliente.get("cjpaginaweb")
+    cjtdc = cliente.get("cjtdc")
+    pnpnombre = cliente.get("pnpnombre")
+    pnsnombre = cliente.get("pnsnombre") if cliente.get("pnsnombre") else None
+    pnpapellido = cliente.get("pnpapellido")
+    pnsapellido = cliente.get("pnsapellido") if cliente.get("pnsapellido") else None
+    pncedula = cliente.get("pncedula")
+    pnnacionalidad = cliente.get("pnnacionalidad")
+    pnrif = cliente.get("pnrif")
+    pnnacionalidad_rif = pnnacionalidad + pnrif if pnnacionalidad and pnrif else None
+    pncorreo = cliente.get("pncorreo")
+    pncorreoalt = cliente.get("pncorreoalt") if cliente.get("pncorreoalt") else None
+    pncodarea = cliente.get("pncodarea")[:4] if cliente.get("pncodarea") else None
+    pntelefono = cliente.get("pntelefono")[-7:] if cliente.get("pntelefono") else None
+    pncodareaalt = cliente.get("pncodareaalt")[:4] if cliente.get("pncodareaalt") else None
+    pntelefonoalt = cliente.get("pntelefonoalt")[-7:] if cliente.get("pntelefonoalt") else None
+    pnparroquia = cliente.get("pnparroquia")
+    pnparroquia = int(pnparroquia)
+    pnfechanac = cliente.get("pnfechanac")
+    pndireccion = cliente.get("pndireccion")
+    
+    sql_persona_juridica = """
+        UPDATE Persona_Juridica
+        SET persona_jur_rif = %s, persona_jur_direccion_fiscal = %s, persona_jur_direccion_fisica = %s, persona_jur_denom_social = %s, persona_jur_razon_social = %s, 
+            persona_jur_pagina_web = %s, persona_jur_capital_disp = %s, fk_lugar_fiscal = %s, fk_lugar_fisica = %s
+        WHERE persona_jur_codigo = %s;
+    """
+    sql_persona_natural = """
+        UPDATE Persona_Natural
+        SET persona_nat_rif = %s, persona_nat_direccion_fiscal = %s, persona_nat_cedula = %s, persona_nat_p_nombre = %s, persona_nat_s_nombre = %s,
+            persona_nat_p_apellido = %s, persona_nat_s_apellido = %s, persona_nat_fecha_nac = %s, fk_lugar = %s
+        WHERE persona_nat_codigo = %s;
+    """
+    sql_contacto = """
+        UPDATE Contacto
+        SET fk_persona_natural = %s
+        WHERE fk_persona_juridica = %s;
+    """
+    sql_eliminar = """
+        DELETE FROM Correo WHERE fk_persona_juridica = %s;
+        DELETE FROM Telefono WHERE fk_persona_juridica = %s;
+        DELETE FROM TDC WHERE fk_persona_juridica = %s;
+    """
+    sql_correo = """
+        INSERT INTO Correo (
+            correo_direccion, fk_persona_natural, fk_persona_juridica
+        ) VALUES (%s, %s, %s);
+    """
+    sql_telefono = """
+        INSERT INTO Telefono (
+            telefono_codigo_area, telefono_numero, fk_persona_natural, fk_persona_juridica
+        ) VALUES (%s, %s, %s, %s);
+    """
+    sql_tdc = """
+        INSERT INTO TDC(
+            tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural, fk_persona_juridica)
+        VALUES (%s, %s, %s, %s, %s, %s);
+    """
+    try:
+        cur.execute(sql_persona_juridica, (cj_nacionalidad_rif, cjdireccionfiscal, cjdireccionfisica, cjdenom, cjrazon, cjpaginaweb, cjcapital, cjparroquiafiscal, cjparroquiafisica, id))
+        cur.execute(sql_persona_natural, (pnnacionalidad_rif, pndireccion, pncedula, pnpnombre, pnsnombre, pnpapellido, pnsapellido, pnfechanac, pnparroquia, id))
+        cur.execute(sql_contacto, (id, id))
+        cur.execute(sql_eliminar, (id, id, )) #FALTA LOGICA DE COMO RECUPERAR EL ID DE LA PERSONA NATURAL
+        cur.execute(sql_correo, (cjcorreo, None, id))
+        if cjcorreoalt:
+            cur.execute(sql_correo, (cjcorreoalt, None, id))
+        cur.execute(sql_telefono, (cjcodarea, cjtelefono, None, id))
+        if cjcodareaalt and cjtelefonoalt:
+            cur.execute(sql_telefono, (cjcodareaalt, cjtelefonoalt, None, id))
+        for tarjeta in cjtdc:
+            cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, id))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Cliente editado exitosamente")
+
+# Ruta para eliminar un cliente juridico de la base de datos
+@app.route("/api/cliente/juridico/delete/<int:id>", methods=["DELETE"])
+def delete_cliente_juridico(id):
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM cliente_juridico WHERE cliente_jur_codigo = %s", (id,))
+
+    conn.commit()
+    cur.close()
+
+    return "Cliente Eliminado"
