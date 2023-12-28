@@ -304,7 +304,7 @@ CREATE TABLE Accion (
 CREATE TABLE Banco (
   banco_codigo serial,
   -- Código identificador de la entidad Banco
-  banco_nombre varchar(20) NOT NULL UNIQUE,
+  banco_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del banco.
 
   CONSTRAINT pk_banco_codigo PRIMARY KEY (banco_codigo),
@@ -510,7 +510,7 @@ CREATE TABLE Beneficio (
   -- Código identificador de la entidad Beneficio
   beneficio_nombre varchar(20) NOT NULL UNIQUE,
   -- Nombre del beneficio.
-  beneficio_descripcion varchar(50),
+  beneficio_descripcion varchar(100),
   -- Descripción del beneficio.
   beneficio_tipo varchar(20) NOT NULL,
   -- Tipo de beneficio.

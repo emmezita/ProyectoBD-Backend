@@ -3049,7 +3049,7 @@ VALUES
 INSERT INTO Beneficio (beneficio_nombre, beneficio_descripcion, beneficio_tipo)
 VALUES
   ('Bono por hijos', 'Beneficio dado para los trabajadores que tienen hijos', 'semestral'),
-  ('Bono por antigüedad', 'Beneficio dado para los trabajadores que tienen antigüedad', 'anual'),
+  ('Bono por antigüedad', 'Beneficio dado para los trabajadores que tienen antiguedad', 'anual'),
   ('Bono por desempeño', 'Beneficio dado para los trabajadores que tienen buen desempeño', 'anual'),
   ('Bono por asistencia', 'Beneficio dado para los trabajadores que tienen buena asistencia', 'anual'),
   ('Bono por puntualidad', 'Beneficio dado para los trabajadores que tienen buena puntualidad', 'anual'),
@@ -3060,9 +3060,9 @@ VALUES
 INSERT INTO Banco (banco_nombre)
 VALUES
   ('Banco Venezolano de Crédito'),
-  ('100% Banco')
-  ('Bancamiga')
-  ('Banco Activo')
+  ('100% Banco'),
+  ('Bancamiga'),
+  ('Banco Activo'),
   ('Banco Bicentenario'),
   ('Banco Caroní'),
   ('Banco de la Fuerza Armada Nacional'),
@@ -3074,7 +3074,7 @@ VALUES
   ('Banco Nacional de Crédito'),
   ('Banco Plaza'),
   ('Banco Provincial'),
-  ('Banco Sofitasa')
+  ('Banco Sofitasa'),
   ('Bancrecer'),
   ('Banesco'),
   ('Banplus'),
