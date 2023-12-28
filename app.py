@@ -944,8 +944,10 @@ def get_persona_juridica_cliente(rif):
         JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
         WHERE p.lugar_codigo = %s
     """
-    cur.execute(sql_lugar, (persona['fk_lugar'],))
-    lugar = cur.fetchone()
+    cur.execute(sql_lugar, (persona['fk_lugar_fiscal'],))
+    lugar_fiscal = cur.fetchone()
+    cur.execute(sql_lugar, (persona['fk_lugar_fisica'],))
+    lugar_fisica = cur.fetchone()
     
     sql_tdc = """
         SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
@@ -967,7 +969,8 @@ def get_persona_juridica_cliente(rif):
         'cliente': cliente,
         'correos': correos,
         'telefonos': telefonos,
-        'lugar': lugar,
+        'lugar_fisica': lugar_fisica,
+        'lugar_fiscal': lugar_fiscal,
         'tdc': tdc,
         'contactos': contactos
     }
@@ -1004,7 +1007,7 @@ def registrar_cliente_juridico():
     
     sql_persona_juridica = """
         INSERT INTO Persona_Juridica (
-             persona_jur_rif, persona_jur_direccion_fiscal, persona_jur_direccion_fisica, persona_jur_denom_social, persona_jur_razon_social, 
+             persona_jur_rif, persona_jur_direccion_fiscal, persona_jur_direccion_fisica, persona_jur_denom_comercial, persona_jur_razon_social, 
              persona_jur_pagina_web, persona_jur_capital_disp, fk_lugar_fiscal, fk_lugar_fisica
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING persona_jur_codigo;
     """
@@ -1077,7 +1080,7 @@ def registrar_cliente_juridico():
 @app.route("/api/cliente/juridico/all", methods=["GET"])
 def get_all_clientes_juridicos():
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_jur_codigo as codigo, persona_jur_rif as rif, persona_jur_denom_social as denom, 
+    cur.execute('''SELECT persona_jur_codigo as codigo, persona_jur_rif as rif, persona_jur_denom_comercial as denom, 
                  persona_jur_capital_disp as capital, cliente_jur_puntos_acumulados as puntos_acumulados, afiliacion_numero as afiliacion
                 FROM persona_juridica pj, cliente_juridico cj, ficha_afiliacion fa
                 where pj.persona_jur_codigo = cj.cliente_jur_codigo
@@ -1140,7 +1143,7 @@ def get_cliente_juridico(id):
     cur.close()
 
     datos = jsonify({
-        'persona_juridica': persona_juridica,
+        'persona': persona_juridica,
         'contactos': contacto,
         'correos': correos,
         'telefonos': telefonos,
@@ -1183,7 +1186,7 @@ def editar_cliente_juridico(id):
     
     sql_persona_juridica = """
         UPDATE Persona_Juridica
-        SET persona_jur_rif = %s, persona_jur_direccion_fiscal = %s, persona_jur_direccion_fisica = %s, persona_jur_denom_social = %s, persona_jur_razon_social = %s, 
+        SET persona_jur_rif = %s, persona_jur_direccion_fiscal = %s, persona_jur_direccion_fisica = %s, persona_jur_denom_comercial = %s, persona_jur_razon_social = %s, 
             persona_jur_pagina_web = %s, persona_jur_capital_disp = %s, fk_lugar_fiscal = %s, fk_lugar_fisica = %s
         WHERE persona_jur_codigo = %s;
     """
