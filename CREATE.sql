@@ -48,7 +48,7 @@ CREATE TABLE Persona_Juridica (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_persona_jur_rif CHECK (persona_jur_rif ~ '^[VEJPG]{1}[0-9]{9}$'),
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
-  CONSTRAINT ck_persona_jur_denom_comercial CHECK (persona_jur_denom_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
+  CONSTRAINT ck_persona_jur_denom_comercial CHECK (persona_jur_denom_comercial ~ '^[A-Za-z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales
   CONSTRAINT ck_persona_jur_razon_social CHECK (persona_jur_razon_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales

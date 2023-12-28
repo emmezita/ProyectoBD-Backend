@@ -33,32 +33,19 @@ function save() {
         cjdireccionfiscal: $(ff+"cjdireccionfiscal").val(),
         cjpaginaweb: $(ff+"cjpaginaweb").val(),
         cjtdc: getTDCs(),
-        pnpnombre: $(ff+"pnpnombre").val(),
-        pnsnombre: $(ff+"pnsnombre").val(),
-        pnpapellido: $(ff+"pnpapellido").val(),
-        pnsapellido: $(ff+"pnsapellido").val(),
-        pncedula: $(ff+"pncedula").val(),
-        pnnacionalidad: $(ff+"pnnacionalidad").val(),
-        pnrif: $(ff+"pnrif").val(),
-        pncorreo: $(ff+"pncorreo").val(),
-        pncorreoalt: $(ff+"pncorreoalt").val(),
-        pntelefono: $(ff+"pncodarea") + $(ff+"pntelefono").val(),
-        pntelefonoalt: $(ff+"pncodareaalt") + $(ff+"pntelefonoalt").val(),
-        pnparroquia: $(ff+"pnparroquia option:selected").attr('value'),
-        pnfechanac: pnfechanac,
-        pndireccion: $(ff+"pndireccion").val(),
+        cjcontactos: getContactos(),
     };
     console.log(data);
 
     $.ajax({
         type: "POST",
-        url: "http://localhost:5000/api/cliente/natural/registrar",
+        url: "http://localhost:5000/api/cliente/juridico/registrar",
         headers: {
             'Content-Type': 'application/json'
         },
         data: JSON.stringify(data),
         success: function (data) {
-            alert("Cliente natural registrado exitosamente");
+            alert("Cliente juridico registrado exitosamente");
             reset = true;
             //hay que resetear tablas
             $('.elementor-form').reset();
