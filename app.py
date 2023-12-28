@@ -815,7 +815,6 @@ def get_cliente_natural(id):
 
     datos = jsonify({
         'persona': persona,
-        'cliente': cliente,
         'correos': correos,
         'telefonos': telefonos,
         'lugar': lugar,
