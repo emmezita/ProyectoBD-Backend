@@ -145,17 +145,27 @@ CREATE TABLE Empleado (
 );
 
 CREATE TABLE Contacto (
-  fk_persona_natural integer,
-  -- Relación con la entidad Persona Natural
+  contacto_codigo serial,
+  -- Código identificador de la entidad Contacto
+  contacto_nombre varchar(50) NOT NULL,
+  -- Nombre del contacto.
+  contacto_numero varchar(11) NOT NULL,
+  -- Número del contacto.
+  contacto_correo varchar(50) NOT NULL,
+  -- Correo del contacto.
   fk_persona_juridica integer,
   -- Relación con la entidad Persona Jurídica
 
-  CONSTRAINT pk_contacto PRIMARY KEY (fk_persona_natural, fk_persona_juridica),
+  CONSTRAINT pk_contacto_codigo PRIMARY KEY (contacto_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contacto_persona_natural_mantiene FOREIGN KEY (fk_persona_natural) REFERENCES Persona_Natural (persona_nat_codigo),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
-  CONSTRAINT fk_contacto_persona_juridica_comprende FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo)
+  CONSTRAINT fk_contacto_persona_juridica_trabaja FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
+  CONSTRAINT ck_contacto_nombre CHECK (contacto_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  -- Constrain. No debe contener números ni caracteres especiales
+  CONSTRAINT ck_contacto_numero CHECK (contacto_numero ~ '^[0-9]{11}$'),
+  -- Constrain. Debe tener once dígitos
+  CONSTRAINT ck_contacto_correo CHECK (contacto_correo ~ '^[a-zA-Z0-9._]+[@]{1}[a-z]+[.]{1}[a-z]{2,3}$')
+  -- Constrain. Debe tener un formato válido
 );
 
 CREATE TABLE Correo (
