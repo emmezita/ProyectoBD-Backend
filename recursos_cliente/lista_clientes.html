@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lista_empleados</title>
+    <title>Lista Clientes</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -145,11 +145,46 @@
                 </table>
             </div>
         </div>
+        <!-- Modales -->
+            <!-- Modal Delete NCostumer -->
+            <div class="modal fade" id="deleteNCostumerModal" tabindex="-1" aria-labelledby="deleteNCostumerModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteEmployeeModalLabel">Eliminar Cliente Natural</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-danger" id="delete-ncostumer-button">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Delete JCostumer -->
+            <div class="modal fade" id="deleteJCostumerModal" tabindex="-1" aria-labelledby="deleteJCostumerModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteEmployeeModalLabel">Eliminar Cliente Juridico</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-danger" id="delete-jcostumer-button">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
+
 <script>
 $(document).ready(function() {
     var data = null;
-    $('#clientesnaturales-tab').on('click', function() {
         $.ajax({
             url: 'http://localhost:5000/api/cliente/natural/all',
             type: 'GET',
@@ -163,14 +198,15 @@ $(document).ready(function() {
                     row.append('<td>' + data[i].nombre + '</td>');
                     var fecha = formatDate(data[i].fecha_nacimiento);
                     row.append('<td>' + fecha + '</td>');
-                    if (data[i].afiliado != null) {
+                    if (data[i].afiliacion != null) {
                         row.append('<td>Si</td>');
                     } else {
                         row.append('<td>No</td>');
                     }
                     row.append('<td>' + data[i].puntos_acumulados + '</td>');
-                    row.append('<td><button class="btn btn-warning" onclick="editar(' + data[i].cedula + ')">Editar</button></td>');
-                    row.append('<td><button class="btn btn-danger" onclick="eliminar(' + data[i].cedula + ')">Eliminar</button></td>');
+                    row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
+                    row.append('<td><button type="button" class="btn btn-danger" id="delete-ncostumer-button" data-bs-toggle="modal" data-bs-target="#deleteNCostumerModal" data-ncostumer-name="'+ data[i].nombre+'" data-ncostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
+
                     $('#body-clientesnaturales').append(row);
                 }
 
@@ -195,8 +231,7 @@ $(document).ready(function() {
                 alert('Hubo un error obteniendo a los clientes naturales');
             }
         });
-    });
-    $('#clientesjuridicos-tab').on('click', function() { 
+
         $.ajax({
             url: 'http://localhost:5000/api/cliente/juridico/all',
             type: 'GET',
@@ -207,16 +242,17 @@ $(document).ready(function() {
                 for (var i = 0; i < data.length; i++) {
                     var row = $('<tr>');
                     row.append('<td>' + data[i].rif + '</td>');
-                    row.append('<td>' + data[i].denominacion_comercial + '</td>');
-                    row.append('<td>' + data[i].capital_disponible + '</td>');
-                    if (data[i].afiliado != null) {
+                    row.append('<td>' + data[i].denom + '</td>');
+                    row.append('<td>' + data[i].capital + '</td>');
+                    if (data[i].afiliacion != null) {
                         row.append('<td>Si</td>');
                     } else {
                         row.append('<td>No</td>');
                     }
                     row.append('<td>' + data[i].puntos_acumulados + '</td>');
-                    row.append('<td><button class="btn btn-warning" onclick="editar(' + data[i].rif + ')">Editar</button></td>');
-                    row.append('<td><button class="btn btn-danger" onclick="eliminar(' + data[i].rif + ')">Eliminar</button></td>');
+                    row.append('<td><button type="button" class="btn btn-warning" onclick="editarj(' + data[i].codigo + ')">Editar</button></td>');
+                    row.append('<td><button type="button" class="btn btn-danger" id="delete-jcostumer-button" data-bs-toggle="modal" data-bs-target="#deleteJCostumerModal" data-jcostumer-name="'+ data[i].denom+'" data-jcostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
+                    
                     $('#body-clientesjuridicos').append(row);
                 }
 
@@ -241,7 +277,6 @@ $(document).ready(function() {
                 alert('Hubo un error obteniendo a los clientes juridicos');
             }
         });
-    });
 });     
 
 // como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
@@ -260,5 +295,65 @@ function formatDate(dateString) {
         month = '0' + month;
 
     return [day, month, year].join('/');
+}
+
+$('#deleteNCostumerModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var costumerId = button.data('ncostumer-id') // Extract info from data-* attributes
+    var costumerName = button.data('ncostumer-name') // Extract info from data-* attributes
+    var modal = $(this)
+    modal.find('.modal-body').text('¿Está seguro que desea eliminar a ' + costumerName + '?')
+    modal.find('#delete-ncostumer-button').attr('data-ncostumer-id', costumerId)
+})
+
+$('#delete-ncostumer-button').click(function() {
+    console.log('delete');
+    var costumerId = $(this).data('ncostumer-id');
+    $.ajax({
+        url: 'http://localhost:5000/api/cliente/natural/delete/' + costumerId,
+        type: 'DELETE',
+        success: function() {
+            alert('Cliente Natural eliminado exitosamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error eliminando el Cliente Natural');
+        }
+    });
+});
+
+$('#deleteJCostumerModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var costumerId = button.data('jcostumer-id') // Extract info from data-* attributes
+    var costumerName = button.data('jcostumer-name') // Extract info from data-* attributes
+    var modal = $(this)
+    modal.find('.modal-body').text('¿Está seguro que desea eliminar a ' + costumerName + '?')
+    modal.find('#delete-jcostumer-button').attr('data-jcostumer-id', costumerId)
+})
+
+$('#delete-jcostumer-button').click(function() {
+    console.log('delete');
+    var costumerId = $(this).data('jcostumer-id');
+    $.ajax({
+        url: 'http://localhost:5000/api/cliente/juridico/delete/' + costumerId,
+        type: 'DELETE',
+        success: function() {
+            alert('Cliente Juridico eliminado exitosamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error eliminando el Cliente Juridico');
+        }
+    });
+});
+
+function editarn(id){
+    console.log('editar Cliente Natural');
+    window.location.href = 'http://dilodev.co/formulario-editar-cliente-natural?id=' + id;
+}
+
+function editarj(id){
+    console.log('editar Cliente Juridico');
+    window.location.href = 'http://dilodev.co/formulario-editar-cliente-juridico?id=' + id;
 }
 </script> 

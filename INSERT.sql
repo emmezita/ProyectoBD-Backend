@@ -3079,3 +3079,99 @@ VALUES
   ('Banesco'),
   ('Banplus'),
   ('Banco Fondo Común');
+
+INSERT INTO Persona_Natural (persona_nat_codigo, persona_nat_rif, persona_nat_direccion_fiscal, persona_nat_cedula, persona_nat_p_nombre, persona_nat_s_nombre, persona_nat_p_apellido, persona_nat_s_apellido, persona_nat_fecha_nac, fk_lugar)
+VALUES 
+  (1, 'V281111112', 'Calle 1, casa 1', '28111111', 'Juan', 'José', 'Pori', 'Pérez', '1991-01-01', 360),
+  (2, 'V281111122', 'Calle 2, casa 2', '28111112', 'Pedro', 'Juan', 'Peri', 'Poroz', '1992-01-01', 361),
+  (3, 'V281111132', 'Calle 3, casa 3', '28111113', 'José', 'Roberto', 'Piro', 'Pérez', '1993-01-01', 363),
+  (4, 'V281111142', 'Calle 4, casa 4', '28111114', 'Luis', 'José', 'Pérez', 'Paraz', '2000-01-01', 364),
+  (5, 'V281111152', 'Calle 5, casa 5', '28111115', 'Carlos', 'Julian', 'Poro', 'Pérez', '2001-01-01', 365);
+
+INSERT INTO Correo (correo_direccion, fk_persona_natural)
+VALUES
+  ('JJ@hotmail.com', 1),
+  ('PedroJuan@hotmail.com', 2),
+  ('JoseR@hotmail.com', 3),
+  ('LuisP@hotmail.com', 4),
+  ('CarlosPoro@hotmail.com', 5);
+
+INSERT INTO Telefono (telefono_codigo_area, telefono_numero, fk_persona_natural)
+VALUES
+  ('0414', '7064231', 1),
+  ('0414', '7064232', 2),
+  ('0414', '7064233', 3),
+  ('0414', '7064234', 4),
+  ('0414', '7064235', 5);
+
+INSERT INTO TDC (tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural)
+VALUES
+  (1, '1234123412341234', '2026-01-01', '312', 4, 1),
+  (2, '1234123412341235', '2027-02-01', '320', 5, 2),
+  (3, '1234123412341236', '2025-03-01', '354', 6, 3),
+  (4, '1234123412341237', '2026-04-01', '141', 7, 4),
+  (5, '1234123412341238', '2030-05-01', '545', 8, 5);
+
+INSERT INTO Cliente_Natural (cliente_nat_codigo, cliente_nat_puntos_acumulados)
+VALUES
+  (1, 100),
+  (2, 200),
+  (3, 300),
+  (4, 400),
+  (5, 500);
+
+INSERT INTO ficha_afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural)
+VALUES
+  (6, '2020-01-01', 100, 1),
+  (7, '2021-02-01', 200, 2),
+  (8, '2022-03-01', 300, 3),
+  (9, '2023-04-01', 400, 4),
+  (10, '2024-05-01', 500, 5);
+
+INSERT INTO Persona_Juridica (persona_jur_codigo, persona_jur_rif, persona_jur_direccion_fiscal, persona_jur_direccion_fisica, persona_jur_denom_comercial, persona_jur_razon_social, persona_jur_pagina_web, persona_jur_capital_disp, fk_lugar_fiscal, fk_lugar_fisica)
+VALUES
+  (1, 'J281111111', 'Calle 1, casa 1', 'Calle 2, casa 2', 'DiarioRonero', 'DiarioRonero', 'https://www.diarioronero.com', 100000, 360, 361),
+  (2, 'J281111121', 'Calle 3, casa 3', 'Calle 4, casa 4', 'Diario del Ron', 'Diario del Ron', 'https://www.diariodelron.com', 2000000, 362, 363),
+  (3, 'J281111131', 'Calle 5, casa 5', 'Calle 6, casa 6', 'Pana Ron', 'Pana Ron', 'https://www.panaron.com', 40000, 364, 365),
+  (4, 'J281111141', 'Calle 7, casa 7', 'Calle 8, casa 8', 'Rumba Ron', 'Rumba Ron', 'https://www.rumbaron.com', 105000, 366, 367),
+  (5, 'J281111151', 'Calle 9, casa 9', 'Calle 10, casa 10', 'Ron con Coca', 'Ron con Coca', 'https://www.ronconcoca.com', 120000, 368, 369);
+   
+INSERT INTO Correo (correo_direccion, fk_persona_juridica)
+VALUES
+  ('Diaroronero@hotmail.com', 1),
+  ('Diariodelron@hotmail.com', 2),
+  ('PanitaRon@hotmail.com', 3),
+  ('Rumbayronjeje@hotmail.com', 4),
+  ('RonconCoquita@hotmail.com', 5);
+
+INSERT INTO Telefono (telefono_codigo_area, telefono_numero, fk_persona_juridica)
+VALUES
+  ('0412', '9064831', 1),
+  ('0412', '9064832', 2),
+  ('0412', '9064833', 3),
+  ('0412', '9064834', 4),
+  ('0412', '9064835', 5);
+
+INSERT INTO ficha_afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_persona_juridica)
+VALUES
+  (1, '2000-01-01', 1000, 1),
+  (2, '2001-02-01', 2000, 2),
+  (3, '2002-03-01', 3000, 3),
+  (4, '2003-04-01', 4000, 4),
+  (5, '2004-05-01', 5000, 5);
+
+INSERT INTO Cliente_Juridico (cliente_jur_codigo, cliente_jur_puntos_acumulados)
+VALUES
+  (1, 100),
+  (2, 200),
+  (3, 300),
+  (4, 400),
+  (5, 500);
+
+INSERT INTO TDC (tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_juridica)
+VALUES
+  (6, '2234123412341235', '2026-01-01', '110', 1, 1),
+  (7, '3234123412341235', '2027-02-01', '240', 2, 2),
+  (8, '4234123412341235', '2025-03-01', '350', 3, 3),
+  (9, '5234123412341235', '2026-04-01', '413', 4, 4),
+  (10, '6234123412341235', '2030-05-01', '545', 5, 5);

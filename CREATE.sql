@@ -52,7 +52,7 @@ CREATE TABLE Persona_Juridica (
   -- Constrain. No debe contener caracteres especiales
   CONSTRAINT ck_persona_jur_razon_social CHECK (persona_jur_razon_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales
-  CONSTRAINT ck_persona_jur_pagina_web CHECK (persona_jur_pagina_web ~ '^[https://]{1}[w]{1}[w]{1}[.]{1}[a-z0-9-]+[.]{1}[a-z]{2,6}$'),
+  CONSTRAINT ck_persona_jur_pagina_web CHECK (persona_jur_pagina_web ~* '^(https://www\.)[a-z0-9-]+(\.[a-z]{2,6})+$'),
   -- Constrain.. Debe comenzar con "https://" y tener un dominio válido
   CONSTRAINT ck_persona_jur_capital_disp CHECK (persona_jur_capital_disp > 0)
   -- Constrain. Debe ser mayor que 0
