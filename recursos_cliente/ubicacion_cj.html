@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubicacion</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+<select id="form-field-estado" name="estado"></select>
+<select id="form-field-municipio" name="municipio"></select>
+<select id="form-field-parroquia" name="parroquia"></select>
+
+<script>
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/usuario/ubicaciones/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                // Llena el campo estado con los datos del JSON
+                data.estados.forEach(estado => {
+                    $("#form-field-cjestadofisica").append('<option value="'+estado.id+'">'+estado.nombre+'</option>');
+                    $("#form-field-cjestadofiscal").append('<option value="'+estado.id+'">'+estado.nombre+'</option>');
+                });
+    
+                // Cuando el estado cambia, llena el campo municipio con los municipios correspondientes
+                $("#form-field-cjestadofisica").change(function() {
+                    var estadoId = $(this).val();
+                    $("#form-field-cjmunicipiofisica").empty();
+                    $("#form-field-cjparroquiafisica").empty();
+                    $.each(data.municipios[estadoId], function(i, municipio) {
+                        $("#form-field-cjmunicipiofisica").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+                    });
+                    // Trigger the change event if there's only one municipality
+                    if (data.municipios[estadoId].length === 1) {
+                        $("#form-field-cjmunicipiofisica").trigger('change');
+                    }
+                });
+
+                // Cuando el estado cambia, llena el campo municipio con los municipios correspondientes
+                $("#form-field-cjestadofiscal").change(function() {
+                    var estadoId = $(this).val();
+                    $("#form-field-cjmunicipiofiscal").empty();
+                    $("#form-field-cjparroquiafiscal").empty();
+                    $.each(data.municipios[estadoId], function(i, municipio) {
+                        $("#form-field-cjmunicipiofiscal").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+                    });
+                    // Trigger the change event if there's only one municipality
+                    if (data.municipios[estadoId].length === 1) {
+                        $("#form-field-cjmunicipiofiscal").trigger('change');
+                    }
+                });
+    
+                // Cuando el municipio cambia, llena el campo parroquia con las parroquias correspondientes
+                $("#form-field-cjmunicipiofisica").change(function() {
+                    var municipioId = $(this).val();
+                    $("#form-field-cjparroquiafisica").empty();
+                    $.each(data.parroquias[municipioId], function(i, parroquia) {
+                        $("#form-field-cjparroquiafisica").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+                    });
+                });
+
+                // Cuando el municipio cambia, llena el campo parroquia con las parroquias correspondientes
+                $("#form-field-cjmunicipiofiscal").change(function() {
+                    var municipioId = $(this).val();
+                    $("#form-field-cjparroquiafiscal").empty();
+                    $.each(data.parroquias[municipioId], function(i, parroquia) {
+                        $("#form-field-cjparroquiafiscal").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+                    });
+                });
+            },
+            error: function() {
+                alert('Error obteniendo ubicaciones');
+            }
+        });
+    });
+    </script>    
+    
+    </body>
+    </html>
