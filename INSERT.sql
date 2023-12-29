@@ -4232,3 +4232,30 @@ VALUES
   (1.0, 9, 1, 15, 1, 7), --SANTA TERESA G. RESERVA
   (1.15, 7, 1, 16, 1, 8), --SANTA TERESA LINAJE
   (1.6, 7, 1, 17, 2, 11); --SANTA TERESA ARAKÚ
+
+INSERT INTO Imagen (imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+VALUES 
+  ('cacique_anejo.jpg', true, 6, 1, 5),
+  ('cacique_500.jpg', true, 6, 1, 6),
+  ('cacique_antiguo.jpg', true, 6, 1, 7),
+  ('cacique_origen.jpg', true, 9, 3, 8),
+  ('cacique_leyenda.jpg', true, 9, 1, 9),
+  ('carupano_legendario.jpg', true, 9, 1, 18),
+  ('carupano_xo.jpg', true, 9, 1, 19),
+  ('carupano_1996.jpg', true, 9, 1, 20),
+  ('carupano_21.jpg', true, 9, 1, 21),
+  ('carupano_18.jpg', true, 9, 1, 22),
+  ('carupano_12.jpg', true, 7, 1, 23),
+  ('carupano_6.jpg', true, 6, 1, 24),
+  ('pampero_aniversario.jpg', true, 6, 1, 1),
+  ('pampero_seleccion.jpg', true, 6, 1, 2),
+  ('pampero_especial.jpg', true, 6, 1, 3),
+  ('pampero_blanco.jpg', true, 6, 2, 4),
+  ('roble_maestro.jpg', true, 9, 1, 10),
+  ('roble_extra_anejo.jpg', true, 9, 1, 11),
+  ('roble_zafra.jpg', true, 9, 6, 13),
+  ('santa_teresa_1796.jpg', true, 9, 1, 14),
+  ('santa_teresa_gran_reserva.jpg', true, 9, 1, 15),
+  ('santa_teresa_linaje.jpg', true, 7, 1, 16),
+  ('santa_teresa_araku.jpg', true, 7, 1, 17);
+

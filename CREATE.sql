@@ -1308,7 +1308,7 @@ CREATE TABLE Producto_Premio (
 CREATE TABLE Imagen (
   imagen_codigo serial,
   -- Código identificador de la entidad Imagen
-  imagen_nombre varchar(20) NOT NULL UNIQUE,
+  imagen_nombre varchar(100) NOT NULL UNIQUE,
   -- Nombre de la imagen.
   imagen_principal boolean NOT NULL,
   -- Indica si la imagen es principal o no.
@@ -1327,8 +1327,6 @@ CREATE TABLE Imagen (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
   CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT ck_imagen_nombre CHECK (imagen_nombre ~'^[a-zA-Z]+\.(jpg|png)$')
-  -- Constrain. Debe terminar en .jpg o .png
 );                
 
 CREATE TABLE Estatus_Pedido (
