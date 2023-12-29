@@ -314,12 +314,31 @@ def registrar_empleado():
 @app.route("/api/empleado/all", methods=["GET"])
 def get_all_empleados():
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_nat_codigo as codigo, persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
-                contrato_fecha_ingreso as fecha_ingreso, contrato_fecha_salida as fecha_salida, cargo_nombre as cargo, departamento_nombre as departamento
-                FROM persona_natural pn, empleado e, contrato_de_empleo ce, contrato_cargo cc, cargo c, contrato_departamento cd, departamento d
-                where pn.persona_nat_codigo = e.empleado_codigo and e.empleado_codigo = ce.fk_empleado
-                and ce.contrato_codigo = cc.fk_contrato_empleo and cc.fk_cargo = c.cargo_codigo and ce.contrato_codigo = cd.fk_contrato_empleo
-                and cd.fk_departamento = d.departamento_codigo 
+    
+    # agarramos todos los empleados a pesar de no tener cargo o departamento
+    cur.execute('''
+                SELECT 
+                    persona_nat_codigo as codigo, 
+                    persona_nat_cedula as cedula, 
+                    (persona_nat_p_nombre || ' ' || persona_nat_p_apellido) as nombre, 
+                    contrato_fecha_ingreso as fecha_ingreso, 
+                    contrato_fecha_salida as fecha_salida, 
+                    cargo_nombre as cargo, 
+                    departamento_nombre as departamento
+                FROM 
+                    persona_natural pn
+                INNER JOIN 
+                    empleado e ON pn.persona_nat_codigo = e.empleado_codigo
+                INNER JOIN 
+                    contrato_de_empleo ce ON e.empleado_codigo = ce.fk_empleado
+                LEFT JOIN 
+                    contrato_cargo cc ON ce.contrato_codigo = cc.fk_contrato_empleo
+                LEFT JOIN 
+                    cargo c ON cc.fk_cargo = c.cargo_codigo
+                LEFT JOIN 
+                    contrato_departamento cd ON ce.contrato_codigo = cd.fk_contrato_empleo
+                LEFT JOIN 
+                    departamento d ON cd.fk_departamento = d.departamento_codigo;
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -1304,3 +1323,21 @@ def delete_cliente_juridico(id):
     cur.close()
 
     return "Cliente Eliminado"
+
+
+
+
+# >>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA REALIZAR OPERACIONES DE INVENTARIO
+# >>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todos los productos (presentaciones) del inventario de una tienda
+@app.route("/api/tienda/inventario/productos/all", methods=["GET"])
+def get_productos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    cur.callproc('get_productos')
+    productos = cur.fetchall()
+    cur.close()
+    pprint(productos)
+    return jsonify(productos)
