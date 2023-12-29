@@ -1,0 +1,35 @@
+<script>
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/producto/anejamiento/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                // Llena el campo anejamiento principal con los datos del JSON
+                data.principal.forEach(anejamiento => {
+                    $("#form-field-panejamiento").append('<option value="'+anejamiento.id+'">'+anejamiento.nombre+'</option>');
+                });
+
+                // Cuando la anejamiento principal cambia, llena el campo anejamiento secundaria con las anejamientos secundarias correspondientes
+                $("#form-field-panejamiento").change(function() {
+                    var id = $(this).val();
+                    $("#form-field-sanejamiento").empty();
+                    $.each(data.secundario[id], function(i, anejamiento) {
+                        $("#form-field-sanejamiento").append('<option value="'+anejamiento.id+'">'+anejamiento.nombre+'</option>');
+                    });
+                    // Trigger the change event if there's only one secondary classification
+                    if (data.secundario[id].length === 1) {
+                        $("#form-field-sanejamiento").trigger('change');
+                    }
+                });
+
+            },
+            error: function() {
+                alert('Error obteniendo los métodos de añejamiento');
+            }
+        });
+    });
+</script>    

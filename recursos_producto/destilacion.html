@@ -1,0 +1,19 @@
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/producto/destilacion/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var destilaciones = data;
+                destilaciones.forEach(destilacion => {
+                    $("#form-field-destilacion").append("<option id="+ destilacion.destilacion_codigo +">"+ destilacion.destilacion_metodo +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los métodos de destilación");
+            }
+        });
+    });
+</script>
