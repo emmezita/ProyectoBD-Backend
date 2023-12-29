@@ -45,12 +45,25 @@ function save() {
         success: function (data) {
             alert("Cliente natural registrado exitosamente");
             reset = true;
-            //hay que resetear tablas
-            $('.elementor-form').reset();
         },
         error: function (data) {
             reset = false;
-            alert(data.responseJSON.message);
+            alert(data.responseText);
         }
     });
 }
+
+$(document).ready(function() {
+    $('#crearClienteNatural').submit(function(event) {
+        event.preventDefault(); // Prevent form submission
+        save(); // Call the save function
+    });
+});
+
+$(document).on('reset', (e) => { 
+    if (reset) {
+        reset = false;
+        return;
+    }
+    e.preventDefault() 
+})

@@ -1,4 +1,6 @@
+from calendar import c
 import datetime
+from tkinter import N
 import traceback
 from flask import Flask, Response, request, jsonify
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
@@ -631,12 +633,20 @@ def get_persona_natural_cliente(cedula):
     lugar = cur.fetchone()
     
     sql_tdc = """
-        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, banco_nombre
         FROM TDC
+        INNER JOIN Banco ON TDC.fk_banco = Banco.banco_codigo
         WHERE fk_persona_natural = %s
     """
+
     cur.execute(sql_tdc, (persona['persona_nat_codigo'],))
-    tdc = cur.fetchone()
+    tdc = cur.fetchall()
+
+    # convertir los objetos de tipo 'date' a cadenas con mm/yyyy
+    for tarjeta in tdc:
+        tarjeta['tdc_fecha_vencimiento'] = tarjeta['tdc_fecha_vencimiento'].strftime('%m/%Y')
+
+    print(tdc)
 
     cur.close()
     datos = {
@@ -644,7 +654,7 @@ def get_persona_natural_cliente(cedula):
         'correos': correos,
         'telefonos': telefonos,
         'lugar': lugar,
-        'tdc': tdc
+        'tdc': tdc,
     }
     pprint(datos)
     return jsonify(datos)
@@ -675,7 +685,7 @@ def registrar_cliente_natural():
     parroquia = int(parroquia)
     tdc = cliente.get("tdc")
     
-     # # Insertar empleado
+     # # Insertar Cliente Natural
     cur = conn.cursor()
     
     sql_persona = """
@@ -722,10 +732,24 @@ def registrar_cliente_natural():
             cliente_codigo = cur.fetchone()
         
         cur.execute("SELECT * FROM TDC WHERE fk_persona_natural = %s", (cliente_codigo,))
-        existeTDC = cur.fetchone()
-        if (not existeTDC):
+        existeTDC = cur.fetchall()
+        
+        # actualmente no tiene tarjetas de credito registradas
+        if (len(existeTDC) == 0):
+            if tdc is not None:
+                for tarjeta in tdc:
+                    cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], cliente_codigo, None))
+        # tiene tarjetas de credito registradas
+        else:
+            # si se envian tarjetas de credito, se saltan las que ya estan registradas, tomando en cuenta el count
+            existing_cards = set(card['tdc_numero_tarjeta'] for card in existeTDC) # type: ignore
+
             for tarjeta in tdc:
-                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], cliente_codigo, None))
+                if tarjeta['numero'] not in existing_cards:
+                    cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], cliente_codigo, None))
+            # si no se envian tarjetas de credito, se eliminan las que ya estan registradas
+            else:
+                cur.execute("DELETE FROM TDC fk_persona_natural = %s", (cliente_codigo,))
         
         cur.execute(sql_cliente, (cliente_codigo, 0))
         
@@ -964,6 +988,10 @@ def get_persona_juridica_cliente(rif):
     """
     cur.execute(sql_tdc, (persona['persona_jur_codigo'],))
     tdc = cur.fetchall()
+
+    # convertir los objetos de tipo 'date' a cadenas con mm/yyyy
+    for tarjeta in tdc:
+        tarjeta['tdc_fecha_vencimiento'] = tarjeta['tdc_fecha_vencimiento'].strftime('%m/%Y')
     
     sql_contacto = """
         SELECT * FROM Contacto WHERE fk_persona_juridica = %s
@@ -1062,13 +1090,29 @@ def registrar_cliente_juridico():
             persona_jur_codigo = cur.fetchone()
         
         cur.execute("SELECT * FROM TDC WHERE fk_persona_juridica = %s", (persona_jur_codigo,))
-        existeTDC = cur.fetchone()
-        if (not existeTDC):
-            for tarjeta in cjtdc:
-                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, persona_jur_codigo))
+        existeTDC = cur.fetchall()
         
+        # actualmente no tiene tarjetas de credito registradas
+        if (len(existeTDC) == 0):
+            print("No tiene tarjetas de credito registradas")
+            if cjtdc is not None:
+                print("Tiene tarjetas de credito para registrar")
+                for tarjeta in cjtdc:
+                    cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, persona_jur_codigo))
+        # tiene tarjetas de credito registradas
+        else:
+            # si se envian tarjetas de credito, se saltan las que ya estan registradas, tomando en cuenta el count
+            existing_cards = set(card['tdc_numero_tarjeta'] for card in existeTDC) # type: ignore
+
+            for tarjeta in cjtdc:
+                if tarjeta['numero'] not in existing_cards:
+                    cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, persona_jur_codigo))
+            # si no se envian tarjetas de credito, se eliminan las que ya estan registradas
+            else:
+                cur.execute("DELETE FROM TDC WHERE fk_persona_juridica = %s", (persona_jur_codigo,))
+
         for contacto in cjcontactos:
-            cur.execute(sql_contacto, (contacto['nombre'], contacto['numero'], contacto['correo'], persona_jur_codigo))
+            cur.execute(sql_contacto, (contacto['nombre'], contacto['telefono'], contacto['correo'], persona_jur_codigo))
             
         cur.execute(sql_cliente, (persona_jur_codigo, 0))
         

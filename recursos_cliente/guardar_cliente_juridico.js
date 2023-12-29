@@ -3,20 +3,6 @@ var reset = false;
 function save() {
     var ff = "#form-field-"
 
-    var pnfechanac = $(ff+"pnfechanac").val() // 2023-12-07
-    // validar que sea mayor de edad
-    var hoy = new Date();
-    var cumpleanos = new Date(fechanac);
-    var edad = hoy.getFullYear() - cumpleanos.getFullYear();
-    var m = hoy.getMonth() - cumpleanos.getMonth();
-    if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
-        edad--;
-    }
-    if (edad < 18) {
-        alert("La persona de contacto debe ser mayor de edad");
-        return;
-    }
-
     var data = {
         cjnacionalidad: $(ff+"cjnacionalidad").val(),
         cjrif: $(ff+"cjrif").val(),
@@ -25,8 +11,8 @@ function save() {
         cjrazon: $(ff+"cjrazon").val(),
         cjcorreo: $(ff+"cjcorreo").val(),
         cjcorreoalt: $(ff+"cjcorreoalt").val(),
-        cjtelefono: $(ff+"cjcodarea") + $(ff+"cjtelefono").val(),
-        cjtelefonoalt: $(ff+"cjcodareaalt") + $(ff+"cjtelefonoalt").val(),
+        cjtelefono: $(ff+"cjcodarea").val() + $(ff+"cjtelefono").val(),
+        cjtelefonoalt: $(ff+"cjcodareaalt").val() + $(ff+"cjtelefonoalt").val(),
         cjparroquiafisica: $(ff+"cjparroquiafisica option:selected").attr('value'),
         cjdireccionfisica: $(ff+"cjdireccionfisica").val(),
         cjparroquiafiscal: $(ff+"cjparroquiafiscal option:selected").attr('value'),
@@ -47,12 +33,25 @@ function save() {
         success: function (data) {
             alert("Cliente juridico registrado exitosamente");
             reset = true;
-            //hay que resetear tablas
-            $('.elementor-form').reset();
         },
         error: function (data) {
             reset = false;
-            alert(data.responseJSON.message);
+            alert(data.responseText);
         }
     });
 }
+
+$(document).ready(function() {
+    $('#crearClienteJuridico').submit(function(event) {
+        event.preventDefault(); // Prevent form submission
+        save(); // Call the save function
+    });
+});
+
+$(document).on('reset', (e) => { 
+    if (reset) {
+        reset = false;
+        return;
+    }
+    e.preventDefault() 
+})

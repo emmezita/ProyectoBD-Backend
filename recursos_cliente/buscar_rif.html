@@ -91,16 +91,17 @@ document.getElementById('buscar').addEventListener('click', function() {
                     $(ff+"cjcapital").val(data.persona.persona_jur_capital_disp).prop('disabled', true);
                     $(ff+"cjdenom").val(data.persona.persona_jur_denom_comercial).prop('disabled', true);
                     $(ff+"cjrazon").val(data.persona.persona_jur_razon_social).prop('disabled', true);
-                    $(ff+"cjcorreo").val(data.persona.persona_jur_correo).prop('disabled', true);
-                    if (data.persona.persona_jur_correo_alt != null)
-                        $(ff+"cjcorreoalt").val(data.persona.persona_jur_correo_alt).prop('disabled', true);
-                    $(ff+"cjcordarea").val(data.telefonos[0].telefono_cod_area).prop('disabled', true);
+                    $(ff+"cjcorreo").val(data.correos[0].correo_direccion).prop('disabled', true);
+                    if (data.correos.length > 1) {
+                        $(ff+"cjcorreoalt").val(data.correos[1].correo_direccion).prop('disabled', true);
+                    }
+                    $(ff+"cjcodarea").val(data.telefonos[0].telefono_codigo_area).prop('disabled', true);
                     $(ff+"cjtelefono").val(data.telefonos[0].telefono_numero).prop('disabled', true);
                     if (data.telefonos.length > 1) {
-                        $(ff+"cjcodareaalt").val(data.telefonos[1].telefono_cod_area).prop('disabled', true);
+                        $(ff+"cjcodareaalt").val(data.telefonos[1].telefono_codigo_area).prop('disabled', true);
                         $(ff+"cjtelefonoalt").val(data.telefonos[1].telefono_numero).prop('disabled', true);
                     }
-                    $(ff+"cjpaginaweb").val(data.persona.persona_jur_pag_web).prop('disabled', true);
+                    $(ff+"cjpaginaweb").val(data.persona.persona_jur_pagina_web).prop('disabled', true);
                     $(ff+"cjdireccionfisica").val(data.persona.persona_jur_direccion_fisica).prop('disabled', true);
                     $(ff+"cjdireccionfiscal").val(data.persona.persona_jur_direccion_fiscal).prop('disabled', true);
                     llenarEMPfisica(data.lugar_fisica.estado, data.lugar_fisica.municipio, data.lugar_fisica.parroquia);
@@ -114,5 +115,27 @@ document.getElementById('buscar').addEventListener('click', function() {
             }
         });
     });
+});
+
+document.getElementById('reset').addEventListener('click', function() {
+    // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón de reset
+    existePersona = false;
+    var ff = '#form-field-';
+    $(ff+"cjnacionalidad").val('').prop('disabled', false);
+    $(ff+"cjrif").val('').prop('disabled', false);
+    $(ff+"cjcapital").val('').prop('disabled', false);
+    $(ff+"cjdenom").val('').prop('disabled', false);
+    $(ff+"cjrazon").val('').prop('disabled', false);
+    $(ff+"cjcorreo").val('').prop('disabled', false);
+    $(ff+"cjcorreoalt").val('').prop('disabled', false);
+    $(ff+"cjcodarea").val('').prop('disabled', false);
+    $(ff+"cjtelefono").val('').prop('disabled', false);
+    $(ff+"cjcodareaalt").val('').prop('disabled', false);
+    $(ff+"cjtelefonoalt").val('').prop('disabled', false);
+    $(ff+"cjpaginaweb").val('').prop('disabled', false);
+    $(ff+"cjdireccionfisica").val('').prop('disabled', false);
+    $(ff+"cjdireccionfiscal").val('').prop('disabled', false);
+    $("#body-TDC").empty();
+    $("#body-contactos").empty();
 });
 </script>

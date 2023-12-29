@@ -143,10 +143,21 @@
         var nombre = $(".input-nombre").val();
         var telefono = $(".input-telefono").val();
         var correo = $(".input-correo").val();
-        if (nombre == "" || telefono == "" || correo == "") {
-            alert("Por favor, llene todos los campos");
+        
+        if (!validateFormContacto(nombre, telefono, correo)) {
             return;
         }
+
+        // revisar si el contacto ya existe
+        var contactos = getContactos();
+        console.log(contactos);
+        for (let i = 0; i < contactos.length; i++) {
+            if (contactos[i].nombre == nombre || contactos[i].telefono == telefono || contactos[i].correo == correo) {
+                alert("El contacto ya existe");
+                return;
+            }
+        }
+
         // Agrega una nueva fila a la tabla con los datos del contacto y los botones de editar y eliminar
         $('#body-contactos').append('<tr><td>' + nombre + '</td><td>' + telefono + '</td><td>' + correo + '</td><td><button class="btn btn-warning-ben" onclick="editContact(this)">Editar</button></td><td><button class="btn btn-danger-ben" onclick="deleteContact(this)">Eliminar</button></td></tr>');
     }
@@ -184,7 +195,7 @@
         row.remove();
     }
 
-    function validateForm(nombre, telefono, correo) {
+    function validateFormContacto(nombre, telefono, correo) {
         if (nombre == "" || telefono == "" || correo == "") {
             alert("Por favor, llene todos los campos");
             return false;

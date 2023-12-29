@@ -30,9 +30,14 @@ function llenarEMP(estado, municipio, parroquia) {
     $("#form-field-parroquia").val(parroquia).prop('disabled', true);    
 }
 
-function llenarTDCs(tarjetas) {
+function llenarTDCs(TDCs) {
+    //si TDCs no es un arreglo, entonces solo hay una TDC
+    if (!Array.isArray(TDCs)) {
+        TDCs = [TDCs];
+    }
+
     TDCs.forEach(TDC => {
-        $("#body-TDC").append("<tr><td id="+ TDC.banco.banco_codigo +">"+TDC.banco.banco_nombre+"</td><td>"+TDC.tdc_numero+"</td><td>"+TDC.tdc_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
+        $("#body-TDC").append("<tr><td id="+ TDC.fk_banco +">"+TDC.banco_nombre+"</td><td>"+TDC.tdc_numero_tarjeta+"</td><td>"+TDC.tdc_fecha_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
     });
 }
 
@@ -106,5 +111,6 @@ document.getElementById('reset').addEventListener('click', function() {
     $(ff+"telefonoalt").val('').prop('disabled', false);
     $(ff+"fechanac").val('').prop('disabled', false);
     $(ff+"direccion").val('').prop('disabled', false);
+    $("#body-TDC").empty();
 });
 </script>
