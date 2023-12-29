@@ -1341,3 +1341,289 @@ def get_productos():
     cur.close()
     pprint(productos)
     return jsonify(productos)
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA REALIZAR EL CRUD DE PRODUCTO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todos los proveedores de la base de datos
+@app.route("/api/producto/proveedor/all", methods=["GET"])
+def get_all_proveedores():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''SELECT persona_jur_codigo as codigo, persona_jur_denom_comercial as denom
+                FROM persona_juridica pj, proveedor p
+                WHERE pj.persona_jur_codigo = p.proveedor_codigo
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para obtener los metodos de fermentacion de la base de datos
+@app.route("/api/producto/fermentacion/all", methods=["GET"])
+def get_all_metodos_fermentacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM fermentacion")
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para obtener los metodos de destilacion de la base de datos
+@app.route("/api/producto/destilacion/all", methods=["GET"])
+def get_all_metodos_destilacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM destilacion")
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para obtener las clasificaciones de la base de datos
+@app.route("/api/producto/clasificacion/all", methods=["GET"])
+def get_all_clasificacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM clasificacion")
+    rows = cur.fetchall()
+    cur.close()
+
+    json_clasificacion = formatear_clasificaciones(rows)
+
+    return jsonify(json_clasificacion)
+
+def formatear_clasificaciones(clasificaciones):
+    principal = []
+    secundario = {}
+
+    for clasificacion in clasificaciones:
+        if clasificacion['fk_clasificacion'] is None:
+            principal.append({
+                'id': clasificacion['clasificacion_codigo'],
+                'nombre': clasificacion['clasificacion_nombre'],
+            })
+        else:
+            if clasificacion['fk_clasificacion'] not in secundario:
+                secundario[clasificacion['fk_clasificacion']] = []
+            secundario[clasificacion['fk_clasificacion']].append({
+                'id': clasificacion['clasificacion_codigo'],
+                'nombre': clasificacion['clasificacion_nombre'],
+            })
+
+    return {
+        'principal': principal,
+        'secundario': secundario
+    }
+    
+# Ruta para obtener todas las categorias de la base de datos
+@app.route("/api/producto/categoria/all", methods=["GET"])
+def get_all_categoria():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM categoria")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener todos los colores de la base de datos
+@app.route("/api/producto/color/all", methods=["GET"])
+def get_all_color():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM color")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener los metodos de anjeamiento de la base de datos
+@app.route("/api/producto/anejamiento/all", methods=["GET"])
+def get_all_anejamiento():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("""
+                SELECT anejamiento_codigo as codigo, (anejamiento_descripcion || ' por ' || anejamiento_tiempo || ' años' || ' en ' 
+                || barrica_nombre ) as nombre, fk_anejamiento
+                FROM anejamiento, barrica
+                WHERE anejamiento.fk_barrica = barrica.barrica_codigo
+                """)
+    rows = cur.fetchall()
+    cur.close()
+
+    json_anejamientos = formatear_anejamientos(rows)
+
+    return jsonify(json_anejamientos)
+
+def formatear_anejamientos(anejamientos):
+    principal = []
+    secundario = {}
+
+    for anejamiento in anejamientos:
+        if anejamiento['fk_anejamiento'] is None:
+            principal.append({
+                'id': anejamiento['codigo'],
+                'nombre': anejamiento['nombre'],
+            })
+        else:
+            if anejamiento['fk_anejamiento'] not in secundario:
+                secundario[anejamiento['fk_anejamiento']] = []
+            secundario[anejamiento['fk_anejamiento']].append({
+                'id': anejamiento['codigo'],
+                'nombre': anejamiento['nombre'],
+            })
+
+    return {
+        'principal': principal,
+        'secundario': secundario
+    }
+    
+# Ruta para obtener todos los aromas de la base de datos
+@app.route("/api/producto/aroma/all", methods=["GET"])
+def get_all_aroma():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM aroma")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener todos los ingredientes de la base de datos
+@app.route("/api/producto/ingrediente/all", methods=["GET"])
+def get_all_ingrediente():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM ingrediente")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener todos los sabores de la base de datos
+@app.route("/api/producto/sabor/all", methods=["GET"])
+def get_all_sabor():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM sabor")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener los empaques de la base de datos
+@app.route("/api/producto/empaque/all", methods=["GET"])
+def get_all_empaque():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("""
+                SELECT caja_codigo as codigo, (caja_descripcion || ' de ' || caja_capacidad || ' unidades') as nombre, fk_caja
+                FROM caja
+                """)
+    rows = cur.fetchall()
+    cur.close()
+
+    json_empaques = formatear_empaques(rows)
+
+    return jsonify(json_empaques)
+
+def formatear_empaques(empaques):
+    principal = []
+    secundario = {}
+
+    for empaque in empaques:
+        if empaque['fk_caja'] is None:
+            principal.append({
+                'id': empaque['codigo'],
+                'nombre': empaque['nombre'],
+            })
+        else:
+            if empaque['fk_caja'] not in secundario:
+                secundario[empaque['fk_caja']] = []
+            secundario[empaque['fk_caja']].append({
+                'id': empaque['codigo'],
+                'nombre': empaque['nombre'],
+            })
+
+    return {
+        'principal': principal,
+        'secundario': secundario
+    }
+    
+# Ruta para obtener todas las tapas de los productos de la base de datos
+@app.route("/api/producto/tapa/all", methods=["GET"])
+def get_all_tapa():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM tapa")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener como se sirve el producto de la base de datos
+@app.route("/api/producto/servido/all", methods=["GET"])
+def get_all_servido():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM servido")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener todas las botellaa de los productos de la base de datos
+@app.route("/api/producto/botella/all", methods=["GET"])
+def get_all_botella():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("""
+                SELECT botella_codigo, material_codigo, (botella_descripcion || ' de ' || material_nombre) as nombre
+                FROM material_botella, botella, material
+                WHERE fk_material = material_codigo
+                AND fk_botella = botella_codigo
+                """)
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para buscar un producto por nombre
+@app.route("/api/producto/buscar/<nombre>", methods=["GET"])
+def buscar_producto(nombre):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM producto WHERE producto_nombre ILIKE %s", ('%' + nombre + '%',))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para registrar el producto en la base de datos
+# @app.route("/api/producto/registrar", methods=["POST"])
+# def registrar_producto():
+#     cur = conn.cursor()
+#     producto = request.get_json()
+#     pprint(producto)
+#     nombre = producto.get("nombre")
+#     grado = producto.get("grado")
+#     proveedor = producto.get("proveedor")
+#     parroquia = producto.get("parroquia")
+#     fermentacion = producto.get("fermentacion")
+#     destilacion = producto.get("destilacion")
+#     clasificacion = producto.get("clasificacion")
+#     categoria = producto.get("categoria")
+#     precio_compra = producto.get("precio_compra")
+#     precio_venta = producto.get("precio_venta")
+#     color = producto.get("color")
+#     detalle_color = producto.get("detalle_color")
+#     direccion = producto.get("direccion")
+#     aromas = producto.get("aromas")
+#     anejamiento = producto.get("anejamiento")
+#     ingredientes = producto.get("ingredientes")
+#     sabores = producto.get("sabores")
+#     empaque = producto.get("empaque")
+#     botella = producto.get("botella")
+#     tapa = producto.get("tapa")
+#     presentacionpeso = producto.get("presentacionpeso")
+#     servidos = producto.get("servidos")
+#     imagen = producto.get("imagen")
+#     cuerpopeso = producto.get("cuerpopeso")
+#     cuerpotextura = producto.get("cuerpotextura")
+#     cuerpodensidad = producto.get("cuerpodensidad")
+#     cuerpodescripcion = producto.get("cuerpodescripcion")
+#     regustoentrada = producto.get("regustoentrada")
+#     regustoevolucion = producto.get("regustoevolucion")
+#     regustopersistencia = producto.get("regustopersistencia")
+#     regustoacabado = producto.get("regustoacabado") 
+#     regustodescripcion = producto.get("regustodescripcion")
+
+#     sql_producto = """

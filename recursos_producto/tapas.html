@@ -1,0 +1,19 @@
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/producto/tapa/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var tapas = data;
+                tapas.forEach(tapa => {
+                    $("#form-field-tapa").append("<option id="+ tapa.tapa_codigo +">"+ tapa.tapa_descripcion +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los tapas");
+            }
+        });
+    });
+</script>

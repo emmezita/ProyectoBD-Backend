@@ -3519,7 +3519,6 @@ VALUES
   ('Banplus'),
   ('Banco Fondo Común');
 
-
 INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural)
 VALUES
   ('1234123412341234', '2026-01-01', '312', 4, 21),
@@ -4176,7 +4175,6 @@ VALUES
   (1, 'Caja Individual de metal', 3),  --16
   (1, 'Forro de cuero', 3),  --17
   (2, 'Caja de Colección de metal', 3),  --18
-  (4, 'Caja de Colección de madera', 3),  --19
   (1, 'Caja Individual de carton', 4),  --20
   (1, 'Caja Individual de metal', 4),  --21
   (1, 'Forro de cuero', 4),  --22
