@@ -1733,7 +1733,6 @@ def get_producto(id):
         'cuerpo': cuerpo,
         'regusto': regusto
     })
-    })
     
     pprint(datos)
     
