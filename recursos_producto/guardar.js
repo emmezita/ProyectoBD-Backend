@@ -81,7 +81,6 @@ function save() {
 
 $(document).ready(function() {
     $('#crearProducto').submit(function(event) {
-        event.preventDefault(); // Prevent form submission
         save(); // Call the save function
     });
 });
