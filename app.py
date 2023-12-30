@@ -136,13 +136,13 @@ def get_all_horarios():
 def get_persona_natural_empleado(cedula):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT * FROM persona_natural WHERE persona_nat_cedula = %s", (cedula,))
-    persona = cur.fetchall()
+    persona = cur.fetchone()
 
     if persona is None:
         return Response(status=409, response="La persona no existe")
 
     cur.execute("SELECT * FROM empleado WHERE empleado_codigo = %s", (persona['persona_nat_codigo'],))
-    empleado = cur.fetchall()
+    empleado = cur.fetchone()
 
     if empleado is not None:
         return Response(status=409, response="El empleado ya existe")
