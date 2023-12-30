@@ -1,0 +1,19 @@
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/presentacion/botella/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var botellas = data;
+                botellas.forEach(botella => {
+                    $("#form-field-botella").append("<option idmaterial="+ botella.material_codigo +" idbotella = "+ botella.botella_codigo+">"+ botella.nombre +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar las botellas");
+            }
+        });
+    });
+</script>

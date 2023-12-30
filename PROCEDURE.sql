@@ -1,24 +1,17 @@
-CREATE OR REPLACE PROCEDURE insertar_empleado(
-    p_nombre IN VARCHAR2,
-    s_nombre IN VARCHAR2,
-    p_apellido IN VARCHAR2,
-    s_apellido IN VARCHAR2,
-    cedula IN VARCHAR2,
-    rif IN VARCHAR2,
-    correo IN VARCHAR2,
-    correo_alt IN VARCHAR2,
-    cod_area IN VARCHAR2,
-    telefono IN VARCHAR2,
-    cod_area_alt IN VARCHAR2,
-    telefono_alt IN VARCHAR2,
-    fecha_nacimiento IN DATE,
-    direccion IN VARCHAR2,
-) 
-LANGUAGE plpgsql
-AS $$
+--Procedimiento para obtener los datos de la tabla inventario_tienda
+CREATE PROCEDURE GetInventarioTiendaData
+AS
 BEGIN
-    INSERT INTO Persona_Natural (rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento)
-    VALUES (rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento);
+    SELECT fk_presentacion_1 as codigo1, fk_presentacion_2 as codigo2, fk_presentacion_3 as codigo3,
+        producto_nombre as nombre, producto_grado_alcoholico as grado, (botella_descripcion || ' de ' || material_nombre ) as botella,
+        botella_capacidad as capacidad, inv_tienda_cantidad as cantidad
+    FROM inventario_tienda inv
+    INNER JOIN
+        material ma ON inv.fk_presentacion_1 = ma.material_codigo
+    INNER JOIN
+        botella b ON inv.fk_presentacion_2 = b.botella_codigo
+    INNER JOIN
+        producto pr ON inv.fk_presentacion_3 = pr.producto_codigo;
 END;
 
 CREATE OR REPLACE PROCEDURE insertar_historico_puntos(

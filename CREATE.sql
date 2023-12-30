@@ -23,11 +23,13 @@ CREATE TABLE Persona_Juridica (
   -- Código identificador de la entidad Persona Jurídica
   persona_jur_rif varchar(11) NOT NULL,
   -- Rif de la persona jurídica. 
-  persona_jur_direccion_fiscal varchar(30) NOT NULL,
+  persona_jur_direccion_fiscal varchar(200) NOT NULL,
   -- Dirección fiscal de la persona jurídica.
-  persona_jur_direccion_fisica varchar(30) NOT NULL,
+  persona_jur_direccion_fisica varchar(200) NOT NULL,
   -- Dirección física de la persona jurídica.
-  persona_jur_denom_social varchar(15) NOT NULL,
+  persona_jur_denom_comercial varchar(30) NOT NULL,
+  -- Denominación comercial de la persona jurídica. 
+  persona_jur_razon_social varchar(30) NOT NULL,
   -- Denominación social de la persona jurídica. 
   persona_jur_pagina_web varchar(70) NOT NULL,
   -- URL de la página web de la persona jurídica. 
@@ -44,12 +46,12 @@ CREATE TABLE Persona_Juridica (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT fk_persona_jur_direccion_fisica FOREIGN KEY (fk_lugar_fisica) REFERENCES Lugar(lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
-  CONSTRAINT ck_persona_jur_rif CHECK (persona_jur_rif ~ '^[VEJPG]{1}[0-9]{9}$'),
+  CONSTRAINT ck_persona_jur_rif CHECK (persona_jur_rif ~ '^[VEJPG]{1}[0-9]{9,10}$'),
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
-  CONSTRAINT ck_persona_jur_denom_social CHECK (persona_jur_denom_social ~ '^[A-Za-z0-9áéíóúñ ]+$'),
+  CONSTRAINT ck_persona_jur_denom_comercial CHECK (persona_jur_denom_comercial ~ '^[A-Za-z0-9áéíóúñ ]+$'),
   -- Constrain. No debe contener caracteres especiales
-  CONSTRAINT ck_persona_jur_pagina_web CHECK (persona_jur_pagina_web ~ '^[https://]{1}[w]{1}[w]{1}[.]{1}[a-z0-9-]+[.]{1}[a-z]{2,6}$'),
-  -- Constrain.. Debe comenzar con "https://" y tener un dominio válido
+  CONSTRAINT ck_persona_jur_razon_social CHECK (persona_jur_razon_social ~ '^[A-Za-z0-9áéíóú., ]+$'),
+  -- Constrain. No debe contener caracteres especiales
   CONSTRAINT ck_persona_jur_capital_disp CHECK (persona_jur_capital_disp > 0)
   -- Constrain. Debe ser mayor que 0
 );
@@ -82,7 +84,7 @@ CREATE TABLE Persona_Natural (
   -- Código identificador de la entidad Persona Natural
   persona_nat_rif varchar(11) NOT NULL UNIQUE,
   -- Rif de la persona natural.
-  persona_nat_direccion_fiscal varchar(30) NOT NULL,
+  persona_nat_direccion_fiscal varchar(200) NOT NULL,
   -- Dirección fiscal de la persona natural.
   persona_nat_cedula varchar(8) NOT NULL UNIQUE,
   -- Cédula de la persona natural. 
@@ -103,17 +105,17 @@ CREATE TABLE Persona_Natural (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_persona_nat_direccion_fiscal FOREIGN KEY (fk_lugar) REFERENCES Lugar(lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
-  CONSTRAINT ck_persona_nat_rif CHECK (persona_nat_rif ~ '^[VEJPG]{1}[0-9]{9}$'),
+  CONSTRAINT ck_persona_nat_rif CHECK (persona_nat_rif ~ '^[VEJPG]{1}[0-9]{8,10}$'),
   -- Constrain. Debe comenzar con una letra V, E, J, P o G, y luego de nueve dígitos
-  CONSTRAINT ck_persona_nat_cedula CHECK (persona_nat_cedula ~ '^[0-9]{7-8}$'),
+  CONSTRAINT ck_persona_nat_cedula CHECK (persona_nat_cedula ~ '^[0-9]{7,8}$'),
   -- Constrain. Debe tener ocho dígitos
-  CONSTRAINT ck_persona_nat_p_nombre CHECK (persona_nat_p_nombre ~ '^[A-Za-záéíóúñ ]+$'),
+  CONSTRAINT ck_persona_nat_p_nombre CHECK (persona_nat_p_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_persona_nat_s_nombre CHECK (persona_nat_s_nombre ~ '^[A-Za-záéíóúñ ]+$'),
+  CONSTRAINT ck_persona_nat_s_nombre CHECK (persona_nat_s_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_persona_nat_p_apellido CHECK (persona_nat_p_apellido ~ '^[A-Za-záéíóúñ ]+$'),
+  CONSTRAINT ck_persona_nat_p_apellido CHECK (persona_nat_p_apellido ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_persona_nat_s_apellido CHECK (persona_nat_s_apellido ~ '^[A-Za-záéíóúñ ]+$')
+  CONSTRAINT ck_persona_nat_s_apellido CHECK (persona_nat_s_apellido ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -141,23 +143,33 @@ CREATE TABLE Empleado (
 );
 
 CREATE TABLE Contacto (
-  fk_persona_natural integer,
-  -- Relación con la entidad Persona Natural
+  contacto_codigo serial,
+  -- Código identificador de la entidad Contacto
+  contacto_nombre varchar(50) NOT NULL,
+  -- Nombre del contacto.
+  contacto_numero varchar(11) NOT NULL,
+  -- Número del contacto.
+  contacto_correo varchar(50) NOT NULL,
+  -- Correo del contacto.
   fk_persona_juridica integer,
   -- Relación con la entidad Persona Jurídica
 
-  CONSTRAINT pk_contacto PRIMARY KEY (fk_persona_natural, fk_persona_juridica),
+  CONSTRAINT pk_contacto_codigo PRIMARY KEY (contacto_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contacto_persona_natural_mantiene FOREIGN KEY (fk_persona_natural) REFERENCES Persona_Natural (persona_nat_codigo),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
-  CONSTRAINT fk_contacto_persona_juridica_comprende FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo)
+  CONSTRAINT fk_contacto_persona_juridica_trabaja FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
+  CONSTRAINT ck_contacto_nombre CHECK (contacto_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
+  -- Constrain. No debe contener números ni caracteres especiales
+  CONSTRAINT ck_contacto_numero CHECK (contacto_numero ~ '^[0-9]{11}$'),
+  -- Constrain. Debe tener once dígitos
+  CONSTRAINT ck_contacto_correo CHECK (contacto_correo ~ '^[a-zA-Z0-9._]+[@]{1}[a-z]+[.]{1}[a-z]{2,3}$')
+  -- Constrain. Debe tener un formato válido
 );
 
 CREATE TABLE Correo (
   correo_codigo serial,
   -- Código identificador de la entidad Correo
-  correo_direccion varchar(30) NOT NULL UNIQUE,
+  correo_direccion varchar(100) NOT NULL UNIQUE,
   -- Dirección de correo electrónico del contacto.
   fk_persona_natural integer,
   -- Relación con la entidad Persona Natural
@@ -170,8 +182,8 @@ CREATE TABLE Correo (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
   CONSTRAINT fk_correo_persona_juridica_administra FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
-  CONSTRAINT ck_correo_direccion CHECK (correo_direccion ~ '^[a-zA-Z0-9]+[@]{1}[a-z]+[.]{1}[a-z]{2,3}$')
-  -- Constrain. Debe tener un formato válido
+  CONSTRAINT ck_correo_direccion CHECK (correo_direccion ~ '^[a-zA-Z0-9._]+[@]{1}[a-z.]+[.]{1}[a-z]{2,3}$')
+    -- Constrain. Debe tener un formato válido
 );
 
 
@@ -202,28 +214,26 @@ CREATE TABLE Telefono (
 CREATE TABLE Permiso (
   permiso_codigo serial,
   -- Código identificador de la entidad Permiso
-  permiso_descripcion varchar(50) NOT NULL UNIQUE,
+  permiso_descripcion varchar(100) NOT NULL UNIQUE,
   -- Descripción del permiso.
-  permiso_tipo varchar(20) NOT NULL,
+  permiso_tipo varchar(50) NOT NULL,
   -- Tipo de permiso.
 
   CONSTRAINT pk_permiso_codigo PRIMARY KEY (permiso_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_permiso_descripcion CHECK (permiso_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
-  -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_permiso_tipo CHECK (permiso_tipo IN ('RRHH', 'Clientes', 'Proveedores', 'Productos', 'Eventos', 'Ventas', 'Compras', 'Pedidos', 'Afiliación', 'Administración'))
+  CONSTRAINT ck_permiso_descripcion CHECK (permiso_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Rol (
   rol_codigo serial,
   -- Código identificador de la entidad Rol
-  rol_nombre varchar(20) NOT NULL UNIQUE,
+  rol_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del rol.
 
   CONSTRAINT pk_rol_codigo PRIMARY KEY (rol_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_rol_nombre CHECK (rol_nombre ~ '^[a-zA-Z]+$')
+  CONSTRAINT ck_rol_nombre CHECK (rol_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -283,19 +293,19 @@ CREATE TABLE Accion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_accion_usuario_realiza FOREIGN KEY (fk_usuario) REFERENCES Usuario (usuario_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Usuario.
-  CONSTRAINT ck_accion_detalle CHECK (accion_detalle ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_accion_detalle CHECK (accion_detalle ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Banco (
   banco_codigo serial,
   -- Código identificador de la entidad Banco
-  banco_nombre varchar(20) NOT NULL UNIQUE,
+  banco_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del banco.
 
   CONSTRAINT pk_banco_codigo PRIMARY KEY (banco_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_banco_nombre CHECK (banco_nombre ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_banco_nombre CHECK (banco_nombre ~ '^[a-zA-Z0-9áéíóúñ% ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -375,7 +385,7 @@ CREATE TABLE Efectivo (
 
   CONSTRAINT pk_efectivo_codigo PRIMARY KEY (efectivo_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_efectivo_denominacion CHECK (efectivo_denominacion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_efectivo_denominacion CHECK (efectivo_denominacion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -445,9 +455,9 @@ CREATE TABLE Contrato_De_Empleo (
 
   CONSTRAINT pk_contrato_codigo PRIMARY KEY (contrato_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_empleado_seestipula FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo),
+  CONSTRAINT fk_contrato_empleado_seestipula FOREIGN KEY (fk_empleado) REFERENCES Empleado (empleado_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Empleado.
-  CONSTRAINT ck_contrato_fecha_salida CHECK (contrato_fecha_salida IS NULL OR contrato_fecha_salida > contrato_fecha_ingreso)
+  CONSTRAINT ck_contrato_fecha_salida CHECK (contrato_fecha_salida IS NULL OR contrato_fecha_salida >= contrato_fecha_ingreso)
   -- Constrain. Debe ser mayor que la fecha de ingreso
 );
 
@@ -465,7 +475,7 @@ CREATE TABLE Vacacion (
 
   CONSTRAINT pk_vacacion_codigo PRIMARY KEY (vacacion_codigo, fk_contrato_empleo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_vacacion_contrato_empleo_toma FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_vacacion_contrato_empleo_toma FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT ck_vacacion_fecha_cierre CHECK (vacacion_fecha_cierre IS NULL OR vacacion_fecha_cierre > vacacion_fecha_inicio),
   -- Constrain. Debe ser mayor que la fecha de inicio
@@ -485,7 +495,7 @@ CREATE TABLE Empleado_Entrada_Salida (
 
   CONSTRAINT pk_emp_ent_sal_codigo PRIMARY KEY (emp_ent_sal_codigo, fk_contrato_empleo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_emp_ent_sal_contrato_empleo_cumple FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_emp_ent_sal_contrato_empleo_cumple FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT ck_emp_ent_sal_fecha_hora_salida CHECK (emp_ent_sal_fecha_hora_salida > emp_ent_sal_fecha_hora_entrada)
   -- Constrain. Debe ser mayor que la fecha de entrada
@@ -494,18 +504,18 @@ CREATE TABLE Empleado_Entrada_Salida (
 CREATE TABLE Beneficio (
   beneficio_codigo serial,
   -- Código identificador de la entidad Beneficio
-  beneficio_nombre varchar(20) NOT NULL UNIQUE,
+  beneficio_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del beneficio.
-  beneficio_descripcion varchar(50),
+  beneficio_descripcion varchar(100),
   -- Descripción del beneficio.
   beneficio_tipo varchar(20) NOT NULL,
   -- Tipo de beneficio.
 
   CONSTRAINT pk_beneficio_codigo PRIMARY KEY (beneficio_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_beneficio_nombre CHECK (beneficio_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_beneficio_nombre CHECK (beneficio_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_beneficio_descripcion CHECK (beneficio_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_beneficio_descripcion CHECK (beneficio_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_beneficio_tipo CHECK (beneficio_tipo IN ('mensual', 'semestral', 'anual'))
   -- Constrain. Debe tener tres posibles valores: mensual, semestral y anual.
@@ -521,7 +531,7 @@ CREATE TABLE Contrato_Beneficio (
 
   CONSTRAINT pk_contrato_beneficio PRIMARY KEY (fk_contrato_empleo, fk_beneficio),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_beneficio_contrato_empleo_goza FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_beneficio_contrato_empleo_goza FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_beneficio_beneficio_ayuda FOREIGN KEY (fk_beneficio) REFERENCES Beneficio (beneficio_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Beneficio.
@@ -555,7 +565,7 @@ CREATE TABLE Contrato_Horario (
 
   CONSTRAINT pk_contrato_horario PRIMARY KEY (fk_contrato_empleo, fk_horario),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_horario_contrato_empleo_acata FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_horario_contrato_empleo_acata FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_horario_horario_esacatado FOREIGN KEY (fk_horario) REFERENCES Horario (horario_codigo)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Horario.
@@ -564,36 +574,38 @@ CREATE TABLE Contrato_Horario (
 CREATE TABLE Departamento (
   departamento_codigo serial,
   -- Código identificador de la entidad Departamento
-  departamento_nombre varchar(20) NOT NULL UNIQUE,
+  departamento_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del departamento.
   departamento_descripcion varchar(50),
   -- Descripción del departamento.
 
   CONSTRAINT pk_departamento_codigo PRIMARY KEY (departamento_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_departamento_nombre CHECK (departamento_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_departamento_nombre CHECK (departamento_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_departamento_descripcion CHECK (departamento_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_departamento_descripcion CHECK (departamento_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Contrato_Departamento (
-  cont_depant_fecha_inicio date NOT NULL,
+  cont_depart_codigo serial,
+  -- Código identificador de la entidad Contrato de Departamento
+  cont_depart_fecha_inicio date NOT NULL,
   -- Fecha de inicio del contrato del departamento.
-  cont_depant_fecha_cierre date,
+  cont_depart_fecha_cierre date,
   -- Fecha de cierre del contrato del departamento.
-  fk_contrato_empleo integer,
+  fk_contrato_empleo integer NOT NULL,
   -- Relación con la entidad Contrato de Empleo
-  fk_departamento integer,
+  fk_departamento integer NOT NULL,
   -- Relación con la entidad Departamento
 
-  CONSTRAINT pk_contrato_departamento PRIMARY KEY (fk_contrato_empleo, fk_departamento),
+  CONSTRAINT pk_contrato_departamento PRIMARY KEY (cont_depart_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_departamento_contrato_empleo_trabaja FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_departamento_contrato_empleo_trabaja FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_departamento_departamento_trabaja FOREIGN KEY (fk_departamento) REFERENCES Departamento (departamento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Departamento.
-  CONSTRAINT ck_cont_depant_fecha_cierre CHECK (cont_depant_fecha_cierre IS NULL OR cont_depant_fecha_cierre > cont_depant_fecha_inicio)
+  CONSTRAINT ck_cont_depart_fecha_cierre CHECK (cont_depart_fecha_cierre IS NULL OR cont_depart_fecha_cierre >= cont_depart_fecha_inicio)
   -- Constrain. Debe ser mayor que la fecha de inicio
 );
 
@@ -607,78 +619,80 @@ CREATE TABLE Cargo (
 
   CONSTRAINT pk_cargo_codigo PRIMARY KEY (cargo_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_cargo_nombre CHECK (cargo_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_cargo_nombre CHECK (cargo_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cargo_descripcion CHECK (cargo_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_cargo_descripcion CHECK (cargo_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Contrato_Cargo (
+  cont_carg_codigo serial,
+  -- Código identificador de la entidad Contrato de Cargo
   cont_carg_fecha_inicio date NOT NULL,
   -- Fecha de inicio del contrato del cargo.
   cont_carg_fecha_cierre date,
   -- Fecha de cierre del contrato del cargo.
   cont_carg_sueldo_mensual decimal(10,2) NOT NULL,
   -- Sueldo mensual del cargo. Debe ser mayor que 0
-  fk_contrato_empleo integer,
+  fk_contrato_empleo integer NOT NULL,
   -- Relación con la entidad Contrato de Empleo
-  fk_cargo integer,
+  fk_cargo integer NOT NULL,
   -- Relación con la entidad Cargo
 
-  CONSTRAINT pk_contrato_cargo PRIMARY KEY (fk_contrato_empleo, fk_cargo),
+  CONSTRAINT pk_contrato_cargo PRIMARY KEY (cont_carg_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_contrato_cargo_contrato_empleo_desempena FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_contrato_cargo_contrato_empleo_desempena FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato de Empleo.
   CONSTRAINT fk_contrato_cargo_cargo_esdesempenado FOREIGN KEY (fk_cargo) REFERENCES Cargo (cargo_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cargo.
   CONSTRAINT ck_cont_carg_sueldo_mensual CHECK (cont_carg_sueldo_mensual > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_cont_carg_fecha_cierre CHECK (cont_carg_fecha_cierre IS NULL OR cont_carg_fecha_cierre > cont_carg_fecha_inicio)
+  CONSTRAINT ck_cont_carg_fecha_cierre CHECK (cont_carg_fecha_cierre IS NULL OR cont_carg_fecha_cierre >= cont_carg_fecha_inicio)
   -- Constrain. Debe ser mayor que la fecha de inicio
 );
 
 CREATE TABLE Color (
   color_codigo serial,
   -- Código identificador de la entidad Color
-  color_descripcion varchar(30) NOT NULL UNIQUE,
+  color_descripcion varchar(100) NOT NULL UNIQUE,
   -- Nombre del color.
 
   CONSTRAINT pk_color_codigo PRIMARY KEY (color_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_color_descripcion CHECK (color_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_color_descripcion CHECK (color_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Fermentacion (
   fermentacion_codigo serial,
   -- Código identificador de la entidad Fermentación
-  fermentacion_metodo varchar(30) NOT NULL UNIQUE,
+  fermentacion_metodo varchar(100) NOT NULL UNIQUE,
   -- Metodo de la fermentación.
 
   CONSTRAINT pk_fermentacion_codigo PRIMARY KEY (fermentacion_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_fermentacion_metodo CHECK (fermentacion_metodo ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_fermentacion_metodo CHECK (fermentacion_metodo ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Destilacion (
   destilacion_codigo serial,
   -- Código identificador de la entidad Destilación
-  destilacion_metodo varchar(30) NOT NULL UNIQUE,
+  destilacion_metodo varchar(100) NOT NULL UNIQUE,
   -- Metodo de la destilación.
 
   CONSTRAINT pk_destilacion_codigo PRIMARY KEY (destilacion_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_destilacion_metodo CHECK (destilacion_metodo ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_destilacion_metodo CHECK (destilacion_metodo ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Clasificacion (
   clasificacion_codigo serial,
   -- Código identificador de la entidad Clasificación
-  clasificacion_nombre varchar(15) NOT NULL UNIQUE,
+  clasificacion_nombre varchar(50) NOT NULL,
   -- Nombre de la clasificación.
-  clasificacion_descripcion varchar(50),
+  clasificacion_descripcion varchar(100),
   -- Descripción de la clasificación.
   fk_clasificacion integer,
   -- Relación con la entidad Clasificación
@@ -687,18 +701,18 @@ CREATE TABLE Clasificacion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_clasificacion_clasificacion_esclasificada FOREIGN KEY (fk_clasificacion) REFERENCES Clasificacion (clasificacion_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Clasificación.
-  CONSTRAINT ck_clasificacion_nombre CHECK (clasificacion_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_clasificacion_nombre CHECK (clasificacion_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_clasificacion_descripcion CHECK (clasificacion_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_clasificacion_descripcion CHECK (clasificacion_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Categoria (
   categoria_codigo serial,
   -- Código identificador de la entidad Categoría
-  categoria_nombre varchar(15) NOT NULL UNIQUE,
+  categoria_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre de la categoría.
-  categoria_descripcion varchar(50),
+  categoria_descripcion varchar(100),
   -- Descripción de la categoría.
   fk_categoria integer,
   -- Relación con la entidad Categoría
@@ -707,22 +721,22 @@ CREATE TABLE Categoria (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_categoria_categoria_escategorizada FOREIGN KEY (fk_categoria) REFERENCES Categoria (categoria_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Categoría.
-  CONSTRAINT ck_categoria_nombre CHECK (categoria_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_categoria_nombre CHECK (categoria_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_categoria_descripcion CHECK (categoria_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_categoria_descripcion CHECK (categoria_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Producto (
   producto_codigo serial,
   -- Código identificador de la entidad Producto
-  producto_nombre varchar(20) NOT NULL UNIQUE,
+  producto_nombre varchar(30) NOT NULL UNIQUE,
   -- Nombre del producto.
   producto_descripcion varchar(70) NOT NULL,
   -- Descripción del producto.
   producto_grado_alcoholico decimal(10,2) NOT NULL,
   -- Grado alcohólico del producto. Debe ser mayor que 0
-  producto_color_detalles varchar(30) NOT NULL,
+  producto_color_detalles varchar(100) NOT NULL,
   -- Detalles del color del producto.
   fk_color integer NOT NULL,
   -- Relación con la entidad Color
@@ -755,26 +769,26 @@ CREATE TABLE Producto (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Proveedor.
   CONSTRAINT fk_producto_lugar_origen FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
-  CONSTRAINT ck_producto_nombre CHECK (producto_nombre ~ '^[a-zA-Z0-9áéíóúñ ]+$'),
+  CONSTRAINT ck_producto_nombre CHECK (producto_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener caracteres especiales
-  CONSTRAINT ck_producto_descripcion CHECK (producto_descripcion ~ '^[a-zA-Z0-9áéíóúñ ]+$'),
+  CONSTRAINT ck_producto_descripcion CHECK (producto_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener caracteres especiales
   CONSTRAINT ck_producto_grado_alcoholico CHECK (producto_grado_alcoholico > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_producto_color_detalles CHECK (producto_color_detalles ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_producto_color_detalles CHECK (producto_color_detalles ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Cuerpo (
   cuerpo_codigo serial,
   -- Código identificador de la entidad Cuerpo
-  cuerpo_peso varchar(20) NOT NULL,
+  cuerpo_peso varchar(20),
   -- Peso del cuerpo.
-  cuerpo_textura varchar(20) NOT NULL,
+  cuerpo_textura varchar(20) ,
   -- Textura del cuerpo.
-  cuerpo_densidad varchar(20) NOT NULL,
+  cuerpo_densidad varchar(20),
   -- Densidad del cuerpo.
-  cuerpo_descripcion varchar(50) NOT NULL UNIQUE,
+  cuerpo_descripcion varchar(100) ,
   -- Descripción del cuerpo.
   fk_producto integer,
   -- Relación con la entidad Producto
@@ -783,13 +797,13 @@ CREATE TABLE Cuerpo (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_cuerpo_producto_detalla FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
-  CONSTRAINT ck_cuerpo_peso CHECK (cuerpo_peso IN ('ligero', 'medio', 'pesado')),
+  CONSTRAINT ck_cuerpo_peso CHECK (cuerpo_peso IN ('Ligero', 'Medio', 'Pesado')),
   -- Constrain. Debe tener tres posibles valores: ligero, medio y pesado.
-  CONSTRAINT ck_cuerpo_textura CHECK (cuerpo_textura IN ('aguado', 'sedoso', 'cremoso', 'viscoso')),
+  CONSTRAINT ck_cuerpo_textura CHECK (cuerpo_textura IN ('Aguado', 'Sedoso', 'Cremoso', 'Viscoso')),
   -- Constrain. Debe tener cuatro posibles valores: aguado, sedoso, cremoso y viscoso.
-  CONSTRAINT ck_cuerpo_densidad CHECK (cuerpo_densidad ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_cuerpo_densidad CHECK (cuerpo_densidad = '' OR cuerpo_densidad ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cuerpo_descripcion CHECK (cuerpo_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_cuerpo_descripcion CHECK (cuerpo_descripcion = '' OR cuerpo_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -804,7 +818,7 @@ CREATE TABLE Regusto (
   -- Persistencia del regusto.
   regusto_acabado varchar(50),
   -- Acabado del regusto.
-  regusto_descripcion varchar(50) NOT NULL UNIQUE,
+  regusto_descripcion varchar(100),
   -- Descripción del regusto.
   fk_producto integer,
   -- Relación con la entidad Producto
@@ -813,15 +827,15 @@ CREATE TABLE Regusto (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_regusto_producto_dejaun FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
-  CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada = '' OR regusto_entrada ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_evolucion CHECK (regusto_evolucion ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_regusto_evolucion CHECK (regusto_evolucion = '' OR regusto_evolucion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_persistencia CHECK (regusto_persistencia ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_regusto_persistencia CHECK (regusto_persistencia = '' OR regusto_persistencia ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_acabado CHECK (regusto_acabado ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_regusto_acabado CHECK (regusto_acabado = '' OR regusto_acabado ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_descripcion CHECK (regusto_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_regusto_descripcion CHECK (regusto_descripcion = '' OR regusto_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -833,7 +847,7 @@ CREATE TABLE Aroma (
 
   CONSTRAINT pk_aroma_codigo PRIMARY KEY (aroma_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_aroma_descripcion CHECK (aroma_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_aroma_descripcion CHECK (aroma_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -859,7 +873,7 @@ CREATE TABLE Sabor (
 
   CONSTRAINT pk_sabor_codigo PRIMARY KEY (sabor_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_sabor_descripcion CHECK (sabor_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_sabor_descripcion CHECK (sabor_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -880,16 +894,16 @@ CREATE TABLE Producto_Sabor (
 CREATE TABLE Servido (
   servido_codigo serial,
   -- Código identificador de la entidad Servido
-  servido_nombre varchar(20) NOT NULL UNIQUE,
+  servido_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del servido.
-  servido_descripcion varchar(50),
+  servido_descripcion varchar(100),
   -- Descripción del servido.
 
   CONSTRAINT pk_servido_codigo PRIMARY KEY (servido_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_servido_nombre CHECK (servido_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_servido_nombre CHECK (servido_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_servido_descripcion CHECK (servido_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_servido_descripcion CHECK (servido_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -910,32 +924,32 @@ CREATE TABLE Producto_Servido (
 CREATE TABLE Ingrediente (
   ingrediente_codigo serial,
   -- Código identificador de la entidad Ingrediente
-  ingrediente_nombre varchar(20) NOT NULL UNIQUE,
+  ingrediente_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del ingrediente.
-  ingrediente_descripcion varchar(50),
+  ingrediente_descripcion varchar(100),
   -- Descripción del ingrediente.
 
   CONSTRAINT pk_ingrediente_codigo PRIMARY KEY (ingrediente_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_ingrediente_nombre CHECK (ingrediente_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_ingrediente_nombre CHECK (ingrediente_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_ingrediente_descripcion CHECK (ingrediente_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_ingrediente_descripcion CHECK (ingrediente_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Barrica (
   barrica_codigo serial,
   -- Código identificador de la entidad Barrica
-  barrica_nombre varchar(20) NOT NULL UNIQUE,
+  barrica_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre de la barrica.
-  barrica_descripcion varchar(50),
+  barrica_descripcion varchar(100),
   -- Descripción de la barrica.
 
   CONSTRAINT pk_barrica_codigo PRIMARY KEY (barrica_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_barrica_nombre CHECK (barrica_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_barrica_nombre CHECK (barrica_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_barrica_descripcion CHECK (barrica_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_barrica_descripcion CHECK (barrica_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -944,7 +958,7 @@ CREATE TABLE Anejamiento (
   -- Código identificador de la entidad Anejamiento
   anejamiento_tiempo integer NOT NULL,
   -- Tiempo de anejamiento. Debe ser mayor que 0
-  anejamiento_descripcion varchar(50),
+  anejamiento_descripcion varchar(100),
   -- Descripción del anejamiento.
   fk_barrica integer NOT NULL,
   -- Relación con la entidad Barrica
@@ -959,7 +973,7 @@ CREATE TABLE Anejamiento (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Anejamiento.
   CONSTRAINT ck_anejamiento_tiempo CHECK (anejamiento_tiempo > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_anejamiento_descripcion CHECK (anejamiento_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_anejamiento_descripcion CHECK (anejamiento_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -990,7 +1004,7 @@ CREATE TABLE Botella (
   -- Altura de la botella en centímetros. Debe ser mayor que 0
   botella_ancho decimal(10,2) NOT NULL,
   -- Ancho de la botella en centímetros. Debe ser mayor que 0
-  botella_descripcion varchar(50),
+  botella_descripcion varchar(100),
   -- Descripción de la botella.
 
   CONSTRAINT pk_botella_codigo PRIMARY KEY (botella_codigo),
@@ -1001,28 +1015,28 @@ CREATE TABLE Botella (
   -- Constrain. Debe ser mayor que 0
   CONSTRAINT ck_botella_ancho CHECK (botella_ancho > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_botella_descripcion CHECK (botella_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_botella_descripcion CHECK (botella_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Material (
   material_codigo serial,
   -- Código identificador de la entidad Material
-  material_nombre varchar(20) NOT NULL UNIQUE,
+  material_nombre varchar(30) NOT NULL UNIQUE,
   -- Nombre del material.
-  material_descripcion varchar(50),
+  material_descripcion varchar(100),
   -- Descripción del material.
   material_tipo varchar(10) NOT NULL,
   -- Tipo de material.
 
   CONSTRAINT pk_material_codigo PRIMARY KEY (material_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_material_nombre CHECK (material_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_material_nombre CHECK (material_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_material_descripcion CHECK (material_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_material_descripcion CHECK (material_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_material_tipo CHECK (material_tipo IN ('tapa', 'caja', 'botella'))
-  -- Constrain. Debe tener tres posibles valores: tapa, caja y botella.
+  CONSTRAINT ck_material_tipo CHECK (material_tipo ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
+  -- Constrain. No debe contener números ni caracteres especiales
 );
 
 CREATE TABLE Material_Botella (
@@ -1048,18 +1062,14 @@ CREATE TABLE Caja (
   -- Descripción de la caja.
   fk_caja integer,
   -- Relación con la entidad Caja
-  fk_material integer NOT NULL,
-  -- Relación con la entidad Material
 
   CONSTRAINT pk_caja_codigo PRIMARY KEY (caja_codigo),
   -- Clave primaria de la tabla.
   CONSTRAINT fk_caja_caja_esempacado FOREIGN KEY (fk_caja) REFERENCES Caja (caja_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Caja.
-  CONSTRAINT fk_caja_material_hechode FOREIGN KEY (fk_material) REFERENCES Material (material_codigo),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Material.
   CONSTRAINT ck_caja_capacidad CHECK (caja_capacidad > 0),
   -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_caja_descripcion CHECK (caja_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_caja_descripcion CHECK (caja_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1068,14 +1078,10 @@ CREATE TABLE Tapa (
   -- Código identificador de la entidad Tapa
   tapa_descripcion varchar(50),
   -- Descripción de la tapa.
-  fk_material integer NOT NULL,
-  -- Relación con la entidad Material
 
   CONSTRAINT pk_tapa_codigo PRIMARY KEY (tapa_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_tapa_material_fabricadocon FOREIGN KEY (fk_material) REFERENCES Material (material_codigo),
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Material.
-  CONSTRAINT ck_tapa_descripcion CHECK (tapa_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_tapa_descripcion CHECK (tapa_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1152,7 +1158,7 @@ CREATE TABLE Evento (
   -- Fecha de inicio del evento.
   evento_fecha_cierre date NOT NULL,
   -- Fecha de cierre del evento.
-  evento_direccion varchar(30) NOT NULL,
+  evento_direccion varchar(100) NOT NULL,
   -- Dirección del evento.
   evento_num_cupos integer NOT NULL,
   -- Número de cupos del evento. Debe ser mayor 0
@@ -1163,9 +1169,9 @@ CREATE TABLE Evento (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_evento_lugar_ubica FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
-  CONSTRAINT ck_evento_nombre CHECK (evento_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_evento_nombre CHECK (evento_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_evento_descripcion CHECK (evento_descripcion ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_evento_descripcion CHECK (evento_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
   CONSTRAINT ck_evento_num_entradas CHECK (evento_num_entradas >= 0),
   -- Constrain. Debe ser mayor o igual a 0
@@ -1251,15 +1257,15 @@ CREATE TABLE Cata (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT fk_cata_evento_cata FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT ck_cata_nombre CHECK (cata_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_cata_nombre CHECK (cata_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_fase_visual CHECK (cata_fase_visual ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_cata_fase_visual CHECK (cata_fase_visual ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_fase_olfativa CHECK (cata_fase_olfativa ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_cata_fase_olfativa CHECK (cata_fase_olfativa ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_fase_gustativa CHECK (cata_fase_gustativa ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_cata_fase_gustativa CHECK (cata_fase_gustativa ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cata_nota CHECK (cata_nota ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_cata_nota CHECK (cata_nota ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1273,9 +1279,9 @@ CREATE TABLE Premio (
 
   CONSTRAINT pk_premio_codigo PRIMARY KEY (premio_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_premio_nombre CHECK (premio_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_premio_nombre CHECK (premio_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_premio_descripcion CHECK (premio_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_premio_descripcion CHECK (premio_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1302,7 +1308,7 @@ CREATE TABLE Producto_Premio (
 CREATE TABLE Imagen (
   imagen_codigo serial,
   -- Código identificador de la entidad Imagen
-  imagen_nombre varchar(20) NOT NULL UNIQUE,
+  imagen_nombre varchar(100) NOT NULL UNIQUE,
   -- Nombre de la imagen.
   imagen_principal boolean NOT NULL,
   -- Indica si la imagen es principal o no.
@@ -1319,10 +1325,8 @@ CREATE TABLE Imagen (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_imagen_evento_ilustra FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
-  CONSTRAINT ck_imagen_nombre CHECK (imagen_nombre ~'^[a-zA-Z]+\.(jpg|png)$')
-  -- Constrain. Debe terminar en .jpg o .png
 );                
 
 CREATE TABLE Estatus_Pedido (
@@ -1335,9 +1339,9 @@ CREATE TABLE Estatus_Pedido (
 
   CONSTRAINT pk_estatus_pedido_codigo PRIMARY KEY (estatus_pedido_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_estatus_pedido_nombre CHECK (estatus_pedido_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_estatus_pedido_nombre CHECK (estatus_pedido_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_estatus_pedido_descripcion CHECK (estatus_pedido_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_estatus_pedido_descripcion CHECK (estatus_pedido_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1346,7 +1350,7 @@ CREATE TABLE Pedido (
   -- Código identificador de la entidad Pedido
   pedido_fecha date NOT NULL,
   -- Fecha del pedido.
-  pedido_direccion varchar(30) NOT NULL,
+  pedido_direccion varchar(100) NOT NULL,
   -- Dirección del pedido.
   pedido_subtotal decimal(10,2) NOT NULL,
   -- Subtotal del pedido. Debe ser mayor que 0
@@ -1377,7 +1381,7 @@ CREATE TABLE Pedido (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
   CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT fk_pedido_lugar_enviadoa FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
@@ -1419,9 +1423,9 @@ CREATE TABLE Estatus_Orden (
 
   CONSTRAINT pk_estatus_orden_codigo PRIMARY KEY (estatus_orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT ck_estatus_orden_nombre CHECK (estatus_orden_nombre ~ '^[a-zA-Záéíóúñ ]+$'),
+  CONSTRAINT ck_estatus_orden_nombre CHECK (estatus_orden_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_estatus_orden_descripcion CHECK (estatus_orden_descripcion ~ '^[a-zA-Záéíóúñ ]+$')
+  CONSTRAINT ck_estatus_orden_descripcion CHECK (estatus_orden_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -1439,7 +1443,7 @@ CREATE TABLE Orden_De_Reposicion (
 
   CONSTRAINT pk_orden_codigo PRIMARY KEY (orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_orden_subtotal CHECK (orden_subtotal IS NULL OR orden_subtotal > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1514,7 +1518,7 @@ CREATE TABLE Factura (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
   CONSTRAINT fk_factura_cliente_juridico_adquiere FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo),
+  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_factura_subtotal CHECK (factura_subtotal > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1531,7 +1535,7 @@ CREATE TABLE Almacen (
   -- Código identificador de la entidad Almacen
   almacen_capacidad integer NOT NULL,
   -- Capacidad del almacén en botellas. Debe ser mayor que 0  
-  almacen_direccion varchar(30) NOT NULL,
+  almacen_direccion varchar(100) NOT NULL,
   -- Dirección del almacén.
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar
@@ -1571,7 +1575,7 @@ CREATE TABLE Tienda (
   -- Código identificador de la entidad Tienda
   tienda_capacidad integer NOT NULL,
   -- Capacidad de la tienda en botellas. Debe ser mayor que 0
-  tienda_direccion varchar(30) NOT NULL,
+  tienda_direccion varchar(100) NOT NULL,
   -- Dirección de la tienda.
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar

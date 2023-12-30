@@ -1,0 +1,141 @@
+<div style="display: flex; justify-content: center; align-items: center;">
+    <input type="text" id="rif" placeholder="Ingrese el RIF" style="font-size: 15px; margin-right: 10px;" />
+    <button type="button" id="buscar" style="margin-right: 10px;">Buscar</button>
+    <button type="button" id="reset">Resetear</button>
+</div>
+<style>
+    #cedula::placeholder { /* Selects the placeholder text of the input with id "cedula" */
+        font-size: 15px; /* Changes the font size */
+    }
+</style>
+
+<script>
+var existePersona = false;
+
+function llenarEMPfisica(estado, municipio, parroquia) { 
+    // llenar los cb de estado, municipio y parroquia
+    $("#form-field-cjestadofisica").val(estado).prop('disabled', true);
+    $("#form-field-cjmunicipiofisica").empty();
+    $("#form-field-cjparroquiafisica").empty();
+
+    $.each(EMP.municipios[estado], function(i, municipio) {
+        $("#form-field-cjmunicipiofisica").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+    });
+    $("#form-field-cjmunicipiofisica").val(municipio).prop('disabled', true);;
+
+    $.each(EMP.parroquias[municipio], function(i, parroquia) {
+        $("#form-field-cjparroquiafisica").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+    });
+    $("#form-field-cjparroquiafisica").val(parroquia).prop('disabled', true);;    
+}
+
+function llenarEPMfiscal(estado, municipio, parroquia) { 
+    // llenar los cb de estado, municipio y parroquia
+    $("#form-field-cjestadofiscal").val(estado);
+    $("#form-field-cjmunicipiofiscal").empty();
+    $("#form-field-cjparroquiafiscal").empty();
+
+    $.each(EMP.municipios[estado], function(i, municipio) {
+        $("#form-field-cjmunicipiofiscal").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+    });
+    $("#form-field-cjmunicipiofiscal").val(municipio);
+
+    $.each(EMP.parroquias[municipio], function(i, parroquia) {
+        $("#form-field-cjparroquiafiscal").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+    });
+    $("#form-field-cjparroquiafiscal").val(parroquia);    
+}
+
+function llenarTDCs(TDCs) {
+    //si TDCs no es un arreglo, entonces solo hay una TDC
+    if (!Array.isArray(TDCs)) {
+        TDCs = [TDCs];
+    }
+
+    TDCs.forEach(TDC => {
+        $("#body-TDC").append("<tr><td id="+ TDC.fk_banco +">"+TDC.banco_nombre+"</td><td>"+TDC.tdc_numero_tarjeta+"</td><td>"+TDC.tdc_fecha_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
+    });
+}
+
+function llenarContactos(contactos) {
+    //si contactos no es un arreglo, entonces solo hay un contacto
+    if (!Array.isArray(contactos)) {
+        contactos = [contactos];
+    }
+    contactos.forEach(contacto => {
+        $('#body-contactos').append('<tr><td>' + contacto.contacto_nombre + '</td><td>' + contacto.contacto_numero + '</td><td>' + contacto.contacto_correo + '</td><td><button class="btn btn-warning-ben" onclick="editContact(this)">Editar</button></td><td><button class="btn btn-danger-ben" onclick="deleteContact(this)">Eliminar</button></td></tr>');
+    });
+}
+
+document.getElementById('buscar').addEventListener('click', function() {
+    // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón
+    var rif = document.getElementById('rif').value;
+    console.log('RIF: ' + rif);
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/personajuridica/cliente/' + rif,
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                if (data == null) {
+                    alert('No se encontró a la persona');
+                    return;
+                } else {
+                    existePersona = true;
+                    ff = '#form-field-';
+                    $(ff+"cjnacionalidad").val(data.persona.persona_jur_rif.substring(0, 1)).prop('disabled', true);
+                    $(ff+"cjrif").val(data.persona.persona_jur_rif.substring(1)).prop('disabled', true);
+                    $(ff+"cjcapital").val(data.persona.persona_jur_capital_disp).prop('disabled', true);
+                    $(ff+"cjdenom").val(data.persona.persona_jur_denom_comercial).prop('disabled', true);
+                    $(ff+"cjrazon").val(data.persona.persona_jur_razon_social).prop('disabled', true);
+                    $(ff+"cjcorreo").val(data.correos[0].correo_direccion).prop('disabled', true);
+                    if (data.correos.length > 1) {
+                        $(ff+"cjcorreoalt").val(data.correos[1].correo_direccion).prop('disabled', true);
+                    }
+                    $(ff+"cjcodarea").val(data.telefonos[0].telefono_codigo_area).prop('disabled', true);
+                    $(ff+"cjtelefono").val(data.telefonos[0].telefono_numero).prop('disabled', true);
+                    if (data.telefonos.length > 1) {
+                        $(ff+"cjcodareaalt").val(data.telefonos[1].telefono_codigo_area).prop('disabled', true);
+                        $(ff+"cjtelefonoalt").val(data.telefonos[1].telefono_numero).prop('disabled', true);
+                    }
+                    $(ff+"cjpaginaweb").val(data.persona.persona_jur_pagina_web).prop('disabled', true);
+                    $(ff+"cjdireccionfisica").val(data.persona.persona_jur_direccion_fisica).prop('disabled', true);
+                    $(ff+"cjdireccionfiscal").val(data.persona.persona_jur_direccion_fiscal).prop('disabled', true);
+                    llenarEMPfisica(data.lugar_fisica.estado, data.lugar_fisica.municipio, data.lugar_fisica.parroquia);
+                    llenarEPMfiscal(data.lugar_fiscal.estado, data.lugar_fiscal.municipio, data.lugar_fiscal.parroquia);
+                    llenarTDCs(data.tdc);
+                    llenarContactos(data.contactos);
+                }
+            },
+            error: function(data) {
+                alert(data.responseText);
+            }
+        });
+    });
+});
+
+document.getElementById('reset').addEventListener('click', function() {
+    // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón de reset
+    existePersona = false;
+    var ff = '#form-field-';
+    $(ff+"cjnacionalidad").val('').prop('disabled', false);
+    $(ff+"cjrif").val('').prop('disabled', false);
+    $(ff+"cjcapital").val('').prop('disabled', false);
+    $(ff+"cjdenom").val('').prop('disabled', false);
+    $(ff+"cjrazon").val('').prop('disabled', false);
+    $(ff+"cjcorreo").val('').prop('disabled', false);
+    $(ff+"cjcorreoalt").val('').prop('disabled', false);
+    $(ff+"cjcodarea").val('').prop('disabled', false);
+    $(ff+"cjtelefono").val('').prop('disabled', false);
+    $(ff+"cjcodareaalt").val('').prop('disabled', false);
+    $(ff+"cjtelefonoalt").val('').prop('disabled', false);
+    $(ff+"cjpaginaweb").val('').prop('disabled', false);
+    $(ff+"cjdireccionfisica").val('').prop('disabled', false);
+    $(ff+"cjdireccionfiscal").val('').prop('disabled', false);
+    $("#body-TDC").empty();
+    $("#body-contactos").empty();
+});
+</script>

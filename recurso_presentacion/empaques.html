@@ -1,0 +1,35 @@
+<script>
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/presentacion/empaque/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                // Llena el campo empaque principal con los datos del JSON
+                data.principal.forEach(empaque => {
+                    $("#form-field-pempaque").append('<option value="'+empaque.id+'">'+empaque.nombre+'</option>');
+                });
+
+                // Cuando la empaque principal cambia, llena el campo empaque secundaria con las empaques secundarias correspondientes
+                $("#form-field-pempaque").change(function() {
+                    var id = $(this).val();
+                    $("#form-field-sempaque").empty();
+                    $.each(data.secundario[id], function(i, empaque) {
+                        $("#form-field-sempaque").append('<option value="'+empaque.id+'">'+empaque.nombre+'</option>');
+                    });
+                    // Trigger the change event if there's only one secondary classification
+                    if (data.secundario[id].length === 1) {
+                        $("#form-field-sempaque").trigger('change');
+                    }
+                });
+
+            },
+            error: function() {
+                alert('Error obteniendo las cajas de los productos');
+            }
+        });
+    });
+</script>    

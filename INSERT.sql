@@ -170,220 +170,220 @@ INSERT INTO Lugar (
 
 -- Municipios del Estado Delta Amacuro
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Antonio Díaz', 'municipio', 9),
-    ('Casacoima', 'municipio', 9),
-    ('Pedernales', 'municipio', 9),
-    ('Tucupita', 'municipio', 9);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Antonio Díaz', 'municipio', 9),
+  ('Casacoima', 'municipio', 9),
+  ('Pedernales', 'municipio', 9),
+  ('Tucupita', 'municipio', 9);
 
 -- Municipios del Distrito Capital
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Caracas', 'municipio', 10);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Caracas', 'municipio', 10);
 
 -- Municipios del Estado Falcón
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
+  lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-    ('Acosta', 'municipio', 11),
-    ('Bolívar', 'municipio', 11),
-    ('Buchivacoa', 'municipio', 11),
-    ('Carirubana', 'municipio', 11),
-    ('Colina', 'municipio', 11),
-    ('Dabajuro', 'municipio', 11),
-    ('Democracia', 'municipio', 11),
-    ('Falcón', 'municipio', 11),
-    ('Federación', 'municipio', 11),
-    ('Iturriza', 'municipio', 11),
-    ('Jacura', 'municipio', 11),
-    ('Los Taques', 'municipio', 11),
-    ('Manaure', 'municipio', 11),
-    ('Mauroa', 'municipio', 11),
-    ('Miranda', 'municipio', 11),
-    ('Palmasola', 'municipio', 11),
-    ('Petit', 'municipio', 11),
-    ('Píritu', 'municipio', 11),
-    ('San Francisco', 'municipio', 11),
-    ('Sucre', 'municipio', 11),
-    ('Silva', 'municipio', 11),
-    ('Tocópero', 'municipio', 11),
-    ('Unión', 'municipio', 11),
-    ('Urumaco', 'municipio', 11),
-    ('Zamora', 'municipio', 11);
+  ('Acosta', 'municipio', 11),
+  ('Bolívar', 'municipio', 11),
+  ('Buchivacoa', 'municipio', 11),
+  ('Carirubana', 'municipio', 11),
+  ('Colina', 'municipio', 11),
+  ('Dabajuro', 'municipio', 11),
+  ('Democracia', 'municipio', 11),
+  ('Falcón', 'municipio', 11),
+  ('Federación', 'municipio', 11),
+  ('Iturriza', 'municipio', 11),
+  ('Jacura', 'municipio', 11),
+  ('Los Taques', 'municipio', 11),
+  ('Manaure', 'municipio', 11),
+  ('Mauroa', 'municipio', 11),
+  ('Miranda', 'municipio', 11),
+  ('Palmasola', 'municipio', 11),
+  ('Petit', 'municipio', 11),
+  ('Píritu', 'municipio', 11),
+  ('San Francisco', 'municipio', 11),
+  ('Sucre', 'municipio', 11),
+  ('Silva', 'municipio', 11),
+  ('Tocópero', 'municipio', 11),
+  ('Unión', 'municipio', 11),
+  ('Urumaco', 'municipio', 11),
+  ('Zamora', 'municipio', 11);
 
 -- Municipios del Estado Guárico
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Camaguán', 'municipio', 12),
-    ('Chaguaramas', 'municipio', 12),
-    ('El Socorro', 'municipio', 12),
-    ('Francisco de Miranda', 'municipio', 12),
-    ('José Félix Ribas', 'municipio', 12),
-    ('José Tadeo Monagas', 'municipio', 12),
-    ('Juan Germán Roscio', 'municipio', 12),
-    ('Juan José Rondón', 'municipio', 12),
-    ('Julián Mellado', 'municipio', 12),
-    ('Leonardo Infante', 'municipio', 12),
-    ('Ortiz', 'municipio', 12),
-    ('San Gerónimo de Guayabal', 'municipio', 12),
-    ('San José de Guaribe', 'municipio', 12),
-    ('Santa María de Ipire', 'municipio', 12),
-    ('Zaraza', 'municipio', 12);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Camaguán', 'municipio', 12),
+  ('Chaguaramas', 'municipio', 12),
+  ('El Socorro', 'municipio', 12),
+  ('Francisco de Miranda', 'municipio', 12),
+  ('José Félix Ribas', 'municipio', 12),
+  ('José Tadeo Monagas', 'municipio', 12),
+  ('Juan Germán Roscio', 'municipio', 12),
+  ('Juan José Rondón', 'municipio', 12),
+  ('Julián Mellado', 'municipio', 12),
+  ('Leonardo Infante', 'municipio', 12),
+  ('Ortiz', 'municipio', 12),
+  ('San Gerónimo de Guayabal', 'municipio', 12),
+  ('San José de Guaribe', 'municipio', 12),
+  ('Santa María de Ipire', 'municipio', 12),
+  ('Zaraza', 'municipio', 12);
 
 -- Municipios del Estado Lara
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Andrés Eloy Blanco', 'municipio', 13),
-    ('Crespo', 'municipio', 13),
-    ('Iribarren', 'municipio', 13),
-    ('Jiménez', 'municipio', 13),
-    ('Morán', 'municipio', 13),
-    ('Palavecino', 'municipio', 13),
-    ('Simón Planas', 'municipio', 13),
-    ('Torres', 'municipio', 13),
-    ('Urdaneta', 'municipio', 13);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Andrés Eloy Blanco', 'municipio', 13),
+  ('Crespo', 'municipio', 13),
+  ('Iribarren', 'municipio', 13),
+  ('Jiménez', 'municipio', 13),
+  ('Morán', 'municipio', 13),
+  ('Palavecino', 'municipio', 13),
+  ('Simón Planas', 'municipio', 13),
+  ('Torres', 'municipio', 13),
+  ('Urdaneta', 'municipio', 13);
 
 -- Municipios del Estado La Guaira
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Vargas', 'municipio', 14);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Vargas', 'municipio', 14);
 
 -- Municipios del Estado Mérida
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Alberto Adriani', 'municipio', 15),
-    ('Andrés Bello', 'municipio', 15),
-    ('Antonio Pinto Salinas', 'municipio', 15),
-    ('Aricagua', 'municipio', 15),
-    ('Arzobispo Chacón', 'municipio', 15),
-    ('Campo Elías', 'municipio', 15),
-    ('Caracciolo Parra Olmedo', 'municipio', 15),
-    ('Cardenal Quintero', 'municipio', 15),
-    ('Guaraque', 'municipio', 15),
-    ('Julio César Salas', 'municipio', 15),
-    ('Justo Briceño', 'municipio', 15),
-    ('Libertador', 'municipio', 15),
-    ('Miranda', 'municipio', 15),
-    ('Obispo Ramos de Lora', 'municipio', 15),
-    ('Padre Noguera', 'municipio', 15),
-    ('Pueblo Llano', 'municipio', 15),
-    ('Rangel', 'municipio', 15),
-    ('Rivas Dávila', 'municipio', 15),
-    ('Santos Marquina', 'municipio', 15),
-    ('Sucre', 'municipio', 15),
-    ('Tovar', 'municipio', 15),
-    ('Tulio Febres Cordero', 'municipio', 15),
-    ('Zea', 'municipio', 15);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Alberto Adriani', 'municipio', 15),
+  ('Andrés Bello', 'municipio', 15),
+  ('Antonio Pinto Salinas', 'municipio', 15),
+  ('Aricagua', 'municipio', 15),
+  ('Arzobispo Chacón', 'municipio', 15),
+  ('Campo Elías', 'municipio', 15),
+  ('Caracciolo Parra Olmedo', 'municipio', 15),
+  ('Cardenal Quintero', 'municipio', 15),
+  ('Guaraque', 'municipio', 15),
+  ('Julio César Salas', 'municipio', 15),
+  ('Justo Briceño', 'municipio', 15),
+  ('Libertador', 'municipio', 15),
+  ('Miranda', 'municipio', 15),
+  ('Obispo Ramos de Lora', 'municipio', 15),
+  ('Padre Noguera', 'municipio', 15),
+  ('Pueblo Llano', 'municipio', 15),
+  ('Rangel', 'municipio', 15),
+  ('Rivas Dávila', 'municipio', 15),
+  ('Santos Marquina', 'municipio', 15),
+  ('Sucre', 'municipio', 15),
+  ('Tovar', 'municipio', 15),
+  ('Tulio Febres Cordero', 'municipio', 15),
+  ('Zea', 'municipio', 15);
 
 -- Municipios del Estado Miranda
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Acevedo', 'municipio', 16),
-    ('Andrés Bello', 'municipio', 16),
-    ('Baruta', 'municipio', 16),
-    ('Bolívar', 'municipio', 16),
-    ('Brión', 'municipio', 16),
-    ('Buroz', 'municipio', 16),
-    ('Carrizal', 'municipio', 16),
-    ('Chacao', 'municipio', 16),
-    ('Cristóbal Rojas', 'municipio', 16),
-    ('El Hatillo', 'municipio', 16),
-    ('Guaicaipuro', 'municipio', 16),
-    ('Gual', 'municipio', 16),
-    ('Independencia', 'municipio', 16),
-    ('Lander', 'municipio', 16),
-    ('Los Salias', 'municipio', 16),
-    ('Páez', 'municipio', 16),
-    ('Paz Castillo', 'municipio', 16),
-    ('Plaza', 'municipio', 16),
-    ('Sucre', 'municipio', 16),
-    ('Urdaneta', 'municipio', 16),
-    ('Zamora', 'municipio', 16);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Acevedo', 'municipio', 16),
+  ('Andrés Bello', 'municipio', 16),
+  ('Baruta', 'municipio', 16),
+  ('Bolívar', 'municipio', 16),
+  ('Brión', 'municipio', 16),
+  ('Buroz', 'municipio', 16),
+  ('Carrizal', 'municipio', 16),
+  ('Chacao', 'municipio', 16),
+  ('Cristóbal Rojas', 'municipio', 16),
+  ('El Hatillo', 'municipio', 16),
+  ('Guaicaipuro', 'municipio', 16),
+  ('Gual', 'municipio', 16),
+  ('Independencia', 'municipio', 16),
+  ('Lander', 'municipio', 16),
+  ('Los Salias', 'municipio', 16),
+  ('Páez', 'municipio', 16),
+  ('Paz Castillo', 'municipio', 16),
+  ('Plaza', 'municipio', 16),
+  ('Sucre', 'municipio', 16),
+  ('Urdaneta', 'municipio', 16),
+  ('Zamora', 'municipio', 16);
 
 -- Municipios del Estado Monagas
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Acosta', 'municipio', 17),
-    ('Aguasay', 'municipio', 17),
-    ('Bolívar', 'municipio', 17),
-    ('Caripe', 'municipio', 17),
-    ('Cedeño', 'municipio', 17),
-    ('Libertador', 'municipio', 17),
-    ('Maturín', 'municipio', 17),
-    ('Piar', 'municipio', 17),
-    ('Punceres', 'municipio', 17),
-    ('Santa Bárbara', 'municipio', 17),
-    ('Sotillo', 'municipio', 17),
-    ('Uracoa', 'municipio', 17),
-    ('Zamora', 'municipio', 17);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Acosta', 'municipio', 17),
+  ('Aguasay', 'municipio', 17),
+  ('Bolívar', 'municipio', 17),
+  ('Caripe', 'municipio', 17),
+  ('Cedeño', 'municipio', 17),
+  ('Libertador', 'municipio', 17),
+  ('Maturín', 'municipio', 17),
+  ('Piar', 'municipio', 17),
+  ('Punceres', 'municipio', 17),
+  ('Santa Bárbara', 'municipio', 17),
+  ('Sotillo', 'municipio', 17),
+  ('Uracoa', 'municipio', 17),
+  ('Zamora', 'municipio', 17);
 
 -- Municipios del Estado Nueva Esparta
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Antolín del Campo', 'municipio', 18),
-    ('Antonio Díaz', 'municipio', 18),
-    ('Arismendi', 'municipio', 18),
-    ('García', 'municipio', 18),
-    ('Gómez', 'municipio', 18),
-    ('Macanao', 'municipio', 18),
-    ('Maneiro', 'municipio', 18),
-    ('Marcano', 'municipio', 18),
-    ('Mariño', 'municipio', 18),
-    ('Tubores', 'municipio', 18),
-    ('Villalba', 'municipio', 18);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Antolín del Campo', 'municipio', 18),
+  ('Antonio Díaz', 'municipio', 18),
+  ('Arismendi', 'municipio', 18),
+  ('García', 'municipio', 18),
+  ('Gómez', 'municipio', 18),
+  ('Macanao', 'municipio', 18),
+  ('Maneiro', 'municipio', 18),
+  ('Marcano', 'municipio', 18),
+  ('Mariño', 'municipio', 18),
+  ('Tubores', 'municipio', 18),
+  ('Villalba', 'municipio', 18);
 
 -- Municipios del Estado Portuguesa
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Agua Blanca', 'municipio', 19),
-    ('Araure', 'municipio', 19),
-    ('Esteller', 'municipio', 19),
-    ('Guanare', 'municipio', 19),
-    ('Guanarito', 'municipio', 19),
-    ('José Vicente de Unda', 'municipio', 19),
-    ('Ospino', 'municipio', 19),
-    ('Páez', 'municipio', 19),
-    ('Papelón', 'municipio', 19),
-    ('San Genaro de Boconoíto', 'municipio', 19),
-    ('San Rafael de Onoto', 'municipio', 19),
-    ('Santa Rosalía', 'municipio', 19),
-    ('Sucre', 'municipio', 19),
-    ('Turén', 'municipio', 19);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Agua Blanca', 'municipio', 19),
+  ('Araure', 'municipio', 19),
+  ('Esteller', 'municipio', 19),
+  ('Guanare', 'municipio', 19),
+  ('Guanarito', 'municipio', 19),
+  ('José Vicente de Unda', 'municipio', 19),
+  ('Ospino', 'municipio', 19),
+  ('Páez', 'municipio', 19),
+  ('Papelón', 'municipio', 19),
+  ('San Genaro de Boconoíto', 'municipio', 19),
+  ('San Rafael de Onoto', 'municipio', 19),
+  ('Santa Rosalía', 'municipio', 19),
+  ('Sucre', 'municipio', 19),
+  ('Turén', 'municipio', 19);
 
 -- Municipios del Estado Sucre
 INSERT INTO Lugar (
-    lugar_nombre, lugar_tipo, fk_lugar)
-    VALUES
-    ('Andrés Eloy Blanco', 'municipio', 20),
-    ('Andrés Mata', 'municipio', 20),
-    ('Arismendi', 'municipio', 20),
-    ('Benítez', 'municipio', 20),
-    ('Bermúdez', 'municipio', 20),
-    ('Bolívar', 'municipio', 20),
-    ('Cajigal', 'municipio', 20),
-    ('Cruz Salmerón Acosta', 'municipio', 20),
-    ('Libertador', 'municipio', 20),
-    ('Mariño', 'municipio', 20),
-    ('Mejía', 'municipio', 20),
-    ('Montes', 'municipio', 20),
-    ('Ribero', 'municipio', 20),
-    ('Sucre', 'municipio', 20),
-    ('Valdez', 'municipio', 20);
+  lugar_nombre, lugar_tipo, fk_lugar)
+VALUES
+  ('Andrés Eloy Blanco', 'municipio', 20),
+  ('Andrés Mata', 'municipio', 20),
+  ('Arismendi', 'municipio', 20),
+  ('Benítez', 'municipio', 20),
+  ('Bermúdez', 'municipio', 20),
+  ('Bolívar', 'municipio', 20),
+  ('Cajigal', 'municipio', 20),
+  ('Cruz Salmerón Acosta', 'municipio', 20),
+  ('Libertador', 'municipio', 20),
+  ('Mariño', 'municipio', 20),
+  ('Mejía', 'municipio', 20),
+  ('Montes', 'municipio', 20),
+  ('Ribero', 'municipio', 20),
+  ('Sucre', 'municipio', 20),
+  ('Valdez', 'municipio', 20);
 
 -- Municipios del Estado Táchira
 INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
-  VALUES
+VALUES
   ('Andrés Bello', 'municipio', 21),
   ('Antonio Rómulo Costa', 'municipio', 21),
   ('Ayacucho', 'municipio', 21),
@@ -417,7 +417,7 @@ INSERT INTO Lugar (
 -- Municipios del Estado Trujillo
 INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
-  VALUES
+VALUES
   ('Andrés Bello', 'municipio', 22),
   ('Boconó', 'municipio', 22),
   ('Bolívar', 'municipio', 22),
@@ -442,7 +442,7 @@ INSERT INTO Lugar (
 -- Municipios del Estado Yaracuy
 INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
-  VALUES
+VALUES
   ('Arístides Bastidas', 'municipio', 23),
   ('Bolívar', 'municipio', 23),
   ('Bruzual', 'municipio', 23),
@@ -461,7 +461,7 @@ INSERT INTO Lugar (
 -- Municipios del Estado Zulia
 INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar) 
-  VALUES
+VALUES
   ('Almirante Padilla', 'municipio', 24),
   ('Baralt', 'municipio', 24),
   ('Cabimas', 'municipio', 24),
@@ -483,7 +483,6 @@ INSERT INTO Lugar (
   ('Simón Bolívar', 'municipio', 24),
   ('Sucre', 'municipio', 24),
   ('Valmore Rodríguez', 'municipio', 24);
-
   
 -- ##################  Parroquias  #########################
 
@@ -663,14 +662,12 @@ INSERT INTO Lugar (
   ('SAN MIGUEL', 'parroquia', 46),
   ('SUCRE', 'parroquia', 46);
 
-
 --Parroquias del municipio Piritu, Anzoategui
 INSERT INTO Lugar (
   lugar_nombre, lugar_tipo, fk_lugar)
   VALUES
   ('PIRITU', 'parroquia', 47),
   ('SAN FRANCISCO', 'parroquia', 47);
-
 
 --Parroquias del municipio San Juan de Capistrano, Anzoategui
 INSERT INTO Lugar (
@@ -954,7 +951,6 @@ VALUES
   ('RAMON IGNACIO MENDEZ', 'parroquia', 85),
   ('PEDRO BRICEÑO MENDEZ', 'parroquia', 85);
 
-
 -- Parroquias del municipio Obispos, Barinas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -1184,7 +1180,6 @@ VALUES
   ('JUAN ANGEL BRAVO', 'parroquia', 116),
   ('MANUEL MANRIQUE', 'parroquia', 116);
 
-
 --PArroquias del municipio Girardot, Cojedes
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -1374,7 +1369,7 @@ VALUES
 --Parroquias del municipio JAcura, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('JACURA', 'parroquia', 139);
+  ('JACURA', 'parroquia', 139),
   ('AGUA LINDA', 'parroquia', 139),
   ('ARAURIMA', 'parroquia', 139);
 
@@ -1395,7 +1390,6 @@ VALUES
   ('MENE DE MAUROA', 'parroquia', 142),
   ('CASIGUA', 'parroquia', 142),
   ('SAN FELIX', 'parroquia', 142);
-
 
 -- Parroquias del municipio Miranda, Falcon
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -1500,12 +1494,11 @@ INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
   ('TUCUPIDO', 'parroquia', 158),
   ('SAN RAFAEL DE LAYA', 'parroquia', 158);
-
   
 -- Parroquias del municicpio Jose Tadeo Monagas
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
-  ('ALTAGRACIA DE ORITUCO', 'parroquia', 161);
+  ('ALTAGRACIA DE ORITUCO', 'parroquia', 161),
   ('LEZAMA', 'parroquia', 161),
   ('LIBERTAD DE ORITUCO', 'parroquia', 161),
   ('SAN FCO DE MACAIRA', 'parroquia', 161),
@@ -1708,7 +1701,6 @@ VALUES
   ('CM. ARICAGUA', 'parroquia', 182),
   ('SAN ANTONIO', 'parroquia', 182);
 
-
 -- Parroquias del municipio Arzobispo Chacon, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -1719,7 +1711,6 @@ VALUES
   ('GUAIMARAL', 'parroquia', 183),
   ('MUCUTUY', 'parroquia', 183),
   ('MUCUCHACHI', 'parroquia', 183);
-
 
 -- Parroquias del municipio Campo Elias, Merida
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -1903,7 +1894,6 @@ INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
   ('MAMPORAL', 'parroquia', 207);
 
-
 -- Parroquia del municipio Carrizal, Miranda
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -2005,7 +1995,6 @@ INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
   ('CM. SAN ANTONIO', 'parroquia', 223),
   ('SAN FRANCISCO', 'parroquia', 223);
-
 
 -- Parroquia del municipio Aguasay
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -2160,7 +2149,6 @@ VALUES
   ('CM. PUNTA DE PIEDRAS', 'parroquia', 245),
   ('LOS BARALES', 'parroquia', 245);
 
-
 -- Parroquias del municipio Villalba, Nueva Esparta
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -2172,13 +2160,11 @@ INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
   ('CM. AGUA BLANCA', 'parroquia', 247);
 
-
 -- Parroquias del municipio Araure, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
   ('CM. ARAURE', 'parroquia', 248),
   ('RIO ACARIGUA', 'parroquia', 248);
-
 
 -- Parroquias del municipio Esteller, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -2248,7 +2234,6 @@ VALUES
   ('CM. EL PLAYON', 'parroquia', 258),
   ('FLORIDA', 'parroquia', 258);
 
-
 -- Parroquias del municipio Sucre, Portuguesa
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -2307,12 +2292,10 @@ VALUES
   ('BOLIVAR', 'parroquia', 265),
   ('MACARAPANA', 'parroquia', 265);
 
-
 -- Parroquias del municipio Bolivar, Sucre
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
   ('CM. MARIGUITAR', 'parroquia', 266);
-
 
 -- Parroquias del municipio Cajigal, Sucre
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -2378,7 +2361,6 @@ VALUES
   ('GRAN MARISCAL', 'parroquia', 274),
   ('RAUL LEONI', 'parroquia', 274);
 
-
 -- Parroquias del municipio Valdez
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -2411,7 +2393,6 @@ VALUES
   ('PALOTAL', 'parroquia', 279),
   ('JUAN VICENTE GOMEZ', 'parroquia', 279),
   ('ISAIAS MEDINA ANGARITA', 'parroquia', 279);
-
 
 -- Parroquias del municipio Cardenas, Tachira
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -2448,7 +2429,6 @@ VALUES
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
   ('CM. PALMIRA', 'parroquia', 285);
-
 
 -- Parroquias del municipio Independencia
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -2498,7 +2478,6 @@ VALUES
   ('CM. LOBATERA', 'parroquia', 292),
   ('CONSTITUCION', 'parroquia', 292);
 
-
 -- Parroquia del municipio Michelena
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -2527,7 +2506,6 @@ VALUES
   ('CM. LA TENDIDA', 'parroquia', 297),
   ('BOCONO', 'parroquia', 297),
   ('HERNANDEZ', 'parroquia', 297);
-
 
 -- Parroquias del municipio San Cristobal, Tachira
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
@@ -2824,7 +2802,6 @@ VALUES
   ('CM. FARRIAR', 'parroquia', 338),
   ('EL GUAYABO', 'parroquia', 338);
 
-
 -- Parroquias del municipio Almirante Padilla, Zulia
 INSERT INTO Lugar (lugar_nombre, lugar_tipo, fk_lugar)
 VALUES
@@ -3015,6 +2992,468 @@ VALUES
   ('LA VICTORIA', 'parroquia', 359),
   ('RAFAEL URDANETA', 'parroquia', 359);
 
+INSERT INTO Persona_Juridica (
+  persona_jur_rif, persona_jur_direccion_fiscal, persona_jur_denom_comercial, persona_jur_razon_social, persona_jur_pagina_web, 
+  persona_jur_capital_disp, persona_jur_direccion_fisica, fk_lugar_fiscal, fk_lugar_fisica
+) VALUES
+  ('J1234567890', 'Av. Principal, Edificio Central', 'ABC', 'ABC Company C.A.', 'https://www.abc-company.com', 100000.00, 'Calle Comercial, Edif. Plaza', 1003, 1004),
+  ('V9876543210', 'Calle Empresarial, Torre A', 'XYZ', 'XYZ Corporation S.A.', 'https://www.xyz-corp.com', 150000.00, 'Avenida Industrial, Bloque 5', 694, 695),
+  ('G8765432100', 'Ruta Empresarial, Edif. Central', 'LMN Enterprises', 'LMN Enterprises C.A.', 'https://www.lmn-enterprises.com', 80000.00, 'Plaza Ejecutiva, Piso 10', 696, 697),
+  ('E5678901230', 'Calle de Negocios, Centro Ejecutivo', 'PQR', 'PQR Solutions S.A.', 'https://www.pqr-solutions.com', 120000.00, 'Avenida Empresarial, Edificio 3', 701, 702),
+  ('P0123456780', 'Zona Industrial, Bloque 7', 'UVW', 'UVW Group C.A.', 'https://www.uvw-group.com', 90000.00, 'Calle del Comercio, Torre B', 706, 707),
+  ('J1111111111', 'Avenida Principal, Edificio Ejecutivo', 'Alpha', 'Alpha Corporation C.A.', 'https://www.alpha-corp.com', 200000.00, 'Calle Empresarial, Edificio 2', 708, 709),
+  ('V2222222222', 'Ruta Empresarial, Edif. Plaza', 'Beta Solutions', 'Beta Solutions S.A.', 'https://www.beta-solutions.com', 180000.00, 'Avenida Comercial, Torre A', 713, 714),
+  ('G3333333333', 'Calle de Negocios, Edif. Ejecutivo', 'Gamma Trading', 'Gamma Trading C.A.',  'https://www.gamma-trading.com', 150000.00, 'Plaza Principal, Piso 8', 715, 716),
+  ('E4444444444', 'Zona Industrial, Bloque 5', 'Delta Enterprises', 'Delta Enterprises C.A.', 'https://www.delta-enterprises.com', 120000.00, 'Avenida Ejecutiva, Edificio 4', 718, 719),
+  ('P5555555555', 'Calle Empresarial, Edif. Central', 'Omega Group', 'Omega Group S.A.',  'https://www.omega-group.com', 250000.00, 'Calle de Negocios, Torre B', 1014, 1016),
+  ('J075601840', 'Estación el Consejo, S.A.', 'Ron Santa Teresa', 'C.A. Ron Santa Teresa', 'https://haciendasantateresa.com.ve', 250000.00, 'Hacienda Santa Teresa, Carretera Panamericana, El Consejo', 701, 701),
+  ('J000107912', 'CC Bello monte, Mezzanina, Oficina 3, Caracas', 'Ron Carupano', 'Destilería Carupano, C.A ', 'https://www.roncarupano.com', 200000.00, 'Hacienda Altamira, Macarapana, Carupano', 1003, 1177),
+  ('J313303305', 'Rones del Caribe Calle 8, Edificio Araguaney', 'Ron Roble Viejo', 'Rones del Caribe, C.A', 'https://www.ronroble.com', 250000.00, 'Edificio Araguaney, La Urbina, Caracas 1070', 1039, 1039),
+  ('J514263512', 'Av. Ppal. Cinzano PB', 'Pampero', 'Industrias Pampero, C.A.', 'https://www.pampero.com/es/', 25000.00, 'Carretera Nacional Ocumare-Yare, Local Complejo Industrial Licorero del Centro (Diagonal Panderia Praday), Pampero, Ocumare del Tuy', 1040, 1028),
+  ('J300215938', 'Av. San Felipe, P-6 Distrito Federal, Caracas', 'Ron Cacique','Diageo Venezuela C.A.','https://www.diageobaracademy.com/es-lac/home/nuestras-marcas/cacique', 25000.00, 'Av. San Felipe, Edificio Ctro. Coinaza', 1388, 1388);
+
+INSERT INTO Correo (
+  correo_direccion, fk_persona_juridica)
+VALUES 
+  ('abc@gmail.com', 1),
+  ('xyz@gmail.com', 2),
+  ('lmn@gmails.com', 3),
+  ('pqr@gmail.com', 4),
+  ('uvw@gmail.com', 5),
+  ('alpha@gmail.com', 6),
+  ('beta@gmail.com', 7),
+  ('gamma@gmail.com', 8),
+  ('delta@gmails.com', 9),
+  ('omega@gmailp.com', 10),
+  ('ronsantateresa@gmail.com', 11),
+  ('roncarupano@gmail.com', 12),
+  ('ronroble@gmail.com', 13),
+  ('pampero@gmail.com', 14),
+  ('roncacique@gmail.com', 15);
+
+INSERT INTO Telefono (
+  telefono_codigo_area, telefono_numero, fk_persona_juridica)
+VALUES 
+  ('0212','1234567', 1),
+  ('0212','9876543', 2),
+  ('0212','8765432', 3),
+  ('0212','7654321', 4),
+  ('0212','6543210', 5),
+  ('0212','5432109', 6),
+  ('0212','4321098', 7),
+  ('0212','3210987', 8),
+  ('0212','2109876', 9),
+  ('0212','1098765', 10),
+  ('0212','7560184', 11),
+  ('0212','0001071', 12),
+  ('0212','3133033', 13),
+  ('0212','5142635', 14),
+  ('0212','3002159', 15);
+
+INSERT INTO Cliente_Juridico (cliente_jur_codigo, cliente_jur_puntos_acumulados)
+VALUES
+  (1, 0),
+  (2, 0),
+  (3, 0),
+  (4, 0),
+  (5, 0),
+  (6, 0),
+  (7, 0),
+  (8, 0),
+  (9, 0),
+  (10, 0);
+
+INSERT INTO Proveedor (proveedor_codigo)
+VALUES
+  (11),
+  (12),
+  (13),
+  (14),
+  (15);
+
+INSERT INTO Persona_Natural (
+  persona_nat_rif, persona_nat_direccion_fiscal, persona_nat_cedula, persona_nat_p_nombre, persona_nat_s_nombre,
+  persona_nat_p_apellido, persona_nat_s_apellido, persona_nat_fecha_nac, fk_lugar
+) VALUES
+  ('V123456789', 'Av. Principal, Edificio Residencial', '21478963', 'Juan', 'Carlos', 'Pérez', 'Gómez', '1990-05-15', 701),
+  ('V98765432', 'Calle Empresarial, Edif. Ejecutivo', '28569714', 'María', 'Isabel', 'López', 'González', '1985-12-08', 702),
+  ('V876543210', 'Ruta Empresarial, Edif. Plaza', '15896374', 'Carlos', NULL, 'Martínez', 'Fernández', '1978-09-23', 703),
+  ('V567890123', 'Calle de Negocios, Torre A', '20076865', 'Ana', 'Carolina', 'Rodríguez', 'Mendoza', '1982-03-02', 704),
+  ('V940837293', 'Zona Industrial, Edif. Central', '29097425', 'Luis', NULL, 'Gutiérrez', NULL, '1995-06-10', 705),
+  ('V274639284', 'Avenida Principal, Edificio Comercial', '8987651', 'Elena', 'María', 'Fernández', 'Pérez', '1987-11-30', 706),
+  ('V093749273', 'Calle Empresarial, Edif. Ejecutivo', '8098943', 'Miguel', NULL, 'Sánchez', NULL, '1992-08-17', 707),
+  ('V016384245', 'Ruta Empresarial, Edif. Plaza', '10987654', 'Laura', 'Isabel', 'Gómez', 'Pérez', '1980-02-25', 708),
+  ('V293847567', 'Calle de Negocios, Torre A', '30980765', 'Pedro', 'Antonio', 'Fernández', 'Martínez', '1989-07-12', 709),
+  ('V103948203', 'Zona Industrial, Edif. Central', '9542378', 'Mónica', NULL, 'González', NULL, '1984-04-05', 710),
+  ('V102493728', 'Avenida Principal, Edificio Comercial', '15521768', 'Carlos', 'José', 'Pérez', 'Gómez', '1991-09-20', 711),
+  ('V294758493', 'Calle Empresarial, Edif. Ejecutivo', '9987095', 'Isabel', 'María', 'Martínez', 'Fernández', '1983-12-03', 712),
+  ('V101201394', 'Ruta Empresarial, Edif. Plaza', '26987654', 'Francisco', 'Javier', 'Gómez', 'Pérez', '1975-06-18', 713),
+  ('V302930134', 'Calle de Negocios, Torre A', '29015732', 'Carla', NULL, 'Fernández', NULL, '1994-02-08', 714),
+  ('V729173650', 'Ruta Empresarial, Edif. Plaza', '27588935', 'Estefany', NULL, 'Torres', 'Mendoza', '2000-11-26', 715),
+  ('V938467502', 'Av. Principal, Edif. Residencial', '27246584', 'Ricardo', 'Javier', 'Martínez', 'Oliveros', '2000-09-15', 716),
+  ('V374819203', 'Calle de Negocios, Torre A', '26838242', 'Nadine', 'Nazareth', 'Chancay', 'Malave', '1999-03-08', 717),
+  ('V289103675', 'Torre Empresarial, Piso 4', '26838243', 'Pedro', 'Nicolás', 'Leal', 'Pacheco', '2001-07-09', 718),
+  ('V389201374', 'Torre Empresarial, Piso 1', '30136096', 'Leandro', 'Emanuel', 'Andrade', 'Da Silva', '2003-06-08', 719),
+  ('V493765392', 'Calle de Negocio, Torre B', '30005364', 'Rafael', 'Eduardo', 'Marcano', 'Mora', '2003-04-28', 720),
+  ('V654321098', 'Calle Empresarial, Edif. Residencial', '38571624', 'Luis', 'Alberto', 'González', 'Pérez', '1988-07-05', 721),
+  ('V876543211', 'Av. Principal, Edificio Comercial', '26783201', 'Verónica', 'Isabel', 'Martínez', 'Fernández', '1993-12-18', 722),
+  ('V234567890', 'Ruta Empresarial, Edif. Plaza', '7871234', 'David', NULL, 'Gómez', NULL, '1976-09-30', 723),
+  ('V109876543', 'Calle de Negocios, Torre A', '12345678', 'Daniela', 'Carolina', 'Rodríguez', 'Mendoza', '1991-03-15', 724),
+  ('V765432109', 'Zona Industrial, Edif. Central', '17654321', 'Miguel', 'Ángel', 'Gutiérrez', 'Fernández', '1984-11-22', 725),
+  ('V212345678', 'Calle Real de Catia, Edif. La Torre, Piso 10, Apto. 1001', '12345679', 'María', 'José', 'Pérez', 'Rodríguez', '1990-01-20', 726),
+  ('V987654323', 'Av. Francisco de Miranda, Edif. Torre Británica, Piso 20, Apto. 2002', '98765432', 'Juan', 'Pedro', 'González', 'Pérez', '1985-02-15', 727),
+  ('V654321099', 'Calle Urdaneta, Edif. El Capitolio, Piso 30, Apto. 3003', '65432109', 'Ana', 'María', 'López', 'Hernández', '1970-03-30', 728),
+  ('V543210987', 'Calle Bolívar, Edif. La Catedral, Piso 40, Apto. 4004', '54321098', 'Carlos', 'Antonio', 'Sánchez', 'García', '1965-05-01', 729),
+  ('V432109876', 'Calle Sucre, Edif. El Palacio de Miraflores, Piso 50, Apto. 5005', '43210987', 'Pedro', 'Luis', 'Pérez', 'Martínez', '1950-07-15', 730);
+
+INSERT INTO Correo (
+  correo_direccion, fk_persona_natural
+)
+VALUES
+  ('juan.perez@gmail.com', 1),
+  ('maria.lopez@hotmail.com', 2),
+  ('carlos.martinez@live.com', 3),
+  ('ana.rodriguez@outlook.com', 4),
+  ('luis.gutierrez@yahoo.com', 5),
+  ('elena.fernandez@gmail.com', 6),
+  ('miguel.sanchez@gmail.com', 7),
+  ('laura.gomez@gmail.com', 8),
+  ('pedro.martinez@gmail.com', 9),
+  ('monica.gonzalez@gmail.com', 10),
+  ('carlos.perez@gmail.com', 11),
+  ('isabel.martinez@gmail.com', 12),
+  ('francisco.gomez@gmail.com', 13),
+  ('carla.fernandez@gmail.com', 14),
+  ('emmezita@mgmail.com', 15),
+  ('etorres.19@est.ucab.edu.ve', 15),
+  ('ricardo.martinez@gmail.com', 16),
+  ('nadine.chancay@gmail.com', 17),
+  ('pedro.leal@gmail.com', 18),
+  ('leandro.andrade@gmail.com', 19),
+  ('rafael.marcano@gmail.com', 20),
+  ('luis.gonzalez@gmail.com', 21),
+  ('veronica.martinez@gmail.com', 22),
+  ('david.gomez@gmail.com', 23),
+  ('daniela.rodriguez@gmail.com', 24),
+  ('miguel.gutierrez@gmail.com', 25),
+  ('maria.perez@gmail.com', 26),
+  ('juan.gonzalez@gmail.com', 27),
+  ('ana.lopez@gmail.com', 28),
+  ('carlos.sanchez@gmail.com', 29),
+  ('pedro.perez@gmail.com', 30);
+
+INSERT INTO Telefono (
+  telefono_codigo_area, telefono_numero, fk_persona_natural
+)
+VALUES
+  ('0412','1234567', 1),
+  ('0412','2856971', 2),
+  ('0412','1589637', 3),
+  ('0412','2007686', 4),
+  ('0412','2909742', 5),
+  ('0412','8987651', 6),
+  ('0412','8098943', 7),
+  ('0414','1098765', 8),
+  ('0414','3098076', 9),
+  ('0414','9542378', 10),
+  ('0414','1552176', 11),
+  ('0414','9987095', 12),
+  ('0414','2698765', 13),
+  ('0414','2901573', 14),
+  ('0414','2758893', 15),
+  ('0414','2724658', 16),
+  ('0414','2683824', 17),
+  ('0414','2683824', 18),
+  ('0414','3013609', 19),
+  ('0414','3000536', 20),
+  ('0414','3857162', 21),
+  ('0414','2678320', 22),
+  ('0424','7871234', 23),
+  ('0424','1234567', 24),
+  ('0424','1765432', 25),
+  ('0424','1234567', 26),
+  ('0424','9876543', 27),
+  ('0424','6543210', 28),
+  ('0424','5432109', 29),
+  ('0424','4321098', 30);
+
+INSERT INTO Cliente_Natural (cliente_nat_codigo, cliente_nat_puntos_acumulados)
+VALUES
+  (21, 0),
+  (22, 0),
+  (23, 0),
+  (24, 0),
+  (25, 0),
+  (26, 0),
+  (27, 0),
+  (28, 0),
+  (29, 0),
+  (30, 0);
+
+INSERT INTO Empleado (empleado_codigo)
+VALUES
+  (1),
+  (2),
+  (3),
+  (4),
+  (5),
+  (6),
+  (7),
+  (8),
+  (9),
+  (10),
+  (11),
+  (12),
+  (13),
+  (14),
+  (15),
+  (16),
+  (17),
+  (18),
+  (19),
+  (20);
+
+INSERT INTO Contacto (
+  contacto_nombre, contacto_numero, contacto_correo, fk_persona_juridica)
+VALUES 
+  ('Juan Pérez', '04123456789', 'juan.perez@gmail.com', 1),
+  ('María López', '04245678901', 'maria.lopez@hotmail.com', 2),
+  ('Carlos García', '04169012345', 'carlos.garcia@yahoo.com', 3),
+  ('Pedro González', '04246789012', 'pedro.gonzalez@live.com', 4),
+  ('Ana Hernández', '04165432109', 'ana.hernandez@outlook.com', 5),
+  ('José Rodríguez', '04244321098', 'jose.rodriguez@gmail.com', 6),
+  ('Luis Pérez', '04163210987', 'luis.perez@hotmail.com', 7),
+  ('Elena González', '04242109876', 'elena.gonzalez@yahoo.com', 8),
+  ('Pedro Martínez', '04161098765', 'pedro.martinez@live.com', 9),
+  ('María Rodríguez', '04240987654', 'maria.rodriguez@outlook.com', 10),
+  ('Juan Hernández', '04169876543', 'juan.hernandez@gmail.com', 11),
+  ('Carlos Pérez', '04248765432', 'carlos.perez@hotmail.com', 12),
+  ('Pedro García', '04167654321', 'pedro.garcia@yahoo.com', 13),
+  ('Ana González', '04246543210', 'ana.gonzalez@live.com', 14),
+  ('José Hernández', '04165432109', 'jose.hernandez@outlook.com', 15);
+
+INSERT INTO Permiso (permiso_descripcion, permiso_tipo)
+VALUES
+  ('Consultar datos de cualquier producto','Producto'),
+  ('Crear nuevos productos','Producto'),
+  ('Actualizar datos de cualquier producto','Producto'),
+  ('Eliminar cualquier producto','Producto'),
+  ('Consultar datos de cualquier premio','Premio'),
+  ('Crear nuevos premios','Premio'),
+  ('Actualizar datos de cualquier premio','Premio'),
+  ('Eliminar cualquier premio','Premio'),
+  ('Consultar datos de cualquier clasificación','Clasificacion'),
+  ('Crear nuevas clasificaciones','Clasificacion'),
+  ('Actualizar datos de cualquier clasificación','Clasificacion'),
+  ('Eliminar cualquier clasificación','Clasificacion'),
+  ('Consultar datos de cualquier categoría','Categoria'),
+  ('Crear nuevas categorías','Categoria'),
+  ('Actualizar datos de cualquier categoría','Categoria'),
+  ('Eliminar cualquier categoría','Categoria'),
+  ('Consultar datos de cualquier servido','Servido'),
+  ('Crear nuevos servidos','Servido'),
+  ('Actualizar datos de cualquier servido','Servido'),
+  ('Eliminar cualquier servido','Servido'),
+  ('Consultar datos de cualquier sabor','Sabor'),
+  ('Crear nuevos sabores','Sabor'),
+  ('Actualizar datos de cualquier sabor','Sabor'),
+  ('Eliminar cualquier sabor','Sabor'),
+  ('Consultar datos de cualquier aroma','Aroma'),
+  ('Crear nuevos aromas','Aroma'),
+  ('Actualizar datos de cualquier aroma','Aroma'),
+  ('Eliminar cualquier aroma','Aroma'),
+  ('Consultar datos de cualquier color','Color'),
+  ('Crear nuevos colores','Color'),
+  ('Actualizar datos de cualquier color','Color'),
+  ('Eliminar cualquier color','Color'),
+  ('Consultar datos de cualquier ingrediente','Ingrediente'),
+  ('Crear nuevos ingredientes','Ingrediente'),
+  ('Actualizar datos de cualquier ingrediente','Ingrediente'),
+  ('Eliminar cualquier ingrediente','Ingrediente'),
+  ('Consultar datos de cualquier barrica','Barrica'),
+  ('Crear nuevas barricas','Barrica'),
+  ('Actualizar datos de cualquier barrica','Barrica'),
+  ('Eliminar cualquier barrica','Barrica'),
+  ('Consultar datos de cualquier añejamiento','Añejamiento'),
+  ('Crear nuevos añejamientos','Añejamiento'),
+  ('Actualizar datos de cualquier añejamiento','Añejamiento'),
+  ('Eliminar cualquier añejamiento','Añejamiento'),
+  ('Consultar datos de cualquier destilación','Destilacion'),
+  ('Crear nuevas destilaciones','Destilacion'),
+  ('Actualizar datos de cualquier destilación','Destilacion'),
+  ('Eliminar cualquier destilación','Destilacion'),
+  ('Consultar datos de cualquier fermentación','Fermentacion'),
+  ('Crear nuevas fermentaciones','Fermentacion'),
+  ('Actualizar datos de cualquier fermentación','Fermentacion'),
+  ('Eliminar cualquier fermentación','Fermentacion'),
+  ('Consultar datos de cualquier diario ronero','Diario Ronero'),
+  ('Crear nuevos diarios roneros','Diario Ronero'),
+  ('Actualizar datos de cualquier diario ronero','Diario Ronero'),
+  ('Eliminar cualquier diario ronero','Diario Ronero'),
+  ('Consultar datos de cualquier tapa','Tapa'),
+  ('Crear nuevas tapas','Tapa'),
+  ('Actualizar datos de cualquier tapa','Tapa'),
+  ('Eliminar cualquier tapa','Tapa'),
+  ('Consultar datos de cualquier caja','Caja'),
+  ('Crear nuevas cajas','Caja'),
+  ('Actualizar datos de cualquier caja','Caja'),
+  ('Eliminar cualquier caja','Caja'),
+  ('Consultar datos de cualquier material','Material'),
+  ('Crear nuevos materiales','Material'),
+  ('Actualizar datos de cualquier material','Material'),
+  ('Eliminar cualquier material','Material'),
+  ('Consultar datos de cualquier botella','Botella'),
+  ('Crear nuevas botellas','Botella'),
+  ('Actualizar datos de cualquier botella','Botella'),
+  ('Eliminar cualquier botella','Botella'),
+  ('Consultar datos de cualquier cata','Cata'),
+  ('Crear nuevas catas','Cata'),
+  ('Actualizar datos de cualquier cata','Cata'),
+  ('Eliminar cualquier cata','Cata'),
+  ('Consultar datos de cualquier evento','Evento'),
+  ('Crear nuevos eventos','Evento'),
+  ('Actualizar datos de cualquier evento','Evento'),
+  ('Eliminar cualquier evento','Evento'),
+  ('Consultar datos de cualquier pago de entrada','Pago Entrada'),
+  ('Crear nuevos pagos de entrada','Pago Entrada'),
+  ('Actualizar datos de cualquier pago de entrada','Pago Entrada'),
+  ('Eliminar cualquier pago de entrada','Pago Entrada'),
+  ('Consultar datos de cualquier histórico de precio de venta','HistoricoPrecioVenta'),
+  ('Consultar datos de cualquier histórico de precio de compra','HistoricoPrecioCompra'),
+  ('Consultar datos de cualquier histórico de tasa de dólar','HistoricoTasaDolar'),
+  ('Consultar datos de cualquier inventario de tienda','Inventario Tienda'),
+  ('Actualizar datos de cualquier inventario de tienda','Inventario Tienda'),
+  ('Consultar datos de cualquier inventario de almacén','Inventario Almacen'),
+  ('Actualizar datos de cualquier inventario de almacén','Inventario Almacen'),
+  ('Consultar datos de cualquier inventario de eventos','Inventario Eventos'),
+  ('Actualizar datos de cualquier inventario de eventos','Inventario Eventos'),
+  ('Consultar datos de cualquier factura','Factura'),
+  ('Crear nuevas facturas','Factura'),
+  ('Actualizar datos de cualquier factura','Factura'),
+  ('Eliminar cualquier factura','Factura'),
+  ('Consultar datos de cualquier pedido','Pedido'),
+  ('Crear nuevos pedidos','Pedido'),
+  ('Actualizar datos de cualquier pedido','Pedido'),
+  ('Eliminar cualquier pedido','Pedido'),
+  ('Consultar datos de cualquier orden de reposición','Orden Reposicion'),
+  ('Crear nuevas órdenes de reposición','Orden Reposicion'),
+  ('Actualizar datos de cualquier orden de reposición','Orden Reposicion'),
+  ('Eliminar cualquier orden de reposición','Orden Reposicion'),
+  ('Consultar datos de cualquier estatus de orden','Estatus Orden'),
+  ('Crear nuevos estatus de orden','Estatus Orden'),
+  ('Actualizar datos de cualquier estatus de orden','Estatus Orden'),
+  ('Eliminar datos de cualquier estatus de orden', 'Estatus Orden'),
+  ('Consultar datos de cualquier estatus de pedido','Estatus Pedido'),
+  ('Crear nuevos estatus de pedido','Estatus Pedido'),
+  ('Actualizar datos de cualquier estatus de pedido','Estatus Pedido'),
+  ('Eliminar datos de cualquier estatus de pedido', 'Estatus Pedido'),
+  ('Consultar datos de cualquier clientes jurídico', 'Cliente Juridico'),
+  ('Crear nuevos clientes jurídicos', 'Cliente Juridico'),
+  ('Actualizar datos de cualquier clientes jurídico', 'Cliente Juridico'),
+  ('Eliminar datos de cualquier clientes jurídico', 'Cliente Juridico'),
+  ('Consultar datos de cualquier clientes natural', 'Cliente Natural'),
+  ('Crear nuevos clientes natural', 'Cliente Natural'),
+  ('Actualizar datos de cualquier clientes natural', 'Cliente Natural'),
+  ('Eliminar datos de cualquier clientes natural', 'Cliente Natural'),
+  ('Consultar datos de cualquier proveedor', 'Proveedor'),
+  ('Crear nuevos proveedores', 'Proveedor'),
+  ('Actualizar datos de cualquier proveedor', 'Proveedor'),
+  ('Eliminar datos de cualquier proveedor', 'Proveedor'),
+  ('Consultar datos de cualquier empleado', 'Empleado'),
+  ('Crear nuevos empleados', 'Empleado'),
+  ('Actualizar datos de cualquier empleado', 'Empleado'),
+  ('Eliminar datos de cualquier empleado', 'Empleado'),
+  ('Consultar datos de cualquier departamento', 'Departamento'),
+  ('Crear nuevos departamentos', 'Departamento'),
+  ('Actualizar datos de cualquier departamento', 'Departamento'),
+  ('Eliminar datos de cualquier departamento', 'Departamento'),
+  ('Consultar datos de cualquier horario', 'Horario'),
+  ('Crear nuevos horarios', 'Horario'),
+  ('Actualizar datos de cualquier horario', 'Horario'),
+  ('Eliminar datos de cualquier horario', 'Horario'),
+  ('Consultar datos de cualquier cargo', 'Cargo'),
+  ('Crear nuevos cargos', 'Cargo'),
+  ('Actualizar datos de cualquier cargo', 'Cargo'),
+  ('Eliminar datos de cualquier cargo', 'Cargo'),
+  ('Consultar datos de cualquier beneficio', 'Beneficio'),
+  ('Crear nuevos beneficios', 'Beneficio'),
+  ('Actualizar datos de cualquier beneficio', 'Beneficio'),
+  ('Eliminar datos de cualquier beneficio', 'Beneficio'),
+  ('Consultar datos de cualquier banco', 'Banco'),
+  ('Crear nuevos bancos', 'Banco'),
+  ('Actualizar datos de cualquier banco', 'Banco'),
+  ('Eliminar datos de cualquier banco', 'Banco'),
+  ('Consultar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'),
+  ('Crear nuevos fichas de afiliación', 'Ficha Afiliacion'),
+  ('Actualizar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'),
+  ('Eliminar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'),
+  ('Consultar datos de cualquier pago por afiliación', 'Pago de Afiliacion'),
+  ('Crear nuevos pagos por afiliación', 'Pago de Afiliacion'),
+  ('Actualizar datos de cualquier pago por afiliación', 'Pago de Afiliacion'),
+  ('Eliminar datos de cualquier pago por afiliación', 'Pago de Afiliacion'),
+  ('Consultar datos de cualquier rol', 'Rol'),
+  ('Crear nuevos roles', 'Rol'),
+  ('Actualizar datos de cualquier rol', 'Rol'),
+  ('Eliminar datos de cualquier rol', 'Rol'),
+  ('Consultar datos de cualquier usuario', 'Usuario'),
+  ('Crear nuevos usuarios', 'Usuario'),
+  ('Actualizar datos de cualquier usuario', 'Usuario'),
+  ('Eliminar datos de cualquier usuario', 'Usuario'),
+  ('Consultar acciones de usuario', 'Usuario'),
+  ('Consultar datos de cualquier permiso', 'Permiso'),
+  ('Crear nuevos permisos', 'Permiso'),
+  ('Actualizar datos de cualquier permiso', 'Permiso'),
+  ('Eliminar datos de cualquier permiso', 'Permiso'),
+  ('Consultar datos de cualquier metodo de pago', 'Metodos de Pago'),
+  ('Crear nuevos metodos de pago', 'Metodos de Pago'),
+  ('Actualizar datos de cualquier metodo de pago', 'Metodos de Pago'),
+  ('Eliminar datos de cualquier metodo de pago', 'Metodos de Pago');
+
+INSERT INTO Rol (rol_nombre)
+VALUES
+  ('Gerente de RRHH'),
+  ('Gerente de compras'),
+  ('Gerente de ventas'),
+  ('Gerente de promociones'),
+  ('Administrador'),
+  ('Gerente de almacén'),
+  ('Repartidor'),
+  ('Cliente jurídico'),
+  ('Cliente natural'),
+  ('Proveedor'),
+  ('Empleado RRHH'),
+  ('Empleado compras'),
+  ('Empleado ventas'),
+  ('Empleado promoción'),
+  ('Empleado administración'),
+  ('Seguridad'),
+  ('Empleado almacén');
+
+-- FALTA EL INSERT DE ROL_PERMISO
+
+INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
+VALUES
+  ('2015-01-15', '2018-07-20', 1),
+  ('2016-02-10', '2019-05-25', 2),
+  ('2017-03-05', NULL, 3),
+  ('2018-04-20', NULL, 4),
+  ('2019-05-15', '2023-06-10', 5),
+  ('2020-06-10', '2023-09-15', 6),
+  ('2021-07-25', NULL, 7),
+  ('2022-08-30', '2023-03-05', 8),
+  ('2023-09-18', NULL, 9),
+  ('2015-10-02', NULL, 10),
+  ('2016-11-20', '2020-12-31', 11),
+  ('2018-01-08', NULL, 12),
+  ('2019-03-25', '2022-07-05', 13),
+  ('2020-05-12', NULL, 14),
+  ('2021-07-01', NULL, 15),
+  ('2022-09-15', NULL, 16),
+  ('2015-11-10', NULL, 17),
+  ('2017-02-05', NULL, 18),
+  ('2018-04-22', NULL, 19),
+  ('2019-06-18', NULL, 20);
+
 
 INSERT INTO Departamento (departamento_nombre, departamento_descripcion)
 VALUES
@@ -3029,29 +3468,874 @@ VALUES
 INSERT INTO Horario (horario_hora_entrada, horario_hora_salida, horario_dia)
 VALUES
   ('08:00:00', '17:00:00', 'Lunes'),
-  ('09:30:00', '18:30:00', 'Miércoles'),
-  ('07:00:00', '15:45:00', 'Viernes'),
   ('10:00:00', '19:00:00', 'Martes'),
-  ('11:30:00', '20:15:00', 'Jueves');
+  ('09:30:00', '18:30:00', 'Miércoles'),
+  ('11:30:00', '20:15:00', 'Jueves'),
+  ('07:00:00', '15:45:00', 'Viernes');
 
 INSERT INTO Cargo (cargo_nombre, cargo_descripcion)
 VALUES
   ('Gerente', 'Encargado'),
   ('Administrador', 'Administrador general del negocio'),
   ('Repartidor', 'Responsable de la entrega de productos'),
-  ('Empleado', 'Asistente'),
-  ('Seguridad', 'Asistente de administración');
+  ('Empleado', 'Empleado general del negocio'),
+  ('Seguridad', 'Encargado de la seguridad del negocio'),
+  ('Cajero', 'Encargado de la caja'),
+  ('Vendedor', 'Encargado de la venta de productos'),
+  ('Almacenista', 'Encargado del almacén de productos'),
+  ('Promotor', 'Encargado de promociones y eventos');
 
 INSERT INTO Beneficio (beneficio_nombre, beneficio_descripcion, beneficio_tipo)
 VALUES
-  ('BonoNavidad', 'Bono especial de Navidad', 'anual'),
-  ('ValeComida', 'Beneficio para alimentos', 'mensual'),
-  ('DíaLibreAdicional', 'Un día libre adicional al mes', 'mensual'),
-  ('BonoDesempeño', 'Bono por desempeño excepcional', 'semestral'),
-  ('SeguroSalud', 'Cobertura de seguro médico', 'anual');
+  ('Bono por hijos', 'Beneficio dado para los trabajadores que tienen hijos', 'semestral'),
+  ('Bono por antiguedad', 'Beneficio dado para los trabajadores que tienen antiguedad', 'anual'),
+  ('Bono por desempeño', 'Beneficio dado para los trabajadores que tienen buen desempeño', 'anual'),
+  ('Bono por asistencia', 'Beneficio dado para los trabajadores que tienen buena asistencia', 'anual'),
+  ('Bono por puntualidad', 'Beneficio dado para los trabajadores que tienen buena puntualidad', 'anual'),
+  ('Bono por vacaciones', 'Beneficio dado para los trabajadores que tienen vacaciones', 'anual'),
+  ('Bono por navidad', 'Beneficio dado para los trabajadores en navidad', 'anual'),
+  ('Seguro social', 'Cobertura de seguro médico', 'anual');
 
-INSERT INTO  Evento(evento_nombre, evento_num_entradas, evento_fecha_inicio, evento_fecha_cierre, evento_direccion, evento_num_cupos, fk_lugar)
+INSERT INTO Banco (banco_nombre)
 VALUES
-  ('Chacao Run Festival', 1000, '2024/12/03', '2024/12/05', 'CHACAO', 1700, 209),
-  ('Venezuela Run Festival', 2000, '2024/02/17', '2024/02/20', 'Caracas', 3000, 128),
-  ('Saca el pecho Fest', 5000, '2024/03/15')
+  ('Banco Venezolano de Crédito'),
+  ('100% Banco'),
+  ('Bancamiga'),
+  ('Banco Activo'),
+  ('Banco Bicentenario'),
+  ('Banco Caroní'),
+  ('Banco de la Fuerza Armada Nacional'),
+  ('Banco de Venezuela'),
+  ('Banco del Caribe'),
+  ('Banco del Tesoro'),
+  ('Banco Exterior'),
+  ('Banco Mercantil'),
+  ('Banco Nacional de Crédito'),
+  ('Banco Plaza'),
+  ('Banco Provincial'),
+  ('Banco Sofitasa'),
+  ('Bancrecer'),
+  ('Banesco'),
+  ('Banplus'),
+  ('Banco Fondo Común');
+
+INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural)
+VALUES
+  ('1234123412341234', '2026-01-01', '312', 4, 21),
+  ('1234123412341235', '2027-02-01', '320', 5, 22),
+  ('1234123412341236', '2025-03-01', '354', 6, 23),
+  ('1234123412341237', '2026-04-01', '141', 7, 24),
+  ('1234123412341238', '2030-05-01', '545', 8, 25);
+
+INSERT INTO ficha_afiliacion (afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural) -- FALTA ARREGLAR EL NUMERO DE AFILIACION
+VALUES
+  ('2020-01-01', 10, 21),
+  ('2021-02-01', 20, 22),
+  ('2022-03-01', 30, 23),
+  ('2023-04-01', 40, 24),
+  ('2024-05-01', 50, 25);
+
+INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_juridica)
+VALUES
+  ('2234123412341235', '2026-01-01', '110', 1, 1),
+  ('3234123412341235', '2027-02-01', '240', 2, 2),
+  ('4234123412341235', '2025-03-01', '350', 3, 3),
+  ('5234123412341235', '2026-04-01', '413', 4, 4),
+  ('6234123412341235', '2030-05-01', '545', 5, 5);
+
+INSERT INTO Fermentacion (fermentacion_metodo) 
+VALUES
+  ('Fermentación en columnas de destilación continua'),
+  ('Fermentación en alambiques pot still'),
+  ('Fermentación en alambiques de cobre'),
+  ('Fermentación con levaduras seleccionadas'),
+  ('Fermentación natural con levaduras ambientales');
+
+INSERT INTO Destilacion (Destilacion_metodo) 
+VALUES
+  ('Destilación simple en alambiques'),
+  ('Destilación en alambiques pot still de cobre'),
+  ('Destilación en alambiques de cobre con doble columna'),
+  ('Destilación en columnas de rectificación'),
+  ('Destilación en alambiques de columna de burbujeo con platos perforados');
+
+INSERT INTO Ingrediente (ingrediente_nombre, ingrediente_descripcion) 
+VALUES
+ ('Jugo de Caña', 'Líquido extraído directamente de la caña de azúcar'),
+  ('Levadura', 'Cepa de levadura seleccionada para realzar y controlar el perfil de fermentación del ron.'),
+  ('Frutos rojos', 'Frutos rojos como fresas, frambuesas, moras, arándanos, etc.'),
+  ('Frutos secos', 'Frutos secos como almendras, nueces, avellanas, etc.'),
+  ('Frutos cítricos', 'Frutos cítricos como naranjas, limones, mandarinas, etc.'),
+  ('Frutos tropicales', 'Frutos tropicales como piña, mango, papaya, etc.'),
+  ('Café', 'Café de grano tostado'),
+  ('Cacao', 'Cacao en polvo'),
+  ('Canela', 'Canela en polvo'),
+  ('Vainilla', 'Vainilla en polvo'),
+  ('Miel', 'Miel de abeja'),
+  ('Caramelo', 'Caramelo líquido'),
+  ('Colorante', 'Colorante artificial'),
+  ('Avellana', 'Avellana en polvo'),
+  ('Granos de café', 'Granos de café tostado'),
+  ('Chocolate oscuro', 'Chocolate oscuro en polvo'),
+  ('Polvo de cacao', 'Polvo de cacao'),
+  ('Nueces', 'Nueces en polvo');
+
+INSERT INTO Barrica (barrica_nombre, barrica_descripcion) 
+VALUES
+  ('Roble Americano', ' '),
+  ('Barrica de Jerez', 'Barrica previamente utilizada para envejecer vino de Jerez'),
+  ('Barrica de Roble Blanco', ' '),
+  ('Barrica de Bourbon', 'Barrica de roble americano previamente utilizada para envejecer bourbon'),
+  ('Barrica de Cognac', 'Barrica que previamente albergó cognac, aportando complejidad y matices a la bebida.');
+
+INSERT INTO Anejamiento (anejamiento_tiempo, anejamiento_descripcion, fk_barrica, fk_anejamiento) 
+VALUES
+  (2, 'Añejamiento Ligero', 1, NULL),
+  (5, 'Añejamiento Moderado', 2, NULL),
+  (5, 'Añejamiento Moderado', 1, NULL),
+  (6, 'Añejamiento Moderado', 3, NULL),
+  (8, 'Añejamiento Intenso', 2, NULL),
+  (8, 'Añejamiento Intenso', 3, NULL),
+  (10, 'Añejamiento Robusto', 4, NULL),
+  (10, 'Añejamiento Robusto', 3, NULL),
+  (12, 'Añejamiento Complejo', 3, NULL),
+  (12, 'Añejamiento Complejo', 4, NULL),
+  (14, 'Añejamiento Complejo', 1, 4),
+  (15, 'Añejamiento Complejo', 1, 4),
+  (18, 'Añejamiento Prolongado', 3, NULL),
+  (25, 'Añejamiento Prolongado', 3, 7),
+  (35, 'Añejamiento Prolongado', 1, 8),
+  (21, 'Añejamiento Prolongado', 1, NULL),
+  (12, 'Añejamiento Complejo', 2, NULL),
+  (4, 'Añejamiento Ligero', 4, NULL),
+  (4, 'Añejamiento Ligero', 3, NULL),
+  (8, 'Añejamiento Intenso', 1, NULL);
+
+INSERT INTO Color (color_descripcion) 
+VALUES
+  ('Ámbar Claro'),
+  ('Ámbar Dorado'),
+  ('Ámbar Medio'),
+  ('Ámbar Oscuro'),
+  ('Caoba'),
+  ('Marrón Profundo'),
+  ('Blanco');
+
+INSERT INTO Aroma (aroma_descripcion) 
+VALUES
+  ('Notas de esencia de Vainilla'),
+  ('Esencia de Caramelo'),
+  ('Mezcla de Frutas Tropicales'),
+  ('Mezcla de Especias'),
+  ('Esencia de Melaza'),
+  ('Notas de esencia de Avellana'),
+  ('Fragancia de Canela'),
+  ('Notas de Azúcar morena'),
+  ('Mezcla de Frutos cítricos'),
+  ('Infusión de Cacao'),
+  ('Fragancia de Coco'),
+  ('Notas de esencia de Almendra'),
+  ('Fragancia de Flores'),
+  ('Esencia de Madera Ahumada');
+
+INSERT INTO Sabor (sabor_descripcion) 
+VALUES
+  ('Sensación de Frutos dulces'),
+  ('Cata de gusto a Vainilla'),
+  ('Cata de gusto a Caramelo'),
+  ('Entrada de Especias'),
+  ('Sensación de Frutos secos'),
+  ('Sensación de Frutos rojos'),
+  ('Sensación de Frutos cítricos'),
+  ('Chocolate negro'),
+  ('Café cremoso'),
+  ('Degustación de Coco'),
+  ('Cata de gusto a Tofi'),
+  ('Entrada de Tabaco'),
+  ('Entrada de Madera');
+
+INSERT INTO Servido (servido_nombre, servido_descripcion) 
+VALUES
+  ('A la Roca', 'Servido sobre hielo para disfrutarlo frío y diluido.'),
+  ('Cóctel', 'Mezcla con ingredientes adicionales'),
+  ('Puro', 'Servido sin mezclas ni hielo, puro y sin diluir.'),
+  ('Splash de Agua', 'Ron con una pequeña cantidad de agua añadida'),
+  ('Ron Punch', 'Elaboración con frutas, jugos y otros ingredientes'),
+  ('Highball', 'Vaso alto con hielo, gaseosa (como cola) y decorado con un twist de naranja.');
+
+INSERT INTO Clasificacion (clasificacion_nombre, clasificacion_descripcion, fk_clasificacion) 
+VALUES
+  ('Ron Agrícola', 'Ron producidos por la fermentación y destilación del zumo de la caña de azúcar', NULL),
+  ('Ron Industrial', 'Se hacen a partir de derivador el jugo de caña (melazas)', NULL),
+  ('Ron Blanco', 'Ron sin añejamiento o con poco tiempo de añejamiento.',1),
+  ('Ron ámbar o ambré', 'Ron con al menos un año de añejamiento',1),
+  ('Ron añejo o vieux', 'Ron con al menos tres años de añejamiento',1),
+  ('Ron Blanco', 'Ron sin añejamiento o con poco tiempo de añejamiento.',2),
+  ('Ron Dorado', 'Ron con un tiempo moderado de añejamiento y color dorado.', 2),
+  ('Ron Negro u Oscuro', 'Ron añejado por un período extenso, con color oscuro.', 2),
+  ('Ron con Especias y Sabor', 'Ron con añadidos de especias y otros sabores.', 2);
+
+INSERT INTO Categoria (categoria_nombre, categoria_descripcion, fk_categoria) 
+VALUES
+  ('Estandar o Añejo', 'Ron de hasta 6 años de envejecimiento', NULL),
+  ('Extra Añejo', 'Ron de entre 7 a 11 años de envejecimiento', NULL),
+  ('Premium', 'Ron de entre 12 a 17 años de envejecimiento', NULL),
+  ('Super Premium', 'Ron de entre 18 a 20 años de envejecimiento', NULL),
+  ('Ultra Premium', 'Ron de entre 21 a 24 años de envejecimiento', NULL),
+  ('Prestige', 'Ron de 25 o más años de envejecimiento', NULL);
+
+INSERT INTO Producto (
+  producto_nombre, producto_descripcion, producto_grado_alcoholico, producto_color_detalles, fk_color, fk_fermentacion, fk_destilacion, fk_clasificacion, fk_categoria, fk_proveedor, fk_lugar) 
+VALUES
+  ('Pampero Aniversario', 'Ron con notas ricas y complejas de cítricos frutas secas', 40.0, 'Destellos rojizos', 5, 4, 1, 8, 3, 14, 1028),
+  ('Pampero Selección', 'Selección de rones añejados con notas de vainilla.', 40.0, 'Profundo ámbar oscuro', 4, 3, 1, 8, 2, 14, 1028),
+  ('Pampero Especial', 'Ron de notas dulces con cuerpo suave', 40.0, 'Dorado brillante', 2, 3, 1, 6, 1, 14, 1028),
+  ('Pampero Blanco', 'Ron blanco suave para cócteles refrescantes.', 37.5, 'Transparente', 7, 1, 3, 6, 1, 14, 1028),
+  ('Cacique Añejo', ' Mezcla de rones añejos y métodos de destilado distintos', 37.5, 'Dorado brillante', 2, 2, 2, 7, 1, 15, 1388),
+  ('Cacique 500 Años', 'Mezcla de diferentes rones añejos de una reserva especial', 40.0, 'Ámbar natural', 3, 3, 2, 7, 2, 15, 1388),
+  ('Cacique Antiguo', 'Ron antiguo con carácter y suavidad excepcionales', 40.0, 'Profundo ámbar oscuro', 4, 2, 2, 8, 3, 15, 1388),
+  ('Cacique Origen', 'Ron con complejidad y notas de roble', 35.0, 'Dorado brillante', 2, 2, 2, 7, 2, 15, 1388),
+  ('Cacique Leyenda', 'Ron sabores intensos y final largo', 40.0, 'Profundo ámbar oscuro', 4, 2, 2, 8, 3, 15, 1388),
+  ('Roble Viejo Maestro', 'Ron con complejidad seca y melada', 40.0, 'Destellos cobrizos', 3, 4, 4, 7, 1, 13, 1039),
+  ('Roble Viejo Extra Añejo', 'Extra añejo con frutos secos y caramelo', 40.0, 'Ámbar limpio y brillante', 3, 4, 4, 7, 2, 13, 1039),
+  ('Roble Viejo Ultra Añejo', 'Ron con frutos secos, rojos y cítricos', 40.0, 'Ámbar limpio y brillante', 3, 1, 1, 7, 2, 13, 1039),
+  ('Roble Viejo Zafra', 'Ron zafra con frutos secos, rojos y cítricos', 40.0, 'Ámbar intenso', 4, 1, 1, 8, 3, 13, 1039),
+  ('Santa Teresa 1796', 'Ron con notas melosas y de chocolate', 40.0, 'Rojo ámbar', 3, 1, 2, 8, 6, 11, 701),
+  ('Santa Teresa Gran Reserva', 'Ron añejo con notas de chocolate', 40.0, 'Destellos dorados', 2, 1, 2, 6, 1, 11, 701),
+  ('Santa Teresa Linaje', 'Ron robusto con notas dulces y almendradas', 40.0, 'Ámbar intenso', 4, 1, 2, 8, 3, 11, 701),
+  ('Arakú', 'Licor mestizo de ron y café cremoso', 28.0, 'Profundo marrón', 6, 1, 2, 6, 1, 11, 701),
+  ('Carúpano Legendario', 'Ron con ricos sabores y final persistente', 40.0, 'Destellos anaranjados', 5, 1, 1, 8, 6, 12, 1177),
+  ('Carúpano X.O.', 'Ron con intensidad y complejidad extraordinarias', 40.0, 'Destellos anaranjados', 5, 1, 1, 8, 6, 12, 1177),
+  ('Carúpano Reserve 1996', 'Ron con notas elegantes y final largo', 40.0, 'Destellos anaranjados', 4, 1, 1, 8, 6, 12, 1177),
+  ('Carúpano 21', 'Ron con riqueza y equilibrio en cada sorbo', 40.0, 'Destellos dorados', 4, 3, 3, 9, 5, 12, 1177),
+  ('Carúpano 18', 'Ron con dulzor y complejidad', 40.0, 'Profundo ámbar oscuro', 4, 3, 3, 8, 4, 12, 1177),
+  ('Carúpano 12', 'Ron con notas de caramelo y miel', 40.0, 'Tono naranja brillante', 3, 3, 1, 7, 3, 12, 1177),
+  ('Carúpano 6', 'Ron con dulzor y frutos secos', 40.0, 'Destellos anaranjados', 1, 3, 1, 8, 3, 12, 1177);
+
+INSERT INTO Mezclado (fk_anejamiento, fk_ingrediente, fk_producto) 
+VALUES
+  (3, 1, 5), --CACIQUE AÑEJO
+  (3, 2, 5), --CACIQUE AÑEJO
+  (3, 4, 5), --CACIQUE AÑEJO
+  (3, 6, 5), --CACIQUE AÑEJO
+  (3, 10, 5), --CACIQUE AÑEJO
+  (6, 1, 6), --CACIQUE 500
+  (6, 2, 6), --CACIQUE 500
+  (6, 6, 6), --CACIQUE 500
+  (6, 8, 6), --CACIQUE 500
+  (10, 1, 7), --CACIQUE ANTIGUO
+  (10, 2, 7), --CACIQUE ANTIGUO
+  (10, 4, 7), --CACIQUE ANTIGUO
+  (10, 6, 7), --CACIQUE ANTIGUO
+  (10, 12, 7), --CACIQUE ANTIGUO
+  (4, 1, 8), --CACIQUE ORIGEN
+  (4, 2, 8), --CACIQUE ORIGEN
+  (4, 6, 8), --CACIQUE ORIGEN
+  (4, 12, 8), --CACIQUE ORIGEN
+  (4, 14, 8), --CACIQUE ORIGEN
+  (10, 1, 9), --CACIQUE LEYENDA
+  (10, 2, 9), --CACIQUE LEYENDA
+  (10, 3, 9), --CACIQUE LEYENDA
+  (10, 4, 9), --CACIQUE LEYENDA
+  (10, 6, 9), --CACIQUE LEYENDA
+  (14, 1, 18), --CARUPANO LEGENDARIO
+  (14, 2, 18), --CARUPANO LEGENDARIO
+  (14, 3, 18), --CARUPANO LEGENDARIO
+  (14, 11, 18), --CARUPANO LEGENDARIO
+  (14, 15, 18), --CARUPANO LEGENDARIO
+  (14, 1, 19), --CARUPANO X.O.
+  (14, 2, 19), --CARUPANO X.O.
+  (14, 3, 19), --CARUPANO X.O.
+  (14, 4, 19), --CARUPANO X.O.
+  (14, 13, 19), --CARUPANO X.O.
+  (14, 15, 19), --CARUPANO X.O.
+  (14, 1, 20), --CARUPANO 1996
+  (14, 2, 20), --CARUPANO 1996
+  (14, 4, 20), --CARUPANO 1996
+  (14, 7, 20), --CARUPANO 1996
+  (14, 9, 20), --CARUPANO 1996
+  (16, 1, 21), --CARUPANO 21
+  (16, 2, 21), --CARUPANO 21
+  (16, 3, 21), --CARUPANO 21
+  (16, 10, 21), --CARUPANO 21
+  (16, 11, 21), --CARUPANO 21
+  (16, 13, 21), --CARUPANO 21
+  (13, 1, 22), --CARUPANO 18
+  (13, 2, 22), --CARUPANO 18
+  (13, 3, 22), --CARUPANO 18
+  (13, 11, 22), --CARUPANO 18
+  (13, 12, 22), --CARUPANO 18
+  (9, 1, 23), --CARUPANO 12
+  (9, 2, 23), --CARUPANO 12
+  (9, 3, 23), --CARUPANO 12
+  (9, 4, 23), --CARUPANO 12
+  (9, 7, 23), --CARUPANO 12
+  (9, 12, 23), --CARUPANO 12
+  (4, 1, 24), --CARUPANO 6
+  (4, 2, 24), --CARUPANO 6
+  (4, 4, 24), --CARUPANO 6
+  (4, 8, 24), --CARUPANO 6
+  (4, 15, 24), --CARUPANO 6
+  (17, 1, 1), --PAMPERO ANIVERSARIO
+  (17, 2, 1), --PAMPERO ANIVERSARIO
+  (17, 4, 1), --PAMPERO ANIVERSARIO
+  (17, 6, 1), --PAMPERO ANIVERSARIO
+  (17, 7, 1), --PAMPERO ANIVERSARIO
+  (17, 8, 1), --PAMPERO ANIVERSARIO
+  (17, 10, 1), --PAMPERO ANIVERSARIO
+  (17, 11, 1), --PAMPERO ANIVERSARIO
+  (6, 1, 2), --PAMPERO SELECCIÓN
+  (6, 2, 2), --PAMPERO SELECCION
+  (6, 3, 2), --PAMPERO SELECCION
+  (6, 6, 2), --PAMPERO SELECCION
+  (6, 12, 2), --PAMPERO SELECCION
+  (6, 13, 2), --PAMPERO SELECCIÓN
+  (18, 1, 3), --PAMPERO ESPECIAL
+  (18, 2, 3), --PAMPERO ESPECIAL
+  (18, 3, 3), --PAMPERO ESPECIAL
+  (18, 6, 3), --PAMPERO ESPECIAL
+  (18, 13, 3), --PAMPERO ESPECIAL
+  (19, 1, 3), --PAMPERO BLANCO
+  (19, 2, 3), --PAMPERO BLANCO
+  (19, 4, 3), --PAMPERO BLANCO
+  (19, 6, 3), --PAMPERO BLANCO
+  (19, 14, 3), --PAMPERO BLANCO
+  (4, 1, 10), --ROBLE MAESTRO
+  (4, 2, 10), --ROBLE MAESTRO
+  (4, 3, 10), --ROBLE MAESTRO
+  (4, 4, 10), --ROBLE MAESTRO
+  (4, 12, 10), --ROBLE MAESTRO
+  (4, 15, 10), --ROBLE MAESTRO
+  (20, 1, 11), --ROBLE EXTRA AÑEJO
+  (20, 2, 11), --ROBLE EXTRA AÑEJO
+  (20, 4, 11), --ROBLE EXTRA AÑEJO
+  (20, 6, 11), --ROBLE EXTRA AÑEJO
+  (20, 7, 11), --ROBLE EXTRA AÑEJO
+  (20, 15, 11), --ROBLE EXTRA AÑEJO
+  (10, 1, 12), --ROBLE ULTRA AÑEJO
+  (10, 2, 12), --ROBLE ULTRA AÑEJO
+  (10, 3, 12), --ROBLE ULTRA AÑEJO
+  (10, 4, 12), --ROBLE ULTRA AÑEJO
+  (10, 10, 12), --ROBLE ULTRA AÑEJO
+  (12, 1, 13), --ROBLE ZAFRA
+  (12, 2, 13), --ROBLE ZAFRA
+  (12, 3, 13), --ROBLE ZAFRA
+  (12, 10, 13), --ROBLE ZAFRA
+  (12, 15, 13), --ROBLE ZAFRA
+  (15, 1, 14), --SANTA TERESA 1796
+  (15, 2, 14), --SANTA TERESA 1796
+  (15, 3, 14), --SANTA TERESA 1796
+  (15, 6, 14), --SANTA TERESA 1796
+  (15, 11, 14), --SANTA TERESA 1796
+  (15, 12, 14), --SANTA TERESA 1796
+  (3, 1, 15), --SANTA TERESA G. RESERVA
+  (3, 2, 15), --SANTA TERESA G. RESERVA
+  (3, 3, 15), --SANTA TERESA G. RESERVA
+  (3, 6, 15), --SANTA TERESA G. RESERVA
+  (3, 11, 15), --SANTA TERESA G. RESERVA
+  (11, 1, 16), --SANTA TERESA LINAJE 
+  (11, 2, 16), --SANTA TERESA LINAJE 
+  (11, 8, 16), --SANTA TERESA LINAJE 
+  (11, 11, 16), --SANTA TERESA LINAJE 
+  (11, 15, 16), --SANTA TERESA LINAJE 
+  (1, 1, 17), --SANTA TERESA ARAKÚ
+  (1, 2, 17), --SANTA TERESA ARAKÚ
+  (1, 6, 17), --SANTA TERESA ARAKÚ
+  (1, 9, 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Producto_Aroma (fk_aroma, fk_producto) 
+VALUES
+  (1, 5), --CACIQUE AÑEJO
+  (2, 5), --CACIQUE AÑEJO
+  (3, 5), --CACIQUE AÑEJO
+  (9, 5), --CACIQUE AÑEJO
+  (14, 5), --CACIQUE AÑEJO
+  (1, 6), --CACIQUE 500
+  (6, 6), --CACIQUE 500
+  (12, 6), --CACIQUE 500
+  (14, 6), --CACIQUE 500
+  (1, 7), --CACIQUE ANTIGUO
+  (2, 7), --CACIQUE ANTIGUO
+  (4, 7), --CACIQUE ANTIGUO
+  (1, 8), --CACIQUE ORIGEN
+  (3, 8), --CACIQUE ORIGEN
+  (1, 9), --CACIQUE LEYENDA
+  (2, 9), --CACIQUE LEYENDA
+  (14, 9), --CACIQUE LEYENDA
+  (3, 18), --CARUPANO LEGENDARIO
+  (11, 18), --CARUPANO LEGENDARIO
+  (14, 18), --CARUPANO LEGENDARIO
+  (2, 19), --CARUPANO X.O.
+  (3, 19), --CARUPANO X.O.
+  (11, 19), --CARUPANO X.O.
+  (12, 19), --CARUPANO X.O.
+  (13, 19), --CARUPANO X.O.
+  (2, 20), --CARUPANO 1996
+  (7, 20), --CARUPANO 1996
+  (10, 20), --CARUPANO 1996
+  (12, 20), --CARUPANO 1996
+  (14, 20), --CARUPANO 1996
+  (9, 21), --CARUPANO 21
+  (10, 21), --CARUPANO 21
+  (11, 21), --CARUPANO 21
+  (10, 22), --CARUPANO 18
+  (12, 22), --CARUPANO 18
+  (14, 22), --CARUPANO 18
+  (2, 23), --CARUPANO 12
+  (5, 23), --CARUPANO 12
+  (7, 23), --CARUPANO 12
+  (13, 23), --CARUPANO 12
+  (2, 24), --CARUPANO 6
+  (5, 24), --CARUPANO 6
+  (6, 24), --CARUPANO 6
+  (13, 24), --CARUPANO 6
+  (14, 24), --CARUPANO 6
+  (1, 1), --PAMPERO ANIVERSARIO
+  (2, 1), --PAMPERO ANIVERSARIO
+  (6, 1), --PAMPERO ANIVERSARIO
+  (7, 1), --PAMPERO ANIVERSARIO
+  (8, 1), --PAMPERO ANIVERSARIO
+  (9, 1), --PAMPERO ANIVERSARIO
+  (14, 1), --PAMPERO ANIVERSARIO
+  (1, 2), --PAMPERO SELECCIÓN
+  (8, 2), --PAMPERO SELECCION
+  (10, 2), --PAMPERO SELECCIÓN
+  (1, 3), --PAMPERO ESPECIAL
+  (5, 3), --PAMPERO ESPECIAL
+  (14, 3), --PAMPERO ESPECIAL
+  (1, 4), --PAMPERO BLANCO
+  (2, 4), --PAMPERO BLANCO
+  (3, 4), --PAMPERO BLANCO
+  (2, 10), --ROBLE MAESTRO
+  (4, 10), --ROBLE MAESTRO
+  (5, 10), --ROBLE MAESTRO
+  (13, 10), --ROBLE MAESTRO
+  (14, 10), --ROBLE MAESTRO
+  (1, 11), --ROBLE EXTRA AÑEJO
+  (2, 11), --ROBLE EXTRA AÑEJO
+  (7, 11), --ROBLE EXTRA AÑEJO
+  (8, 11), --ROBLE EXTRA AÑEJO
+  (2, 12), --ROBLE ULTRA AÑEJO
+  (5, 12), --ROBLE ULTRA AÑEJO
+  (9, 12), --ROBLE ULTRA AÑEJO
+  (12, 12), --ROBLE ULTRA AÑEJO
+  (14, 12), --ROBLE ULTRA AÑEJO
+  (9, 13), --ROBLE ULTRA ZAFRA
+  (12, 13), --ROBLE ULTRA ZAFRA
+  (14, 13), --ROBLE ULTRA ZAFRA
+  (1, 14), --SANTA TERESA 1796
+  (4, 14), --SANTA TERESA 1796
+  (7, 14), --SANTA TERESA 1796
+  (14, 14), --SANTA TERESA 1796
+  (1, 15), --SANTA TERESA G. RESERVA
+  (4, 15), --SANTA TERESA G. RESERVA
+  (14, 15), --SANTA TERESA G. RESERVA
+  (5, 16), --SANTA TERESA LINAJE
+  (6, 16), --SANTA TERESA LINAJE
+  (12, 16), --SANTA TERESA LINAJE
+  (14, 16), --SANTA TERESA LINAJE
+  (1, 17), --SANTA TERESA ARAKÚ
+  (10, 17), --SANTA TERESA ARAKÚ
+  (14, 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Producto_Sabor (fk_sabor, fk_producto) 
+VALUES
+  (2, 5), --CACIQUE AÑEJO
+  (3, 5), --CACIQUE AÑEJO
+  (7, 5), --CACIQUE AÑEJO
+  (2, 6), --CACIQUE 500
+  (5, 6), --CACIQUE 500
+  (12, 6), --CACIQUE 500
+  (2, 7), --CACIQUE ANTIGUO
+  (3, 7), --CACIQUE ANTIGUO
+  (4, 7), --CACIQUE ANTIGUO
+  (1, 8), --CACIQUE ORIGEN
+  (2, 8), --CACIQUE ORIGEN
+  (2, 9), --CACIQUE LEYENDA
+  (3, 9), --CACIQUE LEYENDA
+  (6, 9), --CACIQUE LEYENDA
+  (13, 9), --CACIQUE LEYENDA
+  (5, 18), --CARUPANO LEGENDARIO
+  (6, 18), --CARUPANO LEGENDARIO
+  (8, 18), --CARUPANO LEGENDARIO
+  (10, 18), --CARUPANO LEGENDARIO
+  (11, 18), --CARUPANO LEGENDARIO
+  (12, 18), --CARUPANO LEGENDARIO
+  (3, 19), --CARUPANO X.O.
+  (5, 19), --CARUPANO X.O.
+  (6, 19), --CARUPANO X.O.
+  (10, 19), --CARUPANO X.O.
+  (11, 19), --CARUPANO X.O.
+  (12, 19), --CARUPANO X.O.
+  (3, 20), --CARUPANO 1996
+  (5, 20), --CARUPANO 1996
+  (11, 20), --CARUPANO 1996
+  (12, 20), --CARUPANO 1996
+  (13, 20), --CARUPANO 1996
+  (6, 21), --CARUPANO 21
+  (7, 21), --CARUPANO 21
+  (8, 21), --CARUPANO 21
+  (10, 21), --CARUPANO 21
+  (12, 21), --CARUPANO 21
+  (1, 22), --CARUPANO 18
+  (6, 22), --CARUPANO 18
+  (8, 22), --CARUPANO 18
+  (3, 23), --CARUPANO 12
+  (6, 23), --CARUPANO 12
+  (13, 23), --CARUPANO 12
+  (3, 24), --CARUPANO 6
+  (5, 24), --CARUPANO 6
+  (13, 24), --CARUPANO 6
+  (2, 1), --PAMPERO ANIVERSARIO
+  (3, 1), --PAMPERO ANIVERSARIO
+  (5, 1), --PAMPERO ANIVERSARIO
+  (7, 1), --PAMPERO ANIVERSARIO
+  (8, 1), --PAMPERO ANIVERSARIO
+  (13, 1), --PAMPERO ANIVERSARIO
+  (1, 2), --PAMPERO SELECCION
+  (2, 2), --PAMPERO SELECCION
+  (12, 2), --PAMPERO SELECCIÓN
+  (1, 3), --PAMPERO ESPECIAL
+  (2, 3), --PAMPERO ESPECIAL
+  (13, 3), --PAMPERO ESPECIAL
+  (1, 4), --PAMPERO BLANCO
+  (2, 4), --PAMPERO BLANCO
+  (3, 4), --PAMPERO BLANCO
+  (3, 10), --ROBLE MAESTRO
+  (4, 10), --ROBLE MAESTRO
+  (5, 10), --ROBLE MAESTRO
+  (6, 10), --ROBLE MAESTRO
+  (12, 10), --ROBLE MAESTRO
+  (13, 10), --ROBLE MAESTRO
+  (2, 11), --ROBLE EXTRA AÑEJO
+  (3, 11), --ROBLE EXTRA AÑEJO
+  (5, 11), --ROBLE EXTRA AÑEJO
+  (3, 12), --ROBLE ULTRA AÑEJO
+  (5, 12), --ROBLE ULTRA AÑEJO
+  (6, 12), --ROBLE ULTRA AÑEJO
+  (7, 12), --ROBLE ULTRA AÑEJO
+  (13, 12), --ROBLE ULTRA AÑEJO
+  (5, 13), --ROBLE ULTRA ZAFRA
+  (6, 13), --ROBLE ULTRA ZAFRA
+  (7, 13), --ROBLE ULTRA ZAFRA
+  (13, 13), --ROBLE ULTRA ZAFRA
+  (2, 14), --SANTA TERESA 1796
+  (4, 14), --SANTA TERESA 1796
+  (6, 14), --SANTA TERESA 1796
+  (8, 14), --SANTA TERESA 1796
+  (13, 14), --SANTA TERESA 1796
+  (2, 15), --SANTA TERESA G. RESERVA
+  (4, 15), --SANTA TERESA G. RESERVA
+  (6, 15), --SANTA TERESA G. RESERVA
+  (8, 15), --SANTA TERESA G. RESERVA
+  (5, 16), --SANTA TERESA LINAJE
+  (8, 16), --SANTA TERESA LINAJE
+  (13, 16), --SANTA TERESA LINAJE
+  (2, 17), --SANTA TERESA ARAKÚ
+  (9, 17), --SANTA TERESA ARAKÚ
+  (13, 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Producto_Servido (fk_servido, fk_producto) 
+VALUES
+  (6, 5), --CACIQUE AÑEJO
+  (1, 6), --CACIQUE 500
+  (6, 6), --CACIQUE 500
+  (3, 6), --CACIQUE 500
+  (1, 7), --CACIQUE ANTIGUO
+  (2, 7), --CACIQUE ANTIGUO
+  (1, 8), --CACIQUE ORIGEN
+  (1, 9), --CACIQUE LEYENDA
+  (2, 9), --CACIQUE LEYENDA
+  (3, 9), --CACIQUE LEYENDA
+  (3, 18), --CARUPANO LEGENDARIO
+  (3, 19), --CARUPANO X.O.
+  (3, 20), --CARUPANO 1996
+  (6, 21), --CARUPANO 21
+  (1, 22), --CARUPANO 18
+  (1, 23), --CARUPANO 12
+  (6, 23), --CARUPANO 12
+  (4, 24), --CARUPANO 6
+  (6, 24), --CARUPANO 6
+  (1, 1), --PAMPERO ANIVERSARIO
+  (1, 2), --PAMPERO SELECCION
+  (2, 2), --PAMPERO SELECCION
+  (6, 2), --PAMPERO SELECCIÓN
+  (2, 3), --PAMPERO ESPECIAL
+  (6, 3), --PAMPERO ESPECIAL
+  (2, 4), --PAMPERO BLANCO
+  (2, 10), --ROBLE MAESTRO
+  (3, 10), --ROBLE MAESTRO
+  (2, 11), --ROBLE EXTRA AÑEJO
+  (3, 11), --ROBLE EXTRA AÑEJO
+  (1, 12), --ROBLE ULTRA AÑEJO
+  (2, 12), --ROBLE ULTRA AÑEJO
+  (3, 12), --ROBLE ULTRA AÑEJO
+  (1, 13), --ROBLE ULTRA ZAFRA
+  (3, 13), --ROBLE ULTRA ZAFRA
+  (1, 14), --SANTA TERESA 1796
+  (3, 14), --SANTA TERESA 1796
+  (2, 15), --SANTA TERESA G. RESERVA
+  (5, 15), --SANTA TERESA G. RESERVA
+  (3, 16), --SANTA TERESA LINAJE
+  (5, 16), --SANTA TERESA LINAJE
+  (3, 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Regusto (regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto) 
+VALUES
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque afrutado', 5), --CACIQUE AÑEJO
+  (' ', ' ', ' ', ' ', 'Matices de frutos secos con toque de vainilla', 6), --CACIQUE 500
+  (' ', ' ', ' ', ' ', 'Matiz dulce con toque de vainilla', 7), --CACIQUE ANTIGUO
+  (' ', ' ', ' ', ' ', 'Matiz dulce de frutos tropicales', 8), --CACIQUE ORIGEN
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque de vainilla', 9), --CACIQUE LEYENDA
+  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos secos', 18), --CARUPANO LEGENDARIO
+  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos negros', 19), --CARUPANO X.O.
+  (' ', ' ', ' ', ' ', 'Matiz seca y elegante con toque de café y tabaco', 20), --CARUPANO 1996
+  (' ', ' ', ' ', ' ', 'Matices de frutas maceradas y tabaco', 21), --CARUPANO 21
+  (' ', ' ', ' ', ' ', 'Matices dulces con entrada vigorosa', 22), --CARUPANO 18
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque de maple', 23), --CARUPANO 12
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque de frutos secos', 24), --CARUPANO 6
+  (' ', ' ', ' ', ' ', 'Matices cítricas con toque dulce', 1), --PAMPERO ANIVERSARIO
+  (' ', ' ', ' ', ' ', 'Matices dulces y amargas', 2), --PAMPERO SELECCIÓN
+  (' ', ' ', ' ', ' ', 'Matices dulces con notas de barrica', 3), --PAMPERO ESPECIAL
+  (' ', ' ', ' ', ' ', 'Matices dulces con frutos tropicales', 4), --PAMPERO BLANCO
+  (' ', ' ', ' ', ' ', 'Matiz seca con notas dulces y meladas', 10), --ROBLE MAESTRO
+  (' ', ' ', ' ', ' ', 'Matiz dulce con frutos secos', 11), --ROBLE EXTRA AÑEJO
+  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos', 12), --ROBLE ULTRA AÑEJO
+  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos y madera', 13), --ROBLE ZAFRA
+  (' ', ' ', ' ', ' ', 'Matices de frutos rojos y chocolate', 14), --SANTA TERESA 1796
+  (' ', ' ', ' ', ' ', 'Matices de chocolate y caña dulce', 15), --SANTA TERESA G. RESERVA
+  (' ', ' ', ' ', ' ', 'Matices de frutos secos y almendra', 16), --SANTA TERESA LINAJE
+  (' ', ' ', ' ', ' ', 'Matices de ron e infusión de café molido', 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Cuerpo (cuerpo_peso, cuerpo_textura, cuerpo_densidad, cuerpo_descripcion, fk_producto) 
+VALUES
+  ('Medio', 'Cremoso', 'Media', 'Sensación sustancial y viscosa', 5), --CACIQUE AÑEJO
+  ('Ligero', 'Sedoso', 'Baja', 'De carácter ligero y sensorial', 6), --CACIQUE 500
+  ('Ligero', 'Sedoso', 'Baja', 'De carácter gentil y persistente', 7), --CACIQUE ANTIGUO
+  ('Ligero', 'Sedoso', 'Baja', 'Estructura suave y cálida', 8), --CACIQUE ORIGEN
+  ('Ligero', 'Sedoso', 'Baja', 'Composición suave', 9), --CACIQUE LEYENDA
+  ('Medio', 'Viscoso', 'Media', 'Untuoso pero sobrio y equilibrado', 18), --CARUPANO LEGENDARIO
+  ('Medio', 'Viscoso', 'Media', 'Untuoso pero recio y equilibrado', 19), --CARUPANO X.O.
+  ('Medio', 'Viscoso', 'Media', 'Equilibrado en fuerza y elegancia', 20), --CARUPANO 1996
+  ('Pesado', 'Cremoso', 'Alta', 'Sensación alcohólica intensa y untuosa', 21), --CARUPANO 21
+  ('Pesado', 'Cremoso', 'Alta', 'Composición persistente con final meloso', 22), --CARUPANO 18
+  ('Pesado', 'Cremoso', 'Alta', 'Composición untuosa pero equilibrada', 23), --CARUPANO 12
+  ('Medio', 'Cremoso', 'Media', 'Equilibrado con toques de melaza', 23), --CARUPANO 6
+  ('Pesado', 'Viscoso', 'Alta', 'Composición compleja y pesada', 1), --PAMPERO ANIVERSARIO
+  ('Medio', 'Viscoso', 'Media', 'Seco pero equilibrado', 2), --PAMPERO SELECCIÓN
+  ('Ligero', 'Sedoso', 'Baja', 'De carácter ligero y persistente', 3), --PAMPERO ESPECIAL
+  ('Ligero', 'Sedoso', 'Baja', 'Sensación fresca pero robusta', 4), --PAMPERO BLANCO
+  ('Medio', 'Viscoso', 'Media', 'Sensación melada pero seca', 10), --ROBLE MAESTRO
+  ('Medio', 'Viscoso', 'Media', 'De carácter persistente pero balanceado', 11), --ROBLE EXTRA AÑEJO
+  ('Medio', 'Viscoso', 'Media', 'De carácter persistente y robusto', 12), --ROBLE ULTRA AÑEJO
+  ('Ligero', 'Sedoso', 'Baja', 'Equilibrado con final largo y sedoso', 13), --ROBLE ZAFRA
+  ('Ligero', 'Sedoso', 'Baja', 'Estructura seca, sedosa y balanceada', 14), --SANTA TERESA 1796
+  ('Ligero', 'Sedoso', 'Baja', 'De cuerpo liviano pero firme y tenso', 15), --SANTA TERESA G. RESERVA
+  ('Medio', 'Cremoso', 'Media', 'De cuerpo robusto y complejo', 16), --SANTA TERESA LINAJE
+  ('Ligero', 'Sedoso', 'Baja', 'Suaves toques de café cremoso', 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Material (material_nombre, material_descripcion, material_tipo) 
+VALUES
+  ('Cartón', 'Material ligero y versátil', 'Polimérico'),
+  ('Madera', 'Material natural', 'Compuesto'),
+  ('Metal', 'Material duradero', 'Metálico'),
+  ('Plástico', 'Material versátil', 'Polimérico'),
+  ('Corteza de Árbol', 'Material orgánico y decorativo', 'Natural'),
+  ('Vidrio', 'Material transparente y reciclable', 'Compuesto'),
+  ('Cerámica', 'Material especial para botellas de ron', 'Cerámico'),
+  ('Porcelana', 'Material de alta calidad', 'Cerámico'),
+  ('Cristal', 'Material transparente y refinado', 'Compuesto');
+
+INSERT INTO Tapa (tapa_descripcion) 
+VALUES
+  ('Corcho Natural'),  
+  ('Plástico Económico'),  
+  ('Metal Premium'),  
+  ('Corcho Sintético'), 
+  ('Metal Cromado'),
+  ('Cristal esmerilado');
+
+INSERT INTO Caja (caja_capacidad, caja_descripcion, fk_caja) 
+VALUES
+  (24, 'Caja Grande', NULL),  --1
+  (12, 'Caja Estándar de cartón', NULL),  --2
+  (6, 'Caja Pequeña de madera', NULL),  --3
+  (6, 'Caja Pequeña de metal', NULL),  --4
+  (1, 'Caja Individual de carton', 1), --5
+  (1, 'Caja Individual de metal', 1),  --6
+  (1, 'Forro de cuero', 1),  --7
+  (2, 'Caja de Colección de metal', 1),  --8
+  (4, 'Caja de Colección de madera', 1),  --9
+  (1, 'Caja Individual de carton', 2),  --10
+  (1, 'Caja Individual de metal', 2),  --11
+  (1, 'Forro de cuero', 2),  --12
+  (2, 'Caja de Colección de metal', 2),  --13
+  (4, 'Caja de Colección de madera', 2),  --14
+  (1, 'Caja Individual de carton', 3),  --15
+  (1, 'Caja Individual de metal', 3),  --16
+  (1, 'Forro de cuero', 3),  --17
+  (2, 'Caja de Colección de metal', 3),  --18
+  (1, 'Caja Individual de carton', 4),  --20
+  (1, 'Caja Individual de metal', 4),  --21
+  (1, 'Forro de cuero', 4),  --22
+  (2, 'Caja de Colección de metal', 4);  --23
+
+INSERT INTO Botella (botella_capacidad, botella_altura, botella_ancho, botella_descripcion) 
+VALUES
+  (0.5, 25.0, 6.0, 'Botella Pequeña'),
+  (0.75, 29.0, 7.0, 'Botella Estándar'),
+  (1.0, 32.0, 8.0, 'Botella Litro'),
+  (1.5, 35.0, 9.0, 'Botella Magnum'),
+  (1.75, 37.5, 10.0, 'Botella Grande'),
+  (3.0, 40.0, 10.0, 'Botella Extra Grande');
+  
+INSERT INTO Material_Botella (fk_material, fk_botella) 
+VALUES
+  (6, 1),  
+  (6, 2),  
+  (6, 3),  
+  (6, 4),  
+  (6, 5),  
+  (7, 2),  
+  (7, 3),  
+  (3, 3),  
+  (3, 2),
+  (9, 3),
+  (9, 1),
+  (9, 2),
+  (9, 6),
+  (7, 1);
+
+INSERT INTO Presentacion (presentacion_peso, fk_material_botella_1, fk_material_botella_2, fk_producto, fk_tapa, fk_caja) 
+VALUES
+  (1.42, 6, 2, 5, 1, 11), --CACIQUE AÑEJO
+  (1.4, 6, 2, 6, 1, 11), --CACIQUE 500
+  (1.3, 6, 2, 7, 5, 11), --CACIQUE ANTIGUO
+  (1.4, 9, 3, 8, 1, 11), --CACIQUE ORIGEN
+  (1.6, 9, 2, 9, 4, 12), --CACIQUE LEYENDA
+  (1.1, 9, 2, 18, 3, 14), --CARUPANO LEGENDARIO
+  (1.3, 9, 2, 19, 6, 10), --CARUPANO X.O.
+  (1.3, 9, 2, 20, 6, 20), --CARUPANO 1996
+  (1.3, 9, 2, 21, 5, 20), --CARUPANO 21
+  (1.3, 9, 2, 22, 5, 20), --CARUPANO 18
+  (1.6, 7, 2, 23, 5, 10), --CARUPANO 12
+  (1.42, 6, 2, 24, 5, 11), --CARUPANO 6
+  (1.3, 6, 2, 1, 1, 12), --PAMPERO ANIVERSARIO
+  (1.3, 6, 2, 2, 1, 10), --PAMPERO SELECCIÓN
+  (1.42, 6, 2, 3, 1, 11), --PAMPERO ESPECIAL
+  (1.4, 6, 2, 4, 1, 12), --PAMPERO BLANCO
+  (1.3, 9, 2, 10, 4, 10), --ROBLE MAESTRO
+  (1.0, 9, 2, 11, 1, 5), --ROBLE EXTRA AÑEJO
+  (1.2, 9, 6, 13, 1, 5), --ROBLE ZAFRA
+  (1.2, 9, 2, 12, 1, 5), --ROBLE ULTRA AÑEJO
+  (1.0, 9, 2, 14, 1, 6), --SANTA TERESA 1796
+  (1.0, 9, 2, 15, 1, 7), --SANTA TERESA G. RESERVA
+  (1.15, 7, 2, 16, 1, 8), --SANTA TERESA LINAJE
+  (1.6, 7, 2, 17, 2, 11); --SANTA TERESA ARAKÚ
+
+INSERT INTO Imagen (imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+VALUES 
+  ('cacique_anejo.jpg', true, 6, 2, 5),
+  ('cacique_500.jpg', true, 6, 2, 6),
+  ('cacique_antiguo.jpg', true, 6, 2, 7),
+  ('cacique_origen.jpg', true, 9, 3, 8),
+  ('cacique_leyenda.jpg', true, 9, 2, 9),
+  ('carupano_legendario.jpg', true, 9, 2, 18),
+  ('carupano_xo.jpg', true, 9, 2, 19),
+  ('carupano_1996.jpg', true, 9, 2, 20),
+  ('carupano_21.jpg', true, 9, 2, 21),
+  ('carupano_18.jpg', true, 9, 2, 22),
+  ('carupano_12.jpg', true, 7, 2, 23),
+  ('carupano_6.jpg', true, 6, 2, 24),
+  ('pampero_aniversario.jpg', true, 6, 2, 1),
+  ('pampero_seleccion.jpg', true, 6, 2, 2),
+  ('pampero_especial.jpg', true, 6, 2, 3),
+  ('pampero_blanco.jpg', true, 6, 2, 4),
+  ('roble_maestro.jpg', true, 9, 2, 10),
+  ('roble_extra_anejo.jpg', true, 9, 2, 11),
+  ('roble_zafra.jpg', true, 9, 6, 13),
+  ('roble_ultra_anejo.jpg', true, 9, 2, 12),
+  ('santa_teresa_1796.jpg', true, 9, 2, 14),
+  ('santa_teresa_gran_reserva.jpg', true, 9, 2, 15),
+  ('santa_teresa_linaje.jpg', true, 7, 2, 16),
+  ('santa_teresa_araku.jpg', true, 7, 2, 17);
+
+INSERT INTO Tienda(
+	tienda_capacidad, tienda_direccion, fk_lugar)
+VALUES 
+  (2000, 'Av. Paéz, frente al distribuidor Baralt, local ASORONUCAB', 715);
+
+INSERT INTO Almacen(
+  almacen_capacidad, almacen_direccion, fk_lugar)
+VALUES 
+  (5000, 'Av. Paéz, frente al distribuidor Baralt, local ASORONUCAB', 715);
+
+INSERT INTO Inventario_Tienda(
+	inv_tienda_cantidad, fk_tienda, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+VALUES
+  (50, 1, 6, 2, 5),
+  (50, 1, 6, 2, 6),
+  (70, 1, 6, 2, 7),
+  (80, 1, 9, 3, 8),
+  (90, 1, 9, 2, 9),
+  (80, 1, 9, 2, 18),
+  (70, 1, 9, 2, 19),
+  (60, 1, 9, 2, 20),
+  (50, 1, 9, 2, 21),
+  (50, 1, 9, 2, 22),
+  (70, 1, 7, 2, 23),
+  (80, 1, 6, 2, 24),
+  (90, 1, 6, 2, 1),
+  (50, 1, 6, 2, 2),
+  (60, 1, 6, 2, 3),
+  (70, 1, 6, 2, 4),
+  (80, 1, 9, 2, 10),
+  (90, 1, 9, 2, 11),
+  (70, 1, 9, 6, 13),
+  (70, 1, 9, 2, 12),
+  (50, 1, 9, 2, 14),
+  (50, 1, 9, 2, 15),
+  (60, 1, 7, 2, 16),
+  (70, 1, 7, 2, 17);
+
+INSERT INTO Inventario_Almacen(
+  inv_almacen_cantidad, fk_almacen, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+VALUES
+  (150, 1, 6, 2, 5),
+  (150, 1, 6, 2, 6),
+  (170, 1, 6, 2, 7),
+  (280, 1, 9, 3, 8),
+  (290, 1, 9, 2, 9),
+  (280, 1, 9, 2, 18),
+  (170, 1, 9, 2, 19),
+  (260, 1, 9, 2, 20),
+  (150, 1, 9, 2, 21),
+  (250, 1, 9, 2, 22),
+  (170, 1, 7, 2, 23),
+  (180, 1, 6, 2, 24),
+  (290, 1, 6, 2, 1),
+  (150, 1, 6, 2, 2),
+  (160, 1, 6, 2, 3),
+  (270, 1, 6, 2, 4),
+  (180, 1, 9, 2, 10),
+  (290, 1, 9, 2, 11),
+  (170, 1, 9, 6, 13),
+  (170, 1, 9, 2, 12),
+  (150, 1, 9, 2, 14),
+  (150, 1, 9, 2, 15),
+  (160, 1, 7, 2, 16),
+  (270, 1, 7, 2, 17);
+
+INSERT INTO Historico_Tasa_Dolar(
+	tasa_valor, tasa_fecha_inicio, tasa_fecha_fin)
+VALUES 
+  (35.95, '2023-12-30', NULL),
+  (35.93, '2023-12-28', '2023-12-30'),
+  (35.83, '2023-12-27', '2023-12-28'),
+  (35.78, '2023-12-26', '2023-12-27'),
+  (35.81, '2023-12-22', '2023-12-26'),
+  (35.78, '2023-12-21', '2023-12-22'),
+  (35.73, '2023-12-20', '2023-12-21'),
+  (35.71, '2023-12-19', '2023-12-20'),
+  (35.65, '2023-12-18', '2023-12-19'),
+  (35.72, '2023-12-15', '2023-12-18');

@@ -1,0 +1,116 @@
+<div style="display: flex; justify-content: center; align-items: center;">
+    <input type="text" id="cedula" placeholder="Ingrese la cédula" style="font-size: 15px; margin-right: 10px;" />
+    <button type="button" id="buscar" style="margin-right: 10px;">Buscar</button>
+    <button type="button" id="reset">Resetear</button>
+</div>
+<style>
+    #cedula::placeholder { /* Selects the placeholder text of the input with id "cedula" */
+        font-size: 15px; /* Changes the font size */
+    }
+</style>
+
+<script>
+
+var existePersona = false;
+
+function llenarEMP(estado, municipio, parroquia) { 
+    // llenar los cb de estado, municipio y parroquia
+    $("#form-field-estado").val(estado).prop('disabled', true);
+    $("#form-field-municipio").empty();
+    $("#form-field-parroquia").empty();
+
+    $.each(EMP.municipios[estado], function(i, municipio) {
+        $("#form-field-municipio").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+    });
+    $("#form-field-municipio").val(municipio).prop('disabled', true);
+
+    $.each(EMP.parroquias[municipio], function(i, parroquia) {
+        $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+    });
+    $("#form-field-parroquia").val(parroquia).prop('disabled', true);    
+}
+
+function llenarTDCs(TDCs) {
+    //si TDCs no es un arreglo, entonces solo hay una TDC
+    if (!Array.isArray(TDCs)) {
+        TDCs = [TDCs];
+    }
+
+    TDCs.forEach(TDC => {
+        $("#body-TDC").append("<tr><td id="+ TDC.fk_banco +">"+TDC.banco_nombre+"</td><td>"+TDC.tdc_numero_tarjeta+"</td><td>"+TDC.tdc_fecha_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
+    });
+}
+
+document.getElementById('buscar').addEventListener('click', function() {
+    // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón
+    var cedula = document.getElementById('cedula').value;
+    console.log('Cédula: ' + cedula);
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/personanatural/cliente/' + cedula,
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                if (data == null) {
+                    alert('No se encontró a la persona');
+                    return;
+                } else {
+                    existePersona = true;
+                    ff = '#form-field-';
+                    $(ff+"pnombre").val(data.persona.persona_nat_p_nombre).prop('disabled', true);
+                    $(ff+"snombre").val(data.persona.persona_nat_s_nombre).prop('disabled', true);
+                    $(ff+"papellido").val(data.persona.persona_nat_p_apellido).prop('disabled', true);
+                    $(ff+"sapellido").val(data.persona.persona_nat_s_apellido).prop('disabled', true);
+                    $(ff+"cedula").val(data.persona.persona_nat_cedula).prop('disabled', true);
+                    $(ff+"nacionalidad").val(data.persona.persona_nat_rif.substring(0, 1)).prop('disabled', true);
+                    $(ff+"rif").val(data.persona.persona_nat_rif.substring(1)).prop('disabled', true);
+                    $(ff+"correo").val(data.correos[0].correo_direccion).prop('disabled', true);
+                    if (data.correos.length > 1)
+                        $(ff+"correoalt").val(data.correos[1].correo_direccion).prop('disabled', true);
+                    $(ff+"codarea").val(data.telefonos[0].telefono_codigo_area).prop('disabled', true);
+                    $(ff+"telefono").val(data.telefonos[0].telefono_numero).prop('disabled', true);
+                    if (data.telefonos.length > 1) {
+                        $(ff+"codareaalt").val(data.telefonos[1].telefono_codigo_area).prop('disabled', true);
+                        $(ff+"telefonoalt").val(data.telefonos[1].telefono_numero).prop('disabled', true);
+                    }
+                    let fecha = new Date(data.persona.persona_nat_fecha_nac);
+                    let formattedFecha = fecha.getFullYear() + '-' + ('0' + (fecha.getMonth() + 1)).slice(-2) + '-' + ('0' + fecha.getDate()).slice(-2);
+                    $(ff+"fechanac").val(formattedFecha).prop('disabled', true);
+                    $(ff+"direccion").val(data.persona.persona_nat_direccion_fiscal).prop('disabled', true);
+
+                    llenarEMP(data.lugar.estado, data.lugar.municipio, data.lugar.parroquia); 
+                    llenarTDCs(data.tdc);
+                }
+            },
+            error: function(data) {
+                alert(data.responseText);
+            }
+        });
+    });   
+});
+
+document.getElementById('reset').addEventListener('click', function() {
+    // Aquí puedes agregar el código que quieres que se ejecute cuando se haga clic en el botón de reset
+    existePersona = false;
+    var ff = '#form-field-';
+    $(ff+"pnombre").val('').prop('disabled', false);
+    $(ff+"snombre").val('').prop('disabled', false);
+    $(ff+"papellido").val('').prop('disabled', false);
+    $(ff+"sapellido").val('').prop('disabled', false);
+    $(ff+"cedula").val('').prop('disabled', false);
+    $(ff+"nacionalidad").val('').prop('disabled', false);
+    $(ff+"rif").val('').prop('disabled', false);
+    $(ff+"correo").val('').prop('disabled', false);
+    $(ff+"correoalt").val('').prop('disabled', false);
+    $(ff+"codarea").val('').prop('disabled', false);
+    $(ff+"telefono").val('').prop('disabled', false);
+    $(ff+"codareaalt").val('').prop('disabled', false);
+    $(ff+"telefonoalt").val('').prop('disabled', false);
+    $(ff+"fechanac").val('').prop('disabled', false);
+    $(ff+"direccion").val('').prop('disabled', false);
+    $("#body-TDC").empty();
+});
+</script>

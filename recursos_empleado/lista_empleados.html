@@ -17,49 +17,49 @@
             color: #202020;
             font-size: 15px; /* Cambia esto al tamaño que desees */
             font-weight: 300; /* Cambia esto al grosor que desees */
-        }.btn-primary-ben {
+        }.btn-primary {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 16px;
             font-weight: 600;
-            background-color: #D1991A;
-            border-color: #D1991A;
-        }.btn-primary-ben:hover {
+            background-color: #A5141A;
+            border-color: #A5141A;
+        }.btn-primary:hover {
             color: #F8F8F8;
-            background-color: #956d11;
-            border-color: #956d11;
-        }.btn-danger-ben {
+            background-color: #800f12;
+            border-color: #800f12;
+        }.btn-danger {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 15px;
             font-weight: 600;
             background-color: #FF0000;
             border-color: #FF0000;
-        }.btn-danger-ben:hover {
+        }.btn-danger:hover {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             background-color: #b30000;
             border-color: #b30000;
-        }.btn-warning-ben {
+        }.btn-warning {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 15px;
             font-weight: 600;
             background-color: #0f3b83;
             border-color: #0f3b83;
-        }.btn-warning-ben:hover {
+        }.btn-warning:hover {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             background-color: #0c2c66;
             border-color: #0c2c66;
-        }.btn-success-ben {
+        }.btn-success {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 15px;
             font-weight: 600;
             background-color: #28a745;
             border-color: #28a745;
-        }.btn-success-ben:hover {
+        }.btn-success:hover {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             background-color: #1e7e34;
@@ -87,28 +87,83 @@
         }
         #table-empleados, #table-empleados th, #table-empleados td {
             border: none;
+        } .nav-link {
+            color: #7a7a7a;
+            font-weight: bold;
+        } .nav-link.active {
+            color: #D1991A !important;
+        } .nav-link:hover {
+            color: #A5141A !important;
         }
     </style>
-    
-    <div class="mt-4 mx-auto">
-        <table id="table-empleados" class="table table-striped ">
-            <thead>
-                <tr>
-                    <th>Cedula</th>
-                    <th>Nombre</th>
-                    <th>Fecha Ingreso</th>
-                    <th>Cargo</th>
-                    <th>Departamento</th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="body-empleados">
-            </tbody>
-        </table>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="tabs" role="tablist">
+        <li class="nav-item" role="empleados">
+          <button class="nav-link active" id="empleados-tab" data-bs-toggle="tab" data-bs-target="#empleados" type="button" role="tab" aria-controls="empleados" aria-selected="true">Empleados</button>
+        </li>
+        <li class="nav-item" role="cargo">
+          <button class="nav-link" id="cargo-tab" data-bs-toggle="tab" data-bs-target="#cargo" type="button" role="tab" aria-controls="cargo" aria-selected="false">Cargo</button>
+        </li>
+        <li class="nav-item" role="departamento">
+          <button class="nav-link" id="departamento-tab" data-bs-toggle="tab" data-bs-target="#departamento" type="button" role="tab" aria-controls="departamento" aria-selected="false">Departamento</button>
+        </li>
+        <li class="nav-item" role="beneficios">
+          <button class="nav-link" id="beneficios-tab" data-bs-toggle="tab" data-bs-target="#beneficios" type="button" role="tab" aria-controls="beneficios" aria-selected="false">Beneficios</button>
+        </li>
+        <li class="nav-item" role="es">
+          <button class="nav-link" id="es-tab" data-bs-toggle="tab" data-bs-target="#es" type="button" role="tab" aria-controls="es" aria-selected="false">Entradas/Salidas</button>
+        </li>
+    </ul>
+
+    <!-- Contenido -->
+    <div class="tab-content" id="content">
+        <div class="tab-pane fade show active" id="empleados" role="tabpanel" aria-labelledby="empleados-tab">
+            <div class="mt-4 mx-auto">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <!-- Toggle para filtrar empleados -->
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="filter-toggle" onclick="filtrarActivos()">
+                        <label class="form-check-label" for="filter-toggle"> Mostrar solo empleados activos</label>
+                    </div>
+
+                    <!-- Botón para añadir empleado -->
+                    <button type="button" class="btn btn-primary mb-3" id="add-employee-button" onclick="window.location.href='https://dilodev.co/formulario-registrar-empleado/'">Añadir Empleado</button>
+                </div>
+
+                <table id="table-empleados" class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Cedula</th>
+                            <th>Nombre</th>
+                            <th>Cargo</th>
+                            <th>Departamento</th>
+                            <th>Fecha Ingreso</th>
+                            <th>Fecha de Salida</th>
+                            <th></th> <!-- no ordenar estas columnas -->
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-empleados"> </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="cargo" role="tabpanel" aria-labelledby="cargo-tab">
+            por hacer
+        </div>
+        <div class="tab-pane fade" id="departamento" role="tabpanel" aria-labelledby="departamento-tab">
+            por hacer
+        </div>
+        <div class="tab-pane fade" id="beneficios" role="tabpanel" aria-labelledby="beneficios-tab">
+            sexo
+        </div>
+        <div class="tab-pane fade" id="es" role="tabpanel" aria-labelledby="es-tab">
+            por hacer
+        </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal Delete Employee -->
     <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -126,6 +181,24 @@
         </div>
     </div>
 
+    <!-- Modal Deactivate Employee-->
+    <div class="modal fade" id="deactivateEmployeeModal" tabindex="-1" aria-labelledby="deactivateEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deactivateEmployeeModalLabel">Desactivar Empleado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" id="deactivate-employee-button">Desactivar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script>
 
 $(document).ready(function() {
@@ -136,20 +209,35 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(d) {
             data = d;
+
             for (var i = 0; i < data.length; i++) {
+                // Filtrar empleados
                 var row = '<tr>';
                 row += '<td>' + data[i].cedula + '</td>';
                 row += '<td>' + data[i].nombre + '</td>';
-                var fechaIngreso = new Date(data[i].fecha_ingreso);
-                row += '<td>' + fechaIngreso.toLocaleDateString('es-VE') + '</td>';
                 row += '<td>' + data[i].cargo + '</td>';
                 row += '<td>' + data[i].departamento + '</td>';
+                var fechaIngreso = formatDate(data[i].fecha_ingreso);
+                row += '<td>' + fechaIngreso + '</td>';
+                var fechaSalida = formatDate(data[i].fecha_salida);
+                if (data[i].fecha_salida == null) {
+                    row += '<td> Activo </td>';
+                } else {
+                    row += '<td>' + fechaSalida + '</td>';
+                }
                 // Botones
-                row += '<td> <button type="button" class="btn btn-warning-ben" data-employee-id="' + data[i].cedula + '">Editar</button> </td>';
-                row += '<td> <button type="button" class="btn btn-danger-ben" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].cedula + '">Eliminar</button></td>';
+                if (data[i].fecha_salida == null) {
+                    row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].codigo +') class="btn btn-warning">Editar</button></td>';
+                    row += '<td> <button type="button" id="deactivate-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deactivateEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].codigo + '">Desactivar</button></td>';
+                } else {
+                    row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].codigo +') class="btn btn-warning inactive-edit">Activar</button></td>';
+                    row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].codigo + '">Eliminar</button></td>';
+                }
                 row += '</tr>';
                 $('#body-empleados').append(row);
             }
+
+            $('.inactive-edit').prop('disabled', true);
 
             $('#table-empleados').DataTable({
                 "language": {
@@ -178,10 +266,21 @@ $(document).ready(function() {
             alert('Hubo un error obteniendo los empleados');
         }
     });
-});    
+});       
+
+function filtrarActivos() {
+    var table = $('#table-empleados').DataTable();
+
+    if ($('#filter-toggle').is(':checked')) {
+        // esconde solo los empleados Activos
+        table.column(5).search('Activo').draw();
+    } else {
+        // muestra todos los empleados
+        table.column(5).search('').draw();
+    }
+}
 
 $('#deleteEmployeeModal').on('show.bs.modal', function (event) {
-    console.log('show.modal');
     var button = $(event.relatedTarget) // Button that triggered the modal
     var employeeId = button.data('employee-id') // Extract info from data-* attributes
     var employeeName = button.data('employee-name') // Extract info from data-* attributes
@@ -191,11 +290,13 @@ $('#deleteEmployeeModal').on('show.bs.modal', function (event) {
 })
 
 $('#delete-employee-button').click(function() {
+    console.log('delete');
     var employeeId = $(this).data('employee-id');
     $.ajax({
-        url: 'http://localhost:5000/api/empleado/' + employeeId,
+        url: 'http://localhost:5000/api/empleado/delete/' + employeeId,
         type: 'DELETE',
         success: function() {
+            alert('Empleado eliminado exitosamente');
             location.reload();
         },
         error: function() {
@@ -203,6 +304,54 @@ $('#delete-employee-button').click(function() {
         }
     });
 });
+
+$('#deactivateEmployeeModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var employeeId = button.data('employee-id') // Extract info from data-* attributes
+    var employeeName = button.data('employee-name') // Extract info from data-* attributes
+    var modal = $(this)
+    modal.find('.modal-body').text('¿Está seguro que desea desactivar a ' + employeeName + '?')
+    modal.find('#deactivate-employee-button').attr('data-employee-id', employeeId)
+})
+
+$('#deactivate-employee-button').click(function() {
+    console.log('desactivate');
+    var employeeId = $(this).data('employee-id');
+    $.ajax({
+        url: 'http://localhost:5000/api/empleado/deactivate/' + employeeId,
+        type: 'PUT',
+        success: function() {
+            alert('Empleado desactivado exitosamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error desactivando el empleado');
+        }
+    });
+});
+
+function editEmployee(id){
+    console.log('edit');
+    window.location.href = 'http://dilodev.co/formulario-editar-empleado?id=' + id;
+}
+
+// como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
+//le sumamos 5 horas por para pasar de dia al correcto
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [day, month, year].join('/');
+}
 
 </script>
 </body>

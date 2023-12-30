@@ -1,0 +1,35 @@
+<script>
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/producto/clasificacion/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                // Llena el campo clasificacion principal con los datos del JSON
+                data.principal.forEach(clasificacion => {
+                    $("#form-field-pclasificacion").append('<option value="'+clasificacion.id+'">'+clasificacion.nombre+'</option>');
+                });
+
+                // Cuando la clasificacion principal cambia, llena el campo clasificacion secundaria con las clasificacions secundarias correspondientes
+                $("#form-field-pclasificacion").change(function() {
+                    var id = $(this).val();
+                    $("#form-field-sclasificacion").empty();
+                    $.each(data.secundario[id], function(i, clasificacion) {
+                        $("#form-field-sclasificacion").append('<option value="'+clasificacion.id+'">'+clasificacion.nombre+'</option>');
+                    });
+                    // Trigger the change event if there's only one secondary classification
+                    if (data.secundario[id].length === 1) {
+                        $("#form-field-sclasificacion").trigger('change');
+                    }
+                });
+
+            },
+            error: function() {
+                alert('Error obteniendo clasificaciones');
+            }
+        });
+    });
+</script>    

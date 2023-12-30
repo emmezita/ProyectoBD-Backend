@@ -1,0 +1,86 @@
+       <!-- 3 componentes, izquierda combobox de servidos, en el medio input de monto $, a la izquierda boton de anadir -->
+       <div class="ms-5">
+        <div class="row mt-5">
+            <div class="col-5">
+                <select class="form-select combo-box-servido" aria-label="elige">
+                    <!-- Se llena con jquery -->
+                </select>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary-hor" onclick="addServido(this, event)">Añadir</button>
+            </div>
+            
+        </div>
+        <!-- y cuando anadas este se mostrara en una lista -->
+        <div class="mt-2 ">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Servido</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody id="body-servidos">
+                    <!-- Se llena con jquery -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+function addServido(e, event){
+    event.preventDefault();
+    var servido = $(e).parent().parent().find("select").val();
+    var servidoId = $(e).parent().parent().find("select").find(":selected").attr("id");
+
+    // Check if the servido or servidoId is null
+    if (!servido || !servidoId) {
+        alert("No se puede añadir un servido nulo.");
+        return;
+    }
+
+    // Check if the servido already exists
+    if (servidoExists(servidoId)) {
+        alert("El servido ya existe en la tabla.");
+        return;
+    }
+    var fila = "<tr><td id="+ servidoId +">"+servido+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deletesServido(this)'>Eliminar</button></td></tr>";
+    $("#body-servidos").append(fila);
+    //clean inputs
+    $(e).parent().parent().find("select").val("");
+}
+
+function deletesServido(e){
+    $(e).parent().parent().remove();
+}
+
+function servidoExists(servidoId, e) {
+    var exists = false;
+    $("#body-servidos tr").each(function() {
+        var currentservidoId = $(this).find("td").eq(0).attr('id');
+        if (currentservidoId === servidoId) {
+            exists = true;
+            return false; 
+        }
+    });
+        return exists;
+}
+
+$(document).ready(function() {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:5000/api/producto/servido/all",
+        success: function(data) {
+            console.log("se carga la data")
+            console.log(data);
+            var servidos = data;
+            servidos.forEach(servido => {
+                $(".combo-box-servido").append("<option id="+ servido.servido_codigo +">"+servido.servido_nombre+ "</option>");
+            });
+        },
+        error: function() {
+            alert("Error al cargar los servidos");
+        }
+    });
+});
+</script>

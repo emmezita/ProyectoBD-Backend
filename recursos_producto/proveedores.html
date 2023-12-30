@@ -1,0 +1,19 @@
+<script>
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/producto/proveedor/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var proveedores = data;
+                proveedores.forEach(proveedor => {
+                    $("#form-field-proveedor").append("<option id="+ proveedor.codigo +">"+ proveedor.denom +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los proveedores");
+            }
+        });
+    });
+</script>

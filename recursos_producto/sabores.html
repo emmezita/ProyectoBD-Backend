@@ -1,0 +1,86 @@
+       <!-- 3 componentes, izquierda combobox de sabores, en el medio input de monto $, a la izquierda boton de anadir -->
+       <div class="ms-5">
+        <div class="row mt-5">
+            <div class="col-5">
+                <select class="form-select combo-box-sabor" aria-label="elige">
+                    <!-- Se llena con jquery -->
+                </select>
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary-hor" onclick="addSabor(this, event)">Añadir</button>
+            </div>
+            
+        </div>
+        <!-- y cuando anadas este se mostrara en una lista -->
+        <div class="mt-2 ">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sabor</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody id="body-sabores">
+                    <!-- Se llena con jquery -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+function addSabor(e, event){
+    event.preventDefault();
+    var sabor = $(e).parent().parent().find("select").val();
+    var saborId = $(e).parent().parent().find("select").find(":selected").attr("id");
+
+    // Check if the sabor or saborId is null
+    if (!sabor || !saborId) {
+        alert("No se puede añadir un sabor nulo.");
+        return;
+    }
+
+    // Check if the sabor already exists
+    if (saborExists(saborId)) {
+        alert("El sabor ya existe en la tabla.");
+        return;
+    }
+    var fila = "<tr><td id="+ saborId +">"+sabor+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deleteSabor(this)'>Eliminar</button></td></tr>";
+    $("#body-sabores").append(fila);
+    //clean inputs
+    $(e).parent().parent().find("select").val("");
+}
+
+function deleteSabor(e){
+    $(e).parent().parent().remove();
+}
+
+function saborExists(saborId, e) {
+    var exists = false;
+    $("#body-sabores tr").each(function() {
+        var currentsaborId = $(this).find("td").eq(0).attr('id');
+        if (currentsaborId === saborId) {
+            exists = true;
+            return false; 
+        }
+    });
+        return exists;
+}
+
+$(document).ready(function() {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:5000/api/producto/sabor/all",
+        success: function(data) {
+            console.log("se carga la data")
+            console.log(data);
+            var sabores = data;
+            sabores.forEach(sabor => {
+                $(".combo-box-sabor").append("<option id="+ sabor.sabor_codigo +">"+sabor.sabor_descripcion+ "</option>");
+            });
+        },
+        error: function() {
+            alert("Error al cargar los sabores");
+        }
+    });
+});
+</script>
