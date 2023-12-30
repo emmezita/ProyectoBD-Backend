@@ -782,13 +782,13 @@ CREATE TABLE Producto (
 CREATE TABLE Cuerpo (
   cuerpo_codigo serial,
   -- Código identificador de la entidad Cuerpo
-  cuerpo_peso varchar(20) NOT NULL,
+  cuerpo_peso varchar(20),
   -- Peso del cuerpo.
-  cuerpo_textura varchar(20) NOT NULL,
+  cuerpo_textura varchar(20) ,
   -- Textura del cuerpo.
-  cuerpo_densidad varchar(20) NOT NULL,
+  cuerpo_densidad varchar(20),
   -- Densidad del cuerpo.
-  cuerpo_descripcion varchar(100) NOT NULL UNIQUE,
+  cuerpo_descripcion varchar(100) ,
   -- Descripción del cuerpo.
   fk_producto integer,
   -- Relación con la entidad Producto
@@ -801,9 +801,9 @@ CREATE TABLE Cuerpo (
   -- Constrain. Debe tener tres posibles valores: ligero, medio y pesado.
   CONSTRAINT ck_cuerpo_textura CHECK (cuerpo_textura IN ('Aguado', 'Sedoso', 'Cremoso', 'Viscoso')),
   -- Constrain. Debe tener cuatro posibles valores: aguado, sedoso, cremoso y viscoso.
-  CONSTRAINT ck_cuerpo_densidad CHECK (cuerpo_densidad ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
+  CONSTRAINT ck_cuerpo_densidad CHECK (cuerpo_densidad = '' OR cuerpo_densidad ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_cuerpo_descripcion CHECK (cuerpo_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
+  CONSTRAINT ck_cuerpo_descripcion CHECK (cuerpo_descripcion = '' OR cuerpo_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 
@@ -818,7 +818,7 @@ CREATE TABLE Regusto (
   -- Persistencia del regusto.
   regusto_acabado varchar(50),
   -- Acabado del regusto.
-  regusto_descripcion varchar(100) NOT NULL UNIQUE,
+  regusto_descripcion varchar(100),
   -- Descripción del regusto.
   fk_producto integer,
   -- Relación con la entidad Producto
@@ -827,15 +827,15 @@ CREATE TABLE Regusto (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_regusto_producto_dejaun FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
-  CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
+  CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada = '' OR regusto_entrada ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_evolucion CHECK (regusto_evolucion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
+  CONSTRAINT ck_regusto_evolucion CHECK (regusto_evolucion = '' OR regusto_evolucion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_persistencia CHECK (regusto_persistencia ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
+  CONSTRAINT ck_regusto_persistencia CHECK (regusto_persistencia = '' OR regusto_persistencia ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_acabado CHECK (regusto_acabado ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
+  CONSTRAINT ck_regusto_acabado CHECK (regusto_acabado = '' OR regusto_acabado ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
-  CONSTRAINT ck_regusto_descripcion CHECK (regusto_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
+  CONSTRAINT ck_regusto_descripcion CHECK (regusto_descripcion = '' OR regusto_descripcion ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$')
   -- Constrain. No debe contener números ni caracteres especiales
 );
 

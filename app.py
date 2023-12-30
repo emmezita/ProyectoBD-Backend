@@ -1568,7 +1568,7 @@ def registrar_producto():
     sql_producto = """
         INSERT INTO producto(
             producto_nombre, producto_descripcion, producto_grado_alcoholico, producto_color_detalles, fk_color, fk_fermentacion, fk_destilacion, fk_clasificacion, fk_categoria, fk_proveedor, fk_lugar)
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING producto_codigo;
     """
     
     sql_aroma = """
@@ -1634,6 +1634,110 @@ def registrar_producto():
     cur.close()
     
     return Response(status=200, response="Producto registrado exitosamente")
+
+# Ruta para obtener todos los productos de la base de datos
+@app.route("/api/producto/all", methods=["GET"])
+def get_all_productos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT pr.producto_codigo as codigo, pr.producto_nombre as nombre, pr.producto_grado_alcoholico as grado, 
+                    pj.persona_jur_denom_comercial as proveedor, cl.clasificacion_nombre as clasificacion, ca.categoria_nombre as categoria
+                FROM producto pr
+                JOIN persona_juridica pj ON pr.fk_proveedor = pj.persona_jur_codigo
+                JOIN proveedor pro ON pj.persona_jur_codigo = pro.proveedor_codigo
+                JOIN clasificacion cl ON pr.fk_clasificacion = cl.clasificacion_codigo
+                JOIN categoria ca ON pr.fk_categoria = ca.categoria_codigo
+                ORDER BY proveedor;
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para obtener los datos de un producto de la base de datos
+@app.route("/api/producto/<int:id>", methods=["GET"])
+def get_producto(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    sql_producto = """
+        SELECT * FROM producto WHERE producto_codigo = %s 
+    """
+    sql_lugar = """
+        SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
+        FROM lugar AS p
+        JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
+        JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
+        WHERE p.lugar_codigo = %s
+    """
+    sql_aroma = """
+        SELECT * FROM producto_aroma WHERE fk_producto = %s
+    """
+    sql_anejamiento = """
+        SELECT fk_anejamiento FROM mezclado WHERE fk_producto = %s
+    """
+    sql_ingrediente = """
+        SELECT fk_ingrediente FROM mezclado WHERE fk_producto = %s
+    """
+    sql_sabor = """
+        SELECT * FROM producto_sabor WHERE fk_producto = %s
+    """
+    sql_servido = """
+        SELECT * FROM producto_servido WHERE fk_producto = %s
+    """
+    sql_cuerpo = """
+        SELECT * FROM cuerpo WHERE fk_producto = %s
+    """
+    sql_regusto = """
+        SELECT * FROM regusto WHERE fk_producto = %s
+    """
+    
+    cur.execute(sql_producto, (id,))
+    producto = cur.fetchone()
+    if producto is None:
+        return Response(status=404, response="Producto no encontrado")
+    
+    cur.execute(sql_lugar, (producto['fk_lugar'],))
+    lugar = cur.fetchone()
+    
+    cur.execute(sql_aroma, (id,))
+    aromas = cur.fetchall()
+    
+    cur.execute(sql_anejamiento, (id,))
+    anejamiento = cur.fetchone()
+    
+    cur.execute(sql_ingrediente, (id,))
+    ingredientes = cur.fetchall()
+    
+    cur.execute(sql_sabor, (id,))
+    sabores = cur.fetchall()
+    
+    cur.execute(sql_servido, (id,))
+    servidos = cur.fetchall()
+    
+    cur.execute(sql_cuerpo, (id,))
+    cuerpo = cur.fetchone()
+    
+    cur.execute(sql_regusto, (id,))
+    regusto = cur.fetchone()
+    
+    cur.close()
+
+    datos = jsonify({
+        'producto': producto,
+        'lugar': lugar,
+        'aromas': aromas,
+        'anejamiento': anejamiento,
+        'ingredientes': ingredientes,
+        'sabores': sabores,
+        'servidos': servidos,
+        'cuerpo': cuerpo,
+        'regusto': regusto
+    })
+    })
+    
+    pprint(datos)
+    
+    return datos
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRESENTACION

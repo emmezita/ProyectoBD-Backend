@@ -196,11 +196,30 @@
             </div>
     </div>
 
+    <!-- Modales -->
+    <!-- Modal Eliminar Producto-->
+    <div class="modal fade" id="deleteProCostumerModal" tabindex="-1" aria-labelledby="deleteProCostumerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteProModalLabel">Eliminar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="delete-procostumer-button">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script>
 $(document).ready(function() {
     var data = null;
     $.ajax({
-        url: 'http://localhost:5000/api/cliente/natural/all',
+        url: 'http://localhost:5000/api/producto/all',
         type: 'GET',
         dataType: 'json',
         success: function(d) {
@@ -208,23 +227,19 @@ $(document).ready(function() {
             console.log(data);
             for (var i = 0; i < data.length; i++) {
                 var row = $('<tr>');
-                row.append('<td>' + data[i].cedula + '</td>');
+                row.append('<td>' + data[i].codigo + '</td>');
                 row.append('<td>' + data[i].nombre + '</td>');
-                var fecha = formatDate(data[i].fecha_nacimiento);
-                row.append('<td>' + fecha + '</td>');
-                if (data[i].afiliacion != null) {
-                    row.append('<td>Si</td>');
-                } else {
-                    row.append('<td>No</td>');
-                }
-                row.append('<td>' + data[i].puntos_acumulados + '</td>');
+                row.append('<td>' + data[i].grado + '</td>');
+                row.append('<td>' + data[i].proveedor + '</td>');
+                row.append('<td>' + data[i].clasificacion + '</td>');
+                row.append('<td>' + data[i].categoria + '</td>');
                 row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
-                row.append('<td><button type="button" class="btn btn-danger" id="delete-ncostumer-button" data-bs-toggle="modal" data-bs-target="#deleteNCostumerModal" data-ncostumer-name="'+ data[i].nombre+'" data-ncostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 
-                $('#body-clientesnaturales').append(row);
+                $('#body-productos').append(row);
             }
 
-            $('#table-clientesnaturales').DataTable({
+            $('#table-productos').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registros por página",
                     "zeroRecords": "No se encontraron resultados",
@@ -242,7 +257,7 @@ $(document).ready(function() {
             });
         },
         error: function() {
-            alert('Hubo un error obteniendo a los clientes naturales');
+            alert('Hubo un error obteniendo a los productos');
         }
     });
 

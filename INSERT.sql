@@ -4227,6 +4227,7 @@ VALUES
   (1.3, 9, 2, 10, 4, 10), --ROBLE MAESTRO
   (1.0, 9, 2, 11, 1, 5), --ROBLE EXTRA AÑEJO
   (1.2, 9, 6, 13, 1, 5), --ROBLE ZAFRA
+  (1.2, 9, 2, 12, 1, 5), --ROBLE ULTRA AÑEJO
   (1.0, 9, 2, 14, 1, 6), --SANTA TERESA 1796
   (1.0, 9, 2, 15, 1, 7), --SANTA TERESA G. RESERVA
   (1.15, 7, 2, 16, 1, 8), --SANTA TERESA LINAJE
@@ -4253,6 +4254,7 @@ VALUES
   ('roble_maestro.jpg', true, 9, 2, 10),
   ('roble_extra_anejo.jpg', true, 9, 2, 11),
   ('roble_zafra.jpg', true, 9, 6, 13),
+  ('roble_ultra_anejo.jpg', true, 9, 2, 12),
   ('santa_teresa_1796.jpg', true, 9, 2, 14),
   ('santa_teresa_gran_reserva.jpg', true, 9, 2, 15),
   ('santa_teresa_linaje.jpg', true, 7, 2, 16),
@@ -4290,6 +4292,7 @@ VALUES
   (80, 1, 9, 2, 10),
   (90, 1, 9, 2, 11),
   (70, 1, 9, 6, 13),
+  (70, 1, 9, 2, 12),
   (50, 1, 9, 2, 14),
   (50, 1, 9, 2, 15),
   (60, 1, 7, 2, 16),
@@ -4317,8 +4320,9 @@ VALUES
   (180, 1, 9, 2, 10),
   (290, 1, 9, 2, 11),
   (170, 1, 9, 6, 13),
-  (250, 1, 9, 2, 14),
-  (250, 1, 9, 2, 15),
+  (170, 1, 9, 2, 12),
+  (150, 1, 9, 2, 14),
+  (150, 1, 9, 2, 15),
   (160, 1, 7, 2, 16),
   (270, 1, 7, 2, 17);
 
