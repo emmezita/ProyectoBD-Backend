@@ -115,6 +115,10 @@
         //clean inputs
         $(e).parent().parent().find("select").val("");
     }
+
+    function deleteIngrediente(e){
+        $(e).parent().parent().remove();
+    }
    
     function ingredienteExists(ingredienteId, e) {
         var exists = false;

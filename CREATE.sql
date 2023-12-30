@@ -1325,7 +1325,7 @@ CREATE TABLE Imagen (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_imagen_evento_ilustra FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
 );                
 

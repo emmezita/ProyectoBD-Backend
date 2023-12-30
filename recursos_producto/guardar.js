@@ -19,6 +19,11 @@ function save() {
         return $(this).find('td:first').attr('id');
     }).get(); //obtenemos tdos los ids de los sabores
 
+    if (Object.keys(aromas).length === 0 || Object.keys(ingredientes).length === 0 || Object.keys(sabores).length === 0 || Object.keys(servidos).length === 0) {
+        alert("Por favor, asegúrate de que todos los campos están llenos antes de guardar.");
+        return;
+    }
+
     var data = {
         nombre: $(ff+"nombre").val(),
         grado: $(ff+"grado").val(),
@@ -28,21 +33,15 @@ function save() {
         destilacion: $(ff+"destilacion option:selected").attr('value'),
         clasificacion: $(ff+"sclasificacion option:selected").attr('value'),
         categoria: $(ff+"categoria option:selected").attr('value'),
-        precio_compra: $(ff+"preciocompra").val(),
-        precio_venta: $(ff+"precioventa").val(),
         color: $(ff+"color option:selected").attr('value'),
         detalle_color: $(ff+"detallecolor").val(),
         direccion: $(ff+"direccion").val(),
+        panejamiento: $(ff+"panejamiento option:selected").attr('value'),
+        sanejamiento: $(ff+"sanejamiento option:selected").attr('value'),
         aromas: aromas,
-        anejamiento: $(ff+"sanejamiento option:selected").attr('value'),
         ingredientes: ingredientes,
         sabores: sabores,
-        empaque: $(ff+"sempaque option:selected").attr('value'),
-        botella: $(ff+"botella option:selected").attr('value'),
-        tapa: $(ff+"tapa option:selected").attr('value'),
-        presentacionpeso: $(ff+"presentacionpeso").val(),
         servidos: servidos,
-        imagen: $(ff+"imagen").val(),
 
         //cuerpo
         cuerpopeso: $(ff+"cuerpopeso").val(),

@@ -115,6 +115,9 @@
         //clean inputs
         $(e).parent().parent().find("select").val("");
     }
+    function deleteAroma(e){
+        $(e).parent().parent().remove();
+    }
    
     function aromaExists(aromaId, e) {
         var exists = false;

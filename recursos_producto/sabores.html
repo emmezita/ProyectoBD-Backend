@@ -50,6 +50,10 @@ function addSabor(e, event){
     $(e).parent().parent().find("select").val("");
 }
 
+function deleteSabor(e){
+    $(e).parent().parent().remove();
+}
+
 function saborExists(saborId, e) {
     var exists = false;
     $("#body-sabores tr").each(function() {

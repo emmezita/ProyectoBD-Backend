@@ -3433,26 +3433,26 @@ VALUES
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES
-    ('2015-01-15', '2018-07-20', 1),
-    ('2016-02-10', '2019-05-25', 2),
-    ('2017-03-05', NULL, 3),
-    ('2018-04-20', NULL, 4),
-    ('2019-05-15', '2023-06-10', 5),
-    ('2020-06-10', '2023-09-15', 6),
-    ('2021-07-25', NULL, 7),
-    ('2022-08-30', '2023-03-05', 8),
-    ('2023-09-18', NULL, 9),
-    ('2015-10-02', NULL, 10),
-    ('2016-11-20', '2020-12-31', 11),
-    ('2018-01-08', NULL, 12),
-    ('2019-03-25', '2022-07-05', 13),
-    ('2020-05-12', NULL, 14),
-    ('2021-07-01', NULL, 15),
-    ('2022-09-15', NULL, 16),
-    ('2015-11-10', NULL, 17),
-    ('2017-02-05', NULL, 18),
-    ('2018-04-22', NULL, 19),
-    ('2019-06-18', NULL, 20);
+  ('2015-01-15', '2018-07-20', 1),
+  ('2016-02-10', '2019-05-25', 2),
+  ('2017-03-05', NULL, 3),
+  ('2018-04-20', NULL, 4),
+  ('2019-05-15', '2023-06-10', 5),
+  ('2020-06-10', '2023-09-15', 6),
+  ('2021-07-25', NULL, 7),
+  ('2022-08-30', '2023-03-05', 8),
+  ('2023-09-18', NULL, 9),
+  ('2015-10-02', NULL, 10),
+  ('2016-11-20', '2020-12-31', 11),
+  ('2018-01-08', NULL, 12),
+  ('2019-03-25', '2022-07-05', 13),
+  ('2020-05-12', NULL, 14),
+  ('2021-07-01', NULL, 15),
+  ('2022-09-15', NULL, 16),
+  ('2015-11-10', NULL, 17),
+  ('2017-02-05', NULL, 18),
+  ('2018-04-22', NULL, 19),
+  ('2019-06-18', NULL, 20);
 
 
 INSERT INTO Departamento (departamento_nombre, departamento_descripcion)
@@ -4202,58 +4202,136 @@ VALUES
   (3, 2),
   (9, 3),
   (9, 1),
+  (9, 2),
   (9, 6),
   (7, 1);
 
 INSERT INTO Presentacion (presentacion_peso, fk_material_botella_1, fk_material_botella_2, fk_producto, fk_tapa, fk_caja) 
 VALUES
-  (1.42, 6, 1, 5, 1, 11), --CACIQUE AÑEJO
-  (1.4, 6, 1, 6, 1, 11), --CACIQUE 500
-  (1.3, 6, 1, 7, 5, 11), --CACIQUE ANTIGUO
+  (1.42, 6, 2, 5, 1, 11), --CACIQUE AÑEJO
+  (1.4, 6, 2, 6, 1, 11), --CACIQUE 500
+  (1.3, 6, 2, 7, 5, 11), --CACIQUE ANTIGUO
   (1.4, 9, 3, 8, 1, 11), --CACIQUE ORIGEN
-  (1.6, 9, 1, 9, 4, 12), --CACIQUE LEYENDA
-  (1.1, 9, 1, 18, 3, 14), --CARUPANO LEGENDARIO
-  (1.3, 9, 1, 19, 6, 10), --CARUPANO X.O.
-  (1.3, 9, 1, 20, 6, 20), --CARUPANO 1996
-  (1.3, 9, 1, 21, 5, 20), --CARUPANO 21
-  (1.3, 9, 1, 22, 5, 20), --CARUPANO 18
-  (1.6, 7, 1, 23, 5, 10), --CARUPANO 12
-  (1.42, 6, 1, 24, 5, 11), --CARUPANO 6
-  (1.3, 6, 1, 1, 1, 12), --PAMPERO ANIVERSARIO
-  (1.3, 6, 1, 2, 1, 10), --PAMPERO SELECCIÓN
-  (1.42, 6, 1, 3, 1, 11), --PAMPERO ESPECIAL
+  (1.6, 9, 2, 9, 4, 12), --CACIQUE LEYENDA
+  (1.1, 9, 2, 18, 3, 14), --CARUPANO LEGENDARIO
+  (1.3, 9, 2, 19, 6, 10), --CARUPANO X.O.
+  (1.3, 9, 2, 20, 6, 20), --CARUPANO 1996
+  (1.3, 9, 2, 21, 5, 20), --CARUPANO 21
+  (1.3, 9, 2, 22, 5, 20), --CARUPANO 18
+  (1.6, 7, 2, 23, 5, 10), --CARUPANO 12
+  (1.42, 6, 2, 24, 5, 11), --CARUPANO 6
+  (1.3, 6, 2, 1, 1, 12), --PAMPERO ANIVERSARIO
+  (1.3, 6, 2, 2, 1, 10), --PAMPERO SELECCIÓN
+  (1.42, 6, 2, 3, 1, 11), --PAMPERO ESPECIAL
   (1.4, 6, 2, 4, 1, 12), --PAMPERO BLANCO
-  (1.3, 9, 1, 10, 4, 10), --ROBLE MAESTRO
-  (1.0, 9, 1, 11, 1, 5), --ROBLE EXTRA AÑEJO
+  (1.3, 9, 2, 10, 4, 10), --ROBLE MAESTRO
+  (1.0, 9, 2, 11, 1, 5), --ROBLE EXTRA AÑEJO
   (1.2, 9, 6, 13, 1, 5), --ROBLE ZAFRA
-  (1.0, 9, 1, 14, 1, 6), --SANTA TERESA 1796
-  (1.0, 9, 1, 15, 1, 7), --SANTA TERESA G. RESERVA
-  (1.15, 7, 1, 16, 1, 8), --SANTA TERESA LINAJE
-  (1.6, 7, 1, 17, 2, 11); --SANTA TERESA ARAKÚ
+  (1.0, 9, 2, 14, 1, 6), --SANTA TERESA 1796
+  (1.0, 9, 2, 15, 1, 7), --SANTA TERESA G. RESERVA
+  (1.15, 7, 2, 16, 1, 8), --SANTA TERESA LINAJE
+  (1.6, 7, 2, 17, 2, 11); --SANTA TERESA ARAKÚ
 
 INSERT INTO Imagen (imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
 VALUES 
-  ('cacique_anejo.jpg', true, 6, 1, 5),
-  ('cacique_500.jpg', true, 6, 1, 6),
-  ('cacique_antiguo.jpg', true, 6, 1, 7),
+  ('cacique_anejo.jpg', true, 6, 2, 5),
+  ('cacique_500.jpg', true, 6, 2, 6),
+  ('cacique_antiguo.jpg', true, 6, 2, 7),
   ('cacique_origen.jpg', true, 9, 3, 8),
-  ('cacique_leyenda.jpg', true, 9, 1, 9),
-  ('carupano_legendario.jpg', true, 9, 1, 18),
-  ('carupano_xo.jpg', true, 9, 1, 19),
-  ('carupano_1996.jpg', true, 9, 1, 20),
-  ('carupano_21.jpg', true, 9, 1, 21),
-  ('carupano_18.jpg', true, 9, 1, 22),
-  ('carupano_12.jpg', true, 7, 1, 23),
-  ('carupano_6.jpg', true, 6, 1, 24),
-  ('pampero_aniversario.jpg', true, 6, 1, 1),
-  ('pampero_seleccion.jpg', true, 6, 1, 2),
-  ('pampero_especial.jpg', true, 6, 1, 3),
+  ('cacique_leyenda.jpg', true, 9, 2, 9),
+  ('carupano_legendario.jpg', true, 9, 2, 18),
+  ('carupano_xo.jpg', true, 9, 2, 19),
+  ('carupano_1996.jpg', true, 9, 2, 20),
+  ('carupano_21.jpg', true, 9, 2, 21),
+  ('carupano_18.jpg', true, 9, 2, 22),
+  ('carupano_12.jpg', true, 7, 2, 23),
+  ('carupano_6.jpg', true, 6, 2, 24),
+  ('pampero_aniversario.jpg', true, 6, 2, 1),
+  ('pampero_seleccion.jpg', true, 6, 2, 2),
+  ('pampero_especial.jpg', true, 6, 2, 3),
   ('pampero_blanco.jpg', true, 6, 2, 4),
-  ('roble_maestro.jpg', true, 9, 1, 10),
-  ('roble_extra_anejo.jpg', true, 9, 1, 11),
+  ('roble_maestro.jpg', true, 9, 2, 10),
+  ('roble_extra_anejo.jpg', true, 9, 2, 11),
   ('roble_zafra.jpg', true, 9, 6, 13),
-  ('santa_teresa_1796.jpg', true, 9, 1, 14),
-  ('santa_teresa_gran_reserva.jpg', true, 9, 1, 15),
-  ('santa_teresa_linaje.jpg', true, 7, 1, 16),
-  ('santa_teresa_araku.jpg', true, 7, 1, 17);
+  ('santa_teresa_1796.jpg', true, 9, 2, 14),
+  ('santa_teresa_gran_reserva.jpg', true, 9, 2, 15),
+  ('santa_teresa_linaje.jpg', true, 7, 2, 16),
+  ('santa_teresa_araku.jpg', true, 7, 2, 17);
 
+INSERT INTO Tienda(
+	tienda_capacidad, tienda_direccion, fk_lugar)
+VALUES 
+  (2000, 'Av. Paéz, frente al distribuidor Baralt, local ASORONUCAB', 715);
+
+INSERT INTO Almacen(
+  almacen_capacidad, almacen_direccion, fk_lugar)
+VALUES 
+  (5000, 'Av. Paéz, frente al distribuidor Baralt, local ASORONUCAB', 715);
+
+INSERT INTO Inventario_Tienda(
+	inv_tienda_cantidad, fk_tienda, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+VALUES
+  (50, 1, 6, 2, 5),
+  (50, 1, 6, 2, 6),
+  (70, 1, 6, 2, 7),
+  (80, 1, 9, 3, 8),
+  (90, 1, 9, 2, 9),
+  (80, 1, 9, 2, 18),
+  (70, 1, 9, 2, 19),
+  (60, 1, 9, 2, 20),
+  (50, 1, 9, 2, 21),
+  (50, 1, 9, 2, 22),
+  (70, 1, 7, 2, 23),
+  (80, 1, 6, 2, 24),
+  (90, 1, 6, 2, 1),
+  (50, 1, 6, 2, 2),
+  (60, 1, 6, 2, 3),
+  (70, 1, 6, 2, 4),
+  (80, 1, 9, 2, 10),
+  (90, 1, 9, 2, 11),
+  (70, 1, 9, 6, 13),
+  (50, 1, 9, 2, 14),
+  (50, 1, 9, 2, 15),
+  (60, 1, 7, 2, 16),
+  (70, 1, 7, 2, 17);
+
+INSERT INTO Inventario_Almacen(
+  inv_almacen_cantidad, fk_almacen, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+VALUES
+  (150, 1, 6, 2, 5),
+  (150, 1, 6, 2, 6),
+  (170, 1, 6, 2, 7),
+  (280, 1, 9, 3, 8),
+  (290, 1, 9, 2, 9),
+  (280, 1, 9, 2, 18),
+  (170, 1, 9, 2, 19),
+  (260, 1, 9, 2, 20),
+  (150, 1, 9, 2, 21),
+  (250, 1, 9, 2, 22),
+  (170, 1, 7, 2, 23),
+  (180, 1, 6, 2, 24),
+  (290, 1, 6, 2, 1),
+  (150, 1, 6, 2, 2),
+  (160, 1, 6, 1, 3),
+  (270, 1, 6, 2, 4),
+  (180, 1, 9, 2, 10),
+  (290, 1, 9, 2, 11),
+  (170, 1, 9, 2, 13),
+  (250, 1, 9, 2, 14),
+  (250, 1, 9, 2, 15),
+  (160, 1, 7, 2, 16),
+  (270, 1, 7, 2, 17);
+
+INSERT INTO Historico_Tasa_Dolar(
+	tasa_valor, tasa_fecha_inicio, tasa_fecha_fin)
+VALUES 
+  (35.95, '2023-12-30', NULL),
+  (35.93, '2023-12-28', '2023-12-30'),
+  (35.83, '2023-12-27', '2023-12-28'),
+  (35.78, '2023-12-26', '2023-12-27'),
+  (35.81, '2023-12-22', '2023-12-26'),
+  (35.78, '2023-12-21', '2023-12-22'),
+  (35.73, '2023-12-20', '2023-12-21'),
+  (35.71, '2023-12-19', '2023-12-20'),
+  (35.65, '2023-12-18', '2023-12-19'),
+  (35.72, '2023-12-15', '2023-12-18');

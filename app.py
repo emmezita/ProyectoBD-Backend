@@ -1504,8 +1504,83 @@ def get_all_sabor():
 
     return jsonify(rows)
 
+# Ruta para obtener como se sirve el producto de la base de datos
+@app.route("/api/producto/servido/all", methods=["GET"])
+def get_all_servido():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM servido")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para registrar un producto en la base de datos
+@app.route("/api/producto/registrar", methods=["POST"])
+def registrar_producto():
+    # cur = conn.cursor()
+    producto = request.get_json()
+    pprint(producto)
+    # nombre = producto.get("nombre")
+    # grado = producto.get("grado")
+    # proveedor = producto.get("proveedor")
+    # parroquia = producto.get("parroquia")
+    # fermentacion = producto.get("fermentacion")
+    # destilacion = producto.get("destilacion")
+    # clasificacion = producto.get("clasificacion")
+    # categoria = producto.get("categoria")
+    # color = producto.get("color")
+    # detalle_color = producto.get("detalle_color")
+    # direccion = producto.get("direccion")
+    # aromas = producto.get("aromas")
+    # anejamiento = producto.get("anejamiento")
+    # ingredientes = producto.get("ingredientes")
+    # sabores = producto.get("sabores")
+    # servidos = producto.get("servidos")
+    # cuerpopeso = producto.get("cuerpopeso")
+    # cuerpotextura = producto.get("cuerpotextura")
+    # cuerpodensidad = producto.get("cuerpodensidad")
+    # cuerpodescripcion = producto.get("cuerpodescripcion")
+    # regustoentrada = producto.get("regustoentrada")
+    # regustoevolucion = producto.get("regustoevolucion")
+    # regustopersistencia = producto.get("regustopersistencia")
+    # regustoacabado = producto.get("regustoacabado")
+    # regustodescripcion = producto.get("regustodescripcion")
+    
+    
+    
+    
+    
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA REALIZAR EL CRUD DE PRESENTACION
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todas las botellaa de los productos de la base de datos
+@app.route("/api/presentacion/botella/all", methods=["GET"])
+def get_all_botella():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("""
+                SELECT botella_codigo, material_codigo, (botella_descripcion || ' de ' || material_nombre) as nombre
+                FROM material_botella, botella, material
+                WHERE fk_material = material_codigo
+                AND fk_botella = botella_codigo
+                """)
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
+# Ruta para obtener todas las tapas de los productos de la base de datos
+@app.route("/api/presentacion/tapa/all", methods=["GET"])
+def get_all_tapa():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM tapa")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
+
 # Ruta para obtener los empaques de la base de datos
-@app.route("/api/producto/empaque/all", methods=["GET"])
+@app.route("/api/presentacion/empaque/all", methods=["GET"])
 def get_all_empaque():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("""
@@ -1542,88 +1617,7 @@ def formatear_empaques(empaques):
         'secundario': secundario
     }
     
-# Ruta para obtener todas las tapas de los productos de la base de datos
-@app.route("/api/producto/tapa/all", methods=["GET"])
-def get_all_tapa():
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT * FROM tapa")
-    rows = cur.fetchall()
-    cur.close()
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA EL INVENTARIO DE LA TIENDA
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    return jsonify(rows)
-
-# Ruta para obtener como se sirve el producto de la base de datos
-@app.route("/api/producto/servido/all", methods=["GET"])
-def get_all_servido():
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT * FROM servido")
-    rows = cur.fetchall()
-    cur.close()
-
-    return jsonify(rows)
-
-# Ruta para obtener todas las botellaa de los productos de la base de datos
-@app.route("/api/producto/botella/all", methods=["GET"])
-def get_all_botella():
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("""
-                SELECT botella_codigo, material_codigo, (botella_descripcion || ' de ' || material_nombre) as nombre
-                FROM material_botella, botella, material
-                WHERE fk_material = material_codigo
-                AND fk_botella = botella_codigo
-                """)
-    rows = cur.fetchall()
-    cur.close()
-
-    return jsonify(rows)
-
-# Ruta para buscar un producto por nombre
-@app.route("/api/producto/buscar/<nombre>", methods=["GET"])
-def buscar_producto(nombre):
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT * FROM producto WHERE producto_nombre ILIKE %s", ('%' + nombre + '%',))
-    rows = cur.fetchall()
-    cur.close()
-    pprint(rows)
-    return jsonify(rows)
-
-# Ruta para registrar el producto en la base de datos
-# @app.route("/api/producto/registrar", methods=["POST"])
-# def registrar_producto():
-#     cur = conn.cursor()
-#     producto = request.get_json()
-#     pprint(producto)
-#     nombre = producto.get("nombre")
-#     grado = producto.get("grado")
-#     proveedor = producto.get("proveedor")
-#     parroquia = producto.get("parroquia")
-#     fermentacion = producto.get("fermentacion")
-#     destilacion = producto.get("destilacion")
-#     clasificacion = producto.get("clasificacion")
-#     categoria = producto.get("categoria")
-#     precio_compra = producto.get("precio_compra")
-#     precio_venta = producto.get("precio_venta")
-#     color = producto.get("color")
-#     detalle_color = producto.get("detalle_color")
-#     direccion = producto.get("direccion")
-#     aromas = producto.get("aromas")
-#     anejamiento = producto.get("anejamiento")
-#     ingredientes = producto.get("ingredientes")
-#     sabores = producto.get("sabores")
-#     empaque = producto.get("empaque")
-#     botella = producto.get("botella")
-#     tapa = producto.get("tapa")
-#     presentacionpeso = producto.get("presentacionpeso")
-#     servidos = producto.get("servidos")
-#     imagen = producto.get("imagen")
-#     cuerpopeso = producto.get("cuerpopeso")
-#     cuerpotextura = producto.get("cuerpotextura")
-#     cuerpodensidad = producto.get("cuerpodensidad")
-#     cuerpodescripcion = producto.get("cuerpodescripcion")
-#     regustoentrada = producto.get("regustoentrada")
-#     regustoevolucion = producto.get("regustoevolucion")
-#     regustopersistencia = producto.get("regustopersistencia")
-#     regustoacabado = producto.get("regustoacabado") 
-#     regustodescripcion = producto.get("regustodescripcion")
-
-#     sql_producto = """

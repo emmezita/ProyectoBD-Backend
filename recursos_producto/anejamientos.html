@@ -21,7 +21,7 @@
                         $("#form-field-sanejamiento").append('<option value="'+anejamiento.id+'">'+anejamiento.nombre+'</option>');
                     });
                     // Trigger the change event if there's only one secondary classification
-                    if (data.secundario[id].length === 1) {
+                    if (data.secundario[id] && data.secundario[id].length === 1) {
                         $("#form-field-sanejamiento").trigger('change');
                     }
                 });

@@ -50,6 +50,10 @@ function addServido(e, event){
     $(e).parent().parent().find("select").val("");
 }
 
+function deletesServido(e){
+    $(e).parent().parent().remove();
+}
+
 function servidoExists(servidoId, e) {
     var exists = false;
     $("#body-servidos tr").each(function() {
