@@ -20,7 +20,7 @@ function save() {
     }).get(); //obtenemos tdos los ids de los sabores
 
     if (Object.keys(aromas).length === 0 || Object.keys(ingredientes).length === 0 || Object.keys(sabores).length === 0 || Object.keys(servidos).length === 0) {
-        alert("Por favor, asegúrate de que todos los campos están llenos antes de guardar.");
+        alert("Por favor, asegúrate de que todas las tablas están llenas antes de guardar.");
         return;
     }
 
@@ -34,8 +34,8 @@ function save() {
         clasificacion: $(ff+"sclasificacion option:selected").attr('value'),
         categoria: $(ff+"categoria option:selected").attr('value'),
         color: $(ff+"color option:selected").attr('value'),
-        detalle_color: $(ff+"detallecolor").val(),
-        direccion: $(ff+"direccion").val(),
+        detalle_color: $(ff+"detallescolor").val(),
+        descripcion: $(ff+"descripcion").val(),
         panejamiento: $(ff+"panejamiento option:selected").attr('value'),
         sanejamiento: $(ff+"sanejamiento option:selected").attr('value'),
         aromas: aromas,

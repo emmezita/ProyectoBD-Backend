@@ -136,13 +136,13 @@ def get_all_horarios():
 def get_persona_natural_empleado(cedula):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute("SELECT * FROM persona_natural WHERE persona_nat_cedula = %s", (cedula,))
-    persona = cur.fetchone()
+    persona = cur.fetchall()
 
     if persona is None:
         return Response(status=409, response="La persona no existe")
 
     cur.execute("SELECT * FROM empleado WHERE empleado_codigo = %s", (persona['persona_nat_codigo'],))
-    empleado = cur.fetchone()
+    empleado = cur.fetchall()
 
     if empleado is not None:
         return Response(status=409, response="El empleado ya existe")
@@ -1517,38 +1517,123 @@ def get_all_servido():
 # Ruta para registrar un producto en la base de datos
 @app.route("/api/producto/registrar", methods=["POST"])
 def registrar_producto():
-    # cur = conn.cursor()
+    cur = conn.cursor()
     producto = request.get_json()
     pprint(producto)
-    # nombre = producto.get("nombre")
-    # grado = producto.get("grado")
-    # proveedor = producto.get("proveedor")
-    # parroquia = producto.get("parroquia")
-    # fermentacion = producto.get("fermentacion")
-    # destilacion = producto.get("destilacion")
-    # clasificacion = producto.get("clasificacion")
-    # categoria = producto.get("categoria")
-    # color = producto.get("color")
-    # detalle_color = producto.get("detalle_color")
-    # direccion = producto.get("direccion")
-    # aromas = producto.get("aromas")
-    # anejamiento = producto.get("anejamiento")
-    # ingredientes = producto.get("ingredientes")
-    # sabores = producto.get("sabores")
-    # servidos = producto.get("servidos")
-    # cuerpopeso = producto.get("cuerpopeso")
-    # cuerpotextura = producto.get("cuerpotextura")
-    # cuerpodensidad = producto.get("cuerpodensidad")
-    # cuerpodescripcion = producto.get("cuerpodescripcion")
-    # regustoentrada = producto.get("regustoentrada")
-    # regustoevolucion = producto.get("regustoevolucion")
-    # regustopersistencia = producto.get("regustopersistencia")
-    # regustoacabado = producto.get("regustoacabado")
-    # regustodescripcion = producto.get("regustodescripcion")
+    nombre = producto.get("nombre")
+    grado = producto.get("grado")
+    if grado:
+        grado = float(grado)
+    proveedor = producto.get("proveedor")
+    proveedor = int(proveedor)
+    parroquia = producto.get("parroquia")
+    parroquia = int(parroquia)
+    fermentacion = producto.get("fermentacion")
+    fermentacion = int(fermentacion)
+    destilacion = producto.get("destilacion")
+    destilacion = int(destilacion)
+    clasificacion = producto.get("clasificacion")
+    clasificacion = int(clasificacion)
+    categoria = producto.get("categoria")
+    categoria = int(categoria)
+    color = producto.get("color")
+    color = int(color)
+    detalle_color = producto.get("detallescolor")
+    descripcion = producto.get("descripcion")
+    aromas = producto.get("aromas")
+    panejamiento = producto.get("panejamiento")
+    if panejamiento:
+        panejamiento = int(panejamiento)
+    sanejamiento = producto.get("sanejamiento")
+    anejamiento = 0
+    if sanejamiento:
+        sanejamiento = int(sanejamiento)
+        anejamiento = sanejamiento
+    else:
+        sanejamiento = None
+        anejamiento = panejamiento
+    ingredientes = producto.get("ingredientes")
+    sabores = producto.get("sabores")
+    servidos = producto.get("servidos")
+    cuerpopeso = producto.get("cuerpopeso")
+    cuerpotextura = producto.get("cuerpotextura")
+    cuerpodensidad = producto.get("cuerpodensidad")
+    cuerpodescripcion = producto.get("cuerpodescripcion")
+    regustoentrada = producto.get("regustoentrada")
+    regustoevolucion = producto.get("regustoevolucion")
+    regustopersistencia = producto.get("regustopersistencia")
+    regustoacabado = producto.get("regustoacabado")
+    regustodescripcion = producto.get("regustodescripcion")
     
+    sql_producto = """
+        INSERT INTO producto(
+            producto_nombre, producto_descripcion, producto_grado_alcoholico, producto_color_detalles, fk_color, fk_fermentacion, fk_destilacion, fk_clasificacion, fk_categoria, fk_proveedor, fk_lugar)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+    """
     
+    sql_aroma = """
+        INSERT INTO producto_aroma(
+            fk_aroma, fk_producto)
+        VALUES (%s,%s);
+    """
     
+    sql_mezclado = """
+        INSERT INTO mezclado(
+            fk_anejamiento, fk_ingrediente, fk_producto)
+        VALUES (%s,%s,%s);
+    """
     
+    sql_sabor = """
+        INSERT INTO producto_sabor(
+            fk_sabor, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_servido = """
+        INSERT INTO producto_servido(
+            fk_servido, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_cuerpo = """
+        INSERT INTO cuerpo(
+            cuerpo_peso, cuerpo_textura, cuerpo_densidad, cuerpo_descripcion, fk_producto)
+        VALUES (%s,%s,%s,%s,%s);
+    """
+    
+    sql_regusto = """
+        INSERT INTO public.regusto(
+            regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto)
+        VALUES (?, ?, ?, ?, ?, ?);
+    """
+    
+    try:
+        cur.execute(sql_producto, (nombre, descripcion, grado, detalle_color, color, fermentacion, destilacion, clasificacion, categoria, proveedor, parroquia))
+        result = cur.fetchone()
+        producto_codigo = result[0] if result is not None else None
+        for aroma in aromas:
+            cur.execute(sql_aroma, (aroma, producto_codigo))
+        for ingrediente in ingredientes:
+            cur.execute(sql_mezclado, (anejamiento, ingrediente, producto_codigo))
+        for sabor in sabores:
+            cur.execute(sql_sabor, (sabor, producto_codigo))
+        for servido in servidos:
+            cur.execute(sql_servido, (servido, producto_codigo))
+        if cuerpopeso or cuerpotextura or cuerpodensidad or cuerpodescripcion:
+            cur.execute(sql_cuerpo, (cuerpopeso, cuerpotextura, cuerpodensidad, cuerpodescripcion, producto_codigo))
+        if regustoentrada or regustoevolucion or regustopersistencia or regustoacabado or regustodescripcion:
+            cur.execute(sql_regusto, (regustoentrada, regustoevolucion, regustopersistencia, regustoacabado, regustodescripcion, producto_codigo))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Producto registrado exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRESENTACION
