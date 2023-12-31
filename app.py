@@ -1604,9 +1604,9 @@ def registrar_producto():
     """
     
     sql_regusto = """
-        INSERT INTO public.regusto(
+        INSERT INTO regusto(
             regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto)
-        VALUES (?, ?, ?, ?, ?, ?);
+        VALUES (%s, %s, %s, %s, %s, %s);
     """
     
     try:
@@ -1811,6 +1811,135 @@ def get_producto(id):
     pprint(datos)
     
     return datos
+
+# Ruta para editar los datos de un producto de la base de datos
+@app.route("/api/producto/editar/<int:id>", methods=["PUT"])
+def editar_producto(id):
+    cur = conn.cursor()
+    producto = request.get_json()
+    pprint(producto)
+    nombre = producto.get("nombre")
+    grado = producto.get("grado")
+    if grado:
+        grado = float(grado)
+    proveedor = producto.get("proveedor")
+    proveedor = int(proveedor)
+    parroquia = producto.get("parroquia")
+    parroquia = int(parroquia)
+    fermentacion = producto.get("fermentacion")
+    fermentacion = int(fermentacion)
+    destilacion = producto.get("destilacion")
+    destilacion = int(destilacion)
+    clasificacion = producto.get("clasificacion")
+    clasificacion = int(clasificacion)
+    categoria = producto.get("categoria")
+    categoria = int(categoria)
+    color = producto.get("color")
+    color = int(color)
+    detalle_color = producto.get("detallescolor")
+    descripcion = producto.get("descripcion")
+    aromas = producto.get("aromas")
+    panejamiento = producto.get("panejamiento")
+    if panejamiento:
+        panejamiento = int(panejamiento)
+    sanejamiento = producto.get("sanejamiento")
+    anejamiento = 0
+    if sanejamiento:
+        sanejamiento = int(sanejamiento)
+        anejamiento = sanejamiento
+    else:
+        sanejamiento = None
+        anejamiento = panejamiento
+    ingredientes = producto.get("ingredientes")
+    sabores = producto.get("sabores")
+    servidos = producto.get("servidos")
+    cuerpopeso = producto.get("cuerpopeso")
+    cuerpotextura = producto.get("cuerpotextura")
+    cuerpodensidad = producto.get("cuerpodensidad")
+    cuerpodescripcion = producto.get("cuerpodescripcion")
+    regustoentrada = producto.get("regustoentrada")
+    regustoevolucion = producto.get("regustoevolucion")
+    regustopersistencia = producto.get("regustopersistencia")
+    regustoacabado = producto.get("regustoacabado")
+    regustodescripcion = producto.get("regustodescripcion")
+    
+    sql_producto = """
+        UPDATE producto
+        SET producto_nombre = %s, producto_descripcion = %s, producto_grado_alcoholico = %s, producto_color_detalles = %s, fk_color = %s, fk_fermentacion = %s, fk_destilacion = %s, fk_clasificacion = %s, fk_categoria = %s, fk_proveedor = %s, fk_lugar = %s
+        WHERE producto_codigo = %s;
+    """
+    
+    sql_eliminar = """
+        DELETE FROM producto_aroma WHERE fk_producto = %s;
+        DELETE FROM mezclado WHERE fk_producto = %s;
+        DELETE FROM producto_sabor WHERE fk_producto = %s;
+        DELETE FROM producto_servido WHERE fk_producto = %s;
+        DELETE FROM cuerpo WHERE fk_producto = %s;
+        DELETE FROM regusto WHERE fk_producto = %s;
+    """
+    
+    sql_aroma = """
+        INSERT INTO producto_aroma(
+            fk_aroma, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_mezclado = """
+        INSERT INTO mezclado(
+            fk_anejamiento, fk_ingrediente, fk_producto)
+        VALUES (%s,%s,%s);
+    """
+    
+    sql_sabor = """
+        INSERT INTO producto_sabor(
+            fk_sabor, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_servido = """
+        INSERT INTO producto_servido(
+            fk_servido, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_cuerpo = """
+        INSERT INTO cuerpo(
+            cuerpo_peso, cuerpo_textura, cuerpo_densidad, cuerpo_descripcion, fk_producto)
+        VALUES (%s,%s,%s,%s,%s);
+    """
+    
+    sql_regusto = """
+        INSERT INTO regusto(
+            regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto)
+        VALUES (%s, %s, %s, %s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_producto, (nombre, descripcion, grado, detalle_color, color, fermentacion, destilacion, clasificacion, categoria, proveedor, parroquia, id))
+        cur.execute(sql_eliminar, (id, id, id, id, id, id))
+        for aroma in aromas:
+            cur.execute(sql_aroma, (aroma, id))
+        for ingrediente in ingredientes:
+            cur.execute(sql_mezclado, (anejamiento, ingrediente, id))
+        for sabor in sabores:
+            cur.execute(sql_sabor, (sabor, id))
+        for servido in servidos:
+            cur.execute(sql_servido, (servido, id))
+        if cuerpopeso or cuerpotextura or cuerpodensidad or cuerpodescripcion:
+            cur.execute(sql_cuerpo, (cuerpopeso, cuerpotextura, cuerpodensidad, cuerpodescripcion, id))
+        if regustoentrada or regustoevolucion or regustopersistencia or regustoacabado or regustodescripcion:
+            cur.execute(sql_regusto, (regustoentrada, regustoevolucion, regustopersistencia, regustoacabado, regustodescripcion, id))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Producto editado exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRESENTACION
@@ -1878,6 +2007,18 @@ def formatear_empaques(empaques):
         'principal': principal,
         'secundario': secundario
     }
+    
+# Ruta para obtener todas las presentaciones de un producto
+@app.route("/api/presentacion/all/<int:id>", methods=["GET"])
+def get_all_presentaciones(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                
+                ''', (id,))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL INVENTARIO DE LA TIENDA

@@ -6,25 +6,25 @@ var ANE = null;
 
 function llenarAromas(aromas) {
     aromas.forEach(aroma => {
-        $('#body-aromas').append("<tr><td id="+ aroma.aroma_codigo +">"+aroma.aroma_descripcion+"</td><td><button type='button' class='btn btn-danger-aro' onclick='deleteAroma(this)'>Eliminar</button></td></tr>");
+        $('#body-aromas').append("<tr><td id="+ aroma.aroma_codigo +">"+aroma.aroma_descripcion+"</td><td><button type='button' class='btn btn-danger' onclick='deleteAroma(this)'>Eliminar</button></td></tr>");
     });
 }
 
 function llenarIngredientes (ingredientes) {
     ingredientes.forEach(ingrediente => {
-        $('#body-ingredientes').append("<tr><td id="+ ingrediente.ingrediente_codigo +">"+ingrediente.ingrediente_nombre+"</td><td><button type='button' class='btn btn-danger-ing' onclick='deleteIngrediente(this)'>Eliminar</button></td></tr>");
+        $('#body-ingredientes').append("<tr><td id="+ ingrediente.ingrediente_codigo +">"+ingrediente.ingrediente_nombre+"</td><td><button type='button' class='btn btn-danger' onclick='deleteIngrediente(this)'>Eliminar</button></td></tr>");
     });
 }
 
 function llenarSabores (sabores) {
     sabores.forEach(sabor => {
-        $('#body-sabores').append("<tr><td id="+ sabor.sabor_codigo +">"+sabor.sabor_descripcion+"</td><td><button type='button' class='btn btn-danger-sab' onclick='deleteSabor(this)'>Eliminar</button></td></tr>");
+        $('#body-sabores').append("<tr><td id="+ sabor.sabor_codigo +">"+sabor.sabor_descripcion+"</td><td><button type='button' class='btn btn-danger' onclick='deleteSabor(this)'>Eliminar</button></td></tr>");
     });
 }
 
 function llenarServidos (servidos) {
     servidos.forEach(servido => {
-        $('#body-servidos').append("<tr><td id="+ servido.servido_codigo +">"+servido.servido_descripcion+"</td><td><button type='button' class='btn btn-danger-ser' onclick='deleteServido(this)'>Eliminar</button></td></tr>");
+        $('#body-servidos').append("<tr><td id="+ servido.servido_codigo +">"+servido.servido_nombre+"</td><td><button type='button' class='btn btn-danger' onclick='deleteServido(this)'>Eliminar</button></td></tr>");
     });
 }
 
