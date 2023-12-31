@@ -2009,16 +2009,130 @@ def formatear_empaques(empaques):
     }
     
 # Ruta para obtener todas las presentaciones de un producto
-@app.route("/api/presentacion/all/<int:id>", methods=["GET"])
-def get_all_presentaciones(id):
+@app.route("/api/presentacion/all", methods=["GET"])
+def get_all_presentaciones():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('''
-                
-                ''', (id,))
+                SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
+                        (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
+                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra,
+                        venta1.precio_venta_valor as precio_venta_tienda, venta2.precio_venta_valor as precio_venta_almacen
+                FROM presentacion pre
+                JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
+                JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
+                JOIN producto pro ON pre.fk_producto = pro.producto_codigo
+                JOIN historico_precio_compra compra ON (pre.fk_material_botella_1 = compra.fk_presentacion_1
+                                                    AND pre.fk_material_botella_2 = compra.fk_presentacion_2
+                                                    AND pre.fk_producto = compra.fk_presentacion_3
+                                                    AND compra.precio_compra_fecha_fin is null)
+                JOIN historico_precio_venta venta1 ON (pre.fk_material_botella_1 = venta1.fk_inventario_tienda_2
+                                                AND pre.fk_material_botella_2 = venta1.fk_inventario_tienda_3
+                                                AND pre.fk_producto = venta1.fk_inventario_tienda_4
+                                                AND venta1.precio_venta_fecha_fin is null)
+                JOIN historico_precio_venta venta2 ON (pre.fk_material_botella_1 = venta2.fk_inventario_almacen_2
+                                                AND pre.fk_material_botella_2 = venta2.fk_inventario_almacen_3
+                                                AND pre.fk_producto = venta2.fk_inventario_almacen_4
+                                                AND venta2.precio_venta_fecha_fin is null)
+                ''')
     rows = cur.fetchall()
     cur.close()
     pprint(rows)
     return jsonify(rows)
+
+
+# Ruta para obtener los productos de la base de datos
+@app.route("/api/presentacion/producto/all", methods=["GET"])
+def get_all_productos_presentacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT producto_codigo as codigo, producto_nombre as nombre
+                FROM producto
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para obtener los datos de una presentacion de la base de datos
+@app.route("/api/presentacion/<int:id1>/<int:id2>/<int:id3>", methods=["GET"])
+def get_presentacion(id1, id2, id3):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    sql_presentacion = """
+        SELECT * FROM presentacion WHERE fk_material_botella_1 = %s AND fk_material_botella_2 = %s AND fk_producto = %s
+    """
+    sql_material = """
+        SELECT * FROM material WHERE material_codigo = %s
+    """
+    sql_botella = """
+        SELECT * FROM botella WHERE botella_codigo = %s
+    """
+    sql_tapa = """
+        SELECT * FROM tapa WHERE tapa_codigo = %s
+    """
+    sql_empaque = """
+        SELECT * FROM caja WHERE caja_codigo = %s
+    """
+    sql_producto = """
+        SELECT * FROM producto WHERE producto_codigo = %s
+    """
+    sql_compra = """
+        SELECT * FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
+    """
+    sql_venta_tienda = """
+        SELECT * FROM historico_precio_venta WHERE fk_inventario_tienda_2 = %s AND fk_inventario_tienda_3 = %s AND fk_inventario_tienda_4 = %s AND precio_venta_fecha_fin is null
+    """
+    sql_venta_almacen = """
+        SELECT * FROM historico_precio_venta WHERE fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s AND precio_venta_fecha_fin is null
+    """
+    
+    cur.execute(sql_presentacion, (id1, id2, id3))
+    presentacion = cur.fetchone()
+    if presentacion is None:
+        return Response(status=404, response="Presentacion no encontrada")
+    
+    cur.execute(sql_material, (presentacion['fk_material_botella_1'],))
+    material = cur.fetchone()
+    
+    cur.execute(sql_botella, (presentacion['fk_material_botella_2'],))
+    botella = cur.fetchone()
+    
+    cur.execute(sql_tapa, (presentacion['fk_tapa'],))
+    tapa = cur.fetchone()
+    
+    cur.execute(sql_empaque, (presentacion['fk_caja'],))
+    empaque = cur.fetchone()
+    
+    cur.execute(sql_producto, (presentacion['fk_producto'],))
+    producto = cur.fetchone()
+    
+    cur.execute(sql_compra, (id1, id2, id3))
+    compra = cur.fetchone()
+    
+    cur.execute(sql_venta_tienda, (id1, id2, id3))
+    venta_tienda = cur.fetchone()
+    
+    cur.execute(sql_venta_almacen, (id1, id2, id3))
+    venta_almacen = cur.fetchone()
+    
+    cur.close()
+
+    datos = jsonify({
+        'presentacion': presentacion,
+        'material': material,
+        'botella': botella,
+        'tapa': tapa,
+        'empaque': empaque,
+        'producto': producto,
+        'compra': compra,
+        'venta_tienda': venta_tienda,
+        'venta_almacen': venta_almacen
+    }) 
+    
+    pprint(datos)
+    
+    return datos
+
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL INVENTARIO DE LA TIENDA
