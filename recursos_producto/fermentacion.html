@@ -17,3 +17,23 @@
         });
     });
 </script>
+
+<script>
+    function cargarFermentaciones() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/producto/fermentacion/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var fermentaciones = data;
+                fermentaciones.forEach(fermentacion => {
+                    $("#form-field-fermentacion").append("<option id="+ fermentacion.fermentacion_codigo +">"+ fermentacion.fermentacion_metodo +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los métodos de fermentación");
+            }
+        });
+    }
+</script>

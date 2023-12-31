@@ -32,6 +32,24 @@ function llenarEMP(estado, municipio, parroquia) {
     $("#form-field-parroquia").val(parroquia);    
 }
 
+// como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
+//le sumamos 5 horas por para pasar de dia al correcto
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [year, month, day].join('-');
+}
+
 $(document).ready(function() {
     var data = null;
     $.ajax({
@@ -97,14 +115,17 @@ $(document).ready(function() {
                 $(ff+"codareaalt").val(data.telefonos[1].telefono_codigo_area)
                 $(ff+"telefonoalt").val(data.telefonos[1].telefono_numero)
             }
-            let fecha = new Date(data.persona.persona_nat_fecha_nac);
-            let formattedFecha = fecha.getFullYear() + '-' + ('0' + (fecha.getMonth() + 1)).slice(-2) + '-' + ('0' + fecha.getDate()).slice(-2);
+            let formattedFecha = formatDate(data.persona.persona_nat_fecha_nac);
             $(ff+"fechanac").val(formattedFecha);
             $(ff+"direccion").val(data.persona.persona_nat_direccion_fiscal)
-            $(ff+"cbcargo").val(data.cargo.cargo_nombre)
-            $(ff+"cbdepa").val(data.departamento.departamento_nombre)
             
-            $(ff+"sueldo").val(parseFloat(data.cargo.cont_carg_sueldo_mensual))
+            if (data.cargo != null) {
+                $(ff+"cbcargo").val(data.cargo.cargo_nombre)
+                $(ff+"sueldo").val(parseFloat(data.cargo.cont_carg_sueldo_mensual))
+            }
+
+            if (data.departamento != null)
+                $(ff+"cbdepa").val(data.departamento.departamento_nombre)
 
             llenarEMP(data.lugar.estado, data.lugar.municipio, data.lugar.parroquia); 
             llenarHorarios(data.horarios);

@@ -17,3 +17,23 @@
         });
     });
 </script>
+
+<script>
+    function cargarColores() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/producto/color/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var colores = data;
+                colores.forEach(color => {
+                    $("#form-field-color").append("<option id="+ color.color_codigo +">"+ color.color_descripcion +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar las colores");
+            }
+        });
+    }
+</script>

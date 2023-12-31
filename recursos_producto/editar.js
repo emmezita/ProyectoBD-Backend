@@ -16,12 +16,6 @@ function llenarIngredientes (ingredientes) {
     });
 }
 
-function llenarAromas (aromas) {
-    aromas.forEach(aroma => {
-        $('#body-aromas').append("<tr><td id="+ aroma.aroma_codigo +">"+aroma.aroma_descripcion+"</td><td><button type='button' class='btn btn-danger-aro' onclick='deleteAroma(this)'>Eliminar</button></td></tr>");
-    });
-}
-
 function llenarSabores (sabores) {
     sabores.forEach(sabor => {
         $('#body-sabores').append("<tr><td id="+ sabor.sabor_codigo +">"+sabor.sabor_descripcion+"</td><td><button type='button' class='btn btn-danger-sab' onclick='deleteSabor(this)'>Eliminar</button></td></tr>");
@@ -55,7 +49,7 @@ function llenarCLA (pclasificacion, sclasificacion) {
     $("#form-field-pclasificacion").val(pclasificacion);
     $("#form-field-sclasificacion").empty();
 
-    $.each(CLA.sclasificaciones[pclasificacion], function(i, sclasificacion) {
+    $.each(CLA.secundario[pclasificacion], function(i, sclasificacion) {
         $("#form-field-sclasificacion").append('<option value="'+sclasificacion.id+'">'+sclasificacion.nombre+'</option>');
     });
     $("#form-field-sclasificacion").val(sclasificacion);
@@ -65,8 +59,8 @@ function llenarANE (panejamiento, sanejamiento) {
     $("#form-field-panejamiento").val(panejamiento);
     $("#form-field-sanejamiento").empty();
 
-    if (ANE.sanejamientos[panejamiento]) {
-        $.each(ANE.sanejamientos[panejamiento], function(i, sanejamiento) {
+    if (ANE.secundario[panejamiento]) {
+        $.each(ANE.secundario[panejamiento], function(i, sanejamiento) {
             $("#form-field-sanejamiento").append('<option value="'+sanejamiento.id+'">'+sanejamiento.nombre+'</option>');
         });
     }
@@ -78,6 +72,21 @@ function llenarANE (panejamiento, sanejamiento) {
 
 $(document).ready(function() {
     var data = null;
+
+    // Llena los campos de los selects antes de hacer el GET del producto
+    cargarCategorias();
+    cargarColores();
+    cargarDestilaciones();
+    cargarFermentaciones();
+    cargarProveedores();
+
+    // cargarCuerpos();
+    // cargarRegustos();
+    // cargarAromas();
+    // cargarIngredientes();
+    // cargarSabores();
+    // cargarServidos();
+
     $.ajax({
         url: 'http://localhost:5000/api/usuario/ubicaciones/all',
         type: 'GET',
