@@ -233,7 +233,7 @@ $(document).ready(function() {
                 row.append('<td>' + data[i].proveedor + '</td>');
                 row.append('<td>' + data[i].clasificacion + '</td>');
                 row.append('<td>' + data[i].categoria + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="editarProducto(' + data[i].codigo + ')">Editar</button></td>');
                 row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 
                 $('#body-productos').append(row);
@@ -263,4 +263,10 @@ $(document).ready(function() {
 
        
 });     
+
+function editarProducto(id){
+    console.log('editar Producto');
+    window.location.href = 'http://dilodev.co/formulario-editar-producto?id=' + id;
+}
+
 </script>

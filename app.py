@@ -283,8 +283,10 @@ def registrar_empleado():
         cur.execute(sql_contrato, (datetime.datetime.now(), None, empleado_codigo))
         result = cur.fetchone()
         contrato_codigo = result[0] if result is not None else None
-        cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
-        cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
+        if departamento:
+            cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
+        if cargo:
+            cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
         
         for beneficio in beneficios:
             if beneficio.get('id') is None or beneficio.get('monto') is None:
@@ -1669,26 +1671,68 @@ def get_producto(id):
         JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
         WHERE p.lugar_codigo = %s
     """
-    sql_aroma = """
-        SELECT * FROM producto_aroma WHERE fk_producto = %s
+    sql_clasificacion = """
+        SELECT cl.clasificacion_codigo AS primario, se.clasificacion_codigo AS secundario
+        FROM clasificacion AS se
+        JOIN clasificacion AS cl ON se.fk_clasificacion = cl.clasificacion_codigo
+        WHERE se.clasificacion_codigo = %s
     """
-    sql_anejamiento = """
+    sql_aroma = """
+        SELECT a.* 
+        FROM aroma a
+        JOIN producto_aroma pa ON a.aroma_codigo = pa.fk_aroma
+        WHERE pa.fk_producto = %s
+    """
+    sql_ane = """
         SELECT fk_anejamiento FROM mezclado WHERE fk_producto = %s
     """
+    sql_anejamiento = """
+        SELECT pr.anejamiento_codigo AS primario, se.anejamiento_codigo AS secundario
+        FROM anejamiento AS se
+        JOIN anejamiento AS pr ON se.fk_anejamiento = pr.anejamiento_codigo
+        WHERE se.anejamiento_codigo = %s
+    """
     sql_ingrediente = """
-        SELECT fk_ingrediente FROM mezclado WHERE fk_producto = %s
+        SELECT i.*
+        FROM ingrediente i
+        JOIN mezclado m ON i.ingrediente_codigo = m.fk_ingrediente
+        WHERE m.fk_producto = %s
     """
     sql_sabor = """
-        SELECT * FROM producto_sabor WHERE fk_producto = %s
+        SELECT s.*
+        FROM sabor s
+        JOIN producto_sabor ps ON s.sabor_codigo = ps.fk_sabor
+        WHERE ps.fk_producto = %s
     """
     sql_servido = """
-        SELECT * FROM producto_servido WHERE fk_producto = %s
+        SELECT s.*
+        FROM servido s
+        JOIN producto_servido ps ON s.servido_codigo = ps.fk_servido
+        WHERE ps.fk_producto = %s
     """
     sql_cuerpo = """
         SELECT * FROM cuerpo WHERE fk_producto = %s
     """
     sql_regusto = """
         SELECT * FROM regusto WHERE fk_producto = %s
+    """
+    sql_color = """
+        SELECT * FROM color WHERE color_codigo = %s
+    """
+    sql_destilacion = """
+        SELECT * FROM destilacion WHERE destilacion_codigo = %s
+    """
+    sql_fermentacion = """
+        SELECT * FROM fermentacion WHERE fermentacion_codigo = %s
+    """
+    sql_proveedor = """
+        SELECT pj.persona_jur_denom_comercial AS proveedor
+        FROM persona_juridica pj
+        JOIN proveedor p ON pj.persona_jur_codigo = p.proveedor_codigo
+        WHERE pj.persona_jur_codigo = %s
+    """
+    sql_categoria = """
+        SELECT * FROM categoria WHERE categoria_codigo = %s
     """
     
     cur.execute(sql_producto, (id,))
@@ -1699,11 +1743,20 @@ def get_producto(id):
     cur.execute(sql_lugar, (producto['fk_lugar'],))
     lugar = cur.fetchone()
     
+    cur.execute(sql_clasificacion, (producto['fk_clasificacion'],))
+    clasificacion = cur.fetchone()
+    
     cur.execute(sql_aroma, (id,))
     aromas = cur.fetchall()
     
-    cur.execute(sql_anejamiento, (id,))
+    cur.execute(sql_ane, (id,))
+    ane = cur.fetchone()
+    ane_codigo = ane['fk_anejamiento'] if ane is not None else None
+        
+    cur.execute(sql_anejamiento, (ane['fk_anejamiento'],))
     anejamiento = cur.fetchone()
+    if not anejamiento:
+        anejamiento = {'primario': ane_codigo, 'secundario': None}
     
     cur.execute(sql_ingrediente, (id,))
     ingredientes = cur.fetchall()
@@ -1720,18 +1773,39 @@ def get_producto(id):
     cur.execute(sql_regusto, (id,))
     regusto = cur.fetchone()
     
+    cur.execute(sql_color, (producto['fk_color'],))
+    color = cur.fetchone()
+    
+    cur.execute(sql_destilacion, (producto['fk_destilacion'],))
+    destilacion = cur.fetchone()
+    
+    cur.execute(sql_fermentacion, (producto['fk_fermentacion'],))
+    fermentacion = cur.fetchone()
+    
+    cur.execute(sql_proveedor, (producto['fk_proveedor'],))
+    proveedor = cur.fetchone()
+    
+    cur.execute(sql_categoria, (producto['fk_categoria'],))
+    categoria = cur.fetchone()
+    
     cur.close()
 
     datos = jsonify({
         'producto': producto,
         'lugar': lugar,
+        'clasificacion': clasificacion,
         'aromas': aromas,
         'anejamiento': anejamiento,
         'ingredientes': ingredientes,
         'sabores': sabores,
         'servidos': servidos,
         'cuerpo': cuerpo,
-        'regusto': regusto
+        'regusto': regusto,
+        'color': color,
+        'destilacion': destilacion,
+        'fermentacion': fermentacion,
+        'proveedor': proveedor,
+        'categoria': categoria
     })
     
     pprint(datos)
