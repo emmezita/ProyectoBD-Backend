@@ -184,9 +184,16 @@ $(document).ready(function() {
                 }
             });
 
+            getProducto(); // ponemos este get dentro del success de este ajax para que se ejecute despues de que se llenen los campos de los selects
+
+        }, 
+        error: function(err) {
+            console.log(err);
         }
     });
+});
 
+function getProducto() {
     $.ajax({
         url: 'http://localhost:5000/api/producto/' + idEditar,
         type: 'GET',
@@ -224,4 +231,4 @@ $(document).ready(function() {
             alert('Error obteniendo producto');
         }
     });
-});
+}
