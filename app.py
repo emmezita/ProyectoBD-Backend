@@ -615,12 +615,13 @@ def deactivate_empleado(id):
 # Ruta para activar un empleado de la base de datos
 @app.route("/api/empleado/activate/<int:id>", methods=["PUT"])
 def activate_empleado(id):
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
 
     cur.execute("UPDATE contrato_de_empleo SET contrato_fecha_salida = %s WHERE fk_empleado = %s", (None, id))
     #Editar cargo
     cur.execute("SELECT fk_cargo, cont_carg_sueldo_mensual FROM contrato_cargo WHERE fk_contrato_empleo = %s ORDER BY cont_carg_fecha_inicio DESC LIMIT 1", (id,))
     cargo = cur.fetchall()
+    pprint(cargo)
     
     if cargo is not None:
         cur.execute(
@@ -630,7 +631,7 @@ def activate_empleado(id):
             )
             VALUES (%s, %s, %s, %s, %s);
             """
-        , (datetime.datetime.now(), None, cargo['cont_carg_sueldo_mensual'], id, cargo['fk_cargo'])
+        , (datetime.datetime.now(), None, cargo[0][1], id, cargo[0][0])
         )
     #Editar departamento
     cur.execute("SELECT fk_departamento FROM contrato_departamento WHERE fk_contrato_empleo = %s ORDER BY cont_depart_fecha_inicio DESC LIMIT 1", (id,))
@@ -2046,6 +2047,71 @@ def formatear_empaques(empaques):
         'secundario': secundario
     }
     
+# Ruta para registrar una presentacion en la base de datos
+@app.route("/api/presentacion/registrar", methods=["POST"])
+def registrar_presentacion():
+    cur = conn.cursor()
+    presentacion = request.get_json()
+    pprint(presentacion)
+    producto = presentacion.get("producto")
+    producto = int(producto)
+    botella = presentacion.get("botella")
+    botella = int(botella)
+    material = presentacion.get("material")
+    material = int(material)
+    tapa = presentacion.get("tapa")
+    tapa = int(tapa)
+    empaque = presentacion.get("empaque")
+    empaque = int(empaque)
+    peso = presentacion.get("presentacionpeso")
+    peso = peso.replace(",", ".")
+    peso = float(peso)
+    precio_compra = presentacion.get("preciocompra")
+    precio_compra = precio_compra.replace(",", ".")
+    precio_compra = float(precio_compra)
+    imagen = presentacion.get("imagen")
+    
+    sql_presentacion = """
+        INSERT INTO presentacion(
+            presentacion_peso, fk_material_botella_1, fk_material_botella_2, fk_producto, fk_tapa, fk_caja)
+        VALUES (%s,%s,%s,%s,%s,%s);
+    """
+    
+    sql_tasa_actual = """
+        SELECT tasa_codigo FROM Historico_Tasa_Dolar WHERE tasa_fecha_fin is null
+    """
+    
+    sql_compra = """
+        INSERT INTO historico_precio_compra(
+            precio_compra_valor,precio_compra_fecha_inicio, fk_historico_tasa_dolar, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+        VALUES (%s, current_timestamp, %s, %s, %s, %s);
+    """
+    
+    sql_imagen = """
+        INSERT INTO imagen(
+            imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+        VALUES (%s, true ,%s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_presentacion, (peso, material, botella, producto, tapa, empaque))
+        cur.execute(sql_tasa_actual)
+        tasa = cur.fetchone()
+        tasa_codigo = tasa[0] if tasa is not None else None
+        cur.execute(sql_compra, (precio_compra, tasa_codigo, material, botella, producto))
+        cur.execute(sql_imagen, (imagen, material, botella, producto))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Presentacion registrada exitosamente")
+    
 # Ruta para obtener todas las presentaciones de un producto
 @app.route("/api/presentacion/all", methods=["GET"])
 def get_all_presentaciones():
@@ -2053,8 +2119,7 @@ def get_all_presentaciones():
     cur.execute('''
                 SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
                         (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
-                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra,
-                        venta1.precio_venta_valor as precio_venta_tienda, venta2.precio_venta_valor as precio_venta_almacen
+                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra                
                 FROM presentacion pre
                 JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
                 JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
@@ -2063,14 +2128,6 @@ def get_all_presentaciones():
                                                     AND pre.fk_material_botella_2 = compra.fk_presentacion_2
                                                     AND pre.fk_producto = compra.fk_presentacion_3
                                                     AND compra.precio_compra_fecha_fin is null)
-                JOIN historico_precio_venta venta1 ON (pre.fk_material_botella_1 = venta1.fk_inventario_tienda_2
-                                                AND pre.fk_material_botella_2 = venta1.fk_inventario_tienda_3
-                                                AND pre.fk_producto = venta1.fk_inventario_tienda_4
-                                                AND venta1.precio_venta_fecha_fin is null)
-                JOIN historico_precio_venta venta2 ON (pre.fk_material_botella_1 = venta2.fk_inventario_almacen_2
-                                                AND pre.fk_material_botella_2 = venta2.fk_inventario_almacen_3
-                                                AND pre.fk_producto = venta2.fk_inventario_almacen_4
-                                                AND venta2.precio_venta_fecha_fin is null)
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -2090,6 +2147,7 @@ def get_all_productos_presentacion():
     cur.close()
     pprint(rows)
     return jsonify(rows)
+
 
 # Ruta para obtener los datos de una presentacion de la base de datos
 @app.route("/api/presentacion/<int:id1>/<int:id2>/<int:id3>", methods=["GET"])
@@ -2120,12 +2178,6 @@ def get_presentacion(id1, id2, id3):
     sql_compra = """
         SELECT precio_compra_valor FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
     """
-    sql_venta_tienda = """
-        SELECT precio_venta_valor FROM historico_precio_venta WHERE fk_inventario_tienda_2 = %s AND fk_inventario_tienda_3 = %s AND fk_inventario_tienda_4 = %s AND precio_venta_fecha_fin is null
-    """
-    sql_venta_almacen = """
-        SELECT precio_venta_valor FROM historico_precio_venta WHERE fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s AND precio_venta_fecha_fin is null
-    """
     sql_imagen = """
         SELECT imagen_nombre FROM imagen WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s
     """
@@ -2153,12 +2205,6 @@ def get_presentacion(id1, id2, id3):
     cur.execute(sql_compra, (id1, id2, id3))
     compra = cur.fetchone()
     
-    cur.execute(sql_venta_tienda, (id1, id2, id3))
-    venta_tienda = cur.fetchone()
-    
-    cur.execute(sql_venta_almacen, (id1, id2, id3))
-    venta_almacen = cur.fetchone()
-    
     cur.execute(sql_imagen, (id1, id2, id3))
     imagen = cur.fetchone()
     
@@ -2172,8 +2218,6 @@ def get_presentacion(id1, id2, id3):
         'empaque': empaque,
         'producto': producto,
         'compra': compra,
-        'venta_tienda': venta_tienda,
-        'venta_almacen': venta_almacen,
         'imagen': imagen
     }) 
     
@@ -2181,6 +2225,69 @@ def get_presentacion(id1, id2, id3):
     
     return datos
 
+# Ruta para editar los datos de una presentacion de la base de datos
+@app.route("/api/presentacion/editar/<int:id1>/<int:id2>/<int:id3>", methods=["PUT"])
+def editar_presentacion(id1, id2, id3):
+    cur = conn.cursor()
+    presentacion = request.get_json()
+    pprint(presentacion)
+    producto = presentacion.get("producto")
+    producto = int(producto)
+    botella = presentacion.get("botella")
+    botella = int(botella)
+    material = presentacion.get("material")
+    material = int(material)
+    tapa = presentacion.get("tapa")
+    tapa = int(tapa)
+    empaque = presentacion.get("empaque")
+    empaque = int(empaque)
+    peso = presentacion.get("presentacionpeso")
+    peso = peso.replace(",", ".")
+    peso = float(peso)
+    precio_compra = presentacion.get("preciocompra")
+    precio_compra = precio_compra.replace(",", ".")
+    precio_compra = float(precio_compra)
+    
+    sql_presentacion = """
+        UPDATE presentacion
+        SET presentacion_peso = %s, fk_material_botella_1 = %s, fk_material_botella_2 = %s, fk_producto = %s, fk_tapa = %s, fk_caja = %s
+        WHERE fk_material_botella_1 = %s AND fk_material_botella_2 = %s AND fk_producto = %s;
+    """
+    
+    sql_eompra_anterior = """
+        SELECT precio_compra_valor FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
+    """
+    
+    sql_compra = """
+        INSERT INTO historico_precio_compra(
+            precio_compra_valor,precio_compra_fecha_inicio, fk_historico_tasa_dolar, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+        VALUES (%s, current_timestamp, %s, %s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_presentacion, (peso, material, botella, producto, tapa, empaque, id1, id2, id3))
+        cur.execute(sql_eompra_anterior, (id1, id2, id3))
+        result = cur.fetchone()
+        compra_anterior = result[0] if result is not None else None
+        if compra_anterior != precio_compra:
+            sql_tasa_actual = """
+                SELECT tasa_codigo FROM Historico_Tasa_Dolar WHERE tasa_fecha_fin is null
+            """
+            cur.execute(sql_tasa_actual)
+            tasa = cur.fetchone()
+            tasa_codigo = tasa[0] if tasa is not None else None
+            cur.execute(sql_compra, (precio_compra, tasa_codigo, id1, id2, id3))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Presentacion editada exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL INVENTARIO DE LA TIENDA

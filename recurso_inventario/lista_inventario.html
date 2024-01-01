@@ -193,8 +193,6 @@
                             <th>Capacidad</th>
                             <th>Peso</th>
                             <th>Precio unitario de compra</th>
-                            <th>Precio unitario venta en tienda</th>
-                            <th>Precio unitario venta en almacén</th>
                             <th></th> <!-- no ordenar estas columnas -->
                             <th></th>
                         </tr>
@@ -281,8 +279,6 @@ $(document).ready(function() {
                 row.append('<td>' + data[i].capacidad + '</td>');
                 row.append('<td>' + data[i].peso + '</td>');
                 row.append('<td>' + data[i].precio_compra + '</td>');
-                row.append('<td>' + data[i].precio_venta_tienda + '</td>');
-                row.append('<td>' + data[i].precio_venta_almacen + '</td>');
                 row.append('<td><button type="button" class="btn btn-warning" onclick="editarPresentacion(' + data[i].c1 + ',' + data[i].c2 +',' + data[i].c3 + ')">Editar</button></td>');
                 row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 

@@ -65,8 +65,6 @@ function getPresentacion(){
             data = d;
             var ff = "#form-field-"
             $(ff + "producto").val(data.producto.producto_nombre);
-            $(ff + "precioventatienda").val(data.venta_tienda.precio_venta_valor);
-            $(ff + "precioventaalmacen").val(data.venta_almacen.precio_venta_valor);
             $(ff + "preciocompra").val(data.compra.precio_compra_valor);
             $(ff + "botella").val(data.botella.botella_descripcion + ' de ' + data.material.material_nombre);
             $(ff + "tapa").val(data.tapa.tapa_descripcion);
