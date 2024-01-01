@@ -2122,7 +2122,8 @@ def get_all_presentaciones():
     cur.execute('''
                 SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
                         (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
-                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra, i.imagen_nombre as imagen             
+                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra, i.imagen_nombre as imagen,
+                        hpv.precio_venta_valor as precio_venta_almacen
                 FROM presentacion pre
                 JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
                 JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
@@ -2131,9 +2132,15 @@ def get_all_presentaciones():
                                                     AND pre.fk_material_botella_2 = compra.fk_presentacion_2
                                                     AND pre.fk_producto = compra.fk_presentacion_3
                                                     AND compra.precio_compra_fecha_fin is null)
-                join imagen i on (pre.fk_material_botella_1 = i.fk_presentacion_1
+                JOIN imagen i ON (pre.fk_material_botella_1 = i.fk_presentacion_1
                                 AND pre.fk_material_botella_2 = i.fk_presentacion_2
                                 AND pre.fk_producto = i.fk_presentacion_3)
+                JOIN historico_precio_venta hpv ON (hpv.fk_inventario_almacen_1 = 1
+                                                    AND pre.fk_material_botella_1 = hpv.fk_inventario_almacen_2
+                                                    AND pre.fk_material_botella_2 = hpv.fk_inventario_almacen_3
+                                                    AND pre.fk_producto = hpv.fk_inventario_almacen_4
+                                                    AND hpv.precio_venta_fecha_fin is null)
+
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -2307,3 +2314,26 @@ def editar_presentacion(id1, id2, id3):
 # RUTAS PARA EL INVENTARIO DE LA TIENDA
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA EL CARRITO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+@app.route("/api/carrito/add", methods=["POST"])
+def add_product():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    producto = request.get_json()
+    pprint(producto)
+    ids = producto.get("id")
+    id1 = ids.get("c1")
+    id2 = ids.get("c2")
+    id3 = ids.get("c3")
+
+    print(id1, id2, id3)
+
+    usuario = producto.get("usuario")
+
+    sql_algo = """ """
+
+    cur.close()
+    
+    return Response(status=200, response="Producto agregado exitosamente")

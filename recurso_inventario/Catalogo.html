@@ -132,19 +132,23 @@ $(document).ready(function() {
                     // var quantity = $(this).data('quantity');
                     // var usuarioId = 
                     // var tipoCliente = 
+
+                    data = {
+                        id: {
+                            c1: id1,
+                            c2: id2,
+                            c3: id3
+                        },
+                        // usuarioid: ,
+                        // tipocliente: ,
+                        // cantidad: quantity
+                    };
+
                     $.ajax({
                         url: 'http://localhost:5000/api/carrito/add',
                         type: 'POST',
-                        data: {
-                            id: {
-                                c1: id1,
-                                c2: id2,
-                                c3: id3
-                            },
-                            // usuarioid: ,
-                            // tipocliente: ,
-                            // cantidad: quantity
-                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
                         success: function() {
                             alert('Presentacion agregado al carrito exitosamente');
                         },
