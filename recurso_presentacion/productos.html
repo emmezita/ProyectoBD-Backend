@@ -17,3 +17,23 @@
         });
     });
 </script>
+
+<script>
+    function cargarProductos() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/presentacion/producto/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var productos = data;
+                productos.forEach(producto => {
+                    $("#form-field-producto").append("<option id="+ producto.codigo +">"+ producto.nombre +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los productos");
+            }
+        });
+    }
+</script>

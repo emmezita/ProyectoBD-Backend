@@ -283,7 +283,7 @@ $(document).ready(function() {
                 row.append('<td>' + data[i].precio_compra + '</td>');
                 row.append('<td>' + data[i].precio_venta_tienda + '</td>');
                 row.append('<td>' + data[i].precio_venta_almacen + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="editarPresentacion(' + data[i].c1 + ',' + data[i].c2 +',' + data[i].c2 + ')">Editar</button></td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="editarPresentacion(' + data[i].c1 + ',' + data[i].c2 +',' + data[i].c3 + ')">Editar</button></td>');
                 row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 
                 $('#body-presentaciones').append(row);
@@ -318,7 +318,7 @@ function editarProducto(id){
 
 function editarPresentacion(c1, c2, c3){
     console.log('editar Presentacion');
-    window.location.href = 'http://dilodev.co/formulario-editar-presentacion?c1=' + c1 + '&c2=' + c2 + '&c3=' + c3;
+    window.location.href = 'http://dilodev.co/formulario-editar-presentacion?id1=' + c1 + '&id2=' + c2 + '&id3=' + c3;
 }
 
 </script>

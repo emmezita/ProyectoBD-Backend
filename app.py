@@ -612,6 +612,44 @@ def deactivate_empleado(id):
 
     return "Empleado Desactivado"
 
+# Ruta para activar un empleado de la base de datos
+@app.route("/api/empleado/activate/<int:id>", methods=["PUT"])
+def activate_empleado(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    cur.execute("UPDATE contrato_de_empleo SET contrato_fecha_salida = %s WHERE fk_empleado = %s", (None, id))
+    #Editar cargo
+    cur.execute("SELECT fk_cargo, cont_carg_sueldo_mensual FROM contrato_cargo WHERE fk_contrato_empleo = %s ORDER BY cont_carg_fecha_inicio DESC LIMIT 1", (id,))
+    cargo = cur.fetchall()
+    
+    if cargo is not None:
+        cur.execute(
+            """
+            INSERT INTO Contrato_Cargo (
+                cont_carg_fecha_inicio, cont_carg_fecha_cierre, cont_carg_sueldo_mensual, fk_contrato_empleo, fk_cargo
+            )
+            VALUES (%s, %s, %s, %s, %s);
+            """
+        , (datetime.datetime.now(), None, cargo['cont_carg_sueldo_mensual'], id, cargo['fk_cargo'])
+        )
+    #Editar departamento
+    cur.execute("SELECT fk_departamento FROM contrato_departamento WHERE fk_contrato_empleo = %s ORDER BY cont_depart_fecha_inicio DESC LIMIT 1", (id,))
+    departamento = cur.fetchone()
+    if departamento is not None:
+        cur.execute(
+            """
+            INSERT INTO Contrato_Departamento (
+                cont_depart_fecha_inicio, cont_depart_fecha_cierre, fk_contrato_empleo, fk_departamento
+            )
+            VALUES (%s, %s, %s, %s);
+            """
+        , (datetime.datetime.now(), None, id, departamento)
+        )
+    conn.commit()
+    cur.close()
+
+    return "Empleado Activado"
+
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE CLIENTE NATURAL
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2062,28 +2100,34 @@ def get_presentacion(id1, id2, id3):
         SELECT * FROM presentacion WHERE fk_material_botella_1 = %s AND fk_material_botella_2 = %s AND fk_producto = %s
     """
     sql_material = """
-        SELECT * FROM material WHERE material_codigo = %s
+        SELECT material_nombre FROM material WHERE material_codigo = %s
     """
     sql_botella = """
-        SELECT * FROM botella WHERE botella_codigo = %s
+        SELECT botella_descripcion FROM botella WHERE botella_codigo = %s
     """
     sql_tapa = """
-        SELECT * FROM tapa WHERE tapa_codigo = %s
+        SELECT tapa_descripcion FROM tapa WHERE tapa_codigo = %s
     """
     sql_empaque = """
-        SELECT * FROM caja WHERE caja_codigo = %s
+        SELECT  pr.caja_codigo AS primario, se.caja_codigo AS secundario
+        FROM caja AS se
+        JOIN caja AS pr ON se.fk_caja = pr.caja_codigo
+        WHERE se.caja_codigo = %s
     """
     sql_producto = """
-        SELECT * FROM producto WHERE producto_codigo = %s
+        SELECT producto_nombre FROM producto WHERE producto_codigo = %s
     """
     sql_compra = """
-        SELECT * FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
+        SELECT precio_compra_valor FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
     """
     sql_venta_tienda = """
-        SELECT * FROM historico_precio_venta WHERE fk_inventario_tienda_2 = %s AND fk_inventario_tienda_3 = %s AND fk_inventario_tienda_4 = %s AND precio_venta_fecha_fin is null
+        SELECT precio_venta_valor FROM historico_precio_venta WHERE fk_inventario_tienda_2 = %s AND fk_inventario_tienda_3 = %s AND fk_inventario_tienda_4 = %s AND precio_venta_fecha_fin is null
     """
     sql_venta_almacen = """
-        SELECT * FROM historico_precio_venta WHERE fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s AND precio_venta_fecha_fin is null
+        SELECT precio_venta_valor FROM historico_precio_venta WHERE fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s AND precio_venta_fecha_fin is null
+    """
+    sql_imagen = """
+        SELECT imagen_nombre FROM imagen WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s
     """
     
     cur.execute(sql_presentacion, (id1, id2, id3))
@@ -2115,6 +2159,9 @@ def get_presentacion(id1, id2, id3):
     cur.execute(sql_venta_almacen, (id1, id2, id3))
     venta_almacen = cur.fetchone()
     
+    cur.execute(sql_imagen, (id1, id2, id3))
+    imagen = cur.fetchone()
+    
     cur.close()
 
     datos = jsonify({
@@ -2126,7 +2173,8 @@ def get_presentacion(id1, id2, id3):
         'producto': producto,
         'compra': compra,
         'venta_tienda': venta_tienda,
-        'venta_almacen': venta_almacen
+        'venta_almacen': venta_almacen,
+        'imagen': imagen
     }) 
     
     pprint(datos)
