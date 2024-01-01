@@ -12,8 +12,9 @@
 </head>
 <body>
     <div class="mt-4 mx-auto">
+<ul>
 
-        <li class="entry content-bg loop-entry product type-product status-publish first instock product_cat-ron has-post-thumbnail shipping-taxable purchasable product-type-simple">
+        <li class="entry content-bg loop-entry product type-product status-publish first instock product_cat-ron has-post-thumbnail shipping-taxable purchasable product-type-simple" style="display: none;">
             <a href="" class="woocommerce-loop-image-link woocommerce-LoopProduct-link woocommerce-loop-product__link">
                 <span class="onsale" style="display:none;">¡Oferta!</span>
                 <img width="300" height="300" src=""
@@ -32,7 +33,7 @@
                                 <span class="woocommerce-Price-currencySymbol">
                                     $
                                 </span>
-                                40,00
+                                <!--Precio-->
                             </bdi>
                         </span>
                     </del>
@@ -43,15 +44,15 @@
                                 <span class="woocommerce-Price-currencySymbol">
                                     $
                                 </span>
-                                32,00
+                                <!--Precio oferta-->
                             </bdi>
                         </span>
                     </ins>
                 </span>
                 <div class="product-action-wrap">
-                    <a href="#" data-quantity="1" class="button product_type_simple add_to_cart_button ajax_add_to_cart"
+                    <a data-quantity="1" class="button product_type_simple add_to_cart_button ajax_add_to_cart"
                         data-product_sku="" aria-label="Añade “RON PAMPERO ANIVERSARIO” a tu carrito" aria-describedby=""
-                        rel="nofollow">Añadir al carrito
+                        rel="nofollow" style="cursor: pointer;">Añadir al carrito
                         <span class="kadence-svg-iconset svg-baseline">
                             <svg aria-hidden="true" class="kadence-svg-icon kadence-arrow-right-alt-svg" fill="currentColor" version="1.1"
                                 xmlns="http://www.w3.org/2000/svg" width="27" height="28" viewBox="0 0 27 28">
@@ -81,6 +82,8 @@
                 </div>
             </div>
         </li>
+
+    </ul>
         
     </div>
 
@@ -90,19 +93,19 @@
 $(document).ready(function() {
     var data = null;
     $.ajax({
-        url: 'http://localhost:5000/api/productos/all',
+        url: 'http://localhost:5000/api/presentacion/all',
         type: 'GET',
         dataType: 'json',
         success: function(d) {
             data = d;
-            var verProductoUrl = 'https://dilodev.co/producto?Id=';
+            var verPresentacionUrl = 'https://dilodev.co/presentacion';
 
             for (var i = 0; i < data.length; i++) {
 
                 // Create a new li element with the same structure
-                var newLi = $('li').first().clone();
+                var newLi = $('li').first().clone().css('display', 'block');
 
-                var url = verProductoUrl + data[i].id;
+                var url = verPresentacionUrl + "?id1=" + data[i].c1 + "&id2=" + data[i].c2 + "&id3=" + data[i].c3;
                 // Change the data as needed
                 newLi.find('a.woocommerce-loop-image-link').attr('href', url);
                 newLi.find('img').attr('src', data[i].imagen);
@@ -110,18 +113,22 @@ $(document).ready(function() {
                 
                 if (data[i].oferta) {
                     newLi.find('.onsale').show();
-                    newLi.find('.price del .woocommerce-Price-amount bdi').text('$' + data[i].precio);
-                    newLi.find('.price ins .woocommerce-Price-amount bdi').text('$' + data[i].precioOferta);
+                    newLi.find('.price del .woocommerce-Price-amount bdi').text('$' + data[i].precio_venta_almacen);
+                    newLi.find('.price ins .woocommerce-Price-amount bdi').text('$' + data[i].precio_descuento);
                 } else {
                     var precioOG = newLi.find('.price del .woocommerce-Price-amount bdi').first().clone();
-                    newLi.find('.price').html(newLi.find('.woocommerce-Price-amount bdi').first().clone().text('$' + data[i].precio));
+                    newLi.find('.price').html(newLi.find('.woocommerce-Price-amount bdi').first().clone().text('$' + data[i].precio_venta_almacen));
                     newLi.find('.price ins').remove();
                 }
 
-                newLi.find('.add_to_cart_button').data('product_id', data[i].id);
+                newLi.find('.add_to_cart_button').data('id1', data[i].c1);
+                newLi.find('.add_to_cart_button').data('id2', data[i].c2);
+                newLi.find('.add_to_cart_button').data('id3', data[i].c3);
 
                 newLi.find('.add_to_cart_button').on('click', function() {
-                    var productId = $(this).data('product_id');
+                    var id1 = $(this).data('id1');
+                    var id2 = $(this).data('id2');
+                    var id3 = $(this).data('id3');
                     // var quantity = $(this).data('quantity');
                     // var usuarioId = 
                     // var tipoCliente = 
@@ -129,26 +136,27 @@ $(document).ready(function() {
                         url: 'http://localhost:5000/api/carrito/add',
                         type: 'POST',
                         data: {
-                            productoid: productId,
+                            id: {
+                                c1: id1,
+                                c2: id2,
+                                c3: id3
+                            },
                             // usuarioid: ,
                             // tipocliente: ,
                             // cantidad: quantity
                         },
                         success: function() {
-                            alert('Producto agregado al carrito exitosamente');
+                            alert('Presentacion agregado al carrito exitosamente');
                         },
                         error: function() {
-                            alert('Hubo un error agregando el producto al carrito');
+                            alert('Hubo un error agregando la Presentacion al carrito');
                         }
                     });
                 });
 
                 // Append the new li to the ul
-                $('ul').append(newLi);
-               
+                $('ul').append(newLi);  
             }
-
-           
         },
         error: function() {
             alert('Hubo un error obteniendo los productos');

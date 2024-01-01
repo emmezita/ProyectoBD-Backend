@@ -1,12 +1,14 @@
 from calendar import c
 import datetime
+import os
 from tkinter import N
 import traceback
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request, jsonify, url_for
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
 from pprint import pprint # se utiliza la libreria pprint para imprimir los datos de una forma mas legible
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 CORS(app)
@@ -2131,6 +2133,12 @@ def get_all_presentaciones():
                 ''')
     rows = cur.fetchall()
     cur.close()
+
+    # cambiar la imagen por la ruta de la imagen (local)
+    for row in rows:
+        filename = secure_filename(row["imagen"])
+        row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
+
     pprint(rows)
     return jsonify(rows)
 
@@ -2207,6 +2215,8 @@ def get_presentacion(id1, id2, id3):
     
     cur.execute(sql_imagen, (id1, id2, id3))
     imagen = cur.fetchone()
+    if imagen is not None:
+        imagen['imagen_nombre'] = os.path.join(app.root_path, 'static', 'img', imagen['imagen_nombre'])
     
     cur.close()
 
