@@ -831,12 +831,13 @@ def registrar_cliente_natural():
 @app.route("/api/cliente/natural/all", methods=["GET"])
 def get_all_clientes_naturales():
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_nat_codigo as codigo, persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
+    cur.execute('''
+                SELECT persona_nat_codigo as codigo, persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
                 persona_nat_fecha_nac as fecha_nacimiento,
                 cliente_nat_puntos_acumulados as puntos_acumulados, afiliacion_numero as afiliacion
-                FROM persona_natural pn, cliente_natural cn, ficha_afiliacion fa
-                where pn.persona_nat_codigo = cn.cliente_nat_codigo
-                and fa.fk_cliente_natural = cn.cliente_nat_codigo
+                FROM persona_natural pn
+                JOIN cliente_natural cn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+                LEFT JOIN ficha_afiliacion fa ON fa.fk_cliente_natural = cn.cliente_nat_codigo
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -1194,11 +1195,12 @@ def registrar_cliente_juridico():
 @app.route("/api/cliente/juridico/all", methods=["GET"])
 def get_all_clientes_juridicos():
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_jur_codigo as codigo, persona_jur_rif as rif, persona_jur_denom_comercial as denom, 
+    cur.execute('''
+                SELECT persona_jur_codigo as codigo, persona_jur_rif as rif, persona_jur_denom_comercial as denom, 
                  persona_jur_capital_disp as capital, cliente_jur_puntos_acumulados as puntos_acumulados, afiliacion_numero as afiliacion
-                FROM persona_juridica pj, cliente_juridico cj, ficha_afiliacion fa
-                where pj.persona_jur_codigo = cj.cliente_jur_codigo
-                and fa.fk_persona_juridica = cj.cliente_jur_codigo
+                FROM persona_juridica pj
+                JOIN cliente_juridico cj ON pj.persona_jur_codigo = cj.cliente_jur_codigo
+                LEFT JOIN ficha_afiliacion fa ON fa.fk_persona_juridica = cj.cliente_jur_codigo
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -1370,9 +1372,9 @@ def delete_cliente_juridico(id):
 
 
 
-# >>>>>>>>>>>>>>>>>>>>>>
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR OPERACIONES DE INVENTARIO
-# >>>>>>>>>>>>>>>>>>>>>>
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # Ruta para obtener todos los productos (presentaciones) del inventario de una tienda
 @app.route("/api/tienda/inventario/productos/all", methods=["GET"])
