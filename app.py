@@ -1,12 +1,14 @@
 from calendar import c
 import datetime
+import os
 from tkinter import N
 import traceback
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request, jsonify, url_for
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
 from pprint import pprint # se utiliza la libreria pprint para imprimir los datos de una forma mas legible
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 CORS(app)
@@ -2054,7 +2056,8 @@ def get_all_presentaciones():
                 SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
                         (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
                         pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra,
-                        venta1.precio_venta_valor as precio_venta_tienda, venta2.precio_venta_valor as precio_venta_almacen
+                        venta1.precio_venta_valor as precio_venta_tienda, venta2.precio_venta_valor as precio_venta_almacen,
+                        imagen_nombre as imagen
                 FROM presentacion pre
                 JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
                 JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
@@ -2071,9 +2074,19 @@ def get_all_presentaciones():
                                                 AND pre.fk_material_botella_2 = venta2.fk_inventario_almacen_3
                                                 AND pre.fk_producto = venta2.fk_inventario_almacen_4
                                                 AND venta2.precio_venta_fecha_fin is null)
+                JOIN imagen img ON (pre.fk_material_botella_1 = img.fk_presentacion_1 
+                                AND pre.fk_material_botella_2 = img.fk_presentacion_2
+                                AND pre.fk_producto = img.fk_presentacion_3)
+                ORDER BY nombre;
                 ''')
     rows = cur.fetchall()
     cur.close()
+
+    # cambiar la imagen por la ruta de la imagen (local)
+    for row in rows:
+        filename = secure_filename(row["imagen"])
+        row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
+
     pprint(rows)
     return jsonify(rows)
 
@@ -2161,6 +2174,8 @@ def get_presentacion(id1, id2, id3):
     
     cur.execute(sql_imagen, (id1, id2, id3))
     imagen = cur.fetchone()
+    if imagen is not None:
+        imagen['imagen_nombre'] = os.path.join(app.root_path, 'static', 'img', imagen['imagen_nombre'])
     
     cur.close()
 
