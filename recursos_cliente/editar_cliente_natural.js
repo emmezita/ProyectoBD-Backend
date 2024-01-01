@@ -20,7 +20,7 @@ function llenarEMP(estado, municipio, parroquia) {
 }
 
 function llenarTDCs(tarjetas) {
-    TDCs.forEach(TDC => {
+    tarjetas.forEach(TDC => {
         $("#body-TDC").append("<tr><td id="+ TDC.banco.banco_codigo +">"+TDC.banco.banco_nombre+"</td><td>"+TDC.tdc_numero+"</td><td>"+TDC.tdc_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
     });
 }
