@@ -8,7 +8,6 @@ import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de 
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
 from pprint import pprint # se utiliza la libreria pprint para imprimir los datos de una forma mas legible
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 CORS(app)
@@ -2123,7 +2122,7 @@ def get_all_presentaciones():
     cur.execute('''
                 SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
                         (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
-                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra                
+                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra, i.imagen_nombre as imagen             
                 FROM presentacion pre
                 JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
                 JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
@@ -2132,13 +2131,16 @@ def get_all_presentaciones():
                                                     AND pre.fk_material_botella_2 = compra.fk_presentacion_2
                                                     AND pre.fk_producto = compra.fk_presentacion_3
                                                     AND compra.precio_compra_fecha_fin is null)
+                join imagen i on (pre.fk_material_botella_1 = i.fk_presentacion_1
+                                AND pre.fk_material_botella_2 = i.fk_presentacion_2
+                                AND pre.fk_producto = i.fk_presentacion_3)
                 ''')
     rows = cur.fetchall()
     cur.close()
 
     # cambiar la imagen por la ruta de la imagen (local)
     for row in rows:
-        filename = secure_filename(row["imagen"])
+        filename = row['imagen']
         row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
 
     pprint(rows)
