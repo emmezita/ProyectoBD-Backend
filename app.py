@@ -2326,6 +2326,100 @@ def get_all_presentaciones_evento():
     pprint(rows)
     return jsonify(rows)
 
+# Ruta para registrar un evento en la base de datos
+@app.route("/api/evento/registrar", methods=["POST"])
+def registrar_evento():
+    cur = conn.cursor()
+    evento = request.get_json()
+    pprint(evento)
+    nombre = evento.get("nombre")
+    cupos = evento.get("cupos")
+    cupos = int(cupos)
+    entradas = evento.get("entradas")
+    entradas = int(entradas)
+    fecha_inicio = evento.get("fechainicio")
+    fecha_cierre = evento.get("fechacierre")
+    presentaciones = evento.get("presentaciones")
+    descripcion = evento.get("descripcion")
+    direccion = evento.get("direccion")
+    parroquia = evento.get("parroquia")
+    
+    sql_evento = """
+        INSERT INTO evento(
+	        evento_nombre, evento_descripcion, evento_num_entradas, evento_fecha_inicio, evento_fecha_cierre, evento_direccion, evento_num_cupos, fk_lugar)
+	    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING evento_codigo;
+    """
+    
+    sql_presentacion = """
+        INSERT INTO evento_lista_producto(
+            even_prod_precio_unitario, even_prod_cantidad, fk_evento, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia))
+        result = cur.fetchone()
+        evento_codigo = result[0] if result is not None else None
+        for presentacion in presentaciones:
+            cur.execute(sql_presentacion, (presentacion['precio'], presentacion['cantidad'], evento_codigo, 1, presentacion['material'], presentacion['botella'], presentacion['producto']))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Evento registrado exitosamente")
+
+# Ruta para obtener los datos de un evento de la base de datos
+@app.route("/api/evento/<int:id>", methods=["GET"])
+def get_evento(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    sql_evento = """
+        SELECT * FROM evento WHERE evento_codigo = %s 
+    """
+    sql_lugar = """
+        SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
+        FROM lugar AS p
+        JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
+        JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
+        WHERE p.lugar_codigo = %s
+    """
+    sql_presentaciones = """
+        SELECT lista.fk_inventario_almacen_2 as c1, lista.fk_inventario_almacen_3 as c2, lista.fk_inventario_almacen_4 as c3, 
+        (pro.producto_nombre || ' en ' || bo.botella_descripcion || ' de ' || ma.material_nombre || ' ' || bo.botella_capacidad) as nombre    
+        FROM evento_lista_producto lista
+        JOIN material ma ON lista.fk_inventario_almacen_2 = ma.material_codigo
+        JOIN botella bo ON lista.fk_inventario_almacen_3 = bo.botella_codigo
+        JOIN producto pro ON lista.fk_inventario_almacen_4 = pro.producto_codigo
+        WHERE fk_evento = %s
+    """
+    cur.execute(sql_evento, (id,))
+    evento = cur.fetchone()
+    if evento is None:
+        return Response(status=404, response="Evento no encontrado")
+    
+    cur.execute(sql_lugar, (evento['fk_lugar'],))
+    lugar = cur.fetchone()
+    
+    cur.execute(sql_presentaciones, (id,))
+    presentaciones = cur.fetchall()
+    
+    cur.close()
+
+    datos = jsonify({
+        'evento': evento,
+        'lugar': lugar,
+        'presentaciones': presentaciones
+    })
+    
+    pprint(datos)
+    
+    return datos
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL CARRITO
