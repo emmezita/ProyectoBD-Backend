@@ -2147,8 +2147,9 @@ def get_all_presentaciones():
 
     # cambiar la imagen por la ruta de la imagen (local)
     for row in rows:
-        filename = row['imagen']
-        row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
+        # filename = row['imagen']
+        # row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
+        row['imagen'] = "https://asoronucab.blob.core.windows.net/images/" + row['imagen']
 
     pprint(rows)
     return jsonify(rows)

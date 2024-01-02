@@ -7,14 +7,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" rel="stylesheet">
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 </head>
 <body>
-    <div class="mt-4 mx-auto">
-<ul>
+<div class="mt-4 mx-auto">
 
-        <li class="entry content-bg loop-entry product type-product status-publish first instock product_cat-ron has-post-thumbnail shipping-taxable purchasable product-type-simple" style="display: none;">
+    <ul id="ul-prueba"> <!-- Eliminar ul al copiar -->
+
+        <li id="producto-card" class="entry content-bg loop-entry product type-product status-publish first instock product_cat-ron has-post-thumbnail shipping-taxable purchasable product-type-simple" style="display: none;">
             <a href="" class="woocommerce-loop-image-link woocommerce-LoopProduct-link woocommerce-loop-product__link">
                 <span class="onsale" style="display:none;">¡Oferta!</span>
                 <img width="300" height="300" src=""
@@ -82,15 +81,17 @@
                 </div>
             </div>
         </li>
-
     </ul>
         
-    </div>
-
+</div>
 
 <script>
 
 $(document).ready(function() {
+
+    // limpiamos los productos que vienen de la plantilla
+    $('ul.products').html('');
+
     var data = null;
     $.ajax({
         url: 'http://localhost:5000/api/presentacion/all',
@@ -103,7 +104,7 @@ $(document).ready(function() {
             for (var i = 0; i < data.length; i++) {
 
                 // Create a new li element with the same structure
-                var newLi = $('li').first().clone().css('display', 'block');
+                var newLi = $('#producto-card').first().clone().css('display', 'block').attr('id', 'producto-card-' + i);
 
                 var url = verPresentacionUrl + "?id1=" + data[i].c1 + "&id2=" + data[i].c2 + "&id3=" + data[i].c3;
                 // Change the data as needed
@@ -159,7 +160,7 @@ $(document).ready(function() {
                 });
 
                 // Append the new li to the ul
-                $('ul').append(newLi);  
+                $('ul.products').append(newLi);  
             }
         },
         error: function() {
@@ -167,22 +168,6 @@ $(document).ready(function() {
         }
     });
 });       
-
-$('#deactivate-employee-button').click(function() {
-    console.log('desactivate');
-    var employeeId = $(this).data('employee-id');
-    $.ajax({
-        url: 'http://localhost:5000/api/empleado/deactivate/' + employeeId,
-        type: 'PUT',
-        success: function() {
-            alert('Empleado desactivado exitosamente');
-            location.reload();
-        },
-        error: function() {
-            alert('Hubo un error desactivando el empleado');
-        }
-    });
-});
 
 // como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
 //le sumamos 5 horas por para pasar de dia al correcto
@@ -201,8 +186,8 @@ function formatDate(dateString) {
 
     return [day, month, year].join('/');
 }
-
 </script>
-</body>
 
+
+</body>
 </html>
