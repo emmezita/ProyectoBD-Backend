@@ -1368,24 +1368,6 @@ def delete_cliente_juridico(id):
 
     return "Cliente Eliminado"
 
-
-
-
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# RUTAS PARA REALIZAR OPERACIONES DE INVENTARIO
-# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-# Ruta para obtener todos los productos (presentaciones) del inventario de una tienda
-@app.route("/api/tienda/inventario/productos/all", methods=["GET"])
-def get_productos():
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-
-    cur.callproc('get_productos')
-    productos = cur.fetchall()
-    cur.close()
-    pprint(productos)
-    return jsonify(productos)
-
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRODUCTO
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2311,8 +2293,39 @@ def editar_presentacion(id1, id2, id3):
     return Response(status=200, response="Presentacion editada exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# RUTAS PARA EL INVENTARIO DE LA TIENDA
+# RUTAS PARA EL CRUD DE EVENTOS
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todos los eventos de la base de datos
+@app.route("/api/evento/all", methods=["GET"])
+def get_all_eventos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT evento_codigo as codigo, evento_nombre as nombre, evento_num_cupos as cupos, evento_num_entradas as entradas, evento_fecha_inicio as fecha_inicio, evento_fecha_cierre as fecha_cierre
+                FROM evento
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+    return jsonify(rows)
+
+# Ruta para obtener las presentaciones de la base de datos
+@app.route("/api/evento/presentacion/all", methods=["GET"])
+def get_all_presentaciones_evento():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
+                        (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad             
+                FROM presentacion pre
+                JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
+                JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
+                JOIN producto pro ON pre.fk_producto = pro.producto_codigo
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+
+    pprint(rows)
+    return jsonify(rows)
+
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL CARRITO

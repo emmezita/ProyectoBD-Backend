@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+
+    <style>   
+        
+        /* Estilo para el botón de añadir */
+        .btn-primary {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #D1991A;
+            border-color: #D1991A;
+        }
+        .btn-primary:hover {
+            background-color: #956d11;
+            border-color: #956d11;
+        }
+
+        /* Estilo para el botón de eliminar */
+        .btn-danger {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #FF0000;
+            border-color: #FF0000;
+        }
+        .btn-danger:hover {
+            background-color: #b30000;
+            border-color: #b30000;
+        }
+
+        table {
+            font-family: 'Hind', sans-serif;
+            color: #202020;
+            font-size: 14px;
+            font-weight: 400;
+            width: 96%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+    
+        th, td {
+            border: 1px solid #999;
+            padding: 0.5rem;
+            text-align: left;
+        }
+    
+        th {
+            background-color: #f3f3f3;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+    </style>
+    
+        <!-- 3 componentes, izquierda combobox de presentaciones, en el medio input de monto $, a la izquierda boton de anadir -->
+        <div class="ms-5">
+            <div class="row mt-5">
+                <div class="row">
+                    <div class="col-3">
+                        <select id="product-select" class="form-select combo-box-pre" aria-label="elige">
+                            <!-- Se llena con jquery -->
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input id="quantity-input" type="number" class="form-control" placeholder="Cantidad" min="1" max="1000">
+                    </div>
+                    <div class="col-3">
+                        <input id="price-input" type="number" class="form-control" placeholder="Precio Unitario" min="0">
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-primary" onclick="addPresentacion(this, event)">Añadir</button>
+                    </div>
+                </div>
+            </div>
+            <!-- y cuando anadas este se mostrara en una lista -->
+            <div class="mt-2 ">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Producto con su presentación</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Editar</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-presentaciones">
+                        <!-- Se llena con jquery -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+<script>
+    function addPresentacion(e, event){
+        event.preventDefault();
+        var presentacion = $(e).parent().parent().find("select").val();
+        var presentacionId1 = $(e).parent().parent().find("select").find(":selected").attr("idmaterial");
+        var presentacionId2 = $(e).parent().parent().find("select").find(":selected").attr("idbotella");
+        var presentacionId3 = $(e).parent().parent().find("select").find(":selected").attr("idproducto");
+        var cantidad = $(e).parent().parent().find("#quantity-input").val();
+        var precioUnitario = $(e).parent().parent().find("#price-input").val();
+
+        // Check if the benefit already exists
+        if (presentacionExists(presentacionId1, presentacionId2, presentacionId3)) {
+            alert("El presentacion ya existe en la tabla.");
+            return;
+        }   
+
+        var fila = "<tr><td idmaterial="+ presentacionId1 + " idbotella=" + presentacionId2+ " idproducto=" + presentacionId3 +">"+presentacion+"</td><td>"+cantidad+"</td><td>"+precioUnitario+"</td><td><button type='button' class='btn btn-primary' onclick='editPresentacion(this)'>Editar</button></td><td><button type='button' class='btn btn-danger' onclick='deletePresentacion(this)'>Eliminar</button></td></tr>";        $("#body-presentaciones").append(fila);
+        //clean inputs
+        $(e).parent().parent().find("select").val("");
+        $(e).parent().parent().find("#quantity-input").val("");
+        $(e).parent().parent().find("#price-input").val("");
+    }
+    function deletePresentacion(e){
+        $(e).parent().parent().remove();
+    }
+
+    function editPresentacion(e){
+        var presentacion = $(e).parent().parent().find("td").eq(0).html();
+        var cantidad = $(e).parent().parent().find("td").eq(1).html();
+        var precioUnitario = $(e).parent().parent().find("td").eq(2).html();
+
+        $(e).parent().parent().find("td").eq(0).html($("#product-select").clone().val(presentacion));
+        $(e).parent().parent().find("td").eq(1).html("<input type='number' value='"+cantidad+"'>");
+        $(e).parent().parent().find("td").eq(2).html("<input type='number' value='"+precioUnitario+"'>");
+        $(e).parent().parent().find("td").eq(3).html("<button type='button' class='btn btn-success' onclick='savePresentacion(this)'>Guardar</button>");
+        $(e).parent().parent().find("td").eq(4).html("<button type='button' class='btn btn-danger' onclick='deletePresentacion(this)'>Eliminar</button>");
+
+    }
+
+    function savePresentacion(e){
+        var presentacion = $(e).parent().parent().find("td").eq(0).find(".combo-box-pre").val();
+        var presentacionId1 = $(e).parent().parent().find("td").eq(0).find(".combo-box-pre").find(":selected").attr("idmaterial");
+        var presentacionId2 = $(e).parent().parent().find("td").eq(0).find(".combo-box-pre").find(":selected").attr("idbotella");
+        var presentacionId3 = $(e).parent().parent().find("td").eq(0).find(".combo-box-pre").find(":selected").attr("idproducto");
+        var cantidad = $(e).parent().parent().find("td").eq(1).find("input").val();
+        var precioUnitario = $(e).parent().parent().find("td").eq(2).find("input").val();
+
+        // Check if the presentation already exists
+        if (presentacionExists(presentacionId1, presentacionId2, presentacionId3, e)) {
+            alert("La presentación ya existe en la tabla.");
+            return;
+        }
+
+        $(e).parent().parent().find("td").eq(0).html(presentacion).attr("idmaterial", presentacionId1).attr("idbotella", presentacionId2).attr("idproducto", presentacionId3);
+        $(e).parent().parent().find("td").eq(1).html(cantidad);
+        $(e).parent().parent().find("td").eq(2).html(precioUnitario);
+        $(e).parent().parent().find("td").eq(3).html("<button type='button' class='btn btn-primary' onclick='editPresentacion(this)'>Editar</button>");
+        $(e).parent().parent().find("td").eq(4).html("<button type='button' class='btn btn-danger' onclick='deletePresentacion(this)'>Eliminar</button>");
+
+    }
+   
+    function presentacionExists(presentacionId1, presentacionId2, presentacionId3, e) {
+        var exists = false;
+        $("#body-presentaciones tr").each(function() {
+            // si existe e es porque se esta editando, por lo que no se debe validar la presentacion que se esta editando
+            if (e && $(this).find("td").eq(0).find(".combo-box-pre").val() === $(e).parent().parent().find("td").eq(0).find(".combo-box-pre").val()) {
+                return true;
+            }
+            var currentPresentacionId1 = $(this).find("td").eq(0).attr('idmaterial');
+            var currentPresentacionId2 = $(this).find("td").eq(0).attr('idbotella');
+            var currentPresentacionId3 = $(this).find("td").eq(0).attr('idproducto');
+            if (currentPresentacionId1 == presentacionId1 && currentPresentacionId2 == presentacionId2 && currentPresentacionId3 == presentacionId3) {
+                exists = true;
+                return false; 
+            }
+        });
+            return exists;
+    }
+
+    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/evento/presentacion/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var presentaciones = data;
+                presentaciones.forEach(presentacion => {
+                    $(".combo-box-pre").append("<option idmaterial="+ presentacion.c1 + " idbotella=" + presentacion.c2 + " idproducto=" + presentacion.c3 + ">"+ presentacion.nombre + " en " + presentacion.botella + " " + presentacion.capacidad + "</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar los presentaciones");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
