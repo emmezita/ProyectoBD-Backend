@@ -80,23 +80,29 @@ $(document).ready(function() {
                     $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
                 });
             });
+
+            getEvento();
         },
         error: function() {
             alert('Error obteniendo ubicaciones');
         }
     });
 
+
+});
+
+function getEvento(){
     $.ajax({
         url: 'http://localhost:5000/api/evento/'+idEditar,
         type: 'GET',
         dataType: 'json',
-        success: function(d) {
-            console.log(d);
+        success: function(data) {
+            console.log(data);
             $("#form-field-nombre").val(data.evento.evento_nombre);
             $("#form-field-cupos").val(data.evento.evento_num_cupos);
             $("#form-field-entradas").val(data.evento.evento_num_entradas);
             $("#form-field-fechainicio").val(formatDate(data.evento.evento_fecha_inicio));
-            $("#form-field-fechacierre").val(formatDate(data.evento.evento_fecha_fin));
+            $("#form-field-fechacierre").val(formatDate(data.evento.evento_fecha_cierre));
             $("#form-field-direccion").val(data.evento.evento_direccion);
             $("#form-field-descripcion").val(data.evento.evento_descripcion);
 
@@ -107,4 +113,4 @@ $(document).ready(function() {
             alert('Error obteniendo evento');
         }
     });
-});
+}

@@ -953,7 +953,6 @@ def editar_cliente_natural(id):
     sql_eliminar = """
         DELETE FROM Correo WHERE fk_persona_natural = %s;
         DELETE FROM Telefono WHERE fk_persona_natural = %s;
-        DELETE FROM TDC WHERE fk_persona_natural = %s;
     """
     sql_correo = """
         INSERT INTO Correo (
@@ -972,15 +971,31 @@ def editar_cliente_natural(id):
     """
     try:
         cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia, id))
-        cur.execute(sql_eliminar, (id, id, id))
+        cur.execute(sql_eliminar, (id, id))
         cur.execute(sql_correo, (correo, id, None))
         if correo_alt:
             cur.execute(sql_correo, (correo_alt, id, None))
         cur.execute(sql_telefono, (cod_area, telefono, id, None))
         if cod_area_alt and telefono_alt:
             cur.execute(sql_telefono, (cod_area_alt, telefono_alt, id, None))
+
+        cur.execute("SELECT * FROM TDC WHERE fk_persona_natural = %s", (id,))
+        existeTDC = cur.fetchall()
+
+        # Create a set of card numbers from tdc
+        tdc_cards = set(tarjeta['numero'] for tarjeta in tdc)
+        existing_cards = set(card['tdc_numero_tarjeta'] for card in existeTDC) # type: ignore
+
+        for card in existeTDC:
+            # If a card in the database is not in tdc, delete it
+            if card['tdc_numero_tarjeta'] not in tdc_cards: # type: ignore
+                cur.execute("DELETE FROM TDC WHERE fk_persona_natural = %s AND tdc_numero_tarjeta = %s", (id, card['tdc_numero_tarjeta'])) # type: ignore
+
         for tarjeta in tdc:
-            cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], id, None))
+            # If a card in tdc is not in the database, add it
+            if tarjeta['numero'] not in existing_cards: # type: ignore
+                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], id, None))
+
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -1320,7 +1335,6 @@ def editar_cliente_juridico(id):
     sql_eliminar = """
         DELETE FROM Correo WHERE fk_persona_juridica = %s;
         DELETE FROM Telefono WHERE fk_persona_juridica = %s;
-        DELETE FROM TDC WHERE fk_persona_juridica = %s;
         DELETE FROM Contacto WHERE fk_persona_juridica = %s;
     """
     sql_correo = """
@@ -1345,17 +1359,35 @@ def editar_cliente_juridico(id):
     """
     try:
         cur.execute(sql_persona_juridica, (cj_nacionalidad_rif, cjdireccionfiscal, cjdireccionfisica, cjdenom, cjrazon, cjpaginaweb, cjcapital, cjparroquiafiscal, cjparroquiafisica, id))
-        cur.execute(sql_eliminar, (id, id, id, id))
+        cur.execute(sql_eliminar, (id, id, id))
         cur.execute(sql_correo, (cjcorreo, None, id))
         if cjcorreoalt:
             cur.execute(sql_correo, (cjcorreoalt, None, id))
         cur.execute(sql_telefono, (cjcodarea, cjtelefono, None, id))
         if cjcodareaalt and cjtelefonoalt:
             cur.execute(sql_telefono, (cjcodareaalt, cjtelefonoalt, None, id))
+
+        # verificar si tiene tarjetas de credito registradas
+        cur.execute("SELECT * FROM TDC WHERE fk_persona_juridica = %s", (id,))
+        existeTDC = cur.fetchall()
+
+        # Create a set of card numbers from cjtdc
+        cjtdc_cards = set(tarjeta['numero'] for tarjeta in cjtdc)
+        existing_cards = set(card['tdc_numero_tarjeta'] for card in existeTDC) # type: ignore
+
+        for card in existeTDC:
+            # If a card in the database is not in cjtdc, delete it
+            if card['tdc_numero_tarjeta'] not in cjtdc_cards: # type: ignore
+                cur.execute("DELETE FROM TDC WHERE fk_persona_juridica = %s AND tdc_numero_tarjeta = %s", (id, card['tdc_numero_tarjeta'])) # type: ignore
+
         for tarjeta in cjtdc:
-            cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, id))
+            # If a card in cjtdc is not in the database, add it
+            if tarjeta['numero'] not in existing_cards: # type: ignore
+                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, id))
+
         for contacto in cjcontactos:
-            cur.execute(sql_contacto, (contacto['nombre'], contacto['numero'], contacto['correo'], id))
+            cur.execute(sql_contacto, (contacto['nombre'], contacto['telefono'], contacto['correo'], id))
+
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
