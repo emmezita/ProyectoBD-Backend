@@ -134,7 +134,6 @@
         var cantidad = $(e).parent().parent().find("td").eq(1).html();
         var precioUnitario = $(e).parent().parent().find("td").eq(2).html();
 
-        $(e).parent().parent().find("td").eq(0).html($("#product-select").clone().val(presentacion));
         $(e).parent().parent().find("td").eq(1).html("<input type='number' value='"+cantidad+"'>");
         $(e).parent().parent().find("td").eq(2).html("<input type='number' value='"+precioUnitario+"'>");
         $(e).parent().parent().find("td").eq(3).html("<button type='button' class='btn btn-success' onclick='savePresentacion(this)'>Guardar</button>");

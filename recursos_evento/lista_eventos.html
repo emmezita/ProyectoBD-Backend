@@ -195,7 +195,13 @@ $(document).ready(function() {
                 row.append('<td>' + fechaInicio + '</td>');
                 var fechaCierre = formatDate(data[i].fecha_cierre);
                 row.append('<td>' + fechaCierre + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="editarEvento(' + data[i].codigo + ')">Editar</button></td>');
+                var fechaActual = new Date();
+                var fechaCi = new Date(data[i].fecha_cierre);
+                if (fechaCi > fechaActual) {
+                    row.append('<td><button type="button" class="btn btn-success" onclick="editarEvento(' + data[i].codigo + ')">Editar</button></td>');
+                } else {
+                    row.append('<td><button type="button" class="btn btn-success" onclick="editarEvento(' + data[i].codigo + ')" disabled>Editar</button></td>');
+                }
                 row.append('<td><button type="button" class="btn btn-danger" id="delete-evencostumer-button" data-bs-toggle="modal" data-bs-target="#deleteEvenCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
                 
                 $('#body-eventos').append(row);
@@ -242,7 +248,7 @@ function formatDate(dateString) {
 }
 
 function editarEvento(id) {
-    window.location.href = 'https://dilodev.co/formulario-registrar-evento/?id=' + id;
+    window.location.href = 'https://dilodev.co/formulario-editar-evento/?id=' + id;
 }
 
 </script>

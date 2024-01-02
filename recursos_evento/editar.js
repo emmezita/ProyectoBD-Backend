@@ -4,7 +4,7 @@ var EMP = null;
 
 function llenarPresentaciones(presentaciones) {
     presentaciones.forEach(presentacion => {
-        $('#body-presentaciones').append("<tr><td idmaterial="+ presentacion.c1 +" idbotella="+ presentacion.c2 +" idproducto="+ presentacion.c3 +">"+presentacion.nombre+"</td><td>"+presentacion.cantidad+"</td><td>"+presentacion.precio+"</td><td><button type='button' class='btn btn-danger' onclick='deletePresentacion(this)'>Eliminar</button></td><td><button type='button' class='btn btn-primary' onclick='editPresentacion(this)'>Editar</button></td></tr>");
+        $('#body-presentaciones').append("<tr><td idmaterial="+ presentacion.c1 +" idbotella="+ presentacion.c2 +" idproducto="+ presentacion.c3 +">"+presentacion.nombre+"</td><td>"+presentacion.cantidad+"</td><td>"+presentacion.precio+"</td><td><button type='button' class='btn btn-primary' onclick='editPresentacion(this)'>Editar</button></td><td><button type='button' class='btn btn-danger' onclick='deletePresentacion(this)'>Eliminar</button></td></tr>");
     });
 }
 

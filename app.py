@@ -2304,6 +2304,11 @@ def editar_presentacion(id1, id2, id3):
     sql_eompra_anterior = """
         SELECT precio_compra_valor FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
     """
+    sql_fin_compra_anterior = """
+        UPDATE historico_precio_compra
+        SET precio_compra_fecha_fin = current_timestamp
+        WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null;
+    """
     
     sql_compra = """
         INSERT INTO historico_precio_compra(
@@ -2323,6 +2328,7 @@ def editar_presentacion(id1, id2, id3):
             cur.execute(sql_tasa_actual)
             tasa = cur.fetchone()
             tasa_codigo = tasa[0] if tasa is not None else None
+            cur.execute(sql_fin_compra_anterior, (id1, id2, id3))
             cur.execute(sql_compra, (precio_compra, tasa_codigo, id1, id2, id3))
         conn.commit()
     except Exception as e:
@@ -2435,7 +2441,8 @@ def get_evento(id):
     """
     sql_presentaciones = """
         SELECT lista.fk_inventario_almacen_2 as c1, lista.fk_inventario_almacen_3 as c2, lista.fk_inventario_almacen_4 as c3, 
-        (pro.producto_nombre || ' en ' || bo.botella_descripcion || ' de ' || ma.material_nombre || ' ' || bo.botella_capacidad) as nombre    
+        (pro.producto_nombre || ' en ' || bo.botella_descripcion || ' de ' || ma.material_nombre || ' ' || bo.botella_capacidad) as nombre,
+        lista.even_prod_precio_unitario as precio, lista.even_prod_cantidad as cantidad    
         FROM evento_lista_producto lista
         JOIN material ma ON lista.fk_inventario_almacen_2 = ma.material_codigo
         JOIN botella bo ON lista.fk_inventario_almacen_3 = bo.botella_codigo
@@ -2464,6 +2471,66 @@ def get_evento(id):
     pprint(datos)
     
     return datos
+
+#Ruta para editar los datos de un evento de la base de datos
+@app.route("/api/evento/editar/<int:id>", methods=["PUT"])
+def editar_evento(id):
+    cur = conn.cursor()
+    evento = request.get_json()
+    pprint(evento)
+    nombre = evento.get("nombre")
+    cupos = evento.get("cupos")
+    cupos = int(cupos)
+    entradas = evento.get("entradas")
+    entradas = int(entradas)
+    fecha_inicio = evento.get("fechainicio")
+    fecha_cierre = evento.get("fechacierre")
+    presentaciones = evento.get("presentaciones")
+    descripcion = evento.get("descripcion")
+    direccion = evento.get("direccion")
+    parroquia = evento.get("parroquia")
+    
+    sql_evento = """
+        UPDATE evento
+        SET evento_nombre = %s, evento_descripcion = %s, evento_num_entradas = %s, evento_fecha_inicio = %s, evento_fecha_cierre = %s, evento_direccion = %s, evento_num_cupos = %s, fk_lugar = %s
+        WHERE evento_codigo = %s;
+    """
+    
+    sql_buscar_presentacion = """
+        SELECT * FROM evento_lista_producto WHERE fk_evento = %s AND fk_inventario_almacen_1 = %s AND fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s
+    """
+    
+    sql_registrar_presentacion = """
+        INSERT INTO evento_lista_producto(
+            even_prod_precio_unitario, even_prod_cantidad, fk_evento, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """
+    
+    sql_presentacion = """
+        UPDATE evento_lista_producto
+        SET even_prod_precio_unitario = %s, even_prod_cantidad = %s
+        WHERE fk_evento = %s AND fk_inventario_almacen_1 = %s AND fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s;
+    """
+    
+    try:
+        cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia, id))
+        cur.execute(sql_buscar_presentacion, (id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        result = cur.fetchone()
+        if result is None:
+            cur.execute(sql_registrar_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        else:
+            cur.execute(sql_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Evento editado exitosamente")
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL CARRITO
