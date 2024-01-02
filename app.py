@@ -873,8 +873,9 @@ def get_cliente_natural(id):
         SELECT * FROM Telefono WHERE fk_persona_natural = %s
     """
     sql_tdc = """
-        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, banco_nombre
         FROM TDC
+        INNER JOIN Banco ON TDC.fk_banco = Banco.banco_codigo
         WHERE fk_persona_natural = %s
     """
     
@@ -897,7 +898,11 @@ def get_cliente_natural(id):
     cur.execute(sql_telefono, (id,))
     telefonos = cur.fetchall()
     cur.execute(sql_tdc, (id,))
-    tdc = cur.fetchone()
+    tdc = cur.fetchall()
+
+    # convertir los objetos de tipo 'date' a cadenas con mm/yyyy
+    for tarjeta in tdc:
+        tarjeta['tdc_fecha_vencimiento'] = tarjeta['tdc_fecha_vencimiento'].strftime('%m/%Y')
     
     cur.close()
 
@@ -1235,8 +1240,9 @@ def get_cliente_juridico(id):
         SELECT * FROM Telefono WHERE fk_persona_juridica = %s
     """
     sql_tdc = """
-        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, banco_nombre
         FROM TDC
+        JOIN Banco ON TDC.fk_banco = Banco.banco_codigo
         WHERE fk_persona_juridica = %s
     """
     
@@ -1245,7 +1251,7 @@ def get_cliente_juridico(id):
     if persona_juridica is None:
         return Response(status=404, response="Cliente no encontrado")
     cur.execute(sql_contacto, (id,))
-    contacto = cur.fetchone() 
+    contacto = cur.fetchall() 
     cur.execute(sql_lugar, (persona_juridica['fk_lugar_fiscal'],))
     lugar_fiscal = cur.fetchone()
     cur.execute(sql_lugar, (persona_juridica['fk_lugar_fisica'],))
@@ -1255,7 +1261,11 @@ def get_cliente_juridico(id):
     cur.execute(sql_telefono, (id,))
     telefonos = cur.fetchall()
     cur.execute(sql_tdc, (id,))
-    tdc = cur.fetchone()
+    tdc = cur.fetchall()
+
+    # convertir los objetos de tipo 'date' a cadenas con mm/yyyy
+    for tarjeta in tdc:
+        tarjeta['tdc_fecha_vencimiento'] = tarjeta['tdc_fecha_vencimiento'].strftime('%m/%Y')
     
     cur.close()
 

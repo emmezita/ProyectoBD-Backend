@@ -20,8 +20,13 @@ function llenarEMP(estado, municipio, parroquia) {
 }
 
 function llenarTDCs(tarjetas) {
+    if (tarjetas == null) return;
+
+    if (!Array.isArray(tarjetas)) 
+        tarjetas = [tarjetas];
+    
     tarjetas.forEach(TDC => {
-        $("#body-TDC").append("<tr><td id="+ TDC.banco.banco_codigo +">"+TDC.banco.banco_nombre+"</td><td>"+TDC.tdc_numero+"</td><td>"+TDC.tdc_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
+        $("#body-TDC").append("<tr><td id="+ TDC.fk_banco +">"+TDC.banco_nombre+"</td><td>"+TDC.tdc_numero_tarjeta+"</td><td>"+TDC.tdc_fecha_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
     });
 }
 

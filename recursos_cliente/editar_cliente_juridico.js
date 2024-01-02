@@ -19,7 +19,7 @@ function llenarEMPfisica(estado, municipio, parroquia) {
     $("#form-field-cjparroquiafisica").val(parroquia);    
 }
 
-function llenarEPMfiscal(estado, municipio, parroquia) { 
+function llenarEMPfiscal(estado, municipio, parroquia) { 
     // llenar los cb de estado, municipio y parroquia
     $("#form-field-cjestadofiscal").val(estado);
     $("#form-field-cjmunicipiofiscal").empty();
@@ -37,14 +37,19 @@ function llenarEPMfiscal(estado, municipio, parroquia) {
 }
 
 function llenarTDCs(tarjetas) {
-    TDCs.forEach(TDC => {
-        $("#body-TDC").append("<tr><td id="+ TDC.banco.banco_codigo +">"+TDC.banco.banco_nombre+"</td><td>"+TDC.tdc_numero+"</td><td>"+TDC.tdc_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
+    if (tarjetas == null) return;
+
+    if (!Array.isArray(tarjetas)) 
+        tarjetas = [tarjetas];
+    
+    tarjetas.forEach(TDC => {
+        $("#body-TDC").append("<tr><td id="+ TDC.fk_banco +">"+TDC.banco_nombre+"</td><td>"+TDC.tdc_numero_tarjeta+"</td><td>"+TDC.tdc_fecha_vencimiento+"</td><td>"+TDC.tdc_cvv+"</td><td><button class='btn btn-danger-ben' onclick='deleteTDC(this)'>Eliminar</button></td></tr>");
     });
 }
 
 function llenarContactos(contactos) {
     contactos.forEach(contacto => {
-        ('#body-contactos').append('<tr><td>' + contacto.contacto_nombre + '</td><td>' + contacto.contacto_numero + '</td><td>' + contacto.contacto_correo + '</td><td><button class="btn btn-warning-ben" onclick="editContact(this)">Editar</button></td><td><button class="btn btn-danger-ben" onclick="deleteContact(this)">Eliminar</button></td></tr>');
+        $('#body-contactos').append('<tr><td>' + contacto.contacto_nombre + '</td><td>' + contacto.contacto_numero + '</td><td>' + contacto.contacto_correo + '</td><td><button class="btn btn-warning-ben" onclick="editContact(this)">Editar</button></td><td><button class="btn btn-danger-ben" onclick="deleteContact(this)">Eliminar</button></td></tr>');
     });
 }
 
@@ -113,12 +118,18 @@ $(document).ready(function() {
                     $("#form-field-cjparroquiafiscal").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
                 });
             });
+
+            getClienteJ();
+
         },
         error: function() {
             alert('Error obteniendo ubicaciones');
         }
     });
 
+});
+
+function getClienteJ(){
     $.ajax({
         url: 'http://localhost:5000/api/cliente/juridico/' + idEditar,
         type: 'GET',
@@ -130,20 +141,20 @@ $(document).ready(function() {
             $(ff+"cjcapital").val(data.persona.persona_jur_capital_disp)
             $(ff+"cjdenom").val(data.persona.persona_jur_denom_comercial)
             $(ff+"cjrazon").val(data.persona.persona_jur_razon_social)
-            $(ff+"cjcorreo").val(data.persona.persona_jur_correo)
-            if (data.persona.persona_jur_correo_alt != null)
-                $(ff+"cjcorreoalt").val(data.persona.persona_jur_correo_alt)
-            $(ff+"cjcordarea").val(data.telefonos[0].telefono_cod_area)
+            $(ff+"cjcorreo").val(data.correos[0].correo_direccion)
+            if (data.correos.length > 1) 
+                $(ff+"cjcorreoalt").val(data.correos[1].correo_direccion)
+            $(ff+"cjcodarea").val(data.telefonos[0].telefono_codigo_area)
             $(ff+"cjtelefono").val(data.telefonos[0].telefono_numero)
             if (data.telefonos.length > 1) {
-                $(ff+"cjcodareaalt").val(data.telefonos[1].telefono_cod_area)
+                $(ff+"cjcodareaalt").val(data.telefonos[1].telefono_codigo_area)
                 $(ff+"cjtelefonoalt").val(data.telefonos[1].telefono_numero)
             }
-            $(ff+"cjpaginaweb").val(data.persona.persona_jur_pag_web)
+            $(ff+"cjpaginaweb").val(data.persona.persona_jur_pagina_web)
             $(ff+"cjdireccionfisica").val(data.persona.persona_jur_direccion_fisica)
             $(ff+"cjdireccionfiscal").val(data.persona.persona_jur_direccion_fiscal)
             llenarEMPfisica(data.lugar_fisica.estado, data.lugar_fisica.municipio, data.lugar_fisica.parroquia);
-            llenarEPMfiscal(data.lugar_fiscal.estado, data.lugar_fiscal.municipio, data.lugar_fiscal.parroquia);
+            llenarEMPfiscal(data.lugar_fiscal.estado, data.lugar_fiscal.municipio, data.lugar_fiscal.parroquia);
             llenarTDCs(data.tdc);
             llenarContactos(data.contactos);
         },
@@ -151,4 +162,4 @@ $(document).ready(function() {
             alert('Error obteniendo cliente');
         }
     });
-});
+}

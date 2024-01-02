@@ -233,8 +233,16 @@ $(document).ready(function() {
                 var row = '<tr>';
                 row += '<td>' + data[i].cedula + '</td>';
                 row += '<td>' + data[i].nombre + '</td>';
-                row += '<td>' + data[i].cargo + '</td>';
-                row += '<td>' + data[i].departamento + '</td>';
+                if (data[i].cargo == null) {
+                    row += '<td> Sin cargo </td>';
+                } else {
+                    row += '<td>' + data[i].cargo + '</td>';
+                }
+                if (data[i].departamento == null) {
+                    row += '<td> Sin departamento </td>';
+                } else {
+                    row += '<td>' + data[i].departamento + '</td>';
+                }
                 var fechaIngreso = formatDate(data[i].fecha_ingreso);
                 row += '<td>' + fechaIngreso + '</td>';
                 var fechaSalida = formatDate(data[i].fecha_salida);
