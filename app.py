@@ -333,13 +333,13 @@ def get_all_empleados():
                 INNER JOIN 
                     empleado e ON pn.persona_nat_codigo = e.empleado_codigo
                 INNER JOIN 
-                    contrato_de_empleo ce ON e.empleado_codigo = ce.fk_empleado
+                    contrato_de_empleo ce ON e.empleado_codigo = ce.fk_empleado 
                 LEFT JOIN 
-                    contrato_cargo cc ON ce.contrato_codigo = cc.fk_contrato_empleo
+                    contrato_cargo cc ON ce.contrato_codigo = cc.fk_contrato_empleo AND cc.cont_carg_fecha_cierre IS NULL
                 LEFT JOIN 
                     cargo c ON cc.fk_cargo = c.cargo_codigo
                 LEFT JOIN 
-                    contrato_departamento cd ON ce.contrato_codigo = cd.fk_contrato_empleo
+                    contrato_departamento cd ON ce.contrato_codigo = cd.fk_contrato_empleo AND cd.cont_depart_fecha_cierre IS NULL
                 LEFT JOIN 
                     departamento d ON cd.fk_departamento = d.departamento_codigo;
                 ''')
@@ -619,6 +619,7 @@ def activate_empleado(id):
     cur = conn.cursor()
 
     cur.execute("UPDATE contrato_de_empleo SET contrato_fecha_salida = %s WHERE fk_empleado = %s", (None, id))
+    print(cur.rowcount)
     #Editar cargo
     cur.execute("SELECT fk_cargo, cont_carg_sueldo_mensual FROM contrato_cargo WHERE fk_contrato_empleo = %s ORDER BY cont_carg_fecha_inicio DESC LIMIT 1", (id,))
     cargo = cur.fetchall()
@@ -634,6 +635,7 @@ def activate_empleado(id):
             """
         , (datetime.datetime.now(), None, cargo[0][1], id, cargo[0][0])
         )
+
     #Editar departamento
     cur.execute("SELECT fk_departamento FROM contrato_departamento WHERE fk_contrato_empleo = %s ORDER BY cont_depart_fecha_inicio DESC LIMIT 1", (id,))
     departamento = cur.fetchone()
@@ -2122,12 +2124,11 @@ def get_all_presentaciones():
                                                     AND pre.fk_material_botella_2 = hpv.fk_inventario_almacen_3
                                                     AND pre.fk_producto = hpv.fk_inventario_almacen_4
                                                     AND hpv.precio_venta_fecha_fin is null)
-
                 ''')
     rows = cur.fetchall()
     cur.close()
 
-    # cambiar la imagen por la ruta de la imagen (local)
+    # cambiar la imagen por la ruta de la imagen
     for row in rows:
         # filename = row['imagen']
         # row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
@@ -2210,7 +2211,7 @@ def get_presentacion(id1, id2, id3):
     cur.execute(sql_imagen, (id1, id2, id3))
     imagen = cur.fetchone()
     if imagen is not None:
-        imagen['imagen_nombre'] = os.path.join(app.root_path, 'static', 'img', imagen['imagen_nombre'])
+        imagen['imagen_nombre'] = "https://asoronucab.blob.core.windows.net/images/" + imagen['imagen_nombre']
     
     cur.close()
 
