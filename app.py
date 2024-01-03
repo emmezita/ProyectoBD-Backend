@@ -2575,7 +2575,19 @@ def obtener_ordenes():
 def obtener_orden(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('SELECT * FROM ObtenerOrdenDeReposicion(%s)', (id,))
+
+    # SELECT o.orden_codigo, o.orden_fecha, (d.fk_inventario_tienda_2 || '' ||d.fk_inventario_tienda_3 || '' ||d.fk_inventario_tienda_4) as producto_codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT, d.detalle_orden_cantidad
+    # FROM Orden_De_Reposicion o
+    # JOIN Detalle_Orden_De_Reposicion d ON o.orden_codigo = d.fk_orden
+    # JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    # JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
+    # WHERE o.orden_codigo = codigo_orden;
+
     rows = cur.fetchone()
+
+    if rows is not None:
+        rows['imagen_nombre'] = "https://asoronucab.blob.core.windows.net/images/" + rows['imagen_nombre']
+
     cur.close()
     pprint(rows)
     return jsonify(rows), 200

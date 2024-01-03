@@ -192,15 +192,20 @@ DROP FUNCTION IF EXISTS ObtenerOrdenDeReposicion(INT);
 
 -- Procedimiento para obtener los datos de una orden de reposicion
 CREATE OR REPLACE FUNCTION ObtenerOrdenDeReposicion(codigo_orden INT)
-RETURNS TABLE(orden_codigo INT, orden_fecha DATE, producto_codigo TEXT, producto_nombre TEXT, cantidad INT)
+RETURNS TABLE(orden_codigo INT, orden_fecha DATE, producto_codigo TEXT, producto_nombre TEXT, cantidad INT, imagen_nombre TEXT)
 LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT o.orden_codigo, o.orden_fecha, (d.fk_inventario_tienda_2 || '' ||d.fk_inventario_tienda_3 || '' ||d.fk_inventario_tienda_4) as producto_codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT, d.detalle_orden_cantidad
+    SELECT o.orden_codigo, o.orden_fecha, (d.fk_inventario_tienda_2 || '' ||d.fk_inventario_tienda_3 || '' ||d.fk_inventario_tienda_4)
+    as producto_codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT, 
+    d.detalle_orden_cantidad, img.imagen_nombre::TEXT
     FROM Orden_De_Reposicion o
     JOIN Detalle_Orden_De_Reposicion d ON o.orden_codigo = d.fk_orden
     JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_tienda_2 
+    AND img.fk_presentacion_2 = d.fk_inventario_tienda_3 
+    AND img.fk_presentacion_3 = d.fk_inventario_tienda_4)
     JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
     WHERE o.orden_codigo = codigo_orden;
 END;
