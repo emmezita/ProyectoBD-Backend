@@ -2555,3 +2555,27 @@ def add_product():
     cur.close()
     
     return Response(status=200, response="Producto agregado exitosamente")
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA LAS ORDENES DE REPOSICION  
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todas las ordenes de reposicion de la base de datos
+@app.route("/api/orden/reposicion/all", methods=["GET"])
+def obtener_ordenes():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerTodasOrdenesDeReposicion()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener los datos de una orden de reposicion de la base de datos
+@app.route("/api/orden/reposicion/<int:id>", methods=["GET"])
+def obtener_orden(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerOrdenDeReposicion(%s)', (id,))
+    rows = cur.fetchone()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200

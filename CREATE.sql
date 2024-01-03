@@ -1418,7 +1418,7 @@ CREATE TABLE Estatus_Orden (
   -- Código identificador de la entidad Estatus_Orden
   estatus_orden_nombre varchar(20) NOT NULL UNIQUE,
   -- Nombre del estatus de la orden.
-  estatus_orden_descripcion varchar(50),
+  estatus_orden_descripcion varchar(200),
   -- Descripción del estatus de la orden.
 
   CONSTRAINT pk_estatus_orden_codigo PRIMARY KEY (estatus_orden_codigo),
@@ -1438,17 +1438,13 @@ CREATE TABLE Orden_De_Reposicion (
   -- Subtotal de la orden de reposición. Debe ser mayor que 0
   orden_total decimal(10,2),
   -- Total de la orden de reposición. Debe ser mayor que 0
-  fk_contrato_empleo integer NOT NULL,
+  fk_contrato_empleo integer ,
   -- Relación con la entidad Contrato_Empleo
 
   CONSTRAINT pk_orden_codigo PRIMARY KEY (orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
+  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
-  CONSTRAINT ck_orden_subtotal CHECK (orden_subtotal IS NULL OR orden_subtotal > 0),
-  -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_orden_total CHECK (orden_total IS NULL OR orden_total > 0)
-  -- Constrain. Debe ser mayor que 0
 );
 
 CREATE TABLE Historico_Estatus_Orden (
@@ -1465,10 +1461,8 @@ CREATE TABLE Historico_Estatus_Orden (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_historico_estatus_orden_estatus_orden FOREIGN KEY (fk_estatus_orden) REFERENCES Estatus_Orden (estatus_orden_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Estatus_Orden.
-  CONSTRAINT fk_historico_estatus_orden_orden FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo),
+  CONSTRAINT fk_historico_estatus_orden_orden FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Orden_De_Reposicion.
-  CONSTRAINT ck_historico_estatus_orden CHECK (fecha_hora_fin_estatus IS NULL OR fecha_hora_fin_estatus > fecha_hora_inicio_estatus)
-  -- Constrain. Debe ser mayor que la fecha y hora de inicio
 );
 
 
@@ -1643,7 +1637,7 @@ CREATE TABLE Detalle_Orden_De_Reposicion (
   -- Código identificador de la entidad Detalle_Orden_De_Reposicion
   detalle_orden_cantidad integer NOT NULL,
   -- Cantidad del producto en la orden de reposición. Debe ser mayor que 0
-  detalle_orden_precio_unitario decimal(10,2) NOT NULL,
+  detalle_orden_precio_unitario decimal(10,2),
   -- Precio unitario del producto en la orden de reposición. Debe ser mayor que 0
   fk_orden integer,
   -- Relación con la entidad Orden_De_Reposicion

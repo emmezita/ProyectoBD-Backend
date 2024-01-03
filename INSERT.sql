@@ -4672,3 +4672,10 @@ VALUES
   ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 400, '2029-01-25', '2029-01-26', 'Avenida de los Premios 789', 500, 697),
   ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 60, '2029-02-10', '2029-02-11', 'Calle de las Reservas 123', 80, 698),
   ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 150, '2029-03-15', '2029-03-16', 'Plaza de la Salsa 456', 180, 699);
+
+INSERT INTO Estatus_Orden (estatus_orden_nombre, estatus_orden_descripcion) 
+VALUES
+  ('Pendiente', 'La orden se ha creado pero aún no se ha iniciado el proceso de reposición.'),
+  ('En proceso', 'La orden se está procesando, ya sea porque se está reponiendo desde el almacén o porque se está emitiendo una orden de compra al proveedor.'),
+  ('Completada', 'La orden se ha completado correctamente y el producto está disponible en la tienda o en el almacén.'),
+  ('Cancelada', 'La orden se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
