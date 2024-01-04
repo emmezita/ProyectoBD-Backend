@@ -16,11 +16,7 @@
     <button id="cancelar" onclick="cancelarOrden()" style="font-size: 18px; background-color: #D1991A;">Cancelar</button>
 </div>
 
-<script>
-    function save() {
-
-    }
-    
+<script>    
     var detalleOrden = {
         idUsuario: 1, // TODO: Cambiar por el id del usuario
         presentaciones: [],
@@ -42,18 +38,53 @@
         detalleOrden.presentaciones.push(datos);
     });
 
-    $.ajax({
-        url: "http://localhost:5000/api/orden/compra/" + idOrden,
-        method: "PUT",
-        dataType: "json",
-        contentType: "application/json",
-        data: JSON.stringify(detalleOrden),
-        success: (data) => {
-            console.log(data);
-            window.location.href = "http://localhost:5000/ordenes_compra";
-        },
-        error: (error) => {
-            console.log(error);
-        },
-    });
+    var urlParams = new URLSearchParams(window.location.search);
+    var idOrden = urlParams.get('id');
+
+
+    function procesarOrden() {
+        $.ajax({
+            url: "http://localhost:5000/api/orden/compra/procesar/"+ idOrden,
+            method: "PUT",
+            dataType: "json",
+            data: JSON.stringify(detalleOrden),
+            success: function (data) {
+                console.log(data);
+                alert("Órden procesada exitosamente");
+            },
+            error: function (data) {
+                alert(data.responseJSON.message);
+            }
+        });
+    }
+
+    // function completarOrden() {
+    //     $.ajax({
+    //         url: "http://localhost:5000/api/orden/compra/" + idOrden + "/completar",
+    //         method: "PUT",
+    //         dataType: "json",
+    //         success: (data) => {
+    //             console.log(data)
+    //             window.location.href = "http://localhost:5000/recursos_ordenes/ordenes.html";
+    //         },
+    //         error: (error) => {
+    //             console.log(error)
+    //         }
+    //     });
+    // }
+
+    // function cancelarOrden() {
+    //     $.ajax({
+    //         url: "http://localhost:5000/api/orden/compra/" + idOrden + "/cancelar",
+    //         method: "PUT",
+    //         dataType: "json",
+    //         success: (data) => {
+    //             console.log(data)
+    //             window.location.href = "http://localhost:5000/recursos_ordenes/ordenes.html";
+    //         },
+    //         error: (error) => {
+    //             console.log(error)
+    //         }
+    //     });
+    // }
 </script>

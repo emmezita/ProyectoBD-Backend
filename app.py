@@ -2689,3 +2689,6 @@ def obtener_orden_compra(id):
     cur.close()
     
     return jsonify({'datos_orden': datos_orden, 'presentaciones': presentaciones})
+
+# Ruta para procesar orden de compra
+@app.route("/api/orden/compra/procesar/<int:id>", methods=["POST"])
