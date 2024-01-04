@@ -238,7 +238,17 @@ BEGIN
                                     AND inv.fk_presentacion_2 = compra.fk_presentacion_2 
                                     AND inv.fk_presentacion_3 = compra.fk_presentacion_3
                                     AND precio_compra_fecha_fin is null
-    WHERE inv.inv_almacen_cantidad <= 100;
+    WHERE inv.inv_almacen_cantidad <= 100
+    AND NOT EXISTS (
+        SELECT 1
+        FROM Detalle_Orden_De_Reposicion d
+        JOIN Historico_Estatus_Orden h ON d.fk_orden = h.fk_orden
+        WHERE d.fk_inventario_almacen_1 = inv.fk_presentacion_1
+          AND d.fk_inventario_almacen_2 = inv.fk_presentacion_2
+          AND d.fk_inventario_almacen_3 = inv.fk_presentacion_3
+          AND h.fk_estatus_orden = 2
+          AND h.fecha_hora_fin_estatus IS NULL
+    );
 
     -- Loop a través de cada proveedor para crear una orden de reposición
     FOR proveedor_record IN SELECT DISTINCT fk_proveedor FROM BajoInventario
