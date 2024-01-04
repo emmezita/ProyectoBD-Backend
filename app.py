@@ -1,6 +1,7 @@
 from calendar import c
 import datetime
 import os
+import json
 from tkinter import N
 import traceback
 from flask import Flask, Response, request, jsonify, url_for
@@ -2691,4 +2692,19 @@ def obtener_orden_compra(id):
     return jsonify({'datos_orden': datos_orden, 'presentaciones': presentaciones})
 
 # Ruta para procesar orden de compra
-@app.route("/api/orden/compra/procesar/<int:id>", methods=["POST"])
+@app.route("/api/orden/compra/procesar/<int:id>", methods=["PUT"])
+def procesar_orden_compra(id):
+    cur = conn.cursor()
+    try:
+        orden = request.get_json()
+        pprint(orden)
+        orden = json.dumps(orden)
+        
+        cur.execute('CALL ProcesarOrdenDeCompra(%s,%s)', (id,orden))
+        conn.commit()
+        return jsonify({"message": "Orden de compra procesada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()

@@ -16,44 +16,43 @@
     <button id="cancelar" onclick="cancelarOrden()" style="font-size: 18px; background-color: #D1991A;">Cancelar</button>
 </div>
 
-<script>    
-    var detalleOrden = {
-        idUsuario: 1, // TODO: Cambiar por el id del usuario
-        presentaciones: [],
-    };
-
-    $('.body-ordenes tr').each(function(i, e) {
-        var idm = $(e).find('td').eq(0).attr('idm');
-        var idb = $(e).find('td').eq(0).attr('idb');
-        var ido = $(e).find('td').eq(0).attr('ido');
-        var cantidad = $(e).find('.cantidad').val();
-        var precio = $(e).find('.precio').val();
-        var datos = {
-            idm: idm,
-            idb: idb,
-            ido: ido,
-            cantidad: cantidad,
-            precio: precio,
-        };
-        detalleOrden.presentaciones.push(datos);
-    });
-
+<script>   
     var urlParams = new URLSearchParams(window.location.search);
     var idOrden = urlParams.get('id');
 
-
     function procesarOrden() {
+        var detalleOrden = {
+            idUsuario: 1, // TODO: Cambiar por el id del usuario
+            presentaciones: [],
+        };
+        $('.body-ordenes tr').each(function(i, e) {
+            var idm = $(e).find('td').eq(0).attr('idm');
+            var idb = $(e).find('td').eq(0).attr('idb');
+            var ido = $(e).find('td').eq(0).attr('ido');
+            var cantidad = $(e).find('.cantidad').val();
+            var precio = $(e).find('.precio').val();
+            var datos = {
+                idm: idm,
+                idb: idb,
+                ido: ido,
+                cantidad: cantidad,
+                precio: precio,
+            };
+            detalleOrden.presentaciones.push(datos);
+        });      
         $.ajax({
+            type: "PUT",
             url: "http://localhost:5000/api/orden/compra/procesar/"+ idOrden,
-            method: "PUT",
-            dataType: "json",
+            headers: {
+                'Content-Type': 'application/json'
+            },
             data: JSON.stringify(detalleOrden),
             success: function (data) {
                 console.log(data);
                 alert("Órden procesada exitosamente");
             },
             error: function (data) {
-                alert(data.responseJSON.message);
+                alert(data.responseText);
             }
         });
     }

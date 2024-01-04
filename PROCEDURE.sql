@@ -437,3 +437,49 @@ BEGIN
     RETURN NEXT presentaciones_cursor;
 END;
 $$;
+
+-- Procedimiento para procesar una orden de compra (cambiar el estatus a "En Proceso")
+CREATE OR REPLACE PROCEDURE ProcesarOrdenDeCompra(_orden_codigo INT, presentaciones JSON)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    idUsuario INT;
+    presentacion RECORD;
+    nuevo_estatus_id INT := 2; -- Reemplaza con el ID de estatus correspondiente
+BEGIN
+    --Asignar empleado a la orden
+
+    idUsuario := (datosOrden ->> 'idUsuario')::INT;    
+
+    UPDATE Orden_De_Reposicion
+    SET fk_empleado = (
+        SELECT Empleado.empleado_codigo
+        FROM Empleado
+        INNER JOIN Usuario ON Empleado.empleado_codigo = Usuario.fk_persona_natural
+        WHERE Usuario.id = idUsuario  -- Reemplaza '_idUsuario' con el ID del usuario
+    )
+    WHERE codigo = _orden_codigo;  -- Reemplaza '_orden_codigo' con el código de la orden
+
+    -- Instrucciones para actualizar el estatus de la orden a "En Proceso"
+    -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+    UPDATE Historico_Estatus_Orden
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+
+    -- Loop a través de cada presentación en el JSON
+    FOR presentacion IN SELECT * FROM json_to_recordset(presentaciones -> 'presentaciones') AS x(cantidad INT, idb INT, idm INT, ido INT, precio DECIMAL)
+    LOOP
+        -- Actualizar Detalle_Orden_De_Reposicion
+        UPDATE Detalle_Orden_De_Reposicion
+        SET detalle_orden_cantidad = presentacion.cantidad,
+            detalle_orden_precio_unitario = presentacion.precio
+        WHERE fk_orden = nueva_orden_id 
+        AND fk_inventario_almacen_2 = presentacion.idm
+        AND fk_inventario_almacen_3 = presentacion.idb
+        AND fk_inventario_almacen_4 = presentacion.ido;
+    END LOOP;
+END;
+$$;

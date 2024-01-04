@@ -3430,6 +3430,7 @@ VALUES
   ('Empleado almacén');
 
 INSERT INTO Rol_Permiso (fk_rol, fk_permiso)
+VALUES
   (2, 102),
   (2, 103),
   (2, 104),
@@ -3438,6 +3439,10 @@ INSERT INTO Rol_Permiso (fk_rol, fk_permiso)
   (2, 107),
   (2, 108),
   (2, 109);
+
+INSERT INTO Usuario (usuario_nombre, usuario_contrasena, fk_persona_natural, fk_persona_juridica, fk_rol)
+VALUES
+  (monicagonza, '123456', 10, NULL, 2),
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES
@@ -3650,7 +3655,7 @@ VALUES
   ('2021-07-25', NULL, 7, 7),
   ('2022-08-30', '2023-03-05', 8, 1),
   ('2023-09-18', NULL, 9, 2),
-  ('2015-10-02', NULL, 10, 3),
+  ('2015-10-02', NULL, 10, 2),
   ('2016-11-20', '2020-12-31', 11, 4),
   ('2018-01-08', NULL, 12, 5),
   ('2019-03-25', '2022-07-05', 13, 6),
