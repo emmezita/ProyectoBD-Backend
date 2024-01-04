@@ -1809,3 +1809,13 @@ def formatear_empaques(empaques):
 # RUTAS PARA EL INVENTARIO DE LA TIENDA
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# Ruta para obtener los datos de historico punto
+
+@app.route("/historicos/historico_punto", methods=["GET"])
+def get_historico_punto():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT hp.punto_codigo, hp.punto_valor, hp.punto_fecha_inicio, t.tienda_direccion FROM historico_punto hp, tienda t WHERE hp.fk_tienda=t.tienda_codigo")
+    rows = cur.fetchall()
+    cur.close()
+
+    return jsonify(rows)
