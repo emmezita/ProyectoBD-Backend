@@ -164,6 +164,8 @@ EXCEPTION
         RAISE EXCEPTION 'Error al procesar la orden de reposicion: %', SQLERRM;
 END $$;
 
+DROP FUNCTION IF EXISTS ObtenerTodasOrdenesDeReposicion();
+
 -- Procedimiento para obtener todas las ordenes de reposicion
 CREATE OR REPLACE FUNCTION ObtenerTodasOrdenesDeReposicion()
 RETURNS TABLE(codigo INT, fecha DATE, producto TEXT, cantidad INT, estatus TEXT) 
@@ -215,100 +217,223 @@ $$;
 -- Orden de Compra a los Proveedores
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
--- Procedimiento para generar una ordenes de compra
--- CREATE OR REPLACE PROCEDURE GenerarOrdenesDeCompraPorProveedor()
--- AS $$
--- DECLARE
---     proveedor_id INT;
---     nueva_orden_id INT;
---     precio_total NUMERIC;
--- BEGIN
---     CALL EliminarOrdenesPendientes();
+--Procedimiento para generar una ordenes de compra
+CREATE OR REPLACE PROCEDURE GenerarOrdenesDeCompraPorProveedor()
+AS $$
+DECLARE
+    proveedor_id INT;
+    nueva_orden_id INT;
+    precio_total NUMERIC;
+    proveedor_record RECORD; -- Variable de tipo record para el primer bucle FOR
+    presentacion_record RECORD; -- Variable de tipo record para el segundo bucle FOR
+BEGIN
+    CALL EliminarOrdenesPendientes();
 
---     -- Crear una tabla temporal para presentaciones con bajo inventario y sus proveedores
---     CREATE TEMP TABLE BajoInventario AS
---     SELECT inv.fk_presentacion_1, inv.fk_presentacion_2, inv.fk_presentacion_3, inv.fk_almacen, pro.fk_proveedor, compra.precio_compra_valor
---     FROM Inventario_Almacen inv
---     JOIN Producto pro ON inv.fk_presentacion_3 = pro.producto_codigo
---     JOIN Historico_Precio_compra compra ON inv.fk_presentacion_1 = compra.fk_presentacion_1 
---                                     AND inv.fk_presentacion_2 = compra.fk_presentacion_2 
---                                     AND inv.fk_presentacion_3 = compra.fk_presentacion_3
---                                     AND precio_compra_fecha_fin is null
---     WHERE inv.inv_almacen_cantidad <= 100;
+    -- Crear una tabla temporal para presentaciones con bajo inventario y sus proveedores
+    CREATE TEMP TABLE BajoInventario AS
+    SELECT inv.fk_presentacion_1, inv.fk_presentacion_2, inv.fk_presentacion_3, inv.fk_almacen, pro.fk_proveedor, compra.precio_compra_valor
+    FROM Inventario_Almacen inv
+    JOIN Producto pro ON inv.fk_presentacion_3 = pro.producto_codigo
+    JOIN Historico_Precio_compra compra ON inv.fk_presentacion_1 = compra.fk_presentacion_1 
+                                    AND inv.fk_presentacion_2 = compra.fk_presentacion_2 
+                                    AND inv.fk_presentacion_3 = compra.fk_presentacion_3
+                                    AND precio_compra_fecha_fin is null
+    WHERE inv.inv_almacen_cantidad <= 100;
 
---     -- Loop a través de cada proveedor para crear una orden de reposición
---     FOR proveedor_record IN SELECT DISTINCT fk_proveedor FROM BajoInventario
---     LOOP
---         proveedor_id := proveedor_record.fk_proveedor;
+    -- Loop a través de cada proveedor para crear una orden de reposición
+    FOR proveedor_record IN SELECT DISTINCT fk_proveedor FROM BajoInventario
+    LOOP
+        proveedor_id := proveedor_record.fk_proveedor;
+        precio_total := 0;
 
---         -- Crear una nueva orden de reposición para el proveedor
---         INSERT INTO Orden_De_Reposicion (orden_fecha, fk_proveedor)
---         VALUES (CURRENT_DATE, proveedor_id)
---         RETURNING orden_codigo INTO nueva_orden_id;
+        -- Crear una nueva orden de reposición para el proveedor
+        INSERT INTO Orden_De_Reposicion (orden_fecha)
+        VALUES (CURRENT_DATE)
+        RETURNING orden_codigo INTO nueva_orden_id;
 
---         INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
---         VALUES (CURRENT_TIMESTAMP, 1, nueva_orden_id);
+        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+        VALUES (CURRENT_TIMESTAMP, 1, nueva_orden_id);
 
---         -- Asociar las presentaciones con la orden de reposición
---         FOR presentacion_record IN SELECT * FROM BajoInventario WHERE fk_proveedor = proveedor_id
---         LOOP
---             precio_total := precio_total + presentacion_record.precio_compra_valor*100;
---             INSERT INTO Detalle_Orden_De_Reposicion (
---                 detalle_orden_cantidad, detalle_orden_precio_unitario, fk_orden, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
---             VALUES (
---                 100, -- Cantidad a reponer, ajustar según necesidad
---                 presentacion_record.precio_unitario_compra, -- Precio unitario de compra
---                 nueva_orden_id,
---                 1, -- Ajustar según corresponda
---                 presentacion_record.fk_presentacion_1,
---                 presentacion_record.fk_presentacion_2,
---                 presentacion_record.fk_presentacion_3
---             );
---         END LOOP;
+        -- Asociar las presentaciones con la orden de reposición
+        FOR presentacion_record IN SELECT * FROM BajoInventario WHERE fk_proveedor = proveedor_id
+        LOOP
+            precio_total := precio_total + presentacion_record.precio_compra_valor*100;
+            INSERT INTO Detalle_Orden_De_Reposicion (
+                detalle_orden_cantidad, detalle_orden_precio_unitario, fk_orden, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+            VALUES (
+                100, -- Cantidad a reponer
+                presentacion_record.precio_compra_valor, -- Precio unitario de compra
+                nueva_orden_id,
+                1, -- Asumiendo que este es el ID del almacén
+                presentacion_record.fk_presentacion_1,
+                presentacion_record.fk_presentacion_2,
+                presentacion_record.fk_presentacion_3
+            );
+        END LOOP;
 
---         -- Actualizar el subtotal y total de la orden de reposición
---         UPDATE Orden_De_Reposicion
---         SET orden_subtotal = precio_total, orden_total = precio_total
---         WHERE orden_codigo = nueva_orden_id;
+        -- Actualizar el subtotal y total de la orden de reposición
+        UPDATE Orden_De_Reposicion
+        SET orden_subtotal = precio_total, orden_total = precio_total
+        WHERE orden_codigo = nueva_orden_id;
         
---     END LOOP;
+    END LOOP;
 
---     DROP TABLE BajoInventario; -- Eliminar la tabla temporal
+    DROP TABLE BajoInventario; -- Eliminar la tabla temporal
 
---     COMMIT; -- Asegura que todas las operaciones se realicen como una transacción atómica
--- EXCEPTION
---     WHEN OTHERS THEN
---         ROLLBACK; -- En caso de error, revierte todas las operaciones
---         RAISE; -- Propaga el error
--- END;
--- $$ LANGUAGE plpgsql;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE; -- Propaga el error
+END;
+$$ LANGUAGE plpgsql;
 
--- -- Procedimiento para procesar una orden de compra
--- CREATE OR REPLACE PROCEDURE EliminarOrdenesPendientes()
--- AS $$
--- BEGIN
---     -- Identificar y eliminar los detalles asociados con órdenes pendientes
---     DELETE FROM Detalle_Orden_De_Reposicion
---     WHERE fk_orden IN (
---         SELECT orden_codigo FROM Orden_De_Reposicion
---         WHERE orden_codigo NOT IN (SELECT fk_orden FROM Historico_Estatus_Orden WHERE fecha_hora_fin_estatus IS NOT NULL AND fk_estatus_orden = 1)
---     );
+-- Procedimiento para procesar una orden de compra
+CREATE OR REPLACE PROCEDURE EliminarOrdenesPendientes()
+AS $$
+BEGIN
+    -- Creamos una tabla temporal para almacenar los fk_orden relevantes
+    CREATE TEMPORARY TABLE TempOrdenes (fk_orden INT);
+    INSERT INTO TempOrdenes
+    SELECT fk_orden FROM Historico_Estatus_Orden WHERE fecha_hora_fin_estatus IS NULL AND fk_estatus_orden = 1;
 
---     -- Identificar y eliminar registros del histórico de estatus relacionados con órdenes pendientes
---     DELETE FROM Historico_Estatus_Orden
---     WHERE fk_orden IN (
---         SELECT orden_codigo FROM Orden_De_Reposicion
---         WHERE orden_codigo NOT IN (SELECT fk_orden FROM Historico_Estatus_Orden WHERE fecha_hora_fin_estatus IS NOT NULL AND fk_estatus_orden = 1)
---     );
+    -- Ahora podemos usar esta tabla temporal en las siguientes consultas DELETE
 
---     -- Finalmente, eliminar las órdenes pendientes
---     DELETE FROM Orden_De_Reposicion
---     WHERE orden_codigo NOT IN (SELECT fk_orden FROM Historico_Estatus_Orden WHERE fecha_hora_fin_estatus IS NOT NULL AND fk_estatus_orden = 1);
+    -- Eliminar detalles de órdenes relacionados con órdenes con estatus 1 y fecha fin NULL
+    DELETE FROM Detalle_Orden_De_Reposicion
+    WHERE fk_orden IN (
+        SELECT fk_orden FROM TempOrdenes
+    );
 
---     COMMIT; -- Asegura que todas las operaciones se realicen como una transacción atómica
--- EXCEPTION
---     WHEN OTHERS THEN
---         ROLLBACK; -- En caso de error, revierte todas las operaciones
---         RAISE; -- Propaga el error
--- END;
--- $$ LANGUAGE plpgsql;
+    -- Eliminar registros del histórico de estatus relacionados con órdenes con estatus 1 y fecha fin NULL
+    DELETE FROM Historico_Estatus_Orden
+    WHERE fk_orden IN (
+        SELECT fk_orden FROM TempOrdenes
+    );
+
+    -- Finalmente, eliminar las órdenes con estatus 1 y fecha fin NULL
+    DELETE FROM Orden_De_Reposicion
+    WHERE orden_codigo IN (
+        SELECT fk_orden FROM TempOrdenes
+    );
+
+    -- No es necesario eliminar la tabla temporal, ya que se eliminará automáticamente al final de la sesión
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE; -- Propaga el error
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS ObtenerOrdenesDeCompra();
+
+-- Funcion para obtener las ordenes de compra
+CREATE OR REPLACE FUNCTION ObtenerOrdenesDeCompra()
+RETURNS TABLE(codigo INT, fecha DATE,  proveedor TEXT, total NUMERIC, empleado TEXT, estatus TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT orden.orden_codigo, orden.orden_fecha, 
+        (
+            SELECT pro.persona_jur_denom_comercial 
+            FROM detalle_orden_de_reposicion detalle 
+            JOIN producto ON detalle.fk_inventario_almacen_4 = producto.producto_codigo
+            JOIN persona_juridica pro ON producto.fk_proveedor = pro.persona_jur_codigo
+            WHERE detalle.fk_orden = orden.orden_codigo
+            LIMIT 1
+        )::TEXT,
+        orden.orden_total as total, 
+        (per.persona_nat_p_nombre || ' ' || per.persona_nat_p_apellido)::TEXT,
+        est.estatus_orden_nombre::TEXT
+    FROM orden_de_reposicion orden
+    LEFT JOIN contrato_de_empleo contrato ON orden.fk_contrato_empleo = contrato.fk_empleado
+    LEFT JOIN persona_natural per ON contrato.fk_empleado = per.persona_nat_codigo
+    JOIN (
+        SELECT fk_orden, fk_estatus_orden
+        FROM (
+            SELECT fk_orden, fk_estatus_orden,
+                ROW_NUMBER() OVER(PARTITION BY fk_orden ORDER BY fecha_hora_inicio_estatus DESC) as rn
+            FROM historico_estatus_orden
+        ) t
+        WHERE t.rn = 1
+    ) historico ON orden.orden_codigo = historico.fk_orden
+    JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo;
+END;
+$$;
+
+-- Funcion para obtener los datos de una orden de compra
+
+DROP FUNCTION IF EXISTS ObtenerDatosOrdenDeCompra(INT);
+
+CREATE OR REPLACE FUNCTION ObtenerDatosOrdenDeCompra(orden_id INT)
+RETURNS SETOF refcursor
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    datos_orden_cursor refcursor := 'datos_orden_cursor';
+    presentaciones_cursor refcursor := 'presentaciones_cursor';
+BEGIN
+     -- Parte 1: Obtener datos de la orden, del proveedor y del empleado
+    OPEN datos_orden_cursor FOR
+    SELECT o.orden_codigo, o.orden_fecha, o.orden_subtotal, o.orden_total, 
+           pro.proveedor_codigo, pro.proveedor_razon_social, pro.proveedor_rif, 
+           pro.proveedor_direccion, pro.proveedor_numero, 
+           d.departamento_nombre, 
+           (per.persona_nat_p_nombre || ' ' || per.persona_nat_p_apellido) as empleado_nombre, 
+           per.persona_nat_cedula as empleado_cedula, 
+           est.estatus_orden_codigo
+           est.estatus_orden_nombre
+    FROM Orden_De_Reposicion o
+    JOIN 
+    (
+        SELECT detalle.fk_orden,
+               pro.persona_jur_codigo as proveedor_codigo,
+               pro.persona_jur_razon_social as proveedor_razon_social,
+               pro.persona_jur_rif as proveedor_rif,
+               lugar.lugar_nombre as proveedor_direccion,
+               (SELECT (tel.telefono_codigo_area || ' ' || tel.telefono_numero)
+                FROM Telefono tel
+                WHERE fk_persona_juridica = pro.persona_jur_codigo
+                LIMIT 1) as proveedor_numero
+        FROM detalle_orden_de_reposicion detalle 
+        JOIN producto ON detalle.fk_inventario_almacen_4 = producto.producto_codigo
+        JOIN persona_juridica pro ON producto.fk_proveedor = pro.persona_jur_codigo
+        JOIN Lugar lugar ON pro.fk_lugar_fisica = lugar.lugar_codigo
+    ) pro ON o.orden_codigo = pro.fk_orden
+    LEFT JOIN contrato_de_empleo contrato ON o.fk_contrato_empleo = contrato.fk_empleado
+    LEFT JOIN contrato_departamento dep ON contrato.contrato_codigo = dep.fk_contrato_empleo
+                                        AND dep.cont_depart_fecha_cierre IS NULL
+    LEFT JOIN departamento d ON dep.fk_departamento = d.departamento_codigo
+    LEFT JOIN persona_natural per ON contrato.fk_empleado = per.persona_nat_codigo
+    JOIN (
+        SELECT fk_orden, fk_estatus_orden
+        FROM (
+            SELECT fk_orden, fk_estatus_orden,
+                ROW_NUMBER() OVER(PARTITION BY fk_orden ORDER BY fecha_hora_inicio_estatus DESC) as rn
+            FROM historico_estatus_orden
+        ) t
+        WHERE t.rn = 1
+    ) historico ON o.orden_codigo = historico.fk_orden
+    JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo
+    WHERE o.orden_codigo = orden_id
+    LIMIT 1;
+
+    RETURN NEXT datos_orden_cursor;
+
+    -- Parte 2: Obtener detalles de las presentaciones
+    OPEN presentaciones_cursor FOR
+
+    SELECT (d.fk_inventario_almacen_2 || '' ||d.fk_inventario_almacen_3 || '' ||d.fk_inventario_almacen_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_orden_precio_unitario,
+        d.detalle_orden_cantidad as cantidad, img.imagen_nombre::TEXT 
+    FROM Detalle_Orden_De_Reposicion d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_almacen_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_almacen_2 
+    AND img.fk_presentacion_2 = d.fk_inventario_almacen_3 
+    AND img.fk_presentacion_3 = d.fk_inventario_almacen_4)
+    JOIN botella bo ON d.fk_inventario_almacen_3 = bo.botella_codigo
+    WHERE d.fk_orden = orden_id;
+
+    RETURN NEXT presentaciones_cursor;
+END;
+$$;

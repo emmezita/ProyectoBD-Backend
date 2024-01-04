@@ -114,26 +114,45 @@
             <div class="mt-4 mx-auto">
                 <table id="table-ordenesReposicion" class="table table-striped">
                     <!-- Aquí va el encabezado y cuerpo de la tabla -->
-                        <thead>
-                            <tr>
-                                <th>ID Orden</th>
-                                <th>Fecha de Solicitud</th>
-                                <th>Producto</th>
-                                <th>Cantidad</th>
-                                <th>Estatus</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                    <tbody id="body-inventariotienda"> </tbody>
+                    <thead>
+                        <tr>
+                            <th>ID Orden</th>
+                            <th>Fecha de Solicitud</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Estatus</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-ordenesReposicion"> </tbody>
                 </table>
             </div>
         </div>
         <div class="tab-pane fade" id="ordenesCompra" role="tabpanel" aria-labelledby="ordenesCompra-tab">
             <!-- Aquí va la tabla de órdenes de compra -->
             <div class="mt-4 mx-auto">
+                
+                <div class="d-flex justify-content-end align-items-center">
+                    <!-- Botón para añadir orden de compra -->
+                    <button type="button" class="btn btn-primary mb-3" id="add-orden-button" onclick="GenerarOrdenes()">Generar Órdenes</button>
+                </div>
+
                 <table id="table-ordenesCompra" class="table table-striped">
                     <!-- Aquí va el encabezado y cuerpo de la tabla -->
+                    <thead>
+                        <tr>
+                            <th>ID Orden</th>
+                            <th>Fecha de Solicitud</th>
+                            <th>Proveedor</th>
+                            <th>Costo total</th>
+                            <th>Empleado</th>
+                            <th>Estatus</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-ordenesCompra"> </tbody>
                 </table>
             </div>
         </div>
@@ -141,11 +160,29 @@
 
 <script>
 
+function GenerarOrdenes() {
+    $.ajax({
+        url: 'http://localhost:5000/api/orden/compra/generar',
+        type: 'POST',
+        dataType: 'json',
+        success: function(data) {
+            alert('Se han generado las órdenes de compra');
+        },
+        error: function() {
+            alert('Error al generar las órdenes de compra');
+        }
+    });        
+}
+
 function verOrdenReposicion(id){
     console.log('ver Orden de Reposicion');
     window.location.href = 'https://dilodev.co/orden-de-reposicion?id=' + id;
 }
 
+function verOrdenCompra(id){
+    console.log('ver Orden de Compra');
+    window.location.href = 'https://dilodev.co/orden-de-compra?id=' + id;
+}
 
 $(document).ready(function() {
     $.ajax({
@@ -164,7 +201,7 @@ $(document).ready(function() {
                 row.append('<td><button type="button" class="btn btn-warning" onclick="verOrdenReposicion(' + data[i].codigo + ')">Ver</button></td>');
                 row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarOrdenReposicion(' + data[i].codigo + ')">Eliminar</button></td>');
                 
-                $('#body-inventariotienda').append(row);
+                $('#body-ordenesReposicion').append(row);
             }
 
             $('#table-ordenesReposicion').DataTable({
@@ -189,6 +226,49 @@ $(document).ready(function() {
         }
     });
 
+    $.ajax({
+        url: 'http://localhost:5000/api/orden/compra/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].codigo + '</td>');
+                var fecha = formatDate(data[i].fecha);
+                row.append('<td>' + fecha + '</td>');
+                row.append('<td>' + data[i].proveedor + '</td>');
+                row.append('<td>' + data[i].total + '</td>');
+                row.append('<td>' + data[i].empleado + '</td>');
+                row.append('<td>' + data[i].estatus + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="verOrdenCompra(' + data[i].codigo + ')">Ver</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarOrdenCompra(' + data[i].codigo + ')">Eliminar</button></td>');
+                
+                $('#body-ordenesCompra').append(row);
+            }
+
+            $('#table-ordenesCompra').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Error al obtener las órdenes de compra');
+        }
+    });
+});
+
 function formatDate(dateString) {
     var oldDate = new Date(dateString);
     var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
@@ -203,9 +283,7 @@ function formatDate(dateString) {
         month = '0' + month;
 
     return [day, month, year].join('/');
-}
-
-});     
+}    
 
 </script>
 

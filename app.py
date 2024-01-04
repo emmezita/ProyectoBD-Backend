@@ -2576,13 +2576,6 @@ def obtener_orden(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('SELECT * FROM ObtenerOrdenDeReposicion(%s)', (id,))
 
-    # SELECT o.orden_codigo, o.orden_fecha, (d.fk_inventario_tienda_2 || '' ||d.fk_inventario_tienda_3 || '' ||d.fk_inventario_tienda_4) as producto_codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT, d.detalle_orden_cantidad
-    # FROM Orden_De_Reposicion o
-    # JOIN Detalle_Orden_De_Reposicion d ON o.orden_codigo = d.fk_orden
-    # JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
-    # JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
-    # WHERE o.orden_codigo = codigo_orden;
-
     rows = cur.fetchone()
 
     if rows is not None:
@@ -2591,3 +2584,75 @@ def obtener_orden(id):
     cur.close()
     pprint(rows)
     return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA LAS ORDENES DE COMPRA
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Generar orden de compra
+@app.route("/api/orden/compra/generar", methods=["POST"])
+def generar_orden_compra():
+    cur = conn.cursor()
+    try:
+        cur.execute('CALL GenerarOrdenesDeCompraPorProveedor()')
+        conn.commit()
+        return jsonify({"message": "Ordenes de compra generadas exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+
+# Ruta para obtener todas las ordenes de compra de la base de datos
+@app.route("/api/orden/compra/all", methods=["GET"])
+def obtener_ordenes_compra():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerOrdenesDeCompra()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+
+# Ruta para obtener los datos de una orden de compra de la base de datos
+@app.route("/api/orden/compra/<int:id>", methods=["GET"])
+def obtener_orden_compra(id):
+    cur = conn.cursor()
+    # Intentar cerrar el cursor antes de abrirlo de nuevo
+    
+    datos_orden = []
+    presentaciones = []
+    
+    try:
+        cur.callproc('ObtenerDatosOrdenDeCompra', (id,))
+        # Obtener los cursores de resultado
+        datos_orden_cursor_name = cur.fetchone()[0]
+        presentaciones_cursor_name = cur.fetchone()[0]
+
+        # Obtener los resultados de los cursores
+        cur.execute(f'FETCH ALL FROM "{datos_orden_cursor_name}";')
+        datos_orden = cur.fetchall()
+
+        cur.execute(f'FETCH ALL FROM "{presentaciones_cursor_name}";')
+        presentaciones = cur.fetchall()
+        
+        cur.execute('CLOSE datos_orden_cursor;')
+        cur.execute('CLOSE presentaciones_cursor;')
+        
+        base_url = "https://asoronucab.blob.core.windows.net/images/"
+
+        for i in range(len(presentaciones)):
+            presentacion = list(presentaciones[i])
+            presentacion[-1] = base_url + presentacion[-1]
+            presentaciones[i] = tuple(presentacion)
+        
+        pprint(datos_orden)
+        pprint(presentaciones)
+        
+    except Exception as e:
+        print(e)
+
+    # Cerrar la conexión
+    cur.close()
+    
+    return jsonify({'datos_orden': datos_orden, 'presentaciones': presentaciones})
