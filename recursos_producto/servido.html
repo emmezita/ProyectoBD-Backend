@@ -7,7 +7,7 @@
                 </select>
             </div>
             <div class="col-2">
-                <button class="btn btn-primary-hor" onclick="addServido(this, event)">Añadir</button>
+                <button class="btn btn-primary" onclick="addServido(this, event)">Añadir</button>
             </div>
             
         </div>
@@ -44,7 +44,7 @@ function addServido(e, event){
         alert("El servido ya existe en la tabla.");
         return;
     }
-    var fila = "<tr><td id="+ servidoId +">"+servido+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deletesServido(this)'>Eliminar</button></td></tr>";
+    var fila = "<tr><td id="+ servidoId +">"+servido+"</td><td><button type='button' class='btn btn-danger' onclick='deletesServido(this)'>Eliminar</button></td></tr>";
     $("#body-servidos").append(fila);
     //clean inputs
     $(e).parent().parent().find("select").val("");

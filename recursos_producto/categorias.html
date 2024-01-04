@@ -17,3 +17,23 @@
         });
     });
 </script>
+
+<script>
+    function cargarCategorias() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:5000/api/producto/categoria/all",
+            success: function(data) {
+                console.log("se carga la data")
+                console.log(data);
+                var categorias = data;
+                categorias.forEach(categoria => {
+                    $("#form-field-categoria").append("<option id="+ categoria.categoria_codigo +">"+ categoria.categoria_nombre +"</option>");
+                });
+            },
+            error: function() {
+                alert("Error al cargar las categorias");
+            }
+        });
+    }
+</script>

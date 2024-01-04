@@ -1,8 +1,9 @@
 from calendar import c
 import datetime
+import os
 from tkinter import N
 import traceback
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request, jsonify, url_for
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
@@ -283,8 +284,10 @@ def registrar_empleado():
         cur.execute(sql_contrato, (datetime.datetime.now(), None, empleado_codigo))
         result = cur.fetchone()
         contrato_codigo = result[0] if result is not None else None
-        cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
-        cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
+        if departamento:
+            cur.execute(sql_departamento, (datetime.datetime.now(), None, contrato_codigo, departamento))
+        if cargo:
+            cur.execute(sql_cargo, (datetime.datetime.now(), None, sueldo, contrato_codigo, cargo))
         
         for beneficio in beneficios:
             if beneficio.get('id') is None or beneficio.get('monto') is None:
@@ -330,13 +333,13 @@ def get_all_empleados():
                 INNER JOIN 
                     empleado e ON pn.persona_nat_codigo = e.empleado_codigo
                 INNER JOIN 
-                    contrato_de_empleo ce ON e.empleado_codigo = ce.fk_empleado
+                    contrato_de_empleo ce ON e.empleado_codigo = ce.fk_empleado 
                 LEFT JOIN 
-                    contrato_cargo cc ON ce.contrato_codigo = cc.fk_contrato_empleo
+                    contrato_cargo cc ON ce.contrato_codigo = cc.fk_contrato_empleo AND cc.cont_carg_fecha_cierre IS NULL
                 LEFT JOIN 
                     cargo c ON cc.fk_cargo = c.cargo_codigo
                 LEFT JOIN 
-                    contrato_departamento cd ON ce.contrato_codigo = cd.fk_contrato_empleo
+                    contrato_departamento cd ON ce.contrato_codigo = cd.fk_contrato_empleo AND cd.cont_depart_fecha_cierre IS NULL
                 LEFT JOIN 
                     departamento d ON cd.fk_departamento = d.departamento_codigo;
                 ''')
@@ -610,6 +613,47 @@ def deactivate_empleado(id):
 
     return "Empleado Desactivado"
 
+# Ruta para activar un empleado de la base de datos
+@app.route("/api/empleado/activate/<int:id>", methods=["PUT"])
+def activate_empleado(id):
+    cur = conn.cursor()
+
+    cur.execute("UPDATE contrato_de_empleo SET contrato_fecha_salida = %s WHERE fk_empleado = %s", (None, id))
+    print(cur.rowcount)
+    #Editar cargo
+    cur.execute("SELECT fk_cargo, cont_carg_sueldo_mensual FROM contrato_cargo WHERE fk_contrato_empleo = %s ORDER BY cont_carg_fecha_inicio DESC LIMIT 1", (id,))
+    cargo = cur.fetchall()
+    pprint(cargo)
+    
+    if cargo is not None:
+        cur.execute(
+            """
+            INSERT INTO Contrato_Cargo (
+                cont_carg_fecha_inicio, cont_carg_fecha_cierre, cont_carg_sueldo_mensual, fk_contrato_empleo, fk_cargo
+            )
+            VALUES (%s, %s, %s, %s, %s);
+            """
+        , (datetime.datetime.now(), None, cargo[0][1], id, cargo[0][0])
+        )
+
+    #Editar departamento
+    cur.execute("SELECT fk_departamento FROM contrato_departamento WHERE fk_contrato_empleo = %s ORDER BY cont_depart_fecha_inicio DESC LIMIT 1", (id,))
+    departamento = cur.fetchone()
+    if departamento is not None:
+        cur.execute(
+            """
+            INSERT INTO Contrato_Departamento (
+                cont_depart_fecha_inicio, cont_depart_fecha_cierre, fk_contrato_empleo, fk_departamento
+            )
+            VALUES (%s, %s, %s, %s);
+            """
+        , (datetime.datetime.now(), None, id, departamento)
+        )
+    conn.commit()
+    cur.close()
+
+    return "Empleado Activado"
+
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE CLIENTE NATURAL
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -788,12 +832,13 @@ def registrar_cliente_natural():
 @app.route("/api/cliente/natural/all", methods=["GET"])
 def get_all_clientes_naturales():
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_nat_codigo as codigo, persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
+    cur.execute('''
+                SELECT persona_nat_codigo as codigo, persona_nat_cedula as cedula, (persona_nat_p_nombre || ' ' ||persona_nat_p_apellido) as nombre, 
                 persona_nat_fecha_nac as fecha_nacimiento,
                 cliente_nat_puntos_acumulados as puntos_acumulados, afiliacion_numero as afiliacion
-                FROM persona_natural pn, cliente_natural cn, ficha_afiliacion fa
-                where pn.persona_nat_codigo = cn.cliente_nat_codigo
-                and fa.fk_cliente_natural = cn.cliente_nat_codigo
+                FROM persona_natural pn
+                JOIN cliente_natural cn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+                LEFT JOIN ficha_afiliacion fa ON fa.fk_cliente_natural = cn.cliente_nat_codigo
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -828,8 +873,9 @@ def get_cliente_natural(id):
         SELECT * FROM Telefono WHERE fk_persona_natural = %s
     """
     sql_tdc = """
-        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, banco_nombre
         FROM TDC
+        INNER JOIN Banco ON TDC.fk_banco = Banco.banco_codigo
         WHERE fk_persona_natural = %s
     """
     
@@ -852,7 +898,11 @@ def get_cliente_natural(id):
     cur.execute(sql_telefono, (id,))
     telefonos = cur.fetchall()
     cur.execute(sql_tdc, (id,))
-    tdc = cur.fetchone()
+    tdc = cur.fetchall()
+
+    # convertir los objetos de tipo 'date' a cadenas con mm/yyyy
+    for tarjeta in tdc:
+        tarjeta['tdc_fecha_vencimiento'] = tarjeta['tdc_fecha_vencimiento'].strftime('%m/%Y')
     
     cur.close()
 
@@ -903,7 +953,6 @@ def editar_cliente_natural(id):
     sql_eliminar = """
         DELETE FROM Correo WHERE fk_persona_natural = %s;
         DELETE FROM Telefono WHERE fk_persona_natural = %s;
-        DELETE FROM TDC WHERE fk_persona_natural = %s;
     """
     sql_correo = """
         INSERT INTO Correo (
@@ -922,15 +971,31 @@ def editar_cliente_natural(id):
     """
     try:
         cur.execute(sql_persona, (nacionalidad_rif, direccion, cedula, p_nombre, s_nombre, p_apellido, s_apellido, fecha_nacimiento, parroquia, id))
-        cur.execute(sql_eliminar, (id, id, id))
+        cur.execute(sql_eliminar, (id, id))
         cur.execute(sql_correo, (correo, id, None))
         if correo_alt:
             cur.execute(sql_correo, (correo_alt, id, None))
         cur.execute(sql_telefono, (cod_area, telefono, id, None))
         if cod_area_alt and telefono_alt:
             cur.execute(sql_telefono, (cod_area_alt, telefono_alt, id, None))
+
+        cur.execute("SELECT * FROM TDC WHERE fk_persona_natural = %s", (id,))
+        existeTDC = cur.fetchall()
+
+        # Create a set of card numbers from tdc
+        tdc_cards = set(tarjeta['numero'] for tarjeta in tdc)
+        existing_cards = set(card['tdc_numero_tarjeta'] for card in existeTDC) # type: ignore
+
+        for card in existeTDC:
+            # If a card in the database is not in tdc, delete it
+            if card['tdc_numero_tarjeta'] not in tdc_cards: # type: ignore
+                cur.execute("DELETE FROM TDC WHERE fk_persona_natural = %s AND tdc_numero_tarjeta = %s", (id, card['tdc_numero_tarjeta'])) # type: ignore
+
         for tarjeta in tdc:
-            cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], id, None))
+            # If a card in tdc is not in the database, add it
+            if tarjeta['numero'] not in existing_cards: # type: ignore
+                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], id, None))
+
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -1151,11 +1216,12 @@ def registrar_cliente_juridico():
 @app.route("/api/cliente/juridico/all", methods=["GET"])
 def get_all_clientes_juridicos():
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('''SELECT persona_jur_codigo as codigo, persona_jur_rif as rif, persona_jur_denom_comercial as denom, 
+    cur.execute('''
+                SELECT persona_jur_codigo as codigo, persona_jur_rif as rif, persona_jur_denom_comercial as denom, 
                  persona_jur_capital_disp as capital, cliente_jur_puntos_acumulados as puntos_acumulados, afiliacion_numero as afiliacion
-                FROM persona_juridica pj, cliente_juridico cj, ficha_afiliacion fa
-                where pj.persona_jur_codigo = cj.cliente_jur_codigo
-                and fa.fk_persona_juridica = cj.cliente_jur_codigo
+                FROM persona_juridica pj
+                JOIN cliente_juridico cj ON pj.persona_jur_codigo = cj.cliente_jur_codigo
+                LEFT JOIN ficha_afiliacion fa ON fa.fk_persona_juridica = cj.cliente_jur_codigo
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -1189,8 +1255,9 @@ def get_cliente_juridico(id):
         SELECT * FROM Telefono WHERE fk_persona_juridica = %s
     """
     sql_tdc = """
-        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco
+        SELECT tdc_codigo, tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, banco_nombre
         FROM TDC
+        JOIN Banco ON TDC.fk_banco = Banco.banco_codigo
         WHERE fk_persona_juridica = %s
     """
     
@@ -1199,7 +1266,7 @@ def get_cliente_juridico(id):
     if persona_juridica is None:
         return Response(status=404, response="Cliente no encontrado")
     cur.execute(sql_contacto, (id,))
-    contacto = cur.fetchone() 
+    contacto = cur.fetchall() 
     cur.execute(sql_lugar, (persona_juridica['fk_lugar_fiscal'],))
     lugar_fiscal = cur.fetchone()
     cur.execute(sql_lugar, (persona_juridica['fk_lugar_fisica'],))
@@ -1209,7 +1276,11 @@ def get_cliente_juridico(id):
     cur.execute(sql_telefono, (id,))
     telefonos = cur.fetchall()
     cur.execute(sql_tdc, (id,))
-    tdc = cur.fetchone()
+    tdc = cur.fetchall()
+
+    # convertir los objetos de tipo 'date' a cadenas con mm/yyyy
+    for tarjeta in tdc:
+        tarjeta['tdc_fecha_vencimiento'] = tarjeta['tdc_fecha_vencimiento'].strftime('%m/%Y')
     
     cur.close()
 
@@ -1264,7 +1335,6 @@ def editar_cliente_juridico(id):
     sql_eliminar = """
         DELETE FROM Correo WHERE fk_persona_juridica = %s;
         DELETE FROM Telefono WHERE fk_persona_juridica = %s;
-        DELETE FROM TDC WHERE fk_persona_juridica = %s;
         DELETE FROM Contacto WHERE fk_persona_juridica = %s;
     """
     sql_correo = """
@@ -1289,17 +1359,35 @@ def editar_cliente_juridico(id):
     """
     try:
         cur.execute(sql_persona_juridica, (cj_nacionalidad_rif, cjdireccionfiscal, cjdireccionfisica, cjdenom, cjrazon, cjpaginaweb, cjcapital, cjparroquiafiscal, cjparroquiafisica, id))
-        cur.execute(sql_eliminar, (id, id, id, id))
+        cur.execute(sql_eliminar, (id, id, id))
         cur.execute(sql_correo, (cjcorreo, None, id))
         if cjcorreoalt:
             cur.execute(sql_correo, (cjcorreoalt, None, id))
         cur.execute(sql_telefono, (cjcodarea, cjtelefono, None, id))
         if cjcodareaalt and cjtelefonoalt:
             cur.execute(sql_telefono, (cjcodareaalt, cjtelefonoalt, None, id))
+
+        # verificar si tiene tarjetas de credito registradas
+        cur.execute("SELECT * FROM TDC WHERE fk_persona_juridica = %s", (id,))
+        existeTDC = cur.fetchall()
+
+        # Create a set of card numbers from cjtdc
+        cjtdc_cards = set(tarjeta['numero'] for tarjeta in cjtdc)
+        existing_cards = set(card['tdc_numero_tarjeta'] for card in existeTDC) # type: ignore
+
+        for card in existeTDC:
+            # If a card in the database is not in cjtdc, delete it
+            if card['tdc_numero_tarjeta'] not in cjtdc_cards: # type: ignore
+                cur.execute("DELETE FROM TDC WHERE fk_persona_juridica = %s AND tdc_numero_tarjeta = %s", (id, card['tdc_numero_tarjeta'])) # type: ignore
+
         for tarjeta in cjtdc:
-            cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, id))
+            # If a card in cjtdc is not in the database, add it
+            if tarjeta['numero'] not in existing_cards: # type: ignore
+                cur.execute(sql_tdc, (tarjeta['numero'], tarjeta['vencimiento'], tarjeta['cvv'], tarjeta['banco'], None, id))
+
         for contacto in cjcontactos:
-            cur.execute(sql_contacto, (contacto['nombre'], contacto['numero'], contacto['correo'], id))
+            cur.execute(sql_contacto, (contacto['nombre'], contacto['telefono'], contacto['correo'], id))
+
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -1323,24 +1411,6 @@ def delete_cliente_juridico(id):
     cur.close()
 
     return "Cliente Eliminado"
-
-
-
-
-# >>>>>>>>>>>>>>>>>>>>>>
-# RUTAS PARA REALIZAR OPERACIONES DE INVENTARIO
-# >>>>>>>>>>>>>>>>>>>>>>
-
-# Ruta para obtener todos los productos (presentaciones) del inventario de una tienda
-@app.route("/api/tienda/inventario/productos/all", methods=["GET"])
-def get_productos():
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-
-    cur.callproc('get_productos')
-    productos = cur.fetchall()
-    cur.close()
-    pprint(productos)
-    return jsonify(productos)
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRODUCTO
@@ -1602,9 +1672,9 @@ def registrar_producto():
     """
     
     sql_regusto = """
-        INSERT INTO public.regusto(
+        INSERT INTO regusto(
             regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto)
-        VALUES (?, ?, ?, ?, ?, ?);
+        VALUES (%s, %s, %s, %s, %s, %s);
     """
     
     try:
@@ -1669,26 +1739,68 @@ def get_producto(id):
         JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
         WHERE p.lugar_codigo = %s
     """
-    sql_aroma = """
-        SELECT * FROM producto_aroma WHERE fk_producto = %s
+    sql_clasificacion = """
+        SELECT cl.clasificacion_codigo AS primario, se.clasificacion_codigo AS secundario
+        FROM clasificacion AS se
+        JOIN clasificacion AS cl ON se.fk_clasificacion = cl.clasificacion_codigo
+        WHERE se.clasificacion_codigo = %s
     """
-    sql_anejamiento = """
+    sql_aroma = """
+        SELECT a.* 
+        FROM aroma a
+        JOIN producto_aroma pa ON a.aroma_codigo = pa.fk_aroma
+        WHERE pa.fk_producto = %s
+    """
+    sql_ane = """
         SELECT fk_anejamiento FROM mezclado WHERE fk_producto = %s
     """
+    sql_anejamiento = """
+        SELECT pr.anejamiento_codigo AS primario, se.anejamiento_codigo AS secundario
+        FROM anejamiento AS se
+        JOIN anejamiento AS pr ON se.fk_anejamiento = pr.anejamiento_codigo
+        WHERE se.anejamiento_codigo = %s
+    """
     sql_ingrediente = """
-        SELECT fk_ingrediente FROM mezclado WHERE fk_producto = %s
+        SELECT i.*
+        FROM ingrediente i
+        JOIN mezclado m ON i.ingrediente_codigo = m.fk_ingrediente
+        WHERE m.fk_producto = %s
     """
     sql_sabor = """
-        SELECT * FROM producto_sabor WHERE fk_producto = %s
+        SELECT s.*
+        FROM sabor s
+        JOIN producto_sabor ps ON s.sabor_codigo = ps.fk_sabor
+        WHERE ps.fk_producto = %s
     """
     sql_servido = """
-        SELECT * FROM producto_servido WHERE fk_producto = %s
+        SELECT s.*
+        FROM servido s
+        JOIN producto_servido ps ON s.servido_codigo = ps.fk_servido
+        WHERE ps.fk_producto = %s
     """
     sql_cuerpo = """
         SELECT * FROM cuerpo WHERE fk_producto = %s
     """
     sql_regusto = """
         SELECT * FROM regusto WHERE fk_producto = %s
+    """
+    sql_color = """
+        SELECT * FROM color WHERE color_codigo = %s
+    """
+    sql_destilacion = """
+        SELECT * FROM destilacion WHERE destilacion_codigo = %s
+    """
+    sql_fermentacion = """
+        SELECT * FROM fermentacion WHERE fermentacion_codigo = %s
+    """
+    sql_proveedor = """
+        SELECT pj.persona_jur_denom_comercial AS proveedor
+        FROM persona_juridica pj
+        JOIN proveedor p ON pj.persona_jur_codigo = p.proveedor_codigo
+        WHERE pj.persona_jur_codigo = %s
+    """
+    sql_categoria = """
+        SELECT * FROM categoria WHERE categoria_codigo = %s
     """
     
     cur.execute(sql_producto, (id,))
@@ -1699,11 +1811,20 @@ def get_producto(id):
     cur.execute(sql_lugar, (producto['fk_lugar'],))
     lugar = cur.fetchone()
     
+    cur.execute(sql_clasificacion, (producto['fk_clasificacion'],))
+    clasificacion = cur.fetchone()
+    
     cur.execute(sql_aroma, (id,))
     aromas = cur.fetchall()
     
-    cur.execute(sql_anejamiento, (id,))
+    cur.execute(sql_ane, (id,))
+    ane = cur.fetchone()
+    ane_codigo = ane['fk_anejamiento'] if ane is not None else None
+        
+    cur.execute(sql_anejamiento, (ane['fk_anejamiento'],))
     anejamiento = cur.fetchone()
+    if not anejamiento:
+        anejamiento = {'primario': ane_codigo, 'secundario': None}
     
     cur.execute(sql_ingrediente, (id,))
     ingredientes = cur.fetchall()
@@ -1720,23 +1841,173 @@ def get_producto(id):
     cur.execute(sql_regusto, (id,))
     regusto = cur.fetchone()
     
+    cur.execute(sql_color, (producto['fk_color'],))
+    color = cur.fetchone()
+    
+    cur.execute(sql_destilacion, (producto['fk_destilacion'],))
+    destilacion = cur.fetchone()
+    
+    cur.execute(sql_fermentacion, (producto['fk_fermentacion'],))
+    fermentacion = cur.fetchone()
+    
+    cur.execute(sql_proveedor, (producto['fk_proveedor'],))
+    proveedor = cur.fetchone()
+    
+    cur.execute(sql_categoria, (producto['fk_categoria'],))
+    categoria = cur.fetchone()
+    
     cur.close()
 
     datos = jsonify({
         'producto': producto,
         'lugar': lugar,
+        'clasificacion': clasificacion,
         'aromas': aromas,
         'anejamiento': anejamiento,
         'ingredientes': ingredientes,
         'sabores': sabores,
         'servidos': servidos,
         'cuerpo': cuerpo,
-        'regusto': regusto
+        'regusto': regusto,
+        'color': color,
+        'destilacion': destilacion,
+        'fermentacion': fermentacion,
+        'proveedor': proveedor,
+        'categoria': categoria
     })
     
     pprint(datos)
     
     return datos
+
+# Ruta para editar los datos de un producto de la base de datos
+@app.route("/api/producto/editar/<int:id>", methods=["PUT"])
+def editar_producto(id):
+    cur = conn.cursor()
+    producto = request.get_json()
+    pprint(producto)
+    nombre = producto.get("nombre")
+    grado = producto.get("grado")
+    if grado:
+        grado = float(grado)
+    proveedor = producto.get("proveedor")
+    proveedor = int(proveedor)
+    parroquia = producto.get("parroquia")
+    parroquia = int(parroquia)
+    fermentacion = producto.get("fermentacion")
+    fermentacion = int(fermentacion)
+    destilacion = producto.get("destilacion")
+    destilacion = int(destilacion)
+    clasificacion = producto.get("clasificacion")
+    clasificacion = int(clasificacion)
+    categoria = producto.get("categoria")
+    categoria = int(categoria)
+    color = producto.get("color")
+    color = int(color)
+    detalle_color = producto.get("detallescolor")
+    descripcion = producto.get("descripcion")
+    aromas = producto.get("aromas")
+    panejamiento = producto.get("panejamiento")
+    if panejamiento:
+        panejamiento = int(panejamiento)
+    sanejamiento = producto.get("sanejamiento")
+    anejamiento = 0
+    if sanejamiento:
+        sanejamiento = int(sanejamiento)
+        anejamiento = sanejamiento
+    else:
+        sanejamiento = None
+        anejamiento = panejamiento
+    ingredientes = producto.get("ingredientes")
+    sabores = producto.get("sabores")
+    servidos = producto.get("servidos")
+    cuerpopeso = producto.get("cuerpopeso")
+    cuerpotextura = producto.get("cuerpotextura")
+    cuerpodensidad = producto.get("cuerpodensidad")
+    cuerpodescripcion = producto.get("cuerpodescripcion")
+    regustoentrada = producto.get("regustoentrada")
+    regustoevolucion = producto.get("regustoevolucion")
+    regustopersistencia = producto.get("regustopersistencia")
+    regustoacabado = producto.get("regustoacabado")
+    regustodescripcion = producto.get("regustodescripcion")
+    
+    sql_producto = """
+        UPDATE producto
+        SET producto_nombre = %s, producto_descripcion = %s, producto_grado_alcoholico = %s, producto_color_detalles = %s, fk_color = %s, fk_fermentacion = %s, fk_destilacion = %s, fk_clasificacion = %s, fk_categoria = %s, fk_proveedor = %s, fk_lugar = %s
+        WHERE producto_codigo = %s;
+    """
+    
+    sql_eliminar = """
+        DELETE FROM producto_aroma WHERE fk_producto = %s;
+        DELETE FROM mezclado WHERE fk_producto = %s;
+        DELETE FROM producto_sabor WHERE fk_producto = %s;
+        DELETE FROM producto_servido WHERE fk_producto = %s;
+        DELETE FROM cuerpo WHERE fk_producto = %s;
+        DELETE FROM regusto WHERE fk_producto = %s;
+    """
+    
+    sql_aroma = """
+        INSERT INTO producto_aroma(
+            fk_aroma, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_mezclado = """
+        INSERT INTO mezclado(
+            fk_anejamiento, fk_ingrediente, fk_producto)
+        VALUES (%s,%s,%s);
+    """
+    
+    sql_sabor = """
+        INSERT INTO producto_sabor(
+            fk_sabor, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_servido = """
+        INSERT INTO producto_servido(
+            fk_servido, fk_producto)
+        VALUES (%s,%s);
+    """
+    
+    sql_cuerpo = """
+        INSERT INTO cuerpo(
+            cuerpo_peso, cuerpo_textura, cuerpo_densidad, cuerpo_descripcion, fk_producto)
+        VALUES (%s,%s,%s,%s,%s);
+    """
+    
+    sql_regusto = """
+        INSERT INTO regusto(
+            regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto)
+        VALUES (%s, %s, %s, %s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_producto, (nombre, descripcion, grado, detalle_color, color, fermentacion, destilacion, clasificacion, categoria, proveedor, parroquia, id))
+        cur.execute(sql_eliminar, (id, id, id, id, id, id))
+        for aroma in aromas:
+            cur.execute(sql_aroma, (aroma, id))
+        for ingrediente in ingredientes:
+            cur.execute(sql_mezclado, (anejamiento, ingrediente, id))
+        for sabor in sabores:
+            cur.execute(sql_sabor, (sabor, id))
+        for servido in servidos:
+            cur.execute(sql_servido, (servido, id))
+        if cuerpopeso or cuerpotextura or cuerpodensidad or cuerpodescripcion:
+            cur.execute(sql_cuerpo, (cuerpopeso, cuerpotextura, cuerpodensidad, cuerpodescripcion, id))
+        if regustoentrada or regustoevolucion or regustopersistencia or regustoacabado or regustodescripcion:
+            cur.execute(sql_regusto, (regustoentrada, regustoevolucion, regustopersistencia, regustoacabado, regustodescripcion, id))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Producto editado exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRESENTACION
@@ -1805,8 +2076,274 @@ def formatear_empaques(empaques):
         'secundario': secundario
     }
     
+# Ruta para registrar una presentacion en la base de datos
+@app.route("/api/presentacion/registrar", methods=["POST"])
+def registrar_presentacion():
+    cur = conn.cursor()
+    presentacion = request.get_json()
+    pprint(presentacion)
+    producto = presentacion.get("producto")
+    producto = int(producto)
+    botella = presentacion.get("botella")
+    botella = int(botella)
+    material = presentacion.get("material")
+    material = int(material)
+    tapa = presentacion.get("tapa")
+    tapa = int(tapa)
+    empaque = presentacion.get("empaque")
+    empaque = int(empaque)
+    peso = presentacion.get("presentacionpeso")
+    peso = peso.replace(",", ".")
+    peso = float(peso)
+    precio_compra = presentacion.get("preciocompra")
+    precio_compra = precio_compra.replace(",", ".")
+    precio_compra = float(precio_compra)
+    imagen = presentacion.get("imagen")
+    
+    sql_presentacion = """
+        INSERT INTO presentacion(
+            presentacion_peso, fk_material_botella_1, fk_material_botella_2, fk_producto, fk_tapa, fk_caja)
+        VALUES (%s,%s,%s,%s,%s,%s);
+    """
+    
+    sql_tasa_actual = """
+        SELECT tasa_codigo FROM Historico_Tasa_Dolar WHERE tasa_fecha_fin is null
+    """
+    
+    sql_compra = """
+        INSERT INTO historico_precio_compra(
+            precio_compra_valor,precio_compra_fecha_inicio, fk_historico_tasa_dolar, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+        VALUES (%s, current_timestamp, %s, %s, %s, %s);
+    """
+    
+    sql_imagen = """
+        INSERT INTO imagen(
+            imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+        VALUES (%s, true ,%s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_presentacion, (peso, material, botella, producto, tapa, empaque))
+        cur.execute(sql_tasa_actual)
+        tasa = cur.fetchone()
+        tasa_codigo = tasa[0] if tasa is not None else None
+        cur.execute(sql_compra, (precio_compra, tasa_codigo, material, botella, producto))
+        cur.execute(sql_imagen, (imagen, material, botella, producto))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Presentacion registrada exitosamente")
+    
+# Ruta para obtener todas las presentaciones de un producto
+@app.route("/api/presentacion/all", methods=["GET"])
+def get_all_presentaciones():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
+                        (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
+                        pre.presentacion_peso as peso, compra.precio_compra_valor as precio_compra, i.imagen_nombre as imagen,
+                        hpv.precio_venta_valor as precio_venta_almacen
+                FROM presentacion pre
+                JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
+                JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
+                JOIN producto pro ON pre.fk_producto = pro.producto_codigo
+                JOIN historico_precio_compra compra ON (pre.fk_material_botella_1 = compra.fk_presentacion_1
+                                                    AND pre.fk_material_botella_2 = compra.fk_presentacion_2
+                                                    AND pre.fk_producto = compra.fk_presentacion_3
+                                                    AND compra.precio_compra_fecha_fin is null)
+                JOIN imagen i ON (pre.fk_material_botella_1 = i.fk_presentacion_1
+                                AND pre.fk_material_botella_2 = i.fk_presentacion_2
+                                AND pre.fk_producto = i.fk_presentacion_3)
+                JOIN historico_precio_venta hpv ON (hpv.fk_inventario_almacen_1 = 1
+                                                    AND pre.fk_material_botella_1 = hpv.fk_inventario_almacen_2
+                                                    AND pre.fk_material_botella_2 = hpv.fk_inventario_almacen_3
+                                                    AND pre.fk_producto = hpv.fk_inventario_almacen_4
+                                                    AND hpv.precio_venta_fecha_fin is null)
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+
+    # cambiar la imagen por la ruta de la imagen
+    for row in rows:
+        # filename = row['imagen']
+        # row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
+        row['imagen'] = "https://asoronucab.blob.core.windows.net/images/" + row['imagen']
+
+    pprint(rows)
+    return jsonify(rows)
+
+
+# Ruta para obtener los productos de la base de datos
+@app.route("/api/presentacion/producto/all", methods=["GET"])
+def get_all_productos_presentacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT producto_codigo as codigo, producto_nombre as nombre
+                FROM producto
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+
+# Ruta para obtener los datos de una presentacion de la base de datos
+@app.route("/api/presentacion/<int:id1>/<int:id2>/<int:id3>", methods=["GET"])
+def get_presentacion(id1, id2, id3):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    sql_presentacion = """
+        SELECT * FROM presentacion WHERE fk_material_botella_1 = %s AND fk_material_botella_2 = %s AND fk_producto = %s
+    """
+    sql_material = """
+        SELECT material_nombre FROM material WHERE material_codigo = %s
+    """
+    sql_botella = """
+        SELECT botella_descripcion FROM botella WHERE botella_codigo = %s
+    """
+    sql_tapa = """
+        SELECT tapa_descripcion FROM tapa WHERE tapa_codigo = %s
+    """
+    sql_empaque = """
+        SELECT  pr.caja_codigo AS primario, se.caja_codigo AS secundario
+        FROM caja AS se
+        JOIN caja AS pr ON se.fk_caja = pr.caja_codigo
+        WHERE se.caja_codigo = %s
+    """
+    sql_producto = """
+        SELECT producto_nombre FROM producto WHERE producto_codigo = %s
+    """
+    sql_compra = """
+        SELECT precio_compra_valor FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
+    """
+    sql_imagen = """
+        SELECT imagen_nombre FROM imagen WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s
+    """
+    
+    cur.execute(sql_presentacion, (id1, id2, id3))
+    presentacion = cur.fetchone()
+    if presentacion is None:
+        return Response(status=404, response="Presentacion no encontrada")
+    
+    cur.execute(sql_material, (presentacion['fk_material_botella_1'],))
+    material = cur.fetchone()
+    
+    cur.execute(sql_botella, (presentacion['fk_material_botella_2'],))
+    botella = cur.fetchone()
+    
+    cur.execute(sql_tapa, (presentacion['fk_tapa'],))
+    tapa = cur.fetchone()
+    
+    cur.execute(sql_empaque, (presentacion['fk_caja'],))
+    empaque = cur.fetchone()
+    
+    cur.execute(sql_producto, (presentacion['fk_producto'],))
+    producto = cur.fetchone()
+    
+    cur.execute(sql_compra, (id1, id2, id3))
+    compra = cur.fetchone()
+    
+    cur.execute(sql_imagen, (id1, id2, id3))
+    imagen = cur.fetchone()
+    if imagen is not None:
+        imagen['imagen_nombre'] = "https://asoronucab.blob.core.windows.net/images/" + imagen['imagen_nombre']
+    
+    cur.close()
+
+    datos = jsonify({
+        'presentacion': presentacion,
+        'material': material,
+        'botella': botella,
+        'tapa': tapa,
+        'empaque': empaque,
+        'producto': producto,
+        'compra': compra,
+        'imagen': imagen
+    }) 
+    
+    pprint(datos)
+    
+    return datos
+
+# Ruta para editar los datos de una presentacion de la base de datos
+@app.route("/api/presentacion/editar/<int:id1>/<int:id2>/<int:id3>", methods=["PUT"])
+def editar_presentacion(id1, id2, id3):
+    cur = conn.cursor()
+    presentacion = request.get_json()
+    pprint(presentacion)
+    producto = presentacion.get("producto")
+    producto = int(producto)
+    botella = presentacion.get("botella")
+    botella = int(botella)
+    material = presentacion.get("material")
+    material = int(material)
+    tapa = presentacion.get("tapa")
+    tapa = int(tapa)
+    empaque = presentacion.get("empaque")
+    empaque = int(empaque)
+    peso = presentacion.get("presentacionpeso")
+    peso = peso.replace(",", ".")
+    peso = float(peso)
+    precio_compra = presentacion.get("preciocompra")
+    precio_compra = precio_compra.replace(",", ".")
+    precio_compra = float(precio_compra)
+    
+    sql_presentacion = """
+        UPDATE presentacion
+        SET presentacion_peso = %s, fk_material_botella_1 = %s, fk_material_botella_2 = %s, fk_producto = %s, fk_tapa = %s, fk_caja = %s
+        WHERE fk_material_botella_1 = %s AND fk_material_botella_2 = %s AND fk_producto = %s;
+    """
+    
+    sql_eompra_anterior = """
+        SELECT precio_compra_valor FROM historico_precio_compra WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null
+    """
+    sql_fin_compra_anterior = """
+        UPDATE historico_precio_compra
+        SET precio_compra_fecha_fin = current_timestamp
+        WHERE fk_presentacion_1 = %s AND fk_presentacion_2 = %s AND fk_presentacion_3 = %s AND precio_compra_fecha_fin is null;
+    """
+    
+    sql_compra = """
+        INSERT INTO historico_precio_compra(
+            precio_compra_valor,precio_compra_fecha_inicio, fk_historico_tasa_dolar, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+        VALUES (%s, current_timestamp, %s, %s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_presentacion, (peso, material, botella, producto, tapa, empaque, id1, id2, id3))
+        cur.execute(sql_eompra_anterior, (id1, id2, id3))
+        result = cur.fetchone()
+        compra_anterior = result[0] if result is not None else None
+        if compra_anterior != precio_compra:
+            sql_tasa_actual = """
+                SELECT tasa_codigo FROM Historico_Tasa_Dolar WHERE tasa_fecha_fin is null
+            """
+            cur.execute(sql_tasa_actual)
+            tasa = cur.fetchone()
+            tasa_codigo = tasa[0] if tasa is not None else None
+            cur.execute(sql_fin_compra_anterior, (id1, id2, id3))
+            cur.execute(sql_compra, (precio_compra, tasa_codigo, id1, id2, id3))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Presentacion editada exitosamente")
+    
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# RUTAS PARA EL INVENTARIO DE LA TIENDA
+# RUTAS PARA EL CRUD DE EVENTOS
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # Ruta para obtener los datos de historico punto
@@ -1819,3 +2356,249 @@ def get_historico_punto():
     cur.close()
 
     return jsonify(rows)
+
+# Ruta para obtener todos los eventos de la base de datos
+@app.route("/api/evento/all", methods=["GET"])
+def get_all_eventos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT evento_codigo as codigo, evento_nombre as nombre, evento_num_cupos as cupos, evento_num_entradas as entradas, evento_fecha_inicio as fecha_inicio, evento_fecha_cierre as fecha_cierre
+                FROM evento
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+    return jsonify(rows)
+
+# Ruta para obtener las presentaciones de la base de datos
+@app.route("/api/evento/presentacion/all", methods=["GET"])
+def get_all_presentaciones_evento():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
+                        (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad             
+                FROM presentacion pre
+                JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
+                JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
+                JOIN producto pro ON pre.fk_producto = pro.producto_codigo
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para registrar un evento en la base de datos
+@app.route("/api/evento/registrar", methods=["POST"])
+def registrar_evento():
+    cur = conn.cursor()
+    evento = request.get_json()
+    pprint(evento)
+    nombre = evento.get("nombre")
+    cupos = evento.get("cupos")
+    cupos = int(cupos)
+    entradas = evento.get("entradas")
+    entradas = int(entradas)
+    fecha_inicio = evento.get("fechainicio")
+    fecha_cierre = evento.get("fechacierre")
+    presentaciones = evento.get("presentaciones")
+    descripcion = evento.get("descripcion")
+    direccion = evento.get("direccion")
+    parroquia = evento.get("parroquia")
+    
+    sql_evento = """
+        INSERT INTO evento(
+	        evento_nombre, evento_descripcion, evento_num_entradas, evento_fecha_inicio, evento_fecha_cierre, evento_direccion, evento_num_cupos, fk_lugar)
+	    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING evento_codigo;
+    """
+    
+    sql_presentacion = """
+        INSERT INTO evento_lista_producto(
+            even_prod_precio_unitario, even_prod_cantidad, fk_evento, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """
+    
+    try:
+        cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia))
+        result = cur.fetchone()
+        evento_codigo = result[0] if result is not None else None
+        for presentacion in presentaciones:
+            cur.execute(sql_presentacion, (presentacion['precio'], presentacion['cantidad'], evento_codigo, 1, presentacion['material'], presentacion['botella'], presentacion['producto']))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Evento registrado exitosamente")
+
+# Ruta para obtener los datos de un evento de la base de datos
+@app.route("/api/evento/<int:id>", methods=["GET"])
+def get_evento(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    sql_evento = """
+        SELECT * FROM evento WHERE evento_codigo = %s 
+    """
+    sql_lugar = """
+        SELECT e.lugar_codigo AS estado, m.lugar_codigo AS municipio, p.lugar_codigo AS parroquia
+        FROM lugar AS p
+        JOIN lugar AS m ON p.fk_lugar = m.lugar_codigo
+        JOIN lugar AS e ON m.fk_lugar = e.lugar_codigo
+        WHERE p.lugar_codigo = %s
+    """
+    sql_presentaciones = """
+        SELECT lista.fk_inventario_almacen_2 as c1, lista.fk_inventario_almacen_3 as c2, lista.fk_inventario_almacen_4 as c3, 
+        (pro.producto_nombre || ' en ' || bo.botella_descripcion || ' de ' || ma.material_nombre || ' ' || bo.botella_capacidad) as nombre,
+        lista.even_prod_precio_unitario as precio, lista.even_prod_cantidad as cantidad    
+        FROM evento_lista_producto lista
+        JOIN material ma ON lista.fk_inventario_almacen_2 = ma.material_codigo
+        JOIN botella bo ON lista.fk_inventario_almacen_3 = bo.botella_codigo
+        JOIN producto pro ON lista.fk_inventario_almacen_4 = pro.producto_codigo
+        WHERE fk_evento = %s
+    """
+    cur.execute(sql_evento, (id,))
+    evento = cur.fetchone()
+    if evento is None:
+        return Response(status=404, response="Evento no encontrado")
+    
+    cur.execute(sql_lugar, (evento['fk_lugar'],))
+    lugar = cur.fetchone()
+    
+    cur.execute(sql_presentaciones, (id,))
+    presentaciones = cur.fetchall()
+    
+    cur.close()
+
+    datos = jsonify({
+        'evento': evento,
+        'lugar': lugar,
+        'presentaciones': presentaciones
+    })
+    
+    pprint(datos)
+    
+    return datos
+
+#Ruta para editar los datos de un evento de la base de datos
+@app.route("/api/evento/editar/<int:id>", methods=["PUT"])
+def editar_evento(id):
+    cur = conn.cursor()
+    evento = request.get_json()
+    pprint(evento)
+    nombre = evento.get("nombre")
+    cupos = evento.get("cupos")
+    cupos = int(cupos)
+    entradas = evento.get("entradas")
+    entradas = int(entradas)
+    fecha_inicio = evento.get("fechainicio")
+    fecha_cierre = evento.get("fechacierre")
+    presentaciones = evento.get("presentaciones")
+    descripcion = evento.get("descripcion")
+    direccion = evento.get("direccion")
+    parroquia = evento.get("parroquia")
+    
+    sql_evento = """
+        UPDATE evento
+        SET evento_nombre = %s, evento_descripcion = %s, evento_num_entradas = %s, evento_fecha_inicio = %s, evento_fecha_cierre = %s, evento_direccion = %s, evento_num_cupos = %s, fk_lugar = %s
+        WHERE evento_codigo = %s;
+    """
+    
+    sql_buscar_presentacion = """
+        SELECT * FROM evento_lista_producto WHERE fk_evento = %s AND fk_inventario_almacen_1 = %s AND fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s
+    """
+    
+    sql_registrar_presentacion = """
+        INSERT INTO evento_lista_producto(
+            even_prod_precio_unitario, even_prod_cantidad, fk_evento, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+        VALUES (%s, %s, %s, %s, %s, %s, %s);
+    """
+    
+    sql_presentacion = """
+        UPDATE evento_lista_producto
+        SET even_prod_precio_unitario = %s, even_prod_cantidad = %s
+        WHERE fk_evento = %s AND fk_inventario_almacen_1 = %s AND fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s;
+    """
+    
+    try:
+        cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia, id))
+        cur.execute(sql_buscar_presentacion, (id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        result = cur.fetchone()
+        if result is None:
+            cur.execute(sql_registrar_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        else:
+            cur.execute(sql_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Evento editado exitosamente")
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA EL CARRITO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+@app.route("/api/carrito/add", methods=["POST"])
+def add_product():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    producto = request.get_json()
+    pprint(producto)
+    ids = producto.get("id")
+    id1 = ids.get("c1")
+    id2 = ids.get("c2")
+    id3 = ids.get("c3")
+
+    print(id1, id2, id3)
+
+    usuario = producto.get("usuario")
+
+    sql_algo = """ """
+
+    cur.close()
+    
+    return Response(status=200, response="Producto agregado exitosamente")
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA LAS ORDENES DE REPOSICION  
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todas las ordenes de reposicion de la base de datos
+@app.route("/api/orden/reposicion/all", methods=["GET"])
+def obtener_ordenes():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerTodasOrdenesDeReposicion()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener los datos de una orden de reposicion de la base de datos
+@app.route("/api/orden/reposicion/<int:id>", methods=["GET"])
+def obtener_orden(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerOrdenDeReposicion(%s)', (id,))
+
+    # SELECT o.orden_codigo, o.orden_fecha, (d.fk_inventario_tienda_2 || '' ||d.fk_inventario_tienda_3 || '' ||d.fk_inventario_tienda_4) as producto_codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT, d.detalle_orden_cantidad
+    # FROM Orden_De_Reposicion o
+    # JOIN Detalle_Orden_De_Reposicion d ON o.orden_codigo = d.fk_orden
+    # JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    # JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
+    # WHERE o.orden_codigo = codigo_orden;
+
+    rows = cur.fetchone()
+
+    if rows is not None:
+        rows['imagen_nombre'] = "https://asoronucab.blob.core.windows.net/images/" + rows['imagen_nombre']
+
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200

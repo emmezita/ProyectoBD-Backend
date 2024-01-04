@@ -157,6 +157,10 @@
         </div>
         <div class="tab-pane fade" id="productos" role="tabpanel" aria-labelledby="productos-tab">
             <div class="mt-4 mx-auto">
+                <div class="d-flex justify-content-end align-items-center">
+                    <!-- Botón para añadir producto -->
+                    <button type="button" class="btn btn-primary mb-3" id="add-producto-button" onclick="window.location.href='https://dilodev.co/formulario-registrar-producto/'">Añadir Producto</button>
+                </div>
                 <table id="table-productos" class="table table-striped ">
                     <thead>
                         <tr>
@@ -176,16 +180,18 @@
         </div>
         <div class="tab-pane fade" id="presentaciones" role="tabpanel" aria-labelledby="presentaciones-tab">
             <div class="mt-4 mx-auto">
+                <div class="d-flex justify-content-end align-items-center">
+                    <!-- Botón para añadir presentación -->
+                    <button type="button" class="btn btn-primary mb-3 ml-auto" id="add-presentacion-button" onclick="window.location.href='https://dilodev.co/formulario-registrar-presentacion/'">Añadir Presentación</button>
+                </div>
                 <table id="table-presentaciones" class="table table-striped ">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nombre del Producto</th>
                             <th>Botella</th>
-                            <th>Material</th>
                             <th>Capacidad</th>
                             <th>Peso</th>
-                            <th>Precio unitario de venta</th>
                             <th>Precio unitario de compra</th>
                             <th></th> <!-- no ordenar estas columnas -->
                             <th></th>
@@ -224,7 +230,6 @@ $(document).ready(function() {
         dataType: 'json',
         success: function(d) {
             data = d;
-            console.log(data);
             for (var i = 0; i < data.length; i++) {
                 var row = $('<tr>');
                 row.append('<td>' + data[i].codigo + '</td>');
@@ -233,7 +238,7 @@ $(document).ready(function() {
                 row.append('<td>' + data[i].proveedor + '</td>');
                 row.append('<td>' + data[i].clasificacion + '</td>');
                 row.append('<td>' + data[i].categoria + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="editarProducto(' + data[i].codigo + ')">Editar</button></td>');
                 row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 
                 $('#body-productos').append(row);
@@ -260,7 +265,56 @@ $(document).ready(function() {
             alert('Hubo un error obteniendo a los productos');
         }
     });
+    $.ajax({
+        url: 'http://localhost:5000/api/presentacion/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].c1 + '' + data[i].c2 + '' + data[i].c3 +'</td>');
+                row.append('<td>' + data[i].nombre + '</td>');
+                row.append('<td>' + data[i].botella + '</td>');
+                row.append('<td>' + data[i].capacidad + '</td>');
+                row.append('<td>' + data[i].peso + '</td>');
+                row.append('<td>' + data[i].precio_compra + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="editarPresentacion(' + data[i].c1 + ',' + data[i].c2 +',' + data[i].c3 + ')">Editar</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 
-       
+                $('#body-presentaciones').append(row);
+            }               
+            $('#table-presentaciones').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Hubo un error obteniendo a las presentaciones');
+        }
+    });
 });     
+
+function editarProducto(id){
+    console.log('editar Producto');
+    window.location.href = 'http://dilodev.co/formulario-editar-producto?id=' + id;
+}
+
+function editarPresentacion(c1, c2, c3){
+    console.log('editar Presentacion');
+    window.location.href = 'http://dilodev.co/formulario-editar-presentacion?id1=' + c1 + '&id2=' + c2 + '&id3=' + c3;
+}
+
 </script>

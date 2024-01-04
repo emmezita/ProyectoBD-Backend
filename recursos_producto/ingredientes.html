@@ -12,7 +12,7 @@
     <style>   
         
         /* Estilo para el botón de añadir */
-        .btn-primary-hor {
+        .btn-primary {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 16px;
@@ -20,13 +20,13 @@
             background-color: #D1991A;
             border-color: #D1991A;
         }
-        .btn-primary-hor:hover {
+        .btn-primary:hover {
             background-color: #956d11;
             border-color: #956d11;
         }
 
         /* Estilo para el botón de eliminar */
-        .btn-danger-hor {
+        .btn-danger {
             font-family: 'Hind', sans-serif;
             color: #F8F8F8;
             font-size: 15px;
@@ -34,7 +34,7 @@
             background-color: #FF0000;
             border-color: #FF0000;
         }
-        .btn-danger-hor:hover {
+        .btn-danger:hover {
             background-color: #b30000;
             border-color: #b30000;
         }
@@ -73,7 +73,7 @@
                     </select>
                 </div>
                 <div class="col-2">
-                    <button class="btn btn-primary-hor" onclick="addIngrediente(this, event)">Añadir</button>
+                    <button class="btn btn-primary" onclick="addIngrediente(this, event)">Añadir</button>
                 </div>
                 
             </div>
@@ -110,7 +110,7 @@
             alert("El ingrediente ya existe en la tabla.");
             return;
         }
-        var fila = "<tr><td id="+ ingredienteId +">"+ingrediente+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deleteIngrediente(this)'>Eliminar</button></td></tr>";
+        var fila = "<tr><td id="+ ingredienteId +">"+ingrediente+"</td><td><button type='button' class='btn btn-danger' onclick='deleteIngrediente(this)'>Eliminar</button></td></tr>";
         $("#body-ingredientes").append(fila);
         //clean inputs
         $(e).parent().parent().find("select").val("");

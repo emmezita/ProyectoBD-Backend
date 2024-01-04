@@ -2,16 +2,9 @@ var urlParams = new URLSearchParams(window.location.search);
 var idEditar = urlParams.get('id');
 var EMP = null;
 
-function llenarHorarios(horarios) {
-    horarios.forEach(horario => {
-        var nombre = horario.horario_dia + " " + horario.horario_hora_entrada + " a " + horario.horario_hora_salida;
-        $('#body-horarios').append("<tr><td id="+ horario.horario_codigo +">"+nombre+"</td><td><button type='button' class='btn btn-danger-hor' onclick='deleteHorario(this)'>Eliminar</button></td></tr>");
-    });
-}
-
-function llenarBeneficios(beneficios) {
-    beneficios.forEach(beneficio => {
-        $('#body-beneficios').append("<tr><td id="+ beneficio.beneficio_codigo +">"+beneficio.beneficio_nombre+"</td><td>"+beneficio.cont_bene_monto+"</td><td><button type='button' class='btn btn-danger-ben' onclick='deleteBenefit(this)'>Eliminar</button></td><td><button type='button' class='btn btn-warning-ben' onclick='editBenefit(this)'>Editar</button></td></tr>");
+function llenarPresentaciones(presentaciones) {
+    presentaciones.forEach(presentacion => {
+        $('#body-presentaciones').append("<tr><td idmaterial="+ presentacion.c1 +" idbotella="+ presentacion.c2 +" idproducto="+ presentacion.c3 +">"+presentacion.nombre+"</td><td>"+presentacion.cantidad+"</td><td>"+presentacion.precio+"</td><td><button type='button' class='btn btn-primary' onclick='editPresentacion(this)'>Editar</button></td><td><button type='button' class='btn btn-danger' onclick='deletePresentacion(this)'>Eliminar</button></td></tr>");
     });
 }
 
@@ -87,52 +80,37 @@ $(document).ready(function() {
                     $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
                 });
             });
+
+            getEvento();
         },
         error: function() {
             alert('Error obteniendo ubicaciones');
         }
     });
 
+
+});
+
+function getEvento(){
     $.ajax({
-        url: 'http://localhost:5000/api/empleado/' + idEditar,
+        url: 'http://localhost:5000/api/evento/'+idEditar,
         type: 'GET',
         dataType: 'json',
         success: function(data) {
-            ff = '#form-field-';
-            $(ff+"pnombre").val(data.persona.persona_nat_p_nombre)
-            $(ff+"snombre").val(data.persona.persona_nat_s_nombre)
-            $(ff+"papellido").val(data.persona.persona_nat_p_apellido)
-            $(ff+"sapellido").val(data.persona.persona_nat_s_apellido)
-            $(ff+"cedula").val(data.persona.persona_nat_cedula)
-            $(ff+"nacionalidad").val(data.persona.persona_nat_rif.substring(0, 1))
-            $(ff+"rif").val(data.persona.persona_nat_rif.substring(1))
-            $(ff+"correo").val(data.correos[0].correo_direccion)
-            if (data.correos.length > 1)
-                $(ff+"correoalt").val(data.correos[1].correo_direccion)
-            $(ff+"codarea").val(data.telefonos[0].telefono_codigo_area)
-            $(ff+"telefono").val(data.telefonos[0].telefono_numero)
-            if (data.telefonos.length > 1) {
-                $(ff+"codareaalt").val(data.telefonos[1].telefono_codigo_area)
-                $(ff+"telefonoalt").val(data.telefonos[1].telefono_numero)
-            }
-            let formattedFecha = formatDate(data.persona.persona_nat_fecha_nac);
-            $(ff+"fechanac").val(formattedFecha);
-            $(ff+"direccion").val(data.persona.persona_nat_direccion_fiscal)
-            
-            if (data.cargo != null) {
-                $(ff+"cbcargo").val(data.cargo.cargo_nombre)
-                $(ff+"sueldo").val(parseFloat(data.cargo.cont_carg_sueldo_mensual))
-            }
+            console.log(data);
+            $("#form-field-nombre").val(data.evento.evento_nombre);
+            $("#form-field-cupos").val(data.evento.evento_num_cupos);
+            $("#form-field-entradas").val(data.evento.evento_num_entradas);
+            $("#form-field-fechainicio").val(formatDate(data.evento.evento_fecha_inicio));
+            $("#form-field-fechacierre").val(formatDate(data.evento.evento_fecha_cierre));
+            $("#form-field-direccion").val(data.evento.evento_direccion);
+            $("#form-field-descripcion").val(data.evento.evento_descripcion);
 
-            if (data.departamento != null)
-                $(ff+"cbdepa").val(data.departamento.departamento_nombre)
-
-            llenarEMP(data.lugar.estado, data.lugar.municipio, data.lugar.parroquia); 
-            llenarHorarios(data.horarios);
-            llenarBeneficios(data.beneficios);
+            llenarPresentaciones(data.presentaciones);
+            llenarEMP(data.lugar.estado, data.lugar.municipio, data.lugar.parroquia);
         },
         error: function() {
-            alert('Error obteniendo empleado');
+            alert('Error obteniendo evento');
         }
     });
-});
+}

@@ -199,6 +199,24 @@
         </div>
     </div>
 
+    <!-- Modal Activate Employee-->
+    <div class="modal fade" id="activateEmployeeModal" tabindex="-1" aria-labelledby="activateEmployeeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="activateEmployeeModalLabel">Activar Empleado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="activate-employee-button">Activar</button>
+                </div>
+            </div>
+        </div>
+    </div>    
+
 <script>
 
 $(document).ready(function() {
@@ -215,8 +233,16 @@ $(document).ready(function() {
                 var row = '<tr>';
                 row += '<td>' + data[i].cedula + '</td>';
                 row += '<td>' + data[i].nombre + '</td>';
-                row += '<td>' + data[i].cargo + '</td>';
-                row += '<td>' + data[i].departamento + '</td>';
+                if (data[i].cargo == null) {
+                    row += '<td> Sin cargo </td>';
+                } else {
+                    row += '<td>' + data[i].cargo + '</td>';
+                }
+                if (data[i].departamento == null) {
+                    row += '<td> Sin departamento </td>';
+                } else {
+                    row += '<td>' + data[i].departamento + '</td>';
+                }
                 var fechaIngreso = formatDate(data[i].fecha_ingreso);
                 row += '<td>' + fechaIngreso + '</td>';
                 var fechaSalida = formatDate(data[i].fecha_salida);
@@ -230,7 +256,7 @@ $(document).ready(function() {
                     row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].codigo +') class="btn btn-warning">Editar</button></td>';
                     row += '<td> <button type="button" id="deactivate-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deactivateEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].codigo + '">Desactivar</button></td>';
                 } else {
-                    row += '<td> <button type="button" id="edit-employee-button" onClick=editEmployee('+ data[i].codigo +') class="btn btn-warning inactive-edit">Activar</button></td>';
+                    row += '<td> <button type="button" id="activate-employee-button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#activateEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].codigo + '">Activar</button></td>';
                     row += '<td> <button type="button" id="delete-employee-button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal" data-employee-name="' + data[i].nombre + '"  data-employee-id="' + data[i].codigo + '">Eliminar</button></td>';
                 }
                 row += '</tr>';
@@ -326,6 +352,31 @@ $('#deactivate-employee-button').click(function() {
         },
         error: function() {
             alert('Hubo un error desactivando el empleado');
+        }
+    });
+});
+
+$('#activateEmployeeModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var employeeId = button.data('employee-id') // Extract info from data-* attributes
+    var employeeName = button.data('employee-name') // Extract info from data-* attributes
+    var modal = $(this)
+    modal.find('.modal-body').text('¿Está seguro que desea activar a ' + employeeName + '?')
+    modal.find('#activate-employee-button').attr('data-employee-id', employeeId)
+})
+
+$('#activate-employee-button').click(function() {
+    console.log('activate');
+    var employeeId = $(this).data('employee-id');
+    $.ajax({
+        url: 'http://localhost:5000/api/empleado/activate/' + employeeId,
+        type: 'PUT',
+        success: function() {
+            alert('Empleado activado exitosamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error activando el empleado');
         }
     });
 });
