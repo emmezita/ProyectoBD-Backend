@@ -3442,7 +3442,7 @@ VALUES
 
 INSERT INTO Usuario (usuario_nombre, usuario_contrasena, fk_persona_natural, fk_persona_juridica, fk_rol)
 VALUES
-  (monicagonza, '123456', 10, NULL, 2),
+  ('monicag', '123456', 10, NULL, 2);
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES

@@ -315,6 +315,8 @@ BEGIN
         SELECT fk_orden FROM TempOrdenes
     );
 
+    DROP TABLE TempOrdenes;
+
     -- No es necesario eliminar la tabla temporal, ya que se eliminará automáticamente al final de la sesión
 
 EXCEPTION
@@ -438,8 +440,10 @@ BEGIN
 END;
 $$;
 
+DROP PROCEDURE procesarordendecompra(integer,json);
+
 -- Procedimiento para procesar una orden de compra (cambiar el estatus a "En Proceso")
-CREATE OR REPLACE PROCEDURE ProcesarOrdenDeCompra(_orden_codigo INT, presentaciones JSON)
+CREATE OR REPLACE PROCEDURE ProcesarOrdenDeCompra(_orden_codigo INT, datosOrden JSON)
 LANGUAGE plpgsql
 AS $$
 DECLARE
@@ -448,17 +452,17 @@ DECLARE
     nuevo_estatus_id INT := 2; -- Reemplaza con el ID de estatus correspondiente
 BEGIN
     --Asignar empleado a la orden
+    UPDATE Orden_De_Reposicion orden
+    SET fk_contrato_empleo = (
+        SELECT contrato.contrato_codigo
+        FROM Contrato_De_Empleo contrato
+        INNER JOIN Empleado ON contrato.fk_empleado = Empleado.empleado_codigo
+        INNER JOIN Usuario ON Empleado.empleado_codigo = Usuario.fk_persona_natural
+        WHERE Usuario.usuario_codigo = idUsuario  -- Reemplaza '_idUsuario' con el ID del usuario
+    ) 
+    WHERE orden_codigo = _orden_codigo;
 
     idUsuario := (datosOrden ->> 'idUsuario')::INT;    
-
-    UPDATE Orden_De_Reposicion
-    SET fk_empleado = (
-        SELECT Empleado.empleado_codigo
-        FROM Empleado
-        INNER JOIN Usuario ON Empleado.empleado_codigo = Usuario.fk_persona_natural
-        WHERE Usuario.id = idUsuario  -- Reemplaza '_idUsuario' con el ID del usuario
-    )
-    WHERE codigo = _orden_codigo;  -- Reemplaza '_orden_codigo' con el código de la orden
 
     -- Instrucciones para actualizar el estatus de la orden a "En Proceso"
     -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
@@ -470,16 +474,30 @@ BEGIN
     VALUES (CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
 
     -- Loop a través de cada presentación en el JSON
-    FOR presentacion IN SELECT * FROM json_to_recordset(presentaciones -> 'presentaciones') AS x(cantidad INT, idb INT, idm INT, ido INT, precio DECIMAL)
+    FOR presentacion IN SELECT * FROM json_to_recordset(datosOrden -> 'presentaciones') AS x(cantidad INT, idb INT, idm INT, ido INT, precio DECIMAL)
     LOOP
         -- Actualizar Detalle_Orden_De_Reposicion
         UPDATE Detalle_Orden_De_Reposicion
         SET detalle_orden_cantidad = presentacion.cantidad,
             detalle_orden_precio_unitario = presentacion.precio
-        WHERE fk_orden = nueva_orden_id 
+        WHERE fk_orden = _orden_codigo
         AND fk_inventario_almacen_2 = presentacion.idm
         AND fk_inventario_almacen_3 = presentacion.idb
         AND fk_inventario_almacen_4 = presentacion.ido;
     END LOOP;
+
+    -- Actualizar el subtotal y total de la orden de reposición
+    UPDATE Orden_De_Reposicion
+    SET orden_subtotal = (
+        SELECT SUM(detalle_orden_cantidad * detalle_orden_precio_unitario)
+        FROM Detalle_Orden_De_Reposicion
+        WHERE fk_orden = _orden_codigo
+    ),
+    orden_total = (
+        SELECT SUM(detalle_orden_cantidad * detalle_orden_precio_unitario)
+        FROM Detalle_Orden_De_Reposicion
+        WHERE fk_orden = _orden_codigo
+    )
+    WHERE orden_codigo = _orden_codigo;
 END;
 $$;
