@@ -15,3 +15,44 @@
     <button id="completar" onclick="completarOrden()" style="font-size: 18px; background-color: #21834A;">Completar</button>
     <button id="cancelar" onclick="cancelarOrden()" style="font-size: 18px; background-color: #D1991A;">Cancelar</button>
 </div>
+
+<script>
+    function save() {
+    
+    var detalleOrden = {
+        idUsuario: 1, // TODO: Cambiar por el id del usuario
+        presentaciones: [],
+    };
+
+    $('.body-ordenes tr').each(function(i, e) {
+        var idm = $(e).find('td').eq(0).attr('idm');
+        var idb = $(e).find('td').eq(0).attr('idb');
+        var ido = $(e).find('td').eq(0).attr('ido');
+        var cantidad = $(e).find('.cantidad').val();
+        var precio = $(e).find('.precio').val();
+        var datos = {
+            idm: idm,
+            idb: idb,
+            ido: ido,
+            cantidad: cantidad,
+            precio: precio,
+        };
+        detalleOrden.presentaciones.push(datos);
+    });
+
+    $.ajax({
+        url: "http://localhost:5000/api/orden/compra/" + idOrden,
+        method: "PUT",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify(detalleOrden),
+        success: (data) => {
+            console.log(data);
+            window.location.href = "http://localhost:5000/ordenes_compra";
+        },
+        error: (error) => {
+            console.log(error);
+        },
+    });
+}
+</script>

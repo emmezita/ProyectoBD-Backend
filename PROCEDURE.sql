@@ -380,7 +380,7 @@ BEGIN
            d.departamento_nombre, 
            (per.persona_nat_p_nombre || ' ' || per.persona_nat_p_apellido) as empleado_nombre, 
            per.persona_nat_cedula as empleado_cedula, 
-           est.estatus_orden_codigo
+           est.estatus_orden_codigo,
            est.estatus_orden_nombre
     FROM Orden_De_Reposicion o
     JOIN 
@@ -422,7 +422,7 @@ BEGIN
     -- Parte 2: Obtener detalles de las presentaciones
     OPEN presentaciones_cursor FOR
 
-    SELECT (d.fk_inventario_almacen_2 || '' ||d.fk_inventario_almacen_3 || '' ||d.fk_inventario_almacen_4)
+    SELECT (d.fk_inventario_almacen_2 || '-' ||d.fk_inventario_almacen_3 || '-' ||d.fk_inventario_almacen_4)
         as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
         d.detalle_orden_precio_unitario,
         d.detalle_orden_cantidad as cantidad, img.imagen_nombre::TEXT 

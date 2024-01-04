@@ -2533,11 +2533,12 @@ def editar_evento(id):
     return Response(status=200, response="Evento editado exitosamente")
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# RUTAS PARA EL CARRITO
+# RUTAS PARA EL CARRITO (VENTA EN LINEA)
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-@app.route("/api/carrito/add", methods=["POST"])
-def add_product():
+# Ruta para agregar un producto al carrito de un usuario (id de usuario)
+@app.route("/api/carrito/<int:id>/add", methods=["POST"])
+def add_product(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     producto = request.get_json()
     pprint(producto)
@@ -2546,15 +2547,47 @@ def add_product():
     id2 = ids.get("c2")
     id3 = ids.get("c3")
 
-    print(id1, id2, id3)
+    print(id1, id2, id3) # id de la presentacion que se desea agregar
 
-    usuario = producto.get("usuario")
+    # Buscamos los pedidos de la persona que no han sido realizados, si no hay ninguno, se crea uno
+    # Si hay uno, se verifica si el producto que se quiere agregar ya esta en el pedido y se informa al usuario
+    # Si no esta, se agrega el producto al pedido
+
+    sql_buscar_codigo_persona = """ 
+        SELECT fk_persona_juridica, fk_persona_natural FROM usuario WHERE usuario_codigo = %s
+    """
+
+    cur.execute(sql_buscar_codigo_persona, (id,))
+    result = cur.fetchone()
+    if result is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_juridica = result['fk_persona_juridica']
+    codigo_persona_natural = result['fk_persona_natural']
+    
+
+    # sql_buscar_pedido = """ """
 
     sql_algo = """ """
 
     cur.close()
     
     return Response(status=200, response="Producto agregado exitosamente")
+
+# Cuando la persona agrega por primera vez un producto al carrito, se debe crear un pedido y un detalle de pedido
+# este funcionara como un carrito de compras (Pedido que no se ha realizado)
+
+# Ruta para conocer los productos que hay en el carrito de un usuario (id de usuario)
+@app.route("/api/carrito/<int:id>", methods=["POST"])
+def ver_carrito(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    sql_algo = """ """
+
+    cur.close()
+    
+    return 
+
+
+
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA LAS ORDENES DE REPOSICION  
