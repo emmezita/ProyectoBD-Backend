@@ -3335,14 +3335,14 @@ VALUES
   ('Crear nuevos pedidos','Pedido'),
   ('Actualizar datos de cualquier pedido','Pedido'),
   ('Eliminar cualquier pedido','Pedido'),
-  ('Consultar datos de cualquier orden de reposición','Orden Reposicion'),
+  ('Consultar datos de cualquier orden de reposición','Orden Reposicion'), --102
   ('Crear nuevas órdenes de reposición','Orden Reposicion'),
   ('Actualizar datos de cualquier orden de reposición','Orden Reposicion'),
   ('Eliminar cualquier orden de reposición','Orden Reposicion'),
   ('Consultar datos de cualquier estatus de orden','Estatus Orden'),
   ('Crear nuevos estatus de orden','Estatus Orden'),
   ('Actualizar datos de cualquier estatus de orden','Estatus Orden'),
-  ('Eliminar datos de cualquier estatus de orden', 'Estatus Orden'),
+  ('Eliminar datos de cualquier estatus de orden', 'Estatus Orden'), --109
   ('Consultar datos de cualquier estatus de pedido','Estatus Pedido'),
   ('Crear nuevos estatus de pedido','Estatus Pedido'),
   ('Actualizar datos de cualquier estatus de pedido','Estatus Pedido'),
@@ -3429,7 +3429,15 @@ VALUES
   ('Seguridad'),
   ('Empleado almacén');
 
--- FALTA EL INSERT DE ROL_PERMISO
+INSERT INTO Rol_Permiso (fk_rol, fk_permiso)
+  (2, 102),
+  (2, 103),
+  (2, 104),
+  (2, 105),
+  (2, 106),
+  (2, 107),
+  (2, 108),
+  (2, 109);
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES
