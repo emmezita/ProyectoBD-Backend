@@ -104,7 +104,7 @@
         </li>
         <li class="nav-item" role="historicotasadolar">
             <button class="nav-link" id="historicotasadolar-tab" data-bs-toggle="tab" data-bs-target="#historicotasadolar" type="button" role="tab" aria-controls="historicotasadolar" aria-selected="false">Historico Tasa Dolar</button>
-        
+        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -113,15 +113,14 @@
             <div class="mt-4 mx-auto">
                 <table id="table-historicopunto" class="table table-striped ">
                     <thead>
-                        <tr>
-                            <th>Valor</th>
-                            <th>Fecha inicio</th>
-                            <th>Tienda</th>
-                            <th></th> <!-- no ordenar estas columnas -->
-                            <th></th>
-                        </tr>
+                        <th>Valor del Punto</th>
+                        <th>Fecha inicio</th>
+                        <th>Tienda</th> 
+                        <th></th>
+                        <th></th>
                     </thead>
-                    <tbody id="body-historicopunto"> </tbody>
+                    <tbody id="body-historicopunto">
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -129,15 +128,14 @@
             <div class="mt-4 mx-auto">
                 <table id="table-historicotasadolar" class="table table-striped ">
                     <thead>
-                        <tr>
-                            <th>Valor</th>
-                            <th>Fecha inicio</th>
-                            <th>Fecha fin</th>
-                            <th></th> <!-- no ordenar estas columnas -->
-                            <th></th>
-                        </tr>
+                        <th>Valor</th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                        <th></th> 
+                        <th></th>
                     </thead>
-                    <tbody id="body-historicotasadolar"> </tbody>
+                    <tbody id="body-historicotasadolar">
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -159,8 +157,25 @@
             </div>
         </div>
     </div>
+
+
 <script>
 
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [year, month, day].join('-');
+}
     
 $(document).ready(function() {
     var data = null;
@@ -174,15 +189,16 @@ $(document).ready(function() {
             for (var i = 0; i < data.length; i++) {
                 var row = $('<tr>');
                 row.append('<td>' + data[i].punto_valor + '</td>');
-                row.append('<td>' + data[i].punto_fecha_inicio + '</td>');
+                var fecha = formatDate(data[i].punto_fecha_inicio);
+                row.append('<td>' + fecha + '</td>');
                 row.append('<td>' + data[i].tienda_direccion + '</td>');
                 row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
                 row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 
-                $('#historicopunto').append(row);
+                $('#body-historicopunto').append(row);
             }
 
-            $('#historicopunto').DataTable({
+            $('#table-historicopunto').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registros por página",
                     "zeroRecords": "No se encontraron resultados",
