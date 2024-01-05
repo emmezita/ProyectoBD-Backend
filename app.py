@@ -2554,21 +2554,49 @@ def add_product(id):
     # Si hay uno, se verifica si el producto que se quiere agregar ya esta en el pedido y se informa al usuario
     # Si no esta, se agrega el producto al pedido
 
-    sql_buscar_codigo_persona = """ 
-        SELECT fk_persona_juridica, fk_persona_natural FROM usuario WHERE usuario_codigo = %s
-    """
+    cur.callproc('ObtenerCodigoPersona', (id,))
+    personas = cur.fetchone()
+    print(personas)
 
-    cur.execute(sql_buscar_codigo_persona, (id,))
-    result = cur.fetchone()
-    if result is None:
+    # Procedimiento de buscar_codigo_persona ^
+    if personas is None:
         return Response(status=404, response="Usuario no encontrado")
-    codigo_persona_juridica = result['fk_persona_juridica']
-    codigo_persona_natural = result['fk_persona_natural']
-    
+    codigo_persona_natural, codigo_persona_juridica = personas
 
-    # sql_buscar_pedido = """ """
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
 
-    sql_algo = """ """
+    if codigoCarrito is None:
+        cur.callproc('CrearPedidoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+        codigoCarrito = cur.fetchone()
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    # Procedimiento de buscar_pedido ^
+
+    # Verificar si el producto ya esta en el pedido
+    sql_buscar_producto = """
+        SELECT fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4
+        FROM detalle_pedido
+        WHERE fk_pedido = %s AND fk_inventario_almacen_1 = 1
+    """
+    cur.execute(sql_buscar_producto, (pedido_codigo,))
+    result = cur.fetchone()
+
+    if result is not None:
+        if result['fk_inventario_almacen_2'] == id1 and result['fk_inventario_almacen_3'] == id2 and result['fk_inventario_almacen_4'] == id3:
+            return Response(status=404, response="Producto ya agregado al carrito")
+    else:
+        sql_agregar_producto = """
+            INSERT INTO detalle_pedido(fk_pedido, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+            VALUES (%s, 1, %s, %s, %s)
+        """
+        cur.execute(sql_agregar_producto, (pedido_codigo, id1, id2, id3))
+        conn.commit()
+
+    # Procedimiento de agregar_producto ^
 
     cur.close()
     
@@ -2581,6 +2609,10 @@ def add_product(id):
 @app.route("/api/carrito/<int:id>", methods=["POST"])
 def ver_carrito(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Buscamos la persona que esta realizando el pedido
+
+
     sql_algo = """ """
 
     cur.close()

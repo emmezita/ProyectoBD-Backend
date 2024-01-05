@@ -3443,6 +3443,7 @@ VALUES
 INSERT INTO Usuario (usuario_nombre, usuario_contrasena, fk_persona_natural, fk_persona_juridica, fk_rol)
 VALUES
   ('monicag', '123456', 10, NULL, 2);
+  ('luisA', '123456', 21, NULL, 9)
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES
@@ -4700,9 +4701,17 @@ VALUES
   ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 60, '2029-02-10', '2029-02-11', 'Calle de las Reservas 123', 80, 698),
   ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 150, '2029-03-15', '2029-03-16', 'Plaza de la Salsa 456', 180, 699);
 
-INSERT INTO Estatus_Orden (estatus_orden_nombre, estatus_orden_descripcion) 
+INSERT INTO Estatus_Orden (estatus_orden_codigo, estatus_orden_nombre, estatus_orden_descripcion) 
 VALUES
-  ('Pendiente', 'La orden se ha creado pero aún no se ha iniciado el proceso de reposición.'),
-  ('En proceso', 'La orden se está procesando, ya sea porque se está reponiendo desde el almacén o porque se está emitiendo una orden de compra al proveedor.'),
-  ('Completada', 'La orden se ha completado correctamente y el producto está disponible en la tienda o en el almacén.'),
-  ('Cancelada', 'La orden se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
+  (1, 'Pendiente', 'La orden se ha creado pero aún no se ha iniciado el proceso de reposición.'),
+  (2, 'En proceso', 'La orden se está procesando, ya sea porque se está reponiendo desde el almacén o porque se está emitiendo una orden de compra al proveedor.'),
+  (3, 'Completada', 'La orden se ha completado correctamente y el producto está disponible en la tienda o en el almacén.'),
+  (4, 'Cancelada', 'La orden se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
+
+INSERT INTO Estatus_Pedido (estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion) 
+VALUES
+  (1, 'Carrito', 'El pedido se encuentra creado, pero el usuario esta agregando presentaciones.'),
+  (2, 'Listo para la Entrega', 'El pedido esta listo para la entrega, es decir, esta pronto por salir del almacen'),
+  (3, 'Entregado', 'El pedido ha sido entregad de manera satisfactoria al cliente.'),
+  (4, 'En Retraso', 'El pedido se encuentra retrasada ya que ha superado el tiempo de espera estimado'),
+  (5, 'Cancelada', 'El pedido se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');

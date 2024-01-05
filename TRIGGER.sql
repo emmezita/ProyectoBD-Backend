@@ -18,3 +18,4 @@ CREATE TRIGGER VerificarInventarioTienda
 AFTER UPDATE ON Inventario_Tienda
 FOR EACH ROW
 EXECUTE FUNCTION verificar_inventario_tienda();
+

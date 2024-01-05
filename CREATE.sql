@@ -1332,9 +1332,9 @@ CREATE TABLE Imagen (
 CREATE TABLE Estatus_Pedido (
   estatus_pedido_codigo serial,
   -- Código identificador de la entidad Estatus_Pedido
-  estatus_pedido_nombre varchar(20) NOT NULL UNIQUE,
+  estatus_pedido_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del estatus del pedido.
-  estatus_pedido_descripcion varchar(50),
+  estatus_pedido_descripcion varchar(200),
   -- Descripción del estatus del pedido.
 
   CONSTRAINT pk_estatus_pedido_codigo PRIMARY KEY (estatus_pedido_codigo),
@@ -1350,11 +1350,11 @@ CREATE TABLE Pedido (
   -- Código identificador de la entidad Pedido
   pedido_fecha date NOT NULL,
   -- Fecha del pedido.
-  pedido_direccion varchar(100) NOT NULL,
+  pedido_direccion varchar(100),
   -- Dirección del pedido.
-  pedido_subtotal decimal(10,2) NOT NULL,
+  pedido_subtotal decimal(10,2),
   -- Subtotal del pedido. Debe ser mayor que 0
-  pedido_total decimal(10,2) NOT NULL,
+  pedido_total decimal(10,2),
   -- Total del pedido. Debe ser mayor que 0
   pedido_puntos_utilizados integer,
   -- Puntos utilizados en el pedido. Debe ser mayor o igual a 0
@@ -1366,8 +1366,6 @@ CREATE TABLE Pedido (
   -- Relación con la entidad Cliente_Natural
   fk_cliente_juridico integer,
   -- Relación con la entidad Cliente_Juridico
-  fk_contrato_empleo integer NOT NULL,
-  -- Relación con la entidad Contrato_Empleo
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar
 

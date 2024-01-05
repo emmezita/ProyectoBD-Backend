@@ -627,3 +627,79 @@ BEGIN
     VALUES (CURRENT_DATE, _valor);
 END;
 $$;
+
+
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Cliente
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para obtener una el codigo del cliente
+CREATE OR REPLACE FUNCTION ObtenerCodigoCliente(_idUsuario INT)
+RETURNS TABLE(fk_persona_natural INT, fk_persona_juridica INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT u.fk_persona_natural, u.fk_persona_juridica
+    FROM usuario u
+    WHERE u.usuario_codigo = _idUsuario AND (u.fk_rol=8 OR u.fk_rol=9); 
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Pedido de Productos
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para buscar un pedido de productos
+CREATE OR REPLACE FUNCTION BuscarCarritoDeCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pedido_codigo
+    FROM pedido p
+    JOIN historico_estatus_pedido hep ON p.pedido_codigo = hep.fk_pedido
+    JOIN estatus_pedido ep ON hep.fk_estatus_pedido = ep.estatus_pedido_codigo
+    WHERE (p.fk_cliente_juridico = _codigoPJ OR p.fk_cliente_juridico IS NULL)
+    AND (p.fk_cliente_natural = _codigoPN OR p.fk_cliente_natural IS NULL)
+    AND ep.estatus_pedido_codigo = 1 AND hep.fecha_hora_fin_estatus IS NULL;
+END;
+$$;
+
+-- Procedimiento para crear un pedido
+CREATE OR REPLACE FUNCTION CrearPedidoDeCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _nuevoPedidoID INT;
+    _codigoLugar INT;
+BEGIN
+
+    -- Buscamos el codigo de lugar del cliente
+    SELECT fk_lugar INTO _codigoLugar
+    FROM (
+        SELECT pn.fk_lugar 
+        FROM persona_natural pn
+        WHERE pn.persona_nat_codigo = _codigoPN
+        UNION
+        SELECT pj.fk_lugar_fisica
+        FROM persona_juridica pj
+        WHERE pj.persona_jur_codigo = _codigoPJ
+    ) AS subquery;
+
+    -- Insertar un nuevo pedido en la tabla Pedido
+    INSERT INTO Pedido (fk_cliente_juridico, fk_cliente_natural, pedido_fecha, fk_lugar)
+    VALUES (_codigoPN, _codigoPJ, CURRENT_DATE, _codigoLugar)
+    RETURNING pedido_codigo INTO _nuevoPedidoID;
+
+    -- Insertar un registro en Historico_Estatus_Pedido para marcar el inicio del estatus "Pendiente" (carrrito)
+    INSERT INTO Historico_Estatus_Pedido (fecha_hora_inicio_estatus, fk_estatus_pedido, fk_pedido)
+    VALUES (CURRENT_TIMESTAMP, 1, _nuevoPedidoID);
+
+    RETURN QUERY
+    SELECT _nuevoPedidoID;
+END;
+$$;
