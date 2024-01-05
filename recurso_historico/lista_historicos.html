@@ -145,93 +145,97 @@
                 </table>
             </div>
         </div>
+    </div>
 
-<script>
+    <script>
 
-function formatDate(dateString) {
-    var oldDate = new Date(dateString);
-    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+    function formatDate(dateString) {
+        var oldDate = new Date(dateString);
+        var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
 
-    var day = '' + date.getDate(),
-        month = '' + (date.getMonth() + 1), 
-        year = date.getFullYear();
+        var day = '' + date.getDate(),
+            month = '' + (date.getMonth() + 1), 
+            year = date.getFullYear();
 
-    if (day.length < 2) 
-        day = '0' + day;
-    if (month.length < 2) 
-        month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+        if (month.length < 2) 
+            month = '0' + month;
 
-    return [year, month, day].join('-');
-}
+        return [year, month, day].join('-');
+    }
 
-function addValor(){
-    var valor = $('#nuevoPunto').val();
-    var data = {
-        "valor": valor
-    };
-    $.ajax({
-        type: "POST",
-        url: 'http://localhost:5000/api/historico/punto',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        data: JSON.stringify(data),
-        success: function(d) {
-            alert('Se ha añadido el valor correctamente');
-            location.reload();
-        },
-        error: function() {
-            alert('Hubo un error añadiendo el valor');
-        }
-    });
-
-}
-    
-$(document).ready(function() {
-    var data = null;
-    $.ajax({
-        url: 'http://localhost:5000/api/historico/punto/all',
-        type: 'GET',
-        dataType: 'json',
-        success: function(d) {
-            data = d;
-            console.log(data);
-            for (var i = 0; i < data.length; i++) {
-                var row = $('<tr>');
-                row.append('<td>' + data[i].valor + '</td>');
-                var fechaInicio = formatDate(data[i].fechainicio);
-                row.append('<td>' + fechaInicio + '</td>');
-                if (data[i].fechafin == null) {
-                    row.append('<td>Actual</td>');
-                } else {
-                    var fechaFin = formatDate(data[i].fechafin);
-                    row.append('<td>' + fechaFin + '</td>');
-                }
-
-                $('#body-historicopunto').append(row);
+    function addValor(){
+        var valor = $('#nuevoPunto').val();
+        var data = {
+            "valor": valor
+        };
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:5000/api/historico/punto/actualizar',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(data),
+            success: function(d) {
+                alert('Se ha añadido el valor correctamente');
+                location.reload();
+            },
+            error: function() {
+                alert('Hubo un error añadiendo el valor');
             }
+        });
 
-            $('#table-historicopunto').DataTable({
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron resultados",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "No hay registros disponibles",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    },
+    }
+        
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/historico/punto/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var row = $('<tr>');
+                    row.append('<td>' + data[i].valor + '</td>');
+                    var fechaInicio = formatDate(data[i].fechainicio);
+                    row.append('<td>' + fechaInicio + '</td>');
+                    if (data[i].fechafin == null) {
+                        row.append('<td>Actual</td>');
+                    } else {
+                        var fechaFin = formatDate(data[i].fechafin);
+                        row.append('<td>' + fechaFin + '</td>');
+                    }
+
+                    $('#body-historicopunto').append(row);
                 }
-            });
-        },
-        error: function() {
-            alert('Hubo un error obteniendo a los historicos');
-        }
-    });
-       
-});   
-</script>
+
+                $('#table-historicopunto').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            },
+            error: function() {
+                alert('Hubo un error obteniendo a los historicos');
+            }
+        });
+        
+    });   
+    </script>
+    
+</body>
+</html>

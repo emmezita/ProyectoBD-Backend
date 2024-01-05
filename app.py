@@ -2758,7 +2758,7 @@ def actualizar_punto():
     try:
         punto = request.get_json()
         pprint(punto)
-        punto = float(punto)
+        punto = float(punto.get('valor'))
         
         cur.execute('CALL ActualizarValorPunto(%s)', (punto,))
         conn.commit()

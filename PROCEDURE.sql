@@ -590,8 +590,8 @@ BEGIN
     WHERE punto_fecha_fin IS NULL;
 
     -- Insertar un nuevo registro en Historico_Punto con la fecha y hora actual y el nuevo valor
-    INSERT INTO Historico_Punto (punto_fecha_inicio, punto_valor)
-    VALUES (CURRENT_DATE, _valor);
+    INSERT INTO Historico_Punto (punto_fecha_inicio, punto_valor, fk_tienda)
+    VALUES (CURRENT_DATE, _valor, 1);
 END;
 $$;
 
