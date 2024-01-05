@@ -2736,3 +2736,35 @@ def cancelar_orden_compra(id):
         return jsonify({"error": str(e)}), 500
     finally:
         cur.close()
+        
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# HISTORICO DEL VALOR DEL PUNTO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el historico del valor del punto
+@app.route("/api/historico/punto/all", methods=["GET"])
+def obtener_historico_punto():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerHistoricoPunto()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para actualizar el valor del punto
+@app.route("/api/historico/punto/actualizar", methods=["POST"])
+def actualizar_punto():
+    cur = conn.cursor()
+    try:
+        punto = request.get_json()
+        pprint(punto)
+        punto = float(punto)
+        
+        cur.execute('CALL ActualizarValorPunto(%s)', (punto,))
+        conn.commit()
+        return jsonify({"message": "Valor del punto actualizado exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()

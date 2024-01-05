@@ -561,3 +561,69 @@ BEGIN
     END LOOP;
 END;
 $$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Historico de Punto
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para obtener el historico del valor del punto
+CREATE OR REPLACE FUNCTION ObtenerHistoricoPunto()
+RETURNS TABLE(fechaInicio DATE, fechaFin DATE, valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT h.punto_fecha_inicio, h.punto_fecha_fin, h.punto_valor
+    FROM Historico_Punto h
+    ORDER BY punto_fecha_inicio DESC;
+END;
+$$;
+
+-- Procedimiento para actualizar el valor del punto
+CREATE OR REPLACE PROCEDURE ActualizarValorPunto(_valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualizar el registro anterior en Historico_Punto con la fecha y hora actual
+    UPDATE Historico_Punto
+    SET punto_fecha_fin = CURRENT_DATE
+    WHERE punto_fecha_fin IS NULL;
+
+    -- Insertar un nuevo registro en Historico_Punto con la fecha y hora actual y el nuevo valor
+    INSERT INTO Historico_Punto (punto_fecha_inicio, punto_valor)
+    VALUES (CURRENT_DATE, _valor);
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Historico de Tasa del Dolar
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para obtener el historico de la tasa del dolar
+CREATE OR REPLACE FUNCTION ObtenerHistoricoTasaDolar()
+RETURNS TABLE(fechaInicio DATE, fechaFin DATE, valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT h.tasa_fecha_inicio, h.tasa_fecha_fin, h.tasa_valor
+    FROM Historico_Tasa_Dolar h
+    ORDER BY tasa_fecha_inicio DESC;
+END;
+$$;
+
+-- Procedimiento para actualizar la tasa del dolar
+CREATE OR REPLACE PROCEDURE ActualizarTasaDolar(_valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualizar el registro anterior en Historico_Tasa_Dolar con la fecha y hora actual
+    UPDATE Historico_Tasa_Dolar
+    SET tasa_fecha_fin = CURRENT_DATE
+    WHERE tasa_fecha_fin IS NULL;
+
+    -- Insertar un nuevo registro en Historico_Tasa_Dolar con la fecha y hora actual y el nuevo valor
+    INSERT INTO Historico_Tasa_Dolar (tasa_fecha_inicio, tasa_valor)
+    VALUES (CURRENT_DATE, _valor);
+END;
+$$;
