@@ -243,9 +243,9 @@ BEGIN
         SELECT 1
         FROM Detalle_Orden_De_Reposicion d
         JOIN Historico_Estatus_Orden h ON d.fk_orden = h.fk_orden
-        WHERE d.fk_inventario_almacen_1 = inv.fk_presentacion_1
-          AND d.fk_inventario_almacen_2 = inv.fk_presentacion_2
-          AND d.fk_inventario_almacen_3 = inv.fk_presentacion_3
+        WHERE d.fk_inventario_almacen_2 = inv.fk_presentacion_1
+          AND d.fk_inventario_almacen_3 = inv.fk_presentacion_2
+          AND d.fk_inventario_almacen_4 = inv.fk_presentacion_3
           AND h.fk_estatus_orden = 2
           AND h.fecha_hora_fin_estatus IS NULL
     );
@@ -461,6 +461,9 @@ DECLARE
     presentacion RECORD;
     nuevo_estatus_id INT := 2; -- Reemplaza con el ID de estatus correspondiente
 BEGIN
+
+    idUsuario := (datosOrden ->> 'idUsuario')::INT;    
+
     --Asignar empleado a la orden
     UPDATE Orden_De_Reposicion orden
     SET fk_contrato_empleo = (
@@ -471,8 +474,6 @@ BEGIN
         WHERE Usuario.usuario_codigo = idUsuario  -- Reemplaza '_idUsuario' con el ID del usuario
     ) 
     WHERE orden_codigo = _orden_codigo;
-
-    idUsuario := (datosOrden ->> 'idUsuario')::INT;    
 
     -- Instrucciones para actualizar el estatus de la orden a "En Proceso"
     -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
