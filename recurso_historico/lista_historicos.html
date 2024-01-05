@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Historicos</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <style>
+        input[type="text"] {
+            font-family: 'Poppins', sans-serif;
+            color: #202020;
+            font-size: 15px; /* Cambia esto al tamaño que desees */
+            font-weight: 300; /* Cambia esto al grosor que desees */
+        }.btn-primary {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #A5141A;
+            border-color: #A5141A;
+        }.btn-primary:hover {
+            color: #F8F8F8;
+            background-color: #800f12;
+            border-color: #800f12;
+        }.btn-danger {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #FF0000;
+            border-color: #FF0000;
+        }.btn-danger:hover {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            background-color: #b30000;
+            border-color: #b30000;
+        }.btn-warning {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #0f3b83;
+            border-color: #0f3b83;
+        }.btn-warning:hover {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            background-color: #0c2c66;
+            border-color: #0c2c66;
+        }.btn-success {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #28a745;
+            border-color: #28a745;
+        }.btn-success:hover {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            background-color: #1e7e34;
+            border-color: #1e7e34;
+        } table {
+            font-family: 'Hind', sans-serif;
+            color: #202020;
+            font-size: 14px;
+            font-weight: 400;
+            width: 96%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        } th, td {
+            border: 1px solid #999;
+            padding: 0.5rem;
+            text-align: left;
+        } th {
+            background-color: #f3f3f3;
+        } tr:nth-child(even) {
+            background-color: #f2f2f2;
+        } .dataTables_filter {
+            margin-bottom: 20px;
+        } table {
+        border-collapse: collapse;
+        }
+        table, table th, table td {
+            border: none;
+        } .nav-link {
+            color: #7a7a7a;
+            font-weight: bold;
+        } .nav-link.active {
+            color: #D1991A !important;
+        } .nav-link:hover {
+            color: #A5141A !important;
+        }
+
+        #nuevoPunto::placeholder {
+            font-size: 14px;
+        }
+    </style>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="tabs" role="tablist">
+        <li class="nav-item" role="historicopunto">
+            <button class="nav-link active" id="historicopunto-tab" data-bs-toggle="tab" data-bs-target="#historicopunto" type="button" role="tab" aria-controls="historicopunto" aria-selected="true">Histórico Punto</button>
+        </li>
+        <li class="nav-item" role="historicotasadolar">
+            <button class="nav-link" id="historicotasadolar-tab" data-bs-toggle="tab" data-bs-target="#historicotasadolar" type="button" role="tab" aria-controls="historicotasadolar" aria-selected="false">Histórico Tasa Dólar</button>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" id="content">
+        <div class="tab-pane fade show active" id="historicopunto" role="tabpanel" aria-labelledby="historicopunto-tab">
+            <div class="mt-4 mx-auto">
+
+                <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px;">
+                    <input type="text" id="nuevoPunto" placeholder="Introduce nuevo valor" style="width: 200px; margin-right: 10px; font-size: 14px;">
+                    <button id="botonAnadir" onclick="addValor()">Añadir</button>
+                </div>
+
+                <table id="table-historicopunto" class="table table-striped ">
+                    <thead>
+                        <th>Valor del Punto</th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha Fin</th>
+                    </thead>
+                    <tbody id="body-historicopunto">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="historicotasadolar" role="tabpanel" aria-labelledby="historicotasadolar">
+            <div class="mt-4 mx-auto">
+                <table id="table-historicotasadolar" class="table table-striped ">
+                    <thead>
+                        <th>Valor</th>
+                        <th>Fecha inicio</th>
+                        <th>Fecha fin</th>
+                    </thead>
+                    <tbody id="body-historicotasadolar">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+<script>
+
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [year, month, day].join('-');
+}
+
+function addValor(){
+    var valor = $('#nuevoPunto').val();
+    var data = {
+        "valor": valor
+    };
+    $.ajax({
+        type: "POST",
+        url: 'http://localhost:5000/api/historico/punto',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: JSON.stringify(data),
+        success: function(d) {
+            alert('Se ha añadido el valor correctamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error añadiendo el valor');
+        }
+    });
+
+}
+    
+$(document).ready(function() {
+    var data = null;
+    $.ajax({
+        url: 'http://localhost:5000/api/historico/punto/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].valor + '</td>');
+                var fechaInicio = formatDate(data[i].fechainicio);
+                row.append('<td>' + fechaInicio + '</td>');
+                if (data[i].fechafin == null) {
+                    row.append('<td>Actual</td>');
+                } else {
+                    var fechaFin = formatDate(data[i].fechafin);
+                    row.append('<td>' + fechaFin + '</td>');
+                }
+
+                $('#body-historicopunto').append(row);
+            }
+
+            $('#table-historicopunto').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Hubo un error obteniendo a los historicos');
+        }
+    });
+       
+});   
+</script>

@@ -167,6 +167,7 @@ function GenerarOrdenes() {
         dataType: 'json',
         success: function(data) {
             alert('Se han generado las órdenes de compra');
+            location.reload();
         },
         error: function() {
             alert('Error al generar las órdenes de compra');
