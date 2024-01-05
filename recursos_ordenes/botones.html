@@ -57,33 +57,37 @@
         });
     }
 
-    // function completarOrden() {
-    //     $.ajax({
-    //         url: "http://localhost:5000/api/orden/compra/" + idOrden + "/completar",
-    //         method: "PUT",
-    //         dataType: "json",
-    //         success: (data) => {
-    //             console.log(data)
-    //             window.location.href = "http://localhost:5000/recursos_ordenes/ordenes.html";
-    //         },
-    //         error: (error) => {
-    //             console.log(error)
-    //         }
-    //     });
-    // }
+    function completarOrden() {
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:5000/api/orden/compra/completar/" + idOrden,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (data) => {
+                console.log(data);
+                alert("Órden completada exitosamente");              
+            },
+            error: (error) => {
+                console.log(error)
+            }
+        });
+    }
 
-    // function cancelarOrden() {
-    //     $.ajax({
-    //         url: "http://localhost:5000/api/orden/compra/" + idOrden + "/cancelar",
-    //         method: "PUT",
-    //         dataType: "json",
-    //         success: (data) => {
-    //             console.log(data)
-    //             window.location.href = "http://localhost:5000/recursos_ordenes/ordenes.html";
-    //         },
-    //         error: (error) => {
-    //             console.log(error)
-    //         }
-    //     });
-    // }
+    function cancelarOrden() {
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:5000/api/orden/compra/cancelar/" + idOrden,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (data) => {
+                console.log(data);
+                alert("Órden cancelada exitosamente");
+            },
+            error: (error) => {
+                console.log(error)
+            }
+        });
+    }
 </script>

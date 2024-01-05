@@ -74,7 +74,14 @@ $(document).ready(() => {
                 row.append('<td idm='+ idP[0] +' idb='+ idP[1] +' ido='+idP[2]+'>' + idPLimpio + '</td>');  // Código del producto
 
                 // Campo de cantidad editable
-                var cantidad = $('<td><input type="number" class="cantidad" value="' + presentacion[3] + '"></td>');
+                var estatus_codigo = data.datos_orden[0][12];
+
+                var cantidad;
+                if (estatus_codigo == 1) {
+                    cantidad = $('<td><input type="number" class="cantidad" value="' + presentacion[3] + '"></td>');
+                } else {
+                    cantidad = $('<td>' + presentacion[3] + '</td>');
+                }
                 row.append(cantidad);
 
                 var td  = $('<td class="row ps-0 py-0 gx-0 jusify-content-center align-items-center">');
@@ -83,7 +90,12 @@ $(document).ready(() => {
                 row.append(td);
 
                 // Campo de precio editable
-                var precio = $('<td><input type="number" class="precio" value="' + presentacion[2] + '"></td>');
+                var precio;
+                if (estatus_codigo == 1) {
+                    precio = $('<td><input type="number" class="precio" value="' + presentacion[2] + '"></td>');
+                } else {
+                    precio = $('<td>' + presentacion[2] + '</td>');
+                }
                 row.append(precio);
 
                 // Calcular el subtotal y añadirlo a la fila

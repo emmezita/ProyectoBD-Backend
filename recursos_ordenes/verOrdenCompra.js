@@ -51,7 +51,7 @@ $(document).ready(function() {
             q.innerHTML = "<strong>Nombre de la empresa: </strong> " + data.datos_orden[0][5] + " <br> <strong>RIF:</strong> " + data.datos_orden[0][6] + "<br> <strong>Dirección:</strong> " + data.datos_orden[0][7] + "<br> <strong>Teléfono:</strong> " + data.datos_orden[0][8]
             if (data.datos_orden[0][9]) {
                 const r = document.getElementById("datos-empleado");
-                r.innerHTML = "<strong>Nombre:</strong> " + data.datos_orden[0][9] + " <br><strong>Dpto:</strong>"  + data.datos_orden[0][10] + " <br><strong>Cédula:</strong> 24-09-2023"  + data.datos_orden[0][11] + "</p>";
+                r.innerHTML = "<strong>Nombre:</strong> " + data.datos_orden[0][10] + " <br><strong>Dpto: </strong>"  + data.datos_orden[0][9] + " <br><strong>Cédula: </strong>"  + data.datos_orden[0][11] + "</p>";
             }
         },
         error: function() {

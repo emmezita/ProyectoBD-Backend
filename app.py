@@ -2708,3 +2708,31 @@ def procesar_orden_compra(id):
         return jsonify({"error": str(e)}), 500
     finally:
         cur.close()
+        
+# Ruta para completar orden de compra
+@app.route("/api/orden/compra/completar/<int:id>", methods=["PUT"])
+def completar_orden_compra(id):
+    cur = conn.cursor()
+    try:
+        cur.execute('CALL CompletarOrdenDeCompra(%s)', (id,))
+        conn.commit()
+        return jsonify({"message": "Orden de compra completada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# Ruta para cancelar orden de compra
+@app.route("/api/orden/compra/cancelar/<int:id>", methods=["PUT"])
+def cancelar_orden_compra(id):
+    cur = conn.cursor()
+    try:
+        cur.execute('CALL CancelarOrdenDeCompra(%s)', (id,))
+        conn.commit()
+        return jsonify({"message": "Orden de compra cancelada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()

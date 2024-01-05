@@ -512,3 +512,52 @@ BEGIN
     WHERE orden_codigo = _orden_codigo;
 END;
 $$;
+
+-- Procedimiento para cancelar una orden de compra
+CREATE OR REPLACE PROCEDURE CancelarOrdenDeCompra(_orden_codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nuevo_estatus_id INT := 4; -- Reemplaza con el ID de estatus correspondiente
+BEGIN
+    -- Instrucciones para actualizar el estatus de la orden a "Cancelada"
+    -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+    UPDATE Historico_Estatus_Orden
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+END;
+$$;
+
+-- Procedimiento para completar una orden de compra
+CREATE OR REPLACE PROCEDURE CompletarOrdenDeCompra(_orden_codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nuevo_estatus_id INT := 3; -- Reemplaza con el ID de estatus correspondiente
+    presentacion RECORD;
+BEGIN
+    -- Instrucciones para actualizar el estatus de la orden a "Completada"
+    -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+    UPDATE Historico_Estatus_Orden
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+
+    -- Loop a través de cada presentación en la orden de compra
+    FOR presentacion IN SELECT * FROM Detalle_Orden_De_Reposicion WHERE fk_orden = _orden_codigo
+    LOOP
+        -- Actualizar Inventario_Almacen
+        UPDATE Inventario_Almacen
+        SET inv_almacen_cantidad = inv_almacen_cantidad + presentacion.detalle_orden_cantidad
+        WHERE fk_almacen = 1 -- Asumiendo que este es el ID del almacén
+        AND fk_presentacion_1 = presentacion.fk_inventario_almacen_2
+        AND fk_presentacion_2 = presentacion.fk_inventario_almacen_3
+        AND fk_presentacion_3 = presentacion.fk_inventario_almacen_4;
+    END LOOP;
+END;
+$$;
