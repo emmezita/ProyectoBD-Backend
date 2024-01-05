@@ -433,7 +433,7 @@ def get_empleado(id):
     
     cur.close()
 
-    datos = jsonify({
+    datos = {
         'persona': persona,
         'correos': correos,
         'telefonos': telefonos,
@@ -442,11 +442,11 @@ def get_empleado(id):
         'beneficios': beneficios,
         'horarios': horarios,
         'lugar': lugar
-    })
+    }
     
     pprint(datos)
 
-    return datos
+    return jsonify(datos)
 
 # Ruta para editar los datos de un empleado de la base de datos
 @app.route("/api/empleado/editar/<int:id>", methods=["PUT"])
