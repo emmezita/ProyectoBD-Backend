@@ -750,11 +750,24 @@ END;
 $$;
 
 -- Registrar ficha de afiliacion
-CREATE OR REPLACE PROCEDURE RegistrarFichaAfiliacion(_codigoPN INT, _codigoPJ INT)
+CREATE OR REPLACE PROCEDURE RegistrarFichaAfiliacion(idUsuario INT)
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    _rol INT;
 BEGIN
-    -- Insertar un nuevo registro en Ficha_Afiliacion
-    INSERT INTO Ficha_Afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural, fk_persona_juridica)
-    VALUES (LPAD(nextval('secuencia_ficha')::text, 8, '0'), CURRENT_DATE, 15, _codigoPN, _codigoPJ);
+-- Verificar si el usuario tiene rol 8 o 9
+    SELECT fk_rol INTO _rol
+    FROM usuario
+    WHERE fk_cliente_natural = _codigoPN OR fk_persona_juridica = _codigoPJ;
+
+    IF _rol = 8 OR _rol = 9 THEN
+        -- Insertar un nuevo registro en Ficha_Afiliacion si el usuario tiene el rol adecuado
+        INSERT INTO Ficha_Afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural, fk_persona_juridica)
+        VALUES (LPAD(nextval('secuencia_ficha')::text, 8, '0'), CURRENT_DATE, 15, _codigoPN, _codigoPJ);
+    ELSE
+        -- Manejar el caso en que el usuario no tiene el rol adecuado
+        RAISE EXCEPTION 'El usuario no tiene el rol requerido.';
+    END IF;
 END;
+$$;
