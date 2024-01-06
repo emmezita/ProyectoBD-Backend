@@ -99,6 +99,9 @@
         #nuevoPunto::placeholder {
             font-size: 14px;
         }
+        #nuevaTasa::placeholder {
+            font-size: 14px;
+        }
     </style>
 
     <!-- Tabs -->
@@ -118,7 +121,7 @@
 
                 <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px;">
                     <input type="text" id="nuevoPunto" placeholder="Introduce nuevo valor" style="width: 200px; margin-right: 10px; font-size: 14px;">
-                    <button id="botonAnadir" onclick="addValor()">Añadir</button>
+                    <button id="botonAnadirPunto" onclick="addValorPunto()">Añadir</button>
                 </div>
 
                 <table id="table-historicopunto" class="table table-striped ">
@@ -134,6 +137,12 @@
         </div>
         <div class="tab-pane fade" id="historicotasadolar" role="tabpanel" aria-labelledby="historicotasadolar">
             <div class="mt-4 mx-auto">
+
+                <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px;">
+                    <input type="text" id="nuevaTasa" placeholder="Introduce nuevo valor" style="width: 200px; margin-right: 10px; font-size: 14px;">
+                    <button id="botonAnadirTasa" onclick="addValorTasa()">Añadir</button>
+                </div>
+
                 <table id="table-historicotasadolar" class="table table-striped ">
                     <thead>
                         <th>Valor</th>
@@ -165,7 +174,7 @@
         return [year, month, day].join('-');
     }
 
-    function addValor(){
+    function addValorPunto(){
         var valor = $('#nuevoPunto').val();
         var data = {
             "valor": valor
@@ -186,6 +195,28 @@
             }
         });
 
+    }
+
+    function addValorTasa(){
+        var valor = $('#nuevaTasa').val();
+        var data = {
+            "valor": valor
+        };
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:5000/api/historico/tasa/actualizar',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(data),
+            success: function(d) {
+                alert('Se ha añadido el valor correctamente');
+                location.reload();
+            },
+            error: function() {
+                alert('Hubo un error añadiendo el valor');
+            }
+        });
     }
         
     $(document).ready(function() {
@@ -230,12 +261,56 @@
                 });
             },
             error: function() {
-                alert('Hubo un error obteniendo a los historicos');
+                alert('Hubo un error obteniendo a los valores del punto');
+            }
+        });
+
+        $.ajax({
+            url: 'http://localhost:5000/api/historico/tasa/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var row = $('<tr>');
+                    row.append('<td>' + data[i].valor + ' Bs.</td>');
+                    var fechaInicio = formatDate(data[i].fechainicio);
+                    row.append('<td>' + fechaInicio + '</td>');
+                    if (data[i].fechafin == null) {
+                        row.append('<td>Actual</td>');
+                    } else {
+                        var fechaFin = formatDate(data[i].fechafin);
+                        row.append('<td>' + fechaFin + '</td>');
+                    }
+
+                    $('#body-historicotasadolar').append(row);
+                }
+
+                $('#table-historicotasadolar').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            },
+            error: function() {
+                alert('Hubo un error obteniendo a los valores del dólar');
             }
         });
         
     });   
-    </script>
+</script>
     
 </body>
 </html>

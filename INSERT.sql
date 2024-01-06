@@ -3442,8 +3442,64 @@ VALUES
 
 INSERT INTO Usuario (usuario_nombre, usuario_contrasena, fk_persona_natural, fk_persona_juridica, fk_rol)
 VALUES
-  ('monicag', '123456', 10, NULL, 2);
-  ('luisA', '123456', 21, NULL, 9)
+  ('monicag', '123456', 10, NULL, 2),
+  ('luisA', '123456', 21, NULL, 9),
+  ('mariajo', '123456', 26, NULL, 9);
+
+INSERT INTO Banco (banco_nombre)
+VALUES
+  ('Banco Venezolano de Crédito'),
+  ('100% Banco'),
+  ('Bancamiga'),
+  ('Banco Activo'),
+  ('Banco Bicentenario'),
+  ('Banco Caroní'),
+  ('Banco de la Fuerza Armada Nacional'),
+  ('Banco de Venezuela'),
+  ('Banco del Caribe'),
+  ('Banco del Tesoro'),
+  ('Banco Exterior'),
+  ('Banco Mercantil'),
+  ('Banco Nacional de Crédito'),
+  ('Banco Plaza'),
+  ('Banco Provincial'),
+  ('Banco Sofitasa'),
+  ('Bancrecer'),
+  ('Banesco'),
+  ('Banplus'),
+  ('Banco Fondo Común');
+
+INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural)
+VALUES
+  ('1234123412341234', '2026-01-01', '312', 4, 21),
+  ('1234123412341235', '2027-02-01', '320', 5, 22),
+  ('1234123412341236', '2025-03-01', '354', 6, 23),
+  ('1234123412341237', '2026-04-01', '141', 7, 24),
+  ('1234123412341238', '2030-05-01', '545', 8, 25);
+
+INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_juridica)
+VALUES
+  ('2234123412341235', '2026-01-01', '110', 1, 1),
+  ('3234123412341235', '2027-02-01', '240', 2, 2),
+  ('4234123412341235', '2025-03-01', '350', 3, 3),
+  ('5234123412341235', '2026-04-01', '413', 4, 4),
+  ('6234123412341235', '2030-05-01', '545', 5, 5);
+
+INSERT INTO ficha_afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural) 
+VALUES
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2020-01-01', 10, 21),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2021-02-01', 20, 22),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2022-03-01', 30, 23),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2023-04-01', 40, 24),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2024-05-01', 50, 25);
+
+INSERT INTO ficha_afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_persona_juridica)
+VALUES
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2020-01-01', 50, 11),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2021-02-01', 60, 12),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2022-03-01', 70, 13),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2023-04-01', 80, 14),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2024-05-01', 90, 15);
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES
@@ -3704,52 +3760,15 @@ VALUES
   ('2018-04-22', NULL, 510, 19, 1),
   ('2019-06-18', NULL, 410, 20, 2);
 
-INSERT INTO Banco (banco_nombre)
+INSERT INTO Color (color_descripcion) 
 VALUES
-  ('Banco Venezolano de Crédito'),
-  ('100% Banco'),
-  ('Bancamiga'),
-  ('Banco Activo'),
-  ('Banco Bicentenario'),
-  ('Banco Caroní'),
-  ('Banco de la Fuerza Armada Nacional'),
-  ('Banco de Venezuela'),
-  ('Banco del Caribe'),
-  ('Banco del Tesoro'),
-  ('Banco Exterior'),
-  ('Banco Mercantil'),
-  ('Banco Nacional de Crédito'),
-  ('Banco Plaza'),
-  ('Banco Provincial'),
-  ('Banco Sofitasa'),
-  ('Bancrecer'),
-  ('Banesco'),
-  ('Banplus'),
-  ('Banco Fondo Común');
-
-INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural)
-VALUES
-  ('1234123412341234', '2026-01-01', '312', 4, 21),
-  ('1234123412341235', '2027-02-01', '320', 5, 22),
-  ('1234123412341236', '2025-03-01', '354', 6, 23),
-  ('1234123412341237', '2026-04-01', '141', 7, 24),
-  ('1234123412341238', '2030-05-01', '545', 8, 25);
-
-INSERT INTO ficha_afiliacion (afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural) -- FALTA ARREGLAR EL NUMERO DE AFILIACION
-VALUES
-  ('2020-01-01', 10, 21),
-  ('2021-02-01', 20, 22),
-  ('2022-03-01', 30, 23),
-  ('2023-04-01', 40, 24),
-  ('2024-05-01', 50, 25);
-
-INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_juridica)
-VALUES
-  ('2234123412341235', '2026-01-01', '110', 1, 1),
-  ('3234123412341235', '2027-02-01', '240', 2, 2),
-  ('4234123412341235', '2025-03-01', '350', 3, 3),
-  ('5234123412341235', '2026-04-01', '413', 4, 4),
-  ('6234123412341235', '2030-05-01', '545', 5, 5);
+  ('Ámbar Claro'),
+  ('Ámbar Dorado'),
+  ('Ámbar Medio'),
+  ('Ámbar Oscuro'),
+  ('Caoba'),
+  ('Marrón Profundo'),
+  ('Blanco');
 
 INSERT INTO Fermentacion (fermentacion_metodo) 
 VALUES
@@ -3766,6 +3785,388 @@ VALUES
   ('Destilación en alambiques de cobre con doble columna'),
   ('Destilación en columnas de rectificación'),
   ('Destilación en alambiques de columna de burbujeo con platos perforados');
+
+INSERT INTO Clasificacion (clasificacion_nombre, clasificacion_descripcion, fk_clasificacion) 
+VALUES
+  ('Ron Agrícola', 'Ron producidos por la fermentación y destilación del zumo de la caña de azúcar', NULL),
+  ('Ron Industrial', 'Se hacen a partir de derivador el jugo de caña (melazas)', NULL),
+  ('Ron Blanco', 'Ron sin añejamiento o con poco tiempo de añejamiento.',1),
+  ('Ron ámbar o ambré', 'Ron con al menos un año de añejamiento',1),
+  ('Ron añejo o vieux', 'Ron con al menos tres años de añejamiento',1),
+  ('Ron Blanco', 'Ron sin añejamiento o con poco tiempo de añejamiento.',2),
+  ('Ron Dorado', 'Ron con un tiempo moderado de añejamiento y color dorado.', 2),
+  ('Ron Negro u Oscuro', 'Ron añejado por un período extenso, con color oscuro.', 2),
+  ('Ron con Especias y Sabor', 'Ron con añadidos de especias y otros sabores.', 2);
+
+INSERT INTO Categoria (categoria_nombre, categoria_descripcion, fk_categoria) 
+VALUES
+  ('Estandar o Añejo', 'Ron de hasta 6 años de envejecimiento', NULL),
+  ('Extra Añejo', 'Ron de entre 7 a 11 años de envejecimiento', NULL),
+  ('Premium', 'Ron de entre 12 a 17 años de envejecimiento', NULL),
+  ('Super Premium', 'Ron de entre 18 a 20 años de envejecimiento', NULL),
+  ('Ultra Premium', 'Ron de entre 21 a 24 años de envejecimiento', NULL),
+  ('Prestige', 'Ron de 25 o más años de envejecimiento', NULL);
+
+INSERT INTO Producto (
+  producto_nombre, producto_descripcion, producto_grado_alcoholico, producto_color_detalles, fk_color, fk_fermentacion, fk_destilacion, fk_clasificacion, fk_categoria, fk_proveedor, fk_lugar) 
+VALUES
+  ('Pampero Aniversario', 'Ron con notas ricas y complejas de cítricos frutas secas', 40.0, 'Destellos rojizos', 5, 4, 1, 8, 3, 14, 1028),
+  ('Pampero Selección', 'Selección de rones añejados con notas de vainilla.', 40.0, 'Profundo ámbar oscuro', 4, 3, 1, 8, 2, 14, 1028),
+  ('Pampero Especial', 'Ron de notas dulces con cuerpo suave', 40.0, 'Dorado brillante', 2, 3, 1, 6, 1, 14, 1028),
+  ('Pampero Blanco', 'Ron blanco suave para cócteles refrescantes.', 37.5, 'Transparente', 7, 1, 3, 6, 1, 14, 1028),
+  ('Cacique Añejo', ' Mezcla de rones añejos y métodos de destilado distintos', 37.5, 'Dorado brillante', 2, 2, 2, 7, 1, 15, 1388),
+  ('Cacique 500 Años', 'Mezcla de diferentes rones añejos de una reserva especial', 40.0, 'Ámbar natural', 3, 3, 2, 7, 2, 15, 1388),
+  ('Cacique Antiguo', 'Ron antiguo con carácter y suavidad excepcionales', 40.0, 'Profundo ámbar oscuro', 4, 2, 2, 8, 3, 15, 1388),
+  ('Cacique Origen', 'Ron con complejidad y notas de roble', 35.0, 'Dorado brillante', 2, 2, 2, 7, 2, 15, 1388),
+  ('Cacique Leyenda', 'Ron sabores intensos y final largo', 40.0, 'Profundo ámbar oscuro', 4, 2, 2, 8, 3, 15, 1388),
+  ('Roble Viejo Maestro', 'Ron con complejidad seca y melada', 40.0, 'Destellos cobrizos', 3, 4, 4, 7, 1, 13, 1039),
+  ('Roble Viejo Extra Añejo', 'Extra añejo con frutos secos y caramelo', 40.0, 'Ámbar limpio y brillante', 3, 4, 4, 7, 2, 13, 1039),
+  ('Roble Viejo Ultra Añejo', 'Ron con frutos secos, rojos y cítricos', 40.0, 'Ámbar limpio y brillante', 3, 1, 1, 7, 2, 13, 1039),
+  ('Roble Viejo Zafra', 'Ron zafra con frutos secos, rojos y cítricos', 40.0, 'Ámbar intenso', 4, 1, 1, 8, 3, 13, 1039),
+  ('Santa Teresa 1796', 'Ron con notas melosas y de chocolate', 40.0, 'Rojo ámbar', 3, 1, 2, 8, 6, 11, 701),
+  ('Santa Teresa Gran Reserva', 'Ron añejo con notas de chocolate', 40.0, 'Destellos dorados', 2, 1, 2, 6, 1, 11, 701),
+  ('Santa Teresa Linaje', 'Ron robusto con notas dulces y almendradas', 40.0, 'Ámbar intenso', 4, 1, 2, 8, 3, 11, 701),
+  ('Arakú', 'Licor mestizo de ron y café cremoso', 28.0, 'Profundo marrón', 6, 1, 2, 6, 1, 11, 701),
+  ('Carúpano Legendario', 'Ron con ricos sabores y final persistente', 40.0, 'Destellos anaranjados', 5, 1, 1, 8, 6, 12, 1177),
+  ('Carúpano X.O.', 'Ron con intensidad y complejidad extraordinarias', 40.0, 'Destellos anaranjados', 5, 1, 1, 8, 6, 12, 1177),
+  ('Carúpano Reserve 1996', 'Ron con notas elegantes y final largo', 40.0, 'Destellos anaranjados', 4, 1, 1, 8, 6, 12, 1177),
+  ('Carúpano 21', 'Ron con riqueza y equilibrio en cada sorbo', 40.0, 'Destellos dorados', 4, 3, 3, 9, 5, 12, 1177),
+  ('Carúpano 18', 'Ron con dulzor y complejidad', 40.0, 'Profundo ámbar oscuro', 4, 3, 3, 8, 4, 12, 1177),
+  ('Carúpano 12', 'Ron con notas de caramelo y miel', 40.0, 'Tono naranja brillante', 3, 3, 1, 7, 3, 12, 1177),
+  ('Carúpano 6', 'Ron con dulzor y frutos secos', 40.0, 'Destellos anaranjados', 1, 3, 1, 8, 3, 12, 1177);
+
+INSERT INTO Cuerpo (cuerpo_peso, cuerpo_textura, cuerpo_densidad, cuerpo_descripcion, fk_producto) 
+VALUES
+  ('Medio', 'Cremoso', 'Media', 'Sensación sustancial y viscosa', 5), --CACIQUE AÑEJO
+  ('Ligero', 'Sedoso', 'Baja', 'De carácter ligero y sensorial', 6), --CACIQUE 500
+  ('Ligero', 'Sedoso', 'Baja', 'De carácter gentil y persistente', 7), --CACIQUE ANTIGUO
+  ('Ligero', 'Sedoso', 'Baja', 'Estructura suave y cálida', 8), --CACIQUE ORIGEN
+  ('Ligero', 'Sedoso', 'Baja', 'Composición suave', 9), --CACIQUE LEYENDA
+  ('Medio', 'Viscoso', 'Media', 'Untuoso pero sobrio y equilibrado', 18), --CARUPANO LEGENDARIO
+  ('Medio', 'Viscoso', 'Media', 'Untuoso pero recio y equilibrado', 19), --CARUPANO X.O.
+  ('Medio', 'Viscoso', 'Media', 'Equilibrado en fuerza y elegancia', 20), --CARUPANO 1996
+  ('Pesado', 'Cremoso', 'Alta', 'Sensación alcohólica intensa y untuosa', 21), --CARUPANO 21
+  ('Pesado', 'Cremoso', 'Alta', 'Composición persistente con final meloso', 22), --CARUPANO 18
+  ('Pesado', 'Cremoso', 'Alta', 'Composición untuosa pero equilibrada', 23), --CARUPANO 12
+  ('Medio', 'Cremoso', 'Media', 'Equilibrado con toques de melaza', 23), --CARUPANO 6
+  ('Pesado', 'Viscoso', 'Alta', 'Composición compleja y pesada', 1), --PAMPERO ANIVERSARIO
+  ('Medio', 'Viscoso', 'Media', 'Seco pero equilibrado', 2), --PAMPERO SELECCIÓN
+  ('Ligero', 'Sedoso', 'Baja', 'De carácter ligero y persistente', 3), --PAMPERO ESPECIAL
+  ('Ligero', 'Sedoso', 'Baja', 'Sensación fresca pero robusta', 4), --PAMPERO BLANCO
+  ('Medio', 'Viscoso', 'Media', 'Sensación melada pero seca', 10), --ROBLE MAESTRO
+  ('Medio', 'Viscoso', 'Media', 'De carácter persistente pero balanceado', 11), --ROBLE EXTRA AÑEJO
+  ('Medio', 'Viscoso', 'Media', 'De carácter persistente y robusto', 12), --ROBLE ULTRA AÑEJO
+  ('Ligero', 'Sedoso', 'Baja', 'Equilibrado con final largo y sedoso', 13), --ROBLE ZAFRA
+  ('Ligero', 'Sedoso', 'Baja', 'Estructura seca, sedosa y balanceada', 14), --SANTA TERESA 1796
+  ('Ligero', 'Sedoso', 'Baja', 'De cuerpo liviano pero firme y tenso', 15), --SANTA TERESA G. RESERVA
+  ('Medio', 'Cremoso', 'Media', 'De cuerpo robusto y complejo', 16), --SANTA TERESA LINAJE
+  ('Ligero', 'Sedoso', 'Baja', 'Suaves toques de café cremoso', 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Regusto (regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto) 
+VALUES
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque afrutado', 5), --CACIQUE AÑEJO
+  (' ', ' ', ' ', ' ', 'Matices de frutos secos con toque de vainilla', 6), --CACIQUE 500
+  (' ', ' ', ' ', ' ', 'Matiz dulce con toque de vainilla', 7), --CACIQUE ANTIGUO
+  (' ', ' ', ' ', ' ', 'Matiz dulce de frutos tropicales', 8), --CACIQUE ORIGEN
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque de vainilla', 9), --CACIQUE LEYENDA
+  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos secos', 18), --CARUPANO LEGENDARIO
+  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos negros', 19), --CARUPANO X.O.
+  (' ', ' ', ' ', ' ', 'Matiz seca y elegante con toque de café y tabaco', 20), --CARUPANO 1996
+  (' ', ' ', ' ', ' ', 'Matices de frutas maceradas y tabaco', 21), --CARUPANO 21
+  (' ', ' ', ' ', ' ', 'Matices dulces con entrada vigorosa', 22), --CARUPANO 18
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque de maple', 23), --CARUPANO 12
+  (' ', ' ', ' ', ' ', 'Matices dulces con toque de frutos secos', 24), --CARUPANO 6
+  (' ', ' ', ' ', ' ', 'Matices cítricas con toque dulce', 1), --PAMPERO ANIVERSARIO
+  (' ', ' ', ' ', ' ', 'Matices dulces y amargas', 2), --PAMPERO SELECCIÓN
+  (' ', ' ', ' ', ' ', 'Matices dulces con notas de barrica', 3), --PAMPERO ESPECIAL
+  (' ', ' ', ' ', ' ', 'Matices dulces con frutos tropicales', 4), --PAMPERO BLANCO
+  (' ', ' ', ' ', ' ', 'Matiz seca con notas dulces y meladas', 10), --ROBLE MAESTRO
+  (' ', ' ', ' ', ' ', 'Matiz dulce con frutos secos', 11), --ROBLE EXTRA AÑEJO
+  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos', 12), --ROBLE ULTRA AÑEJO
+  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos y madera', 13), --ROBLE ZAFRA
+  (' ', ' ', ' ', ' ', 'Matices de frutos rojos y chocolate', 14), --SANTA TERESA 1796
+  (' ', ' ', ' ', ' ', 'Matices de chocolate y caña dulce', 15), --SANTA TERESA G. RESERVA
+  (' ', ' ', ' ', ' ', 'Matices de frutos secos y almendra', 16), --SANTA TERESA LINAJE
+  (' ', ' ', ' ', ' ', 'Matices de ron e infusión de café molido', 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Aroma (aroma_descripcion) 
+VALUES
+  ('Notas de esencia de Vainilla'),
+  ('Esencia de Caramelo'),
+  ('Mezcla de Frutas Tropicales'),
+  ('Mezcla de Especias'),
+  ('Esencia de Melaza'),
+  ('Notas de esencia de Avellana'),
+  ('Fragancia de Canela'),
+  ('Notas de Azúcar morena'),
+  ('Mezcla de Frutos cítricos'),
+  ('Infusión de Cacao'),
+  ('Fragancia de Coco'),
+  ('Notas de esencia de Almendra'),
+  ('Fragancia de Flores'),
+  ('Esencia de Madera Ahumada');
+
+INSERT INTO Producto_Aroma (fk_aroma, fk_producto) 
+VALUES
+  (1, 5), --CACIQUE AÑEJO
+  (2, 5), --CACIQUE AÑEJO
+  (3, 5), --CACIQUE AÑEJO
+  (9, 5), --CACIQUE AÑEJO
+  (14, 5), --CACIQUE AÑEJO
+  (1, 6), --CACIQUE 500
+  (6, 6), --CACIQUE 500
+  (12, 6), --CACIQUE 500
+  (14, 6), --CACIQUE 500
+  (1, 7), --CACIQUE ANTIGUO
+  (2, 7), --CACIQUE ANTIGUO
+  (4, 7), --CACIQUE ANTIGUO
+  (1, 8), --CACIQUE ORIGEN
+  (3, 8), --CACIQUE ORIGEN
+  (1, 9), --CACIQUE LEYENDA
+  (2, 9), --CACIQUE LEYENDA
+  (14, 9), --CACIQUE LEYENDA
+  (3, 18), --CARUPANO LEGENDARIO
+  (11, 18), --CARUPANO LEGENDARIO
+  (14, 18), --CARUPANO LEGENDARIO
+  (2, 19), --CARUPANO X.O.
+  (3, 19), --CARUPANO X.O.
+  (11, 19), --CARUPANO X.O.
+  (12, 19), --CARUPANO X.O.
+  (13, 19), --CARUPANO X.O.
+  (2, 20), --CARUPANO 1996
+  (7, 20), --CARUPANO 1996
+  (10, 20), --CARUPANO 1996
+  (12, 20), --CARUPANO 1996
+  (14, 20), --CARUPANO 1996
+  (9, 21), --CARUPANO 21
+  (10, 21), --CARUPANO 21
+  (11, 21), --CARUPANO 21
+  (10, 22), --CARUPANO 18
+  (12, 22), --CARUPANO 18
+  (14, 22), --CARUPANO 18
+  (2, 23), --CARUPANO 12
+  (5, 23), --CARUPANO 12
+  (7, 23), --CARUPANO 12
+  (13, 23), --CARUPANO 12
+  (2, 24), --CARUPANO 6
+  (5, 24), --CARUPANO 6
+  (6, 24), --CARUPANO 6
+  (13, 24), --CARUPANO 6
+  (14, 24), --CARUPANO 6
+  (1, 1), --PAMPERO ANIVERSARIO
+  (2, 1), --PAMPERO ANIVERSARIO
+  (6, 1), --PAMPERO ANIVERSARIO
+  (7, 1), --PAMPERO ANIVERSARIO
+  (8, 1), --PAMPERO ANIVERSARIO
+  (9, 1), --PAMPERO ANIVERSARIO
+  (14, 1), --PAMPERO ANIVERSARIO
+  (1, 2), --PAMPERO SELECCIÓN
+  (8, 2), --PAMPERO SELECCION
+  (10, 2), --PAMPERO SELECCIÓN
+  (1, 3), --PAMPERO ESPECIAL
+  (5, 3), --PAMPERO ESPECIAL
+  (14, 3), --PAMPERO ESPECIAL
+  (1, 4), --PAMPERO BLANCO
+  (2, 4), --PAMPERO BLANCO
+  (3, 4), --PAMPERO BLANCO
+  (2, 10), --ROBLE MAESTRO
+  (4, 10), --ROBLE MAESTRO
+  (5, 10), --ROBLE MAESTRO
+  (13, 10), --ROBLE MAESTRO
+  (14, 10), --ROBLE MAESTRO
+  (1, 11), --ROBLE EXTRA AÑEJO
+  (2, 11), --ROBLE EXTRA AÑEJO
+  (7, 11), --ROBLE EXTRA AÑEJO
+  (8, 11), --ROBLE EXTRA AÑEJO
+  (2, 12), --ROBLE ULTRA AÑEJO
+  (5, 12), --ROBLE ULTRA AÑEJO
+  (9, 12), --ROBLE ULTRA AÑEJO
+  (12, 12), --ROBLE ULTRA AÑEJO
+  (14, 12), --ROBLE ULTRA AÑEJO
+  (9, 13), --ROBLE ULTRA ZAFRA
+  (12, 13), --ROBLE ULTRA ZAFRA
+  (14, 13), --ROBLE ULTRA ZAFRA
+  (1, 14), --SANTA TERESA 1796
+  (4, 14), --SANTA TERESA 1796
+  (7, 14), --SANTA TERESA 1796
+  (14, 14), --SANTA TERESA 1796
+  (1, 15), --SANTA TERESA G. RESERVA
+  (4, 15), --SANTA TERESA G. RESERVA
+  (14, 15), --SANTA TERESA G. RESERVA
+  (5, 16), --SANTA TERESA LINAJE
+  (6, 16), --SANTA TERESA LINAJE
+  (12, 16), --SANTA TERESA LINAJE
+  (14, 16), --SANTA TERESA LINAJE
+  (1, 17), --SANTA TERESA ARAKÚ
+  (10, 17), --SANTA TERESA ARAKÚ
+  (14, 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Sabor (sabor_descripcion) 
+VALUES
+  ('Sensación de Frutos dulces'),
+  ('Cata de gusto a Vainilla'),
+  ('Cata de gusto a Caramelo'),
+  ('Entrada de Especias'),
+  ('Sensación de Frutos secos'),
+  ('Sensación de Frutos rojos'),
+  ('Sensación de Frutos cítricos'),
+  ('Chocolate negro'),
+  ('Café cremoso'),
+  ('Degustación de Coco'),
+  ('Cata de gusto a Tofi'),
+  ('Entrada de Tabaco'),
+  ('Entrada de Madera');
+
+INSERT INTO Producto_Sabor (fk_sabor, fk_producto) 
+VALUES
+  (2, 5), --CACIQUE AÑEJO
+  (3, 5), --CACIQUE AÑEJO
+  (7, 5), --CACIQUE AÑEJO
+  (2, 6), --CACIQUE 500
+  (5, 6), --CACIQUE 500
+  (12, 6), --CACIQUE 500
+  (2, 7), --CACIQUE ANTIGUO
+  (3, 7), --CACIQUE ANTIGUO
+  (4, 7), --CACIQUE ANTIGUO
+  (1, 8), --CACIQUE ORIGEN
+  (2, 8), --CACIQUE ORIGEN
+  (2, 9), --CACIQUE LEYENDA
+  (3, 9), --CACIQUE LEYENDA
+  (6, 9), --CACIQUE LEYENDA
+  (13, 9), --CACIQUE LEYENDA
+  (5, 18), --CARUPANO LEGENDARIO
+  (6, 18), --CARUPANO LEGENDARIO
+  (8, 18), --CARUPANO LEGENDARIO
+  (10, 18), --CARUPANO LEGENDARIO
+  (11, 18), --CARUPANO LEGENDARIO
+  (12, 18), --CARUPANO LEGENDARIO
+  (3, 19), --CARUPANO X.O.
+  (5, 19), --CARUPANO X.O.
+  (6, 19), --CARUPANO X.O.
+  (10, 19), --CARUPANO X.O.
+  (11, 19), --CARUPANO X.O.
+  (12, 19), --CARUPANO X.O.
+  (3, 20), --CARUPANO 1996
+  (5, 20), --CARUPANO 1996
+  (11, 20), --CARUPANO 1996
+  (12, 20), --CARUPANO 1996
+  (13, 20), --CARUPANO 1996
+  (6, 21), --CARUPANO 21
+  (7, 21), --CARUPANO 21
+  (8, 21), --CARUPANO 21
+  (10, 21), --CARUPANO 21
+  (12, 21), --CARUPANO 21
+  (1, 22), --CARUPANO 18
+  (6, 22), --CARUPANO 18
+  (8, 22), --CARUPANO 18
+  (3, 23), --CARUPANO 12
+  (6, 23), --CARUPANO 12
+  (13, 23), --CARUPANO 12
+  (3, 24), --CARUPANO 6
+  (5, 24), --CARUPANO 6
+  (13, 24), --CARUPANO 6
+  (2, 1), --PAMPERO ANIVERSARIO
+  (3, 1), --PAMPERO ANIVERSARIO
+  (5, 1), --PAMPERO ANIVERSARIO
+  (7, 1), --PAMPERO ANIVERSARIO
+  (8, 1), --PAMPERO ANIVERSARIO
+  (13, 1), --PAMPERO ANIVERSARIO
+  (1, 2), --PAMPERO SELECCION
+  (2, 2), --PAMPERO SELECCION
+  (12, 2), --PAMPERO SELECCIÓN
+  (1, 3), --PAMPERO ESPECIAL
+  (2, 3), --PAMPERO ESPECIAL
+  (13, 3), --PAMPERO ESPECIAL
+  (1, 4), --PAMPERO BLANCO
+  (2, 4), --PAMPERO BLANCO
+  (3, 4), --PAMPERO BLANCO
+  (3, 10), --ROBLE MAESTRO
+  (4, 10), --ROBLE MAESTRO
+  (5, 10), --ROBLE MAESTRO
+  (6, 10), --ROBLE MAESTRO
+  (12, 10), --ROBLE MAESTRO
+  (13, 10), --ROBLE MAESTRO
+  (2, 11), --ROBLE EXTRA AÑEJO
+  (3, 11), --ROBLE EXTRA AÑEJO
+  (5, 11), --ROBLE EXTRA AÑEJO
+  (3, 12), --ROBLE ULTRA AÑEJO
+  (5, 12), --ROBLE ULTRA AÑEJO
+  (6, 12), --ROBLE ULTRA AÑEJO
+  (7, 12), --ROBLE ULTRA AÑEJO
+  (13, 12), --ROBLE ULTRA AÑEJO
+  (5, 13), --ROBLE ULTRA ZAFRA
+  (6, 13), --ROBLE ULTRA ZAFRA
+  (7, 13), --ROBLE ULTRA ZAFRA
+  (13, 13), --ROBLE ULTRA ZAFRA
+  (2, 14), --SANTA TERESA 1796
+  (4, 14), --SANTA TERESA 1796
+  (6, 14), --SANTA TERESA 1796
+  (8, 14), --SANTA TERESA 1796
+  (13, 14), --SANTA TERESA 1796
+  (2, 15), --SANTA TERESA G. RESERVA
+  (4, 15), --SANTA TERESA G. RESERVA
+  (6, 15), --SANTA TERESA G. RESERVA
+  (8, 15), --SANTA TERESA G. RESERVA
+  (5, 16), --SANTA TERESA LINAJE
+  (8, 16), --SANTA TERESA LINAJE
+  (13, 16), --SANTA TERESA LINAJE
+  (2, 17), --SANTA TERESA ARAKÚ
+  (9, 17), --SANTA TERESA ARAKÚ
+  (13, 17); --SANTA TERESA ARAKÚ
+
+INSERT INTO Servido (servido_nombre, servido_descripcion) 
+VALUES
+  ('A la Roca', 'Servido sobre hielo para disfrutarlo frío y diluido.'),
+  ('Cóctel', 'Mezcla con ingredientes adicionales'),
+  ('Puro', 'Servido sin mezclas ni hielo, puro y sin diluir.'),
+  ('Splash de Agua', 'Ron con una pequeña cantidad de agua añadida'),
+  ('Ron Punch', 'Elaboración con frutas, jugos y otros ingredientes'),
+  ('Highball', 'Vaso alto con hielo, gaseosa (como cola) y decorado con un twist de naranja.');
+
+INSERT INTO Producto_Servido (fk_servido, fk_producto) 
+VALUES
+  (6, 5), --CACIQUE AÑEJO
+  (1, 6), --CACIQUE 500
+  (6, 6), --CACIQUE 500
+  (3, 6), --CACIQUE 500
+  (1, 7), --CACIQUE ANTIGUO
+  (2, 7), --CACIQUE ANTIGUO
+  (1, 8), --CACIQUE ORIGEN
+  (1, 9), --CACIQUE LEYENDA
+  (2, 9), --CACIQUE LEYENDA
+  (3, 9), --CACIQUE LEYENDA
+  (3, 18), --CARUPANO LEGENDARIO
+  (3, 19), --CARUPANO X.O.
+  (3, 20), --CARUPANO 1996
+  (6, 21), --CARUPANO 21
+  (1, 22), --CARUPANO 18
+  (1, 23), --CARUPANO 12
+  (6, 23), --CARUPANO 12
+  (4, 24), --CARUPANO 6
+  (6, 24), --CARUPANO 6
+  (1, 1), --PAMPERO ANIVERSARIO
+  (1, 2), --PAMPERO SELECCION
+  (2, 2), --PAMPERO SELECCION
+  (6, 2), --PAMPERO SELECCIÓN
+  (2, 3), --PAMPERO ESPECIAL
+  (6, 3), --PAMPERO ESPECIAL
+  (2, 4), --PAMPERO BLANCO
+  (2, 10), --ROBLE MAESTRO
+  (3, 10), --ROBLE MAESTRO
+  (2, 11), --ROBLE EXTRA AÑEJO
+  (3, 11), --ROBLE EXTRA AÑEJO
+  (1, 12), --ROBLE ULTRA AÑEJO
+  (2, 12), --ROBLE ULTRA AÑEJO
+  (3, 12), --ROBLE ULTRA AÑEJO
+  (1, 13), --ROBLE ULTRA ZAFRA
+  (3, 13), --ROBLE ULTRA ZAFRA
+  (1, 14), --SANTA TERESA 1796
+  (3, 14), --SANTA TERESA 1796
+  (2, 15), --SANTA TERESA G. RESERVA
+  (5, 15), --SANTA TERESA G. RESERVA
+  (3, 16), --SANTA TERESA LINAJE
+  (5, 16), --SANTA TERESA LINAJE
+  (3, 17); --SANTA TERESA ARAKÚ
 
 INSERT INTO Ingrediente (ingrediente_nombre, ingrediente_descripcion) 
 VALUES
@@ -3818,107 +4219,6 @@ VALUES
   (4, 'Añejamiento Ligero', 4, NULL),
   (4, 'Añejamiento Ligero', 3, NULL),
   (8, 'Añejamiento Intenso', 1, NULL);
-
-INSERT INTO Color (color_descripcion) 
-VALUES
-  ('Ámbar Claro'),
-  ('Ámbar Dorado'),
-  ('Ámbar Medio'),
-  ('Ámbar Oscuro'),
-  ('Caoba'),
-  ('Marrón Profundo'),
-  ('Blanco');
-
-INSERT INTO Aroma (aroma_descripcion) 
-VALUES
-  ('Notas de esencia de Vainilla'),
-  ('Esencia de Caramelo'),
-  ('Mezcla de Frutas Tropicales'),
-  ('Mezcla de Especias'),
-  ('Esencia de Melaza'),
-  ('Notas de esencia de Avellana'),
-  ('Fragancia de Canela'),
-  ('Notas de Azúcar morena'),
-  ('Mezcla de Frutos cítricos'),
-  ('Infusión de Cacao'),
-  ('Fragancia de Coco'),
-  ('Notas de esencia de Almendra'),
-  ('Fragancia de Flores'),
-  ('Esencia de Madera Ahumada');
-
-INSERT INTO Sabor (sabor_descripcion) 
-VALUES
-  ('Sensación de Frutos dulces'),
-  ('Cata de gusto a Vainilla'),
-  ('Cata de gusto a Caramelo'),
-  ('Entrada de Especias'),
-  ('Sensación de Frutos secos'),
-  ('Sensación de Frutos rojos'),
-  ('Sensación de Frutos cítricos'),
-  ('Chocolate negro'),
-  ('Café cremoso'),
-  ('Degustación de Coco'),
-  ('Cata de gusto a Tofi'),
-  ('Entrada de Tabaco'),
-  ('Entrada de Madera');
-
-INSERT INTO Servido (servido_nombre, servido_descripcion) 
-VALUES
-  ('A la Roca', 'Servido sobre hielo para disfrutarlo frío y diluido.'),
-  ('Cóctel', 'Mezcla con ingredientes adicionales'),
-  ('Puro', 'Servido sin mezclas ni hielo, puro y sin diluir.'),
-  ('Splash de Agua', 'Ron con una pequeña cantidad de agua añadida'),
-  ('Ron Punch', 'Elaboración con frutas, jugos y otros ingredientes'),
-  ('Highball', 'Vaso alto con hielo, gaseosa (como cola) y decorado con un twist de naranja.');
-
-INSERT INTO Clasificacion (clasificacion_nombre, clasificacion_descripcion, fk_clasificacion) 
-VALUES
-  ('Ron Agrícola', 'Ron producidos por la fermentación y destilación del zumo de la caña de azúcar', NULL),
-  ('Ron Industrial', 'Se hacen a partir de derivador el jugo de caña (melazas)', NULL),
-  ('Ron Blanco', 'Ron sin añejamiento o con poco tiempo de añejamiento.',1),
-  ('Ron ámbar o ambré', 'Ron con al menos un año de añejamiento',1),
-  ('Ron añejo o vieux', 'Ron con al menos tres años de añejamiento',1),
-  ('Ron Blanco', 'Ron sin añejamiento o con poco tiempo de añejamiento.',2),
-  ('Ron Dorado', 'Ron con un tiempo moderado de añejamiento y color dorado.', 2),
-  ('Ron Negro u Oscuro', 'Ron añejado por un período extenso, con color oscuro.', 2),
-  ('Ron con Especias y Sabor', 'Ron con añadidos de especias y otros sabores.', 2);
-
-INSERT INTO Categoria (categoria_nombre, categoria_descripcion, fk_categoria) 
-VALUES
-  ('Estandar o Añejo', 'Ron de hasta 6 años de envejecimiento', NULL),
-  ('Extra Añejo', 'Ron de entre 7 a 11 años de envejecimiento', NULL),
-  ('Premium', 'Ron de entre 12 a 17 años de envejecimiento', NULL),
-  ('Super Premium', 'Ron de entre 18 a 20 años de envejecimiento', NULL),
-  ('Ultra Premium', 'Ron de entre 21 a 24 años de envejecimiento', NULL),
-  ('Prestige', 'Ron de 25 o más años de envejecimiento', NULL);
-
-INSERT INTO Producto (
-  producto_nombre, producto_descripcion, producto_grado_alcoholico, producto_color_detalles, fk_color, fk_fermentacion, fk_destilacion, fk_clasificacion, fk_categoria, fk_proveedor, fk_lugar) 
-VALUES
-  ('Pampero Aniversario', 'Ron con notas ricas y complejas de cítricos frutas secas', 40.0, 'Destellos rojizos', 5, 4, 1, 8, 3, 14, 1028),
-  ('Pampero Selección', 'Selección de rones añejados con notas de vainilla.', 40.0, 'Profundo ámbar oscuro', 4, 3, 1, 8, 2, 14, 1028),
-  ('Pampero Especial', 'Ron de notas dulces con cuerpo suave', 40.0, 'Dorado brillante', 2, 3, 1, 6, 1, 14, 1028),
-  ('Pampero Blanco', 'Ron blanco suave para cócteles refrescantes.', 37.5, 'Transparente', 7, 1, 3, 6, 1, 14, 1028),
-  ('Cacique Añejo', ' Mezcla de rones añejos y métodos de destilado distintos', 37.5, 'Dorado brillante', 2, 2, 2, 7, 1, 15, 1388),
-  ('Cacique 500 Años', 'Mezcla de diferentes rones añejos de una reserva especial', 40.0, 'Ámbar natural', 3, 3, 2, 7, 2, 15, 1388),
-  ('Cacique Antiguo', 'Ron antiguo con carácter y suavidad excepcionales', 40.0, 'Profundo ámbar oscuro', 4, 2, 2, 8, 3, 15, 1388),
-  ('Cacique Origen', 'Ron con complejidad y notas de roble', 35.0, 'Dorado brillante', 2, 2, 2, 7, 2, 15, 1388),
-  ('Cacique Leyenda', 'Ron sabores intensos y final largo', 40.0, 'Profundo ámbar oscuro', 4, 2, 2, 8, 3, 15, 1388),
-  ('Roble Viejo Maestro', 'Ron con complejidad seca y melada', 40.0, 'Destellos cobrizos', 3, 4, 4, 7, 1, 13, 1039),
-  ('Roble Viejo Extra Añejo', 'Extra añejo con frutos secos y caramelo', 40.0, 'Ámbar limpio y brillante', 3, 4, 4, 7, 2, 13, 1039),
-  ('Roble Viejo Ultra Añejo', 'Ron con frutos secos, rojos y cítricos', 40.0, 'Ámbar limpio y brillante', 3, 1, 1, 7, 2, 13, 1039),
-  ('Roble Viejo Zafra', 'Ron zafra con frutos secos, rojos y cítricos', 40.0, 'Ámbar intenso', 4, 1, 1, 8, 3, 13, 1039),
-  ('Santa Teresa 1796', 'Ron con notas melosas y de chocolate', 40.0, 'Rojo ámbar', 3, 1, 2, 8, 6, 11, 701),
-  ('Santa Teresa Gran Reserva', 'Ron añejo con notas de chocolate', 40.0, 'Destellos dorados', 2, 1, 2, 6, 1, 11, 701),
-  ('Santa Teresa Linaje', 'Ron robusto con notas dulces y almendradas', 40.0, 'Ámbar intenso', 4, 1, 2, 8, 3, 11, 701),
-  ('Arakú', 'Licor mestizo de ron y café cremoso', 28.0, 'Profundo marrón', 6, 1, 2, 6, 1, 11, 701),
-  ('Carúpano Legendario', 'Ron con ricos sabores y final persistente', 40.0, 'Destellos anaranjados', 5, 1, 1, 8, 6, 12, 1177),
-  ('Carúpano X.O.', 'Ron con intensidad y complejidad extraordinarias', 40.0, 'Destellos anaranjados', 5, 1, 1, 8, 6, 12, 1177),
-  ('Carúpano Reserve 1996', 'Ron con notas elegantes y final largo', 40.0, 'Destellos anaranjados', 4, 1, 1, 8, 6, 12, 1177),
-  ('Carúpano 21', 'Ron con riqueza y equilibrio en cada sorbo', 40.0, 'Destellos dorados', 4, 3, 3, 9, 5, 12, 1177),
-  ('Carúpano 18', 'Ron con dulzor y complejidad', 40.0, 'Profundo ámbar oscuro', 4, 3, 3, 8, 4, 12, 1177),
-  ('Carúpano 12', 'Ron con notas de caramelo y miel', 40.0, 'Tono naranja brillante', 3, 3, 1, 7, 3, 12, 1177),
-  ('Carúpano 6', 'Ron con dulzor y frutos secos', 40.0, 'Destellos anaranjados', 1, 3, 1, 8, 3, 12, 1177);
 
 INSERT INTO Mezclado (fk_anejamiento, fk_ingrediente, fk_producto) 
 VALUES
@@ -4051,296 +4351,14 @@ VALUES
   (1, 6, 17), --SANTA TERESA ARAKÚ
   (1, 9, 17); --SANTA TERESA ARAKÚ
 
-INSERT INTO Producto_Aroma (fk_aroma, fk_producto) 
+INSERT INTO Botella (botella_capacidad, botella_altura, botella_ancho, botella_descripcion) 
 VALUES
-  (1, 5), --CACIQUE AÑEJO
-  (2, 5), --CACIQUE AÑEJO
-  (3, 5), --CACIQUE AÑEJO
-  (9, 5), --CACIQUE AÑEJO
-  (14, 5), --CACIQUE AÑEJO
-  (1, 6), --CACIQUE 500
-  (6, 6), --CACIQUE 500
-  (12, 6), --CACIQUE 500
-  (14, 6), --CACIQUE 500
-  (1, 7), --CACIQUE ANTIGUO
-  (2, 7), --CACIQUE ANTIGUO
-  (4, 7), --CACIQUE ANTIGUO
-  (1, 8), --CACIQUE ORIGEN
-  (3, 8), --CACIQUE ORIGEN
-  (1, 9), --CACIQUE LEYENDA
-  (2, 9), --CACIQUE LEYENDA
-  (14, 9), --CACIQUE LEYENDA
-  (3, 18), --CARUPANO LEGENDARIO
-  (11, 18), --CARUPANO LEGENDARIO
-  (14, 18), --CARUPANO LEGENDARIO
-  (2, 19), --CARUPANO X.O.
-  (3, 19), --CARUPANO X.O.
-  (11, 19), --CARUPANO X.O.
-  (12, 19), --CARUPANO X.O.
-  (13, 19), --CARUPANO X.O.
-  (2, 20), --CARUPANO 1996
-  (7, 20), --CARUPANO 1996
-  (10, 20), --CARUPANO 1996
-  (12, 20), --CARUPANO 1996
-  (14, 20), --CARUPANO 1996
-  (9, 21), --CARUPANO 21
-  (10, 21), --CARUPANO 21
-  (11, 21), --CARUPANO 21
-  (10, 22), --CARUPANO 18
-  (12, 22), --CARUPANO 18
-  (14, 22), --CARUPANO 18
-  (2, 23), --CARUPANO 12
-  (5, 23), --CARUPANO 12
-  (7, 23), --CARUPANO 12
-  (13, 23), --CARUPANO 12
-  (2, 24), --CARUPANO 6
-  (5, 24), --CARUPANO 6
-  (6, 24), --CARUPANO 6
-  (13, 24), --CARUPANO 6
-  (14, 24), --CARUPANO 6
-  (1, 1), --PAMPERO ANIVERSARIO
-  (2, 1), --PAMPERO ANIVERSARIO
-  (6, 1), --PAMPERO ANIVERSARIO
-  (7, 1), --PAMPERO ANIVERSARIO
-  (8, 1), --PAMPERO ANIVERSARIO
-  (9, 1), --PAMPERO ANIVERSARIO
-  (14, 1), --PAMPERO ANIVERSARIO
-  (1, 2), --PAMPERO SELECCIÓN
-  (8, 2), --PAMPERO SELECCION
-  (10, 2), --PAMPERO SELECCIÓN
-  (1, 3), --PAMPERO ESPECIAL
-  (5, 3), --PAMPERO ESPECIAL
-  (14, 3), --PAMPERO ESPECIAL
-  (1, 4), --PAMPERO BLANCO
-  (2, 4), --PAMPERO BLANCO
-  (3, 4), --PAMPERO BLANCO
-  (2, 10), --ROBLE MAESTRO
-  (4, 10), --ROBLE MAESTRO
-  (5, 10), --ROBLE MAESTRO
-  (13, 10), --ROBLE MAESTRO
-  (14, 10), --ROBLE MAESTRO
-  (1, 11), --ROBLE EXTRA AÑEJO
-  (2, 11), --ROBLE EXTRA AÑEJO
-  (7, 11), --ROBLE EXTRA AÑEJO
-  (8, 11), --ROBLE EXTRA AÑEJO
-  (2, 12), --ROBLE ULTRA AÑEJO
-  (5, 12), --ROBLE ULTRA AÑEJO
-  (9, 12), --ROBLE ULTRA AÑEJO
-  (12, 12), --ROBLE ULTRA AÑEJO
-  (14, 12), --ROBLE ULTRA AÑEJO
-  (9, 13), --ROBLE ULTRA ZAFRA
-  (12, 13), --ROBLE ULTRA ZAFRA
-  (14, 13), --ROBLE ULTRA ZAFRA
-  (1, 14), --SANTA TERESA 1796
-  (4, 14), --SANTA TERESA 1796
-  (7, 14), --SANTA TERESA 1796
-  (14, 14), --SANTA TERESA 1796
-  (1, 15), --SANTA TERESA G. RESERVA
-  (4, 15), --SANTA TERESA G. RESERVA
-  (14, 15), --SANTA TERESA G. RESERVA
-  (5, 16), --SANTA TERESA LINAJE
-  (6, 16), --SANTA TERESA LINAJE
-  (12, 16), --SANTA TERESA LINAJE
-  (14, 16), --SANTA TERESA LINAJE
-  (1, 17), --SANTA TERESA ARAKÚ
-  (10, 17), --SANTA TERESA ARAKÚ
-  (14, 17); --SANTA TERESA ARAKÚ
-
-INSERT INTO Producto_Sabor (fk_sabor, fk_producto) 
-VALUES
-  (2, 5), --CACIQUE AÑEJO
-  (3, 5), --CACIQUE AÑEJO
-  (7, 5), --CACIQUE AÑEJO
-  (2, 6), --CACIQUE 500
-  (5, 6), --CACIQUE 500
-  (12, 6), --CACIQUE 500
-  (2, 7), --CACIQUE ANTIGUO
-  (3, 7), --CACIQUE ANTIGUO
-  (4, 7), --CACIQUE ANTIGUO
-  (1, 8), --CACIQUE ORIGEN
-  (2, 8), --CACIQUE ORIGEN
-  (2, 9), --CACIQUE LEYENDA
-  (3, 9), --CACIQUE LEYENDA
-  (6, 9), --CACIQUE LEYENDA
-  (13, 9), --CACIQUE LEYENDA
-  (5, 18), --CARUPANO LEGENDARIO
-  (6, 18), --CARUPANO LEGENDARIO
-  (8, 18), --CARUPANO LEGENDARIO
-  (10, 18), --CARUPANO LEGENDARIO
-  (11, 18), --CARUPANO LEGENDARIO
-  (12, 18), --CARUPANO LEGENDARIO
-  (3, 19), --CARUPANO X.O.
-  (5, 19), --CARUPANO X.O.
-  (6, 19), --CARUPANO X.O.
-  (10, 19), --CARUPANO X.O.
-  (11, 19), --CARUPANO X.O.
-  (12, 19), --CARUPANO X.O.
-  (3, 20), --CARUPANO 1996
-  (5, 20), --CARUPANO 1996
-  (11, 20), --CARUPANO 1996
-  (12, 20), --CARUPANO 1996
-  (13, 20), --CARUPANO 1996
-  (6, 21), --CARUPANO 21
-  (7, 21), --CARUPANO 21
-  (8, 21), --CARUPANO 21
-  (10, 21), --CARUPANO 21
-  (12, 21), --CARUPANO 21
-  (1, 22), --CARUPANO 18
-  (6, 22), --CARUPANO 18
-  (8, 22), --CARUPANO 18
-  (3, 23), --CARUPANO 12
-  (6, 23), --CARUPANO 12
-  (13, 23), --CARUPANO 12
-  (3, 24), --CARUPANO 6
-  (5, 24), --CARUPANO 6
-  (13, 24), --CARUPANO 6
-  (2, 1), --PAMPERO ANIVERSARIO
-  (3, 1), --PAMPERO ANIVERSARIO
-  (5, 1), --PAMPERO ANIVERSARIO
-  (7, 1), --PAMPERO ANIVERSARIO
-  (8, 1), --PAMPERO ANIVERSARIO
-  (13, 1), --PAMPERO ANIVERSARIO
-  (1, 2), --PAMPERO SELECCION
-  (2, 2), --PAMPERO SELECCION
-  (12, 2), --PAMPERO SELECCIÓN
-  (1, 3), --PAMPERO ESPECIAL
-  (2, 3), --PAMPERO ESPECIAL
-  (13, 3), --PAMPERO ESPECIAL
-  (1, 4), --PAMPERO BLANCO
-  (2, 4), --PAMPERO BLANCO
-  (3, 4), --PAMPERO BLANCO
-  (3, 10), --ROBLE MAESTRO
-  (4, 10), --ROBLE MAESTRO
-  (5, 10), --ROBLE MAESTRO
-  (6, 10), --ROBLE MAESTRO
-  (12, 10), --ROBLE MAESTRO
-  (13, 10), --ROBLE MAESTRO
-  (2, 11), --ROBLE EXTRA AÑEJO
-  (3, 11), --ROBLE EXTRA AÑEJO
-  (5, 11), --ROBLE EXTRA AÑEJO
-  (3, 12), --ROBLE ULTRA AÑEJO
-  (5, 12), --ROBLE ULTRA AÑEJO
-  (6, 12), --ROBLE ULTRA AÑEJO
-  (7, 12), --ROBLE ULTRA AÑEJO
-  (13, 12), --ROBLE ULTRA AÑEJO
-  (5, 13), --ROBLE ULTRA ZAFRA
-  (6, 13), --ROBLE ULTRA ZAFRA
-  (7, 13), --ROBLE ULTRA ZAFRA
-  (13, 13), --ROBLE ULTRA ZAFRA
-  (2, 14), --SANTA TERESA 1796
-  (4, 14), --SANTA TERESA 1796
-  (6, 14), --SANTA TERESA 1796
-  (8, 14), --SANTA TERESA 1796
-  (13, 14), --SANTA TERESA 1796
-  (2, 15), --SANTA TERESA G. RESERVA
-  (4, 15), --SANTA TERESA G. RESERVA
-  (6, 15), --SANTA TERESA G. RESERVA
-  (8, 15), --SANTA TERESA G. RESERVA
-  (5, 16), --SANTA TERESA LINAJE
-  (8, 16), --SANTA TERESA LINAJE
-  (13, 16), --SANTA TERESA LINAJE
-  (2, 17), --SANTA TERESA ARAKÚ
-  (9, 17), --SANTA TERESA ARAKÚ
-  (13, 17); --SANTA TERESA ARAKÚ
-
-INSERT INTO Producto_Servido (fk_servido, fk_producto) 
-VALUES
-  (6, 5), --CACIQUE AÑEJO
-  (1, 6), --CACIQUE 500
-  (6, 6), --CACIQUE 500
-  (3, 6), --CACIQUE 500
-  (1, 7), --CACIQUE ANTIGUO
-  (2, 7), --CACIQUE ANTIGUO
-  (1, 8), --CACIQUE ORIGEN
-  (1, 9), --CACIQUE LEYENDA
-  (2, 9), --CACIQUE LEYENDA
-  (3, 9), --CACIQUE LEYENDA
-  (3, 18), --CARUPANO LEGENDARIO
-  (3, 19), --CARUPANO X.O.
-  (3, 20), --CARUPANO 1996
-  (6, 21), --CARUPANO 21
-  (1, 22), --CARUPANO 18
-  (1, 23), --CARUPANO 12
-  (6, 23), --CARUPANO 12
-  (4, 24), --CARUPANO 6
-  (6, 24), --CARUPANO 6
-  (1, 1), --PAMPERO ANIVERSARIO
-  (1, 2), --PAMPERO SELECCION
-  (2, 2), --PAMPERO SELECCION
-  (6, 2), --PAMPERO SELECCIÓN
-  (2, 3), --PAMPERO ESPECIAL
-  (6, 3), --PAMPERO ESPECIAL
-  (2, 4), --PAMPERO BLANCO
-  (2, 10), --ROBLE MAESTRO
-  (3, 10), --ROBLE MAESTRO
-  (2, 11), --ROBLE EXTRA AÑEJO
-  (3, 11), --ROBLE EXTRA AÑEJO
-  (1, 12), --ROBLE ULTRA AÑEJO
-  (2, 12), --ROBLE ULTRA AÑEJO
-  (3, 12), --ROBLE ULTRA AÑEJO
-  (1, 13), --ROBLE ULTRA ZAFRA
-  (3, 13), --ROBLE ULTRA ZAFRA
-  (1, 14), --SANTA TERESA 1796
-  (3, 14), --SANTA TERESA 1796
-  (2, 15), --SANTA TERESA G. RESERVA
-  (5, 15), --SANTA TERESA G. RESERVA
-  (3, 16), --SANTA TERESA LINAJE
-  (5, 16), --SANTA TERESA LINAJE
-  (3, 17); --SANTA TERESA ARAKÚ
-
-INSERT INTO Regusto (regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto) 
-VALUES
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque afrutado', 5), --CACIQUE AÑEJO
-  (' ', ' ', ' ', ' ', 'Matices de frutos secos con toque de vainilla', 6), --CACIQUE 500
-  (' ', ' ', ' ', ' ', 'Matiz dulce con toque de vainilla', 7), --CACIQUE ANTIGUO
-  (' ', ' ', ' ', ' ', 'Matiz dulce de frutos tropicales', 8), --CACIQUE ORIGEN
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque de vainilla', 9), --CACIQUE LEYENDA
-  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos secos', 18), --CARUPANO LEGENDARIO
-  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos negros', 19), --CARUPANO X.O.
-  (' ', ' ', ' ', ' ', 'Matiz seca y elegante con toque de café y tabaco', 20), --CARUPANO 1996
-  (' ', ' ', ' ', ' ', 'Matices de frutas maceradas y tabaco', 21), --CARUPANO 21
-  (' ', ' ', ' ', ' ', 'Matices dulces con entrada vigorosa', 22), --CARUPANO 18
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque de maple', 23), --CARUPANO 12
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque de frutos secos', 24), --CARUPANO 6
-  (' ', ' ', ' ', ' ', 'Matices cítricas con toque dulce', 1), --PAMPERO ANIVERSARIO
-  (' ', ' ', ' ', ' ', 'Matices dulces y amargas', 2), --PAMPERO SELECCIÓN
-  (' ', ' ', ' ', ' ', 'Matices dulces con notas de barrica', 3), --PAMPERO ESPECIAL
-  (' ', ' ', ' ', ' ', 'Matices dulces con frutos tropicales', 4), --PAMPERO BLANCO
-  (' ', ' ', ' ', ' ', 'Matiz seca con notas dulces y meladas', 10), --ROBLE MAESTRO
-  (' ', ' ', ' ', ' ', 'Matiz dulce con frutos secos', 11), --ROBLE EXTRA AÑEJO
-  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos', 12), --ROBLE ULTRA AÑEJO
-  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos y madera', 13), --ROBLE ZAFRA
-  (' ', ' ', ' ', ' ', 'Matices de frutos rojos y chocolate', 14), --SANTA TERESA 1796
-  (' ', ' ', ' ', ' ', 'Matices de chocolate y caña dulce', 15), --SANTA TERESA G. RESERVA
-  (' ', ' ', ' ', ' ', 'Matices de frutos secos y almendra', 16), --SANTA TERESA LINAJE
-  (' ', ' ', ' ', ' ', 'Matices de ron e infusión de café molido', 17); --SANTA TERESA ARAKÚ
-
-INSERT INTO Cuerpo (cuerpo_peso, cuerpo_textura, cuerpo_densidad, cuerpo_descripcion, fk_producto) 
-VALUES
-  ('Medio', 'Cremoso', 'Media', 'Sensación sustancial y viscosa', 5), --CACIQUE AÑEJO
-  ('Ligero', 'Sedoso', 'Baja', 'De carácter ligero y sensorial', 6), --CACIQUE 500
-  ('Ligero', 'Sedoso', 'Baja', 'De carácter gentil y persistente', 7), --CACIQUE ANTIGUO
-  ('Ligero', 'Sedoso', 'Baja', 'Estructura suave y cálida', 8), --CACIQUE ORIGEN
-  ('Ligero', 'Sedoso', 'Baja', 'Composición suave', 9), --CACIQUE LEYENDA
-  ('Medio', 'Viscoso', 'Media', 'Untuoso pero sobrio y equilibrado', 18), --CARUPANO LEGENDARIO
-  ('Medio', 'Viscoso', 'Media', 'Untuoso pero recio y equilibrado', 19), --CARUPANO X.O.
-  ('Medio', 'Viscoso', 'Media', 'Equilibrado en fuerza y elegancia', 20), --CARUPANO 1996
-  ('Pesado', 'Cremoso', 'Alta', 'Sensación alcohólica intensa y untuosa', 21), --CARUPANO 21
-  ('Pesado', 'Cremoso', 'Alta', 'Composición persistente con final meloso', 22), --CARUPANO 18
-  ('Pesado', 'Cremoso', 'Alta', 'Composición untuosa pero equilibrada', 23), --CARUPANO 12
-  ('Medio', 'Cremoso', 'Media', 'Equilibrado con toques de melaza', 23), --CARUPANO 6
-  ('Pesado', 'Viscoso', 'Alta', 'Composición compleja y pesada', 1), --PAMPERO ANIVERSARIO
-  ('Medio', 'Viscoso', 'Media', 'Seco pero equilibrado', 2), --PAMPERO SELECCIÓN
-  ('Ligero', 'Sedoso', 'Baja', 'De carácter ligero y persistente', 3), --PAMPERO ESPECIAL
-  ('Ligero', 'Sedoso', 'Baja', 'Sensación fresca pero robusta', 4), --PAMPERO BLANCO
-  ('Medio', 'Viscoso', 'Media', 'Sensación melada pero seca', 10), --ROBLE MAESTRO
-  ('Medio', 'Viscoso', 'Media', 'De carácter persistente pero balanceado', 11), --ROBLE EXTRA AÑEJO
-  ('Medio', 'Viscoso', 'Media', 'De carácter persistente y robusto', 12), --ROBLE ULTRA AÑEJO
-  ('Ligero', 'Sedoso', 'Baja', 'Equilibrado con final largo y sedoso', 13), --ROBLE ZAFRA
-  ('Ligero', 'Sedoso', 'Baja', 'Estructura seca, sedosa y balanceada', 14), --SANTA TERESA 1796
-  ('Ligero', 'Sedoso', 'Baja', 'De cuerpo liviano pero firme y tenso', 15), --SANTA TERESA G. RESERVA
-  ('Medio', 'Cremoso', 'Media', 'De cuerpo robusto y complejo', 16), --SANTA TERESA LINAJE
-  ('Ligero', 'Sedoso', 'Baja', 'Suaves toques de café cremoso', 17); --SANTA TERESA ARAKÚ
+  (0.5, 25.0, 6.0, 'Botella Pequeña'),
+  (0.75, 29.0, 7.0, 'Botella Estándar'),
+  (1.0, 32.0, 8.0, 'Botella Litro'),
+  (1.5, 35.0, 9.0, 'Botella Magnum'),
+  (1.75, 37.5, 10.0, 'Botella Grande'),
+  (3.0, 40.0, 10.0, 'Botella Extra Grande');
 
 INSERT INTO Material (material_nombre, material_descripcion, material_tipo) 
 VALUES
@@ -4354,14 +4372,22 @@ VALUES
   ('Porcelana', 'Material de alta calidad', 'Cerámico'),
   ('Cristal', 'Material transparente y refinado', 'Compuesto');
 
-INSERT INTO Tapa (tapa_descripcion) 
+INSERT INTO Material_Botella (fk_material, fk_botella) 
 VALUES
-  ('Corcho Natural'),  
-  ('Plástico Económico'),  
-  ('Metal Premium'),  
-  ('Corcho Sintético'), 
-  ('Metal Cromado'),
-  ('Cristal esmerilado');
+  (6, 1),  
+  (6, 2),  
+  (6, 3),  
+  (6, 4),  
+  (6, 5),  
+  (7, 2),  
+  (7, 3),  
+  (3, 3),  
+  (3, 2),
+  (9, 3),
+  (9, 1),
+  (9, 2),
+  (9, 6),
+  (7, 1);
 
 INSERT INTO Caja (caja_capacidad, caja_descripcion, fk_caja) 
 VALUES
@@ -4388,31 +4414,14 @@ VALUES
   (1, 'Forro de cuero', 4),  --22
   (2, 'Caja de Colección de metal', 4);  --23
 
-INSERT INTO Botella (botella_capacidad, botella_altura, botella_ancho, botella_descripcion) 
+INSERT INTO Tapa (tapa_descripcion) 
 VALUES
-  (0.5, 25.0, 6.0, 'Botella Pequeña'),
-  (0.75, 29.0, 7.0, 'Botella Estándar'),
-  (1.0, 32.0, 8.0, 'Botella Litro'),
-  (1.5, 35.0, 9.0, 'Botella Magnum'),
-  (1.75, 37.5, 10.0, 'Botella Grande'),
-  (3.0, 40.0, 10.0, 'Botella Extra Grande');
-  
-INSERT INTO Material_Botella (fk_material, fk_botella) 
-VALUES
-  (6, 1),  
-  (6, 2),  
-  (6, 3),  
-  (6, 4),  
-  (6, 5),  
-  (7, 2),  
-  (7, 3),  
-  (3, 3),  
-  (3, 2),
-  (9, 3),
-  (9, 1),
-  (9, 2),
-  (9, 6),
-  (7, 1);
+  ('Corcho Natural'),  
+  ('Plástico Económico'),  
+  ('Metal Premium'),  
+  ('Corcho Sintético'), 
+  ('Metal Cromado'),
+  ('Cristal esmerilado');
 
 INSERT INTO Presentacion (presentacion_peso, fk_material_botella_1, fk_material_botella_2, fk_producto, fk_tapa, fk_caja) 
 VALUES
@@ -4441,6 +4450,59 @@ VALUES
   (1.15, 7, 2, 16, 1, 8), --SANTA TERESA LINAJE
   (1.6, 7, 2, 17, 2, 11); --SANTA TERESA ARAKÚ
 
+INSERT INTO Evento (evento_nombre, evento_descripcion, evento_num_entradas, evento_fecha_inicio, evento_fecha_cierre, evento_direccion, evento_num_cupos, fk_lugar)
+VALUES
+  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 0, '2023-02-15', '2023-02-16', 'Calle Principal 123', 150, 694),
+  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 0, '2023-03-20', '2023-03-21', 'Avenida Principal 456', 250, 695),
+  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 0, '2023-04-10', '2023-04-11', 'Calle Secundaria 789', 100, 696),
+  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 0, '2023-06-25', '2023-06-26', 'Playa Principal, Frente al Mar', 400, 697),
+  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 0, '2023-07-10', '2023-07-11', 'Calle del Chocolate 123', 70, 698),
+  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 0, '2023-08-15', '2023-08-16', 'Plaza del Jazz 789', 150, 699),
+  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 0, '2023-09-05', '2023-09-06', 'Calle de los Cocteles 456', 100, 700),
+  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 0, '2023-12-20', '2023-12-21', 'Calle de las Luces 123', 300, 701),
+  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 0, '2024-01-25', '2024-01-26', 'Avenida de los Premios 789', 500, 702),
+  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 0, '2024-02-10', '2024-02-11', 'Calle de las Reservas 123', 80, 703),
+  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 0, '2024-03-15', '2024-03-16', 'Plaza de la Salsa 456', 180, 704),
+  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 0, '2024-04-10', '2024-04-11', 'Calle de la Gastronomía 789', 90, 705),
+  ('Fiesta Ronera de Verano', 'Gran fiesta de verano con ron y música en vivo', 0, '2024-06-25', '2024-06-26', 'Playa Principal, Frente al Mar', 400, 706),
+  ('Cata de Ron Aromático', 'Degustación de rones aromáticos y coctelería', 0, '2024-08-10', '2024-08-11', 'Calle de los Aromas 123', 110, 707),
+  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 0, '2024-09-15', '2024-09-16', 'Plaza del Jazz 456', 150, 708),
+  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 0, '2025-02-15', '2025-02-16', 'Calle Principal 123', 150, 709),
+  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 0, '2025-03-20', '2025-03-21', 'Avenida Principal 456', 250, 710),
+  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 0, '2025-04-10', '2025-04-11', 'Calle Secundaria 789', 100, 711),
+  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 0, '2025-06-25', '2025-06-26', 'Playa Principal, Frente al Mar', 400, 712),
+  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 0, '2025-07-10', '2025-07-11', 'Calle del Chocolate 123', 70, 713),
+  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 0, '2025-08-15', '2025-08-16', 'Plaza del Jazz 789', 150, 714),
+  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 0, '2025-09-05', '2025-09-06', 'Calle de los Cocteles 456', 100, 715),
+  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 0, '2025-12-20', '2025-12-21', 'Calle de las Luces 123', 300, 694),
+  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 0, '2026-01-25', '2026-01-26', 'Avenida de los Premios 789', 500, 695),
+  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 0, '2026-02-10', '2026-02-11', 'Calle de las Reservas 123', 80, 696),
+  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 0, '2026-03-15', '2026-03-16', 'Plaza de la Salsa 456', 180, 697),
+  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 0, '2026-04-10', '2026-04-11', 'Calle de la Gastronomía 789', 90, 698),
+  ('Fiesta Ronera de Verano', 'Gran fiesta de verano con ron y música en vivo', 0, '2026-06-25', '2026-06-26', 'Playa Principal, Frente al Mar', 400, 699),
+  ('Cata de Ron Aromático', 'Degustación de rones aromáticos y coctelería', 0, '2026-08-10', '2026-08-11', 'Calle de los Aromas 123', 110, 700),
+  ('Cata de Ron de Colección', 'Degustación de rones de colección con expertos', 0, '2026-09-25', '2026-09-26', 'Calle de las Colecciones 123', 90, 701),
+  ('Fiesta Ronera de Halloween', 'Celebra Halloween con ron y disfraces', 0, '2026-10-31', '2026-11-01', 'Calle del Terror 456', 250, 702),
+  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 0, '2026-11-15', '2026-11-16', 'Calle de la Gastronomía 789', 90, 703),
+  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 0, '2027-01-25', '2027-01-26', 'Avenida de los Premios 789', 500, 704),
+  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 0, '2027-02-10', '2027-02-11', 'Calle de las Reservas 123', 80, 705),
+  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 0, '2027-03-15', '2027-03-16', 'Plaza de la Salsa 456', 180, 706),
+  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 0, '2027-04-10', '2027-04-11', 'Calle de la Gastronomía 789', 90, 707),
+  ('Fiesta Ronera de Verano', 'Gran fiesta de verano con ron y música en vivo', 0, '2027-06-25', '2027-06-26', 'Playa Principal, Frente al Mar', 400, 708),
+  ('Cata de Ron Aromático', 'Degustación de rones aromáticos y coctelería', 0, '2027-08-10', '2027-08-11', 'Calle de los Aromas 123', 110, 709),
+  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 0, '2027-09-15', '2027-09-16', 'Plaza del Jazz 456', 150, 710),
+  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 0, '2028-02-15', '2028-02-16', 'Calle Principal 123', 150, 711),
+  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 0, '2028-03-20', '2028-03-21', 'Avenida Principal 456', 250, 712),
+  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 0, '2028-04-10', '2028-04-11', 'Calle Secundaria 789', 100, 713),
+  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 0, '2028-06-25', '2028-06-26', 'Playa Principal, Frente al Mar', 400, 714),
+  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 0, '2028-07-10', '2028-07-11', 'Calle del Chocolate 123', 70, 715),
+  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 0, '2028-08-15', '2028-08-16', 'Plaza del Jazz 789', 150, 694),
+  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 0, '2028-09-05', '2028-09-06', 'Calle de los Cocteles 456', 100, 695),
+  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 0, '2028-12-20', '2028-12-21', 'Calle de las Luces 123', 300, 696),
+  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 0, '2029-01-25', '2029-01-26', 'Avenida de los Premios 789', 500, 697),
+  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 0, '2029-02-10', '2029-02-11', 'Calle de las Reservas 123', 80, 698),
+  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 0, '2029-03-15', '2029-03-16', 'Plaza de la Salsa 456', 180, 699);
+
 INSERT INTO Imagen (imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
 VALUES 
   ('cacique_anejo.jpg', true, 6, 2, 5),
@@ -4468,15 +4530,106 @@ VALUES
   ('santa_teresa_linaje.jpg', true, 7, 2, 16),
   ('santa_teresa_araku.jpg', true, 7, 2, 17);
 
-INSERT INTO Tienda(
-	tienda_capacidad, tienda_direccion, fk_lugar)
+INSERT INTO Estatus_Pedido (estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion) 
+VALUES
+  (1, 'Carrito', 'El pedido se encuentra creado, pero el usuario esta agregando presentaciones.'),
+  (2, 'Listo para la Entrega', 'El pedido esta listo para la entrega, es decir, esta pronto por salir del almacen'),
+  (3, 'Entregado', 'El pedido ha sido entregad de manera satisfactoria al cliente.'),
+  (4, 'En Retraso', 'El pedido se encuentra retrasada ya que ha superado el tiempo de espera estimado'),
+  (5, 'Cancelada', 'El pedido se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
+
+INSERT INTO Estatus_Orden (estatus_orden_codigo, estatus_orden_nombre, estatus_orden_descripcion) 
+VALUES
+  (1, 'Pendiente', 'La orden se ha creado pero aún no se ha iniciado el proceso de reposición.'),
+  (2, 'En proceso', 'La orden se está procesando, ya sea porque se está reponiendo desde el almacén o porque se está emitiendo una orden de compra al proveedor.'),
+  (3, 'Completada', 'La orden se ha completado correctamente y el producto está disponible en la tienda o en el almacén.'),
+  (4, 'Cancelada', 'La orden se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
+
+INSERT INTO Orden_De_Reposicion (orden_fecha, orden_subtotal, orden_total, fk_contrato_empleo)
 VALUES 
-  (2000, 'Av. Paéz, frente al distribuidor Baralt, local ASORONUCAB', 715);
+  ('2023-12-30', 0, 0, null),
+  ('2023-12-30', 0, 0, null),
+  ('2023-12-30', 0, 0, null),
+  ('2024-01-01', 19025.00, 19025.00, 10),
+  ('2024-01-01', 16523.00, 16523.00, 10),
+  ('2024-01-02', 11998.00, 11998.00, 10),
+  ('2024-01-02', 10647.00, 10647.00, 10),
+  ('2024-01-03', 19222.00, 19222.00, 10),
+  ('2024-01-03', 16523.00, 16523.00, 10),
+  ('2024-01-04', 14000.00, 14000.00, NULL),
+  ('2024-01-04', 16523.00, 16523.00, null),
+  ('2024-01-05', 11998.00, 11998.00, null),
+  ('2024-01-05', 11998.00, 11998.00, null);
+
+INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_orden, fk_orden)
+VALUES
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 1, 1),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 2, 1),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 3, 1),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 1, 2),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 2, 2),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 3, 2),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 1, 3),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 2, 3),
+  ('2023-12-30 00:00:00', '2023-12-30 00:00:00', 3, 3),
+  ('2024-01-01 00:00:00', '2024-01-01 01:00:00', 1, 4),
+  ('2024-01-01 10:00:00', null, 2, 4),
+  ('2024-01-01 00:00:00', '2024-01-02 00:00:00', 1, 5),
+  ('2024-01-02 00:00:00', null, 2, 5),
+  ('2024-01-02 00:00:00', '2024-01-02 01:00:00', 1, 6),
+  ('2024-01-02 01:00:00', '2024-01-02 02:00:00', 2, 6),
+  ('2024-01-02 02:00:00', '2024-01-02 02:00:00', 3, 6),
+  ('2024-01-02 00:00:00', '2024-01-02 01:00:00', 1, 7),
+  ('2024-01-02 01:00:00', '2024-01-02 02:00:00', 2, 7),
+  ('2024-01-02 02:00:00', '2024-01-02 02:00:00', 3, 7),
+  ('2024-01-03 00:00:00', '2024-01-03 01:00:00', 1, 8),
+  ('2024-01-03 01:00:00', '2024-01-03 02:00:00', 2, 8),
+  ('2024-01-03 02:00:00', '2024-01-03 00:00:00', 3, 8),
+  ('2024-01-03 00:00:00', '2024-01-03 01:00:00', 1, 9),
+  ('2024-01-03 01:00:00', '2024-01-03 02:00:00', 2, 9),
+  ('2024-01-03 02:00:00', '2024-01-03 02:00:00', 3, 9),
+  ('2024-01-04 00:00:00', null, 1, 10),
+  ('2024-01-04 00:00:00', null, 1, 11),
+  ('2024-01-05 00:00:00', null, 1, 12),
+  ('2024-01-05 00:00:00', null, 1, 13);
 
 INSERT INTO Almacen(
   almacen_capacidad, almacen_direccion, fk_lugar)
 VALUES 
   (5000, 'Av. Paéz, frente al distribuidor Baralt, local ASORONUCAB', 715);
+
+INSERT INTO Inventario_Almacen(
+  inv_almacen_cantidad, fk_almacen, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+VALUES
+  (150, 1, 6, 2, 5),
+  (150, 1, 6, 2, 6),
+  (170, 1, 6, 2, 7),
+  (280, 1, 9, 3, 8),
+  (290, 1, 9, 2, 9),
+  (280, 1, 9, 2, 18),
+  (170, 1, 9, 2, 19),
+  (260, 1, 9, 2, 20),
+  (150, 1, 9, 2, 21),
+  (250, 1, 9, 2, 22),
+  (170, 1, 7, 2, 23),
+  (180, 1, 6, 2, 24),
+  (290, 1, 6, 2, 1),
+  (150, 1, 6, 2, 2),
+  (160, 1, 6, 2, 3),
+  (270, 1, 6, 2, 4),
+  (180, 1, 9, 2, 10),
+  (290, 1, 9, 2, 11),
+  (170, 1, 9, 6, 13),
+  (170, 1, 9, 2, 12),
+  (150, 1, 9, 2, 14),
+  (150, 1, 9, 2, 15),
+  (160, 1, 7, 2, 16),
+  (270, 1, 7, 2, 17);
+
+INSERT INTO Tienda(
+	tienda_capacidad, tienda_direccion, fk_lugar)
+VALUES 
+  (2000, 'Av. Paéz, frente al distribuidor Baralt, local ASORONUCAB', 715);
 
 INSERT INTO Inventario_Tienda(
 	inv_tienda_cantidad, fk_tienda, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
@@ -4506,33 +4659,59 @@ VALUES
   (60, 1, 7, 2, 16),
   (70, 1, 7, 2, 17);
 
-INSERT INTO Inventario_Almacen(
-  inv_almacen_cantidad, fk_almacen, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
+INSERT INTO Detalle_Orden_De_Reposicion (
+  detalle_orden_cantidad, detalle_orden_precio_unitario, fk_orden, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3,
+  fk_inventario_almacen_4, fk_inventario_tienda_1, fk_inventario_tienda_2, fk_inventario_tienda_3, fk_inventario_tienda_4)
 VALUES
-  (150, 1, 6, 2, 5),
-  (150, 1, 6, 2, 6),
-  (170, 1, 6, 2, 7),
-  (280, 1, 9, 3, 8),
-  (290, 1, 9, 2, 9),
-  (280, 1, 9, 2, 18),
-  (170, 1, 9, 2, 19),
-  (260, 1, 9, 2, 20),
-  (150, 1, 9, 2, 21),
-  (250, 1, 9, 2, 22),
-  (170, 1, 7, 2, 23),
-  (180, 1, 6, 2, 24),
-  (290, 1, 6, 2, 1),
-  (150, 1, 6, 2, 2),
-  (160, 1, 6, 2, 3),
-  (270, 1, 6, 2, 4),
-  (180, 1, 9, 2, 10),
-  (290, 1, 9, 2, 11),
-  (170, 1, 9, 6, 13),
-  (170, 1, 9, 2, 12),
-  (150, 1, 9, 2, 14),
-  (150, 1, 9, 2, 15),
-  (160, 1, 7, 2, 16),
-  (270, 1, 7, 2, 17);
+  (50, 0, 1, NULL, NULL, NULL, NULL, 1, 9, 2, 14),
+  (50, 0, 2, NULL, NULL, NULL, NULL, 1, 9, 2, 15),
+  (50, 0, 3, NULL, NULL, NULL, NULL, 1, 7, 2, 16),
+  (200, 40.25, 4, 1, 9, 2, 14, NULL, NULL, NULL, NULL),
+  (100, 35.25, 4, 1, 9, 2, 15, NULL, NULL, NULL, NULL),
+  (100, 33.25, 4, 1, 7, 2, 16, NULL, NULL, NULL, NULL),
+  (100, 41.25, 4, 1, 7, 2, 17, NULL, NULL, NULL, NULL),
+  (100, 30.25, 5, 1, 6, 2, 5, NULL, NULL, NULL, NULL),
+  (100, 35.25, 5, 1, 6, 2, 6, NULL, NULL, NULL, NULL),
+  (100, 33.25, 5, 1, 6, 2, 7, NULL, NULL, NULL, NULL),
+  (100, 41.25, 5, 1, 9, 3, 8, NULL, NULL, NULL, NULL),
+  (100, 25.23, 5, 1, 9, 2, 9, NULL, NULL, NULL, NULL),
+  (100, 33.25, 6, 1, 6, 2, 1, NULL, NULL, NULL, NULL),
+  (100, 41.25, 6, 1, 6, 2, 2, NULL, NULL, NULL, NULL),
+  (100, 25.23, 6, 1, 6, 2, 3, NULL, NULL, NULL, NULL),
+  (100, 20.25, 6, 1, 6, 2, 4, NULL, NULL, NULL, NULL),
+  (100, 37.25, 7, 1, 9, 2, 10, NULL, NULL, NULL, NULL),
+  (100, 37.25, 7, 1, 9, 2, 11, NULL, NULL, NULL, NULL),
+  (100, 37.25, 7, 1, 9, 6, 13, NULL, NULL, NULL, NULL),
+  (100, 37.25, 7, 1, 9, 2, 12, NULL, NULL, NULL, NULL),
+  (100, 20.25, 8, 1, 9, 2, 18, NULL, NULL, NULL, NULL),
+  (100, 37.25, 8, 1, 9, 2, 19, NULL, NULL, NULL, NULL),
+  (100, 20.45, 8, 1, 9, 2, 20, NULL, NULL, NULL, NULL),
+  (100, 23.52, 8, 1, 9, 2, 21, NULL, NULL, NULL, NULL),
+  (100, 25.25, 8, 1, 9, 2, 22, NULL, NULL, NULL, NULL),
+  (100, 30.25, 8, 1, 7, 2, 23, NULL, NULL, NULL, NULL),
+  (100, 35.25, 8, 1, 6, 2, 24, NULL, NULL, NULL, NULL),
+  (100, 30.25, 9, 1, 6, 2, 5, NULL, NULL, NULL, NULL),
+  (100, 35.25, 9, 1, 6, 2, 6, NULL, NULL, NULL, NULL),
+  (100, 33.25, 9, 1, 6, 2, 7, NULL, NULL, NULL, NULL),
+  (100, 41.25, 9, 1, 9, 3, 8, NULL, NULL, NULL, NULL),
+  (100, 25.23, 9, 1, 9, 2, 9, NULL, NULL, NULL, NULL),
+  (100, 30.25, 10, 1, 9, 2, 14, NULL, NULL, NULL, NULL),
+  (100, 35.25, 10, 1, 9, 2, 15, NULL, NULL, NULL, NULL),
+  (100, 33.25, 10, 1, 7, 2, 16, NULL, NULL, NULL, NULL),
+  (100, 41.25, 10, 1, 7, 2, 17, NULL, NULL, NULL, NULL),
+  (100, 30.25, 11, 1, 6, 2, 5, NULL, NULL, NULL, NULL),
+  (100, 35.25, 11, 1, 6, 2, 6, NULL, NULL, NULL, NULL),
+  (100, 33.25, 11, 1, 6, 2, 7, NULL, NULL, NULL, NULL),
+  (100, 41.25, 11, 1, 9, 3, 8, NULL, NULL, NULL, NULL),
+  (100, 25.23, 11, 1, 9, 2, 9, NULL, NULL, NULL, NULL),
+  (100, 33.25, 12, 1, 6, 2, 1, NULL, NULL, NULL, NULL),
+  (100, 41.25, 12, 1, 6, 2, 2, NULL, NULL, NULL, NULL),
+  (100, 25.23, 12, 1, 6, 2, 3, NULL, NULL, NULL, NULL),
+  (100, 20.25, 12, 1, 6, 2, 4, NULL, NULL, NULL, NULL),
+  (100, 33.25, 13, 1, 6, 2, 1, NULL, NULL, NULL, NULL),
+  (100, 41.25, 13, 1, 6, 2, 2, NULL, NULL, NULL, NULL),
+  (100, 25.23, 13, 1, 6, 2, 3, NULL, NULL, NULL, NULL),
+  (100, 20.25, 13, 1, 6, 2, 4, NULL, NULL, NULL, NULL);
 
 INSERT INTO Historico_Punto (
   punto_valor, punto_fecha_inicio, punto_fecha_fin, fk_tienda)
@@ -4647,71 +4826,3 @@ VALUES
   (58.41, '2023/07/22', 1, 1, 9, 2, 15),
   (59.15, '2023/07/23', 1, 1, 7, 2, 16),
   (67.15, '2023/07/24', 1, 1, 7, 2, 17);
-
-INSERT INTO Evento (evento_nombre, evento_descripcion, evento_num_entradas, evento_fecha_inicio, evento_fecha_cierre, evento_direccion, evento_num_cupos, fk_lugar)
-VALUES
-  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 100, '2023-02-15', '2023-02-16', 'Calle Principal 123', 150, 694),
-  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 200, '2023-03-20', '2023-03-21', 'Avenida Principal 456', 250, 695),
-  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 75, '2023-04-10', '2023-04-11', 'Calle Secundaria 789', 100, 696),
-  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 300, '2023-06-25', '2023-06-26', 'Playa Principal, Frente al Mar', 400, 697),
-  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 50, '2023-07-10', '2023-07-11', 'Calle del Chocolate 123', 70, 698),
-  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 120, '2023-08-15', '2023-08-16', 'Plaza del Jazz 789', 150, 699),
-  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 80, '2023-09-05', '2023-09-06', 'Calle de los Cocteles 456', 100, 700),
-  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 250, '2023-12-20', '2023-12-21', 'Calle de las Luces 123', 300, 701),
-  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 400, '2024-01-25', '2024-01-26', 'Avenida de los Premios 789', 500, 702),
-  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 60, '2024-02-10', '2024-02-11', 'Calle de las Reservas 123', 80, 703),
-  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 150, '2024-03-15', '2024-03-16', 'Plaza de la Salsa 456', 180, 704),
-  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 70, '2024-04-10', '2024-04-11', 'Calle de la Gastronomía 789', 90, 705),
-  ('Fiesta Ronera de Verano', 'Gran fiesta de verano con ron y música en vivo', 300, '2024-06-25', '2024-06-26', 'Playa Principal, Frente al Mar', 400, 706),
-  ('Cata de Ron Aromático', 'Degustación de rones aromáticos y coctelería', 90, '2024-08-10', '2024-08-11', 'Calle de los Aromas 123', 110, 707),
-  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 120, '2024-09-15', '2024-09-16', 'Plaza del Jazz 456', 150, 708),
-  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 100, '2025-02-15', '2025-02-16', 'Calle Principal 123', 150, 709),
-  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 200, '2025-03-20', '2025-03-21', 'Avenida Principal 456', 250, 710),
-  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 75, '2025-04-10', '2025-04-11', 'Calle Secundaria 789', 100, 711),
-  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 300, '2025-06-25', '2025-06-26', 'Playa Principal, Frente al Mar', 400, 712),
-  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 50, '2025-07-10', '2025-07-11', 'Calle del Chocolate 123', 70, 713),
-  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 120, '2025-08-15', '2025-08-16', 'Plaza del Jazz 789', 150, 714),
-  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 80, '2025-09-05', '2025-09-06', 'Calle de los Cocteles 456', 100, 715),
-  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 250, '2025-12-20', '2025-12-21', 'Calle de las Luces 123', 300, 694),
-  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 400, '2026-01-25', '2026-01-26', 'Avenida de los Premios 789', 500, 695),
-  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 60, '2026-02-10', '2026-02-11', 'Calle de las Reservas 123', 80, 696),
-  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 150, '2026-03-15', '2026-03-16', 'Plaza de la Salsa 456', 180, 697),
-  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 70, '2026-04-10', '2026-04-11', 'Calle de la Gastronomía 789', 90, 698),
-  ('Fiesta Ronera de Verano', 'Gran fiesta de verano con ron y música en vivo', 300, '2026-06-25', '2026-06-26', 'Playa Principal, Frente al Mar', 400, 699),
-  ('Cata de Ron Aromático', 'Degustación de rones aromáticos y coctelería', 90, '2026-08-10', '2026-08-11', 'Calle de los Aromas 123', 110, 700),
-  ('Cata de Ron de Colección', 'Degustación de rones de colección con expertos', 70, '2026-09-25', '2026-09-26', 'Calle de las Colecciones 123', 90, 701),
-  ('Fiesta Ronera de Halloween', 'Celebra Halloween con ron y disfraces', 200, '2026-10-31', '2026-11-01', 'Calle del Terror 456', 250, 702),
-  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 70, '2026-11-15', '2026-11-16', 'Calle de la Gastronomía 789', 90, 703),
-  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 400, '2027-01-25', '2027-01-26', 'Avenida de los Premios 789', 500, 704),
-  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 60, '2027-02-10', '2027-02-11', 'Calle de las Reservas 123', 80, 705),
-  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 150, '2027-03-15', '2027-03-16', 'Plaza de la Salsa 456', 180, 706),
-  ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 70, '2027-04-10', '2027-04-11', 'Calle de la Gastronomía 789', 90, 707),
-  ('Fiesta Ronera de Verano', 'Gran fiesta de verano con ron y música en vivo', 300, '2027-06-25', '2027-06-26', 'Playa Principal, Frente al Mar', 400, 708),
-  ('Cata de Ron Aromático', 'Degustación de rones aromáticos y coctelería', 90, '2027-08-10', '2027-08-11', 'Calle de los Aromas 123', 110, 709),
-  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 120, '2027-09-15', '2027-09-16', 'Plaza del Jazz 456', 150, 710),
-  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 100, '2028-02-15', '2028-02-16', 'Calle Principal 123', 150, 711),
-  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 200, '2028-03-20', '2028-03-21', 'Avenida Principal 456', 250, 712),
-  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 75, '2028-04-10', '2028-04-11', 'Calle Secundaria 789', 100, 713),
-  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 300, '2028-06-25', '2028-06-26', 'Playa Principal, Frente al Mar', 400, 714),
-  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 50, '2028-07-10', '2028-07-11', 'Calle del Chocolate 123', 70, 715),
-  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 120, '2028-08-15', '2028-08-16', 'Plaza del Jazz 789', 150, 694),
-  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 80, '2028-09-05', '2028-09-06', 'Calle de los Cocteles 456', 100, 695),
-  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 250, '2028-12-20', '2028-12-21', 'Calle de las Luces 123', 300, 696),
-  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 400, '2029-01-25', '2029-01-26', 'Avenida de los Premios 789', 500, 697),
-  ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 60, '2029-02-10', '2029-02-11', 'Calle de las Reservas 123', 80, 698),
-  ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 150, '2029-03-15', '2029-03-16', 'Plaza de la Salsa 456', 180, 699);
-
-INSERT INTO Estatus_Orden (estatus_orden_codigo, estatus_orden_nombre, estatus_orden_descripcion) 
-VALUES
-  (1, 'Pendiente', 'La orden se ha creado pero aún no se ha iniciado el proceso de reposición.'),
-  (2, 'En proceso', 'La orden se está procesando, ya sea porque se está reponiendo desde el almacén o porque se está emitiendo una orden de compra al proveedor.'),
-  (3, 'Completada', 'La orden se ha completado correctamente y el producto está disponible en la tienda o en el almacén.'),
-  (4, 'Cancelada', 'La orden se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
-
-INSERT INTO Estatus_Pedido (estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion) 
-VALUES
-  (1, 'Carrito', 'El pedido se encuentra creado, pero el usuario esta agregando presentaciones.'),
-  (2, 'Listo para la Entrega', 'El pedido esta listo para la entrega, es decir, esta pronto por salir del almacen'),
-  (3, 'Entregado', 'El pedido ha sido entregad de manera satisfactoria al cliente.'),
-  (4, 'En Retraso', 'El pedido se encuentra retrasada ya que ha superado el tiempo de espera estimado'),
-  (5, 'Cancelada', 'El pedido se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');

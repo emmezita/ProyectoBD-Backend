@@ -2800,3 +2800,49 @@ def actualizar_punto():
         return jsonify({"error": str(e)}), 500
     finally:
         cur.close()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# HISTORICO DE LA TASA DEL DOLAR
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el historico de la tasa del dolar
+@app.route("/api/historico/tasa/all", methods=["GET"])
+def obtener_historico_tasa():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerHistoricoTasaDolar()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para actualizar la tasa del dolar
+@app.route("/api/historico/tasa/actualizar", methods=["POST"])
+def actualizar_tasa():
+    cur = conn.cursor()
+    try:
+        tasa = request.get_json()
+        pprint(tasa)
+        tasa = float(tasa.get('valor'))
+        
+        cur.execute('CALL ActualizarTasaDolar(%s)', (tasa,))
+        conn.commit()
+        return jsonify({"message": "Tasa del dolar actualizada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# AFILIACION
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todas las afiliaciones de la base de datos
+@app.route("/api/afiliacion/all", methods=["GET"])
+def obtener_afiliaciones():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerFichasAfiliacion()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200

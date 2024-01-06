@@ -105,6 +105,9 @@
         <li class="nav-item" role="clientesjuridicos">
             <button class="nav-link" id="clientesjuridicos-tab" data-bs-toggle="tab" data-bs-target="#clientesjuridicos" type="button" role="tab" aria-controls="clientesjuridicos" aria-selected="false">Clientes Jurídicos</button>
         </li>
+        <li class="nav-item" role="fichaafiliacion">
+            <button class="nav-link" id="fichaafiliacion-tab" data-bs-toggle="tab" data-bs-target="#fichaafiliacion" type="button" role="tab" aria-controls="fichaafiliacion" aria-selected="false">Ficha de Afiliación</button>
+        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -145,6 +148,26 @@
                 </table>
             </div>
         </div>
+        <div class="tab-pane fade" id="fichaafiliacion" role="tabpanel" aria-labelledby="fichaafiliacion-tab">
+            <div class="mt-4 mx-auto">
+                <table id="table-fichaafiliacion" class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Fecha de Afiliacion</th>
+                            <th>Persona</th>
+                            <th>Cédula o RIF</th>
+                            <th>Monto mensual</th>
+                            <th>Puntos acumulados</th>
+                            <th></th> <!-- no ordenar estas columnas -->
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-fichaafiliacion"> </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Modales -->
             <!-- Modal Delete NCostumer -->
             <div class="modal fade" id="deleteNCostumerModal" tabindex="-1" aria-labelledby="deleteNCostumerModalLabel" aria-hidden="true">
@@ -277,6 +300,51 @@ $(document).ready(function() {
                 alert('Hubo un error obteniendo a los clientes juridicos');
             }
         });
+
+        $.ajax({
+            url: 'http://localhost:5000/api/afiliacion/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var row = $('<tr>');
+                    row.append('<td>' + data[i].codigo + '</td>');
+                    var fecha = formatDate(data[i].fecha);
+                    row.append('<td>' + fecha + '</td>');
+                    row.append('<td>' + data[i].nombre + '</td>');
+                    row.append('<td>' + data[i].cedularif + '</td>');
+                    row.append('<td>' + data[i].montomensual + '</td>');
+                    row.append('<td>' + data[i].puntos + '</td>');
+                    row.append('<td><button type="button" class="btn btn-warning" onclick="editarFicha(' + data[i].codigo + ')">Editar</button></td>');
+                    row.append('<td><button type="button" class="btn btn-danger" id="delete-fichaafiliacion-button" data-bs-toggle="modal" data-bs-target="#deleteFichaAfiliacionModal" data-fichaafiliacion-name="'+ data[i].nombre+'" data-fichaafiliacion-id="'+ data[i].codigo+'">Eliminar</button></td>');
+
+                    $('#body-fichaafiliacion').append(row);
+                }
+
+                $('#table-fichaafiliacion').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            },
+            error: function() {
+                alert('Hubo un error obteniendo las fichas de afiliacion');
+            }
+        });
+
 });     
 
 // como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
@@ -356,4 +424,5 @@ function editarj(id){
     console.log('editar Cliente Juridico');
     window.location.href = 'http://dilodev.co/formulario-editar-cliente-juridico?id=' + id;
 }
-</script> 
+
+</script>

@@ -397,8 +397,14 @@ CREATE TABLE Punto (
   -- Clave primaria de la tabla.
 );
 
+CREATE SEQUENCE secuencia_ficha
+    INCREMENT BY 1
+    START WITH 1
+    MINVALUE 1
+    MAXVALUE 99999999;
+
 CREATE TABLE Ficha_Afiliacion (
-  afiliacion_numero serial,
+  afiliacion_numero varchar(8),
   -- Código identificador de la entidad Ficha de Afiliación
   afiliacion_fecha date NOT NULL,
   -- Fecha de afiliación del cliente.
@@ -428,7 +434,7 @@ CREATE TABLE Pago_Afiliacion (
   -- Monto del pago de la afiliación. Debe ser mayor que 0
   pago_mes_pagado date NOT NULL,
   -- Mes que se está pagando.
-  fk_ficha_afiliacion integer NOT NULL,
+  fk_ficha_afiliacion varchar(8) NOT NULL,
   -- Relación con la entidad Ficha de Afiliación
   fk_tdc integer NOT NULL,
   -- Relación con la entidad TDC
@@ -1379,8 +1385,6 @@ CREATE TABLE Pedido (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
   CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT fk_pedido_lugar_enviadoa FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_pedido_subtotal CHECK (pedido_subtotal > 0),
@@ -1664,9 +1668,7 @@ CREATE TABLE Detalle_Orden_De_Reposicion (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
   CONSTRAINT fk_detalle_orden_inventario_tienda_repone FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT ck_detalle_orden_cantidad CHECK (detalle_orden_cantidad > 0),
-  -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_detalle_orden_precio_unitario CHECK (detalle_orden_precio_unitario > 0)
+  CONSTRAINT ck_detalle_orden_cantidad CHECK (detalle_orden_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
 );
 

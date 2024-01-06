@@ -173,19 +173,23 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT orden.orden_codigo, orden_fecha, 
-        (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT,
-        detalle.detalle_orden_cantidad, est.estatus_orden_nombre::TEXT
+    SELECT orden.orden_codigo, orden.orden_fecha,
+       (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT,
+        detalle.detalle_orden_cantidad,
+        est.estatus_orden_nombre::TEXT
     FROM orden_de_reposicion orden
     JOIN detalle_orden_de_reposicion detalle ON orden.orden_codigo = detalle.fk_orden
+                                            AND detalle.fk_inventario_almacen_1 is null 
+                                            AND detalle.fk_inventario_almacen_2 is null 
+                                            AND detalle.fk_inventario_almacen_3 is null 
+                                            AND detalle.fk_inventario_almacen_4 is null 
     JOIN producto pro ON detalle.fk_inventario_tienda_4 = pro.producto_codigo
     JOIN botella bo ON detalle.fk_inventario_tienda_3 = bo.botella_codigo
     JOIN (
-        SELECT fk_orden, fk_estatus_orden
+        SELECT fk_orden, fk_estatus_orden,
+            ROW_NUMBER() OVER (PARTITION BY fk_orden ORDER BY fk_estatus_orden DESC) as rn
         FROM historico_estatus_orden
-        ORDER BY fk_estatus_orden DESC
-        LIMIT 1
-    ) historico ON orden.orden_codigo = historico.fk_orden
+    ) historico ON orden.orden_codigo = historico.fk_orden AND historico.rn = 1
     JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo;
 END;
 $$;
@@ -368,7 +372,16 @@ BEGIN
         ) t
         WHERE t.rn = 1
     ) historico ON orden.orden_codigo = historico.fk_orden
-    JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo;
+    JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo
+    WHERE EXISTS (
+        SELECT 1
+        FROM detalle_orden_de_reposicion detalle
+        WHERE detalle.fk_orden = orden.orden_codigo
+        AND detalle.fk_inventario_almacen_1 IS NOT NULL
+        AND detalle.fk_inventario_almacen_2 IS NOT NULL
+        AND detalle.fk_inventario_almacen_3 IS NOT NULL
+        AND detalle.fk_inventario_almacen_4 IS NOT NULL
+    );
 END;
 $$;
 
@@ -703,3 +716,45 @@ BEGIN
     SELECT _nuevoPedidoID;
 END;
 $$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Afiliacion
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+DROP FUNCTION IF EXISTS ObtenerFichasAfiliacion();
+
+-- Obtener fichas de afiliacion
+CREATE OR REPLACE FUNCTION ObtenerFichasAfiliacion()
+RETURNS TABLE(codigo TEXT, fecha DATE, nombre TEXT, cedulaRif TEXT, montoMensual NUMERIC, puntos INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT af.afiliacion_numero::TEXT as codigo, af.afiliacion_fecha::DATE as fecha,
+        (pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido)::TEXT as nombre,
+        pn.persona_nat_cedula::TEXT as cedula_rif, af.afiliacion_monto_mensual as monto_mensual,
+        cn.cliente_nat_puntos_acumulados as puntos
+    FROM Ficha_Afiliacion af
+    JOIN cliente_natural cn ON cn.cliente_nat_codigo = af.fk_cliente_natural
+    JOIN persona_natural pn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+    UNION
+    SELECT af.afiliacion_numero::TEXT as codigo,  af.afiliacion_fecha::DATE as fecha,
+        pj.persona_jur_razon_social::TEXT as nombre,
+        pj.persona_jur_rif::TEXT as cedula_rif, af.afiliacion_monto_mensual as monto_mensual,
+        cj.cliente_jur_puntos_acumulados as puntos
+    FROM Ficha_Afiliacion af
+    JOIN persona_juridica pj ON pj.persona_jur_codigo = af.fk_persona_juridica
+    LEFT JOIN cliente_juridico cj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    ORDER BY codigo;
+END;
+$$;
+
+-- Registrar ficha de afiliacion
+CREATE OR REPLACE PROCEDURE RegistrarFichaAfiliacion(_codigoPN INT, _codigoPJ INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Insertar un nuevo registro en Ficha_Afiliacion
+    INSERT INTO Ficha_Afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural, fk_persona_juridica)
+    VALUES (LPAD(nextval('secuencia_ficha')::text, 8, '0'), CURRENT_DATE, 15, _codigoPN, _codigoPJ);
+END;
