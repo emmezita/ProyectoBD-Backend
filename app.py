@@ -2906,3 +2906,19 @@ def obtener_perfil(id):
     data = json.loads(rows)
     data = jsonify(data)
     return data, 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# CARNET
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el carnet de una persona 
+@app.route("/api/carnet/<int:id>", methods=["GET"])
+def obtener_carnet(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ObtenerCarnet', (id,))
+    rows = cur.fetchone()
+    cur.close()
+    if rows is None:
+        return Response(status=404, response="Usuario no encontrado")
+    return jsonify(rows), 200
+    

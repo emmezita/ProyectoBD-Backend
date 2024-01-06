@@ -777,3 +777,38 @@ BEGIN
     WHERE u.usuario_codigo = _usuario_id AND u.fk_persona_juridica IS NOT NULL;
 END;
 $$;
+
+-- Funcion que devuelve los datos para un carnet 
+CREATE OR REPLACE FUNCTION ObtenerDatosCarnet(_usuario_id INT)
+RETURNS TABLE (datos_perfil TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+
+END;
+
+DROP FUNCTION IF EXISTS ObtenerCarnet(INT);
+
+CREATE OR REPLACE FUNCTION ObtenerCarnet(_usuario_id INT)
+RETURNS TABLE (
+    afiliacion_numero VARCHAR(8),
+    nombre_completo VARCHAR(255),
+    identificacion VARCHAR(11)
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT fa.afiliacion_numero,
+           COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::VARCHAR(255) AS nombre_completo,
+           COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::VARCHAR(11) AS identificacion
+    FROM Usuario u
+    LEFT JOIN Persona_Natural pn ON u.fk_persona_natural = pn.persona_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON u.fk_persona_juridica = pj.persona_jur_codigo
+    LEFT JOIN Cliente_Natural cn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON pj.persona_jur_codigo = cj.cliente_jur_codigo
+    LEFT JOIN Ficha_Afiliacion fa ON (cn.cliente_nat_codigo = fa.fk_cliente_natural OR cj.cliente_jur_codigo = fa.fk_persona_juridica)
+    WHERE u.usuario_codigo = _usuario_id AND fa.afiliacion_numero IS NOT NULL;
+END;
+$$;
