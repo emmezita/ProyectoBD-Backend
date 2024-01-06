@@ -2571,7 +2571,7 @@ def add_product(id):
     # Si hay uno, se verifica si el producto que se quiere agregar ya esta en el pedido y se informa al usuario
     # Si no esta, se agrega el producto al pedido
 
-    cur.callproc('ObtenerCodigoPersona', (id,))
+    cur.callproc('ObtenerCodigoCliente', (id,))
     personas = cur.fetchone()
     print(personas)
 
