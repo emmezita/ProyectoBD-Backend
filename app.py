@@ -1430,6 +1430,13 @@ def delete_cliente_juridico(id):
 
     return "Cliente Eliminado"
 
+
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA REALIZAR EL CRUD DE ROLES
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRODUCTO
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2890,8 +2897,12 @@ def registrar_afiliacion(id):
 @app.route("/api/perfil/<int:id>", methods=["GET"])
 def obtener_perfil(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.callproc('ObtenerDatosPerfilUsuario(%s)', (id,))  # Pasar los argumentos como una tupla
-    rows = cur.fetchall()
+    cur.callproc('ObtenerDatosPerfilUsuario', (id,))  # Pasar los argumentos como una tupla
+    rows = cur.fetchone()
     cur.close()
-    pprint(rows)
-    return jsonify(rows), 200
+    if rows is None:
+        return Response(status=404, response="Usuario no encontrado")
+    rows = rows.get ('datos_perfil')
+    data = json.loads(rows)
+    data = jsonify(data)
+    return data, 200
