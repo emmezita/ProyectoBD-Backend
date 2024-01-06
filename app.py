@@ -2863,3 +2863,35 @@ def obtener_afiliaciones():
     cur.close()
     pprint(rows)
     return jsonify(rows), 200
+
+# Ruta para afiliar a una persona en la base de datos
+@app.route("/api/afiliacion/registrar/<int:id>", methods=["PUT"])
+def registrar_afiliacion(id):
+    cur = conn.cursor()
+    try:
+        cur.callproc('ObtenerCodigoCliente', (id,))
+        personas = cur.fetchone()
+        codigo_persona_natural, codigo_persona_juridica = personas 
+        
+        cur.execute('CALL RegistrarFichaAfiliacion(%s, %s)', (codigo_persona_natural,codigo_persona_juridica))
+        conn.commit()
+        return jsonify({"message": "Afiliacion registrada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# PERFIL
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener los datos de una persona
+@app.route("/api/perfil/<int:id>", methods=["GET"])
+def obtener_perfil(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ObtenerDatosPerfilUsuario(%s)', (id,))  # Pasar los argumentos como una tupla
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
