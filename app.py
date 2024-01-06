@@ -29,6 +29,23 @@ conn = psycopg2.connect(database=db_name, user=db_user, password=db_pass, host=d
 # RUTAS GENERALES
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+# Ruta para Inciar Sesion 
+@app.route("/api/login", methods=["POST"])
+def login():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    data = request.get_json()
+    pprint(data)
+    usuario = data.get("usuario")
+    contrasena = data.get("contrasena")
+    cur.execute("SELECT * FROM Usuario WHERE usuario_nombre = %s AND usuario_contrasena = %s", (usuario, contrasena))
+    usuario = cur.fetchone()
+    cur.close()
+
+    if usuario is None:
+        return Response(status=404, response="Usuario no encontrado")
+    
+    return jsonify(usuario), 200
+
 # Ruta para obtener todas las ubicaciones de la base de datos (JSON)
 @app.route("/api/usuario/ubicaciones/all", methods=["GET"])
 def get_all_ubicaciones():
