@@ -1436,6 +1436,119 @@ def delete_cliente_juridico(id):
 # RUTAS PARA REALIZAR EL CRUD DE ROLES
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+def reformat_data(data):
+    result = {}
+    for item in data:
+        rol_codigo = item['rol_codigo']
+        rol_nombre = item['rol_nombre']
+        permiso = {
+            'permiso_codigo': item['permiso_codigo'],
+            'permiso_descripcion': item['permiso_descripcion'],
+            'permiso_tipo': item['permiso_tipo']
+        }
+        if rol_codigo not in result:
+            result[rol_codigo] = {
+                'rol_codigo': rol_codigo,
+                'rol_nombre': rol_nombre,
+                'permisos': [permiso]
+            }
+        else:
+            result[rol_codigo]['permisos'].append(permiso)
+    return list(result.values())
+
+@app.route("/api/rol/all", methods=["GET"])
+def get_all_roles():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    sql_roles = """
+        SELECT r.rol_codigo, r.rol_nombre, p.permiso_codigo, p.permiso_descripcion, p.permiso_tipo
+        FROM Rol r, rol_permiso rp, permiso p
+        WHERE r.rol_codigo = rp.fk_rol AND rp.fk_permiso = p.permiso_codigo
+        ORDER BY r.rol_codigo
+    """
+    cur.execute(sql_roles)
+    rows = cur.fetchall()
+    cur.close()
+
+    formated_rows = reformat_data(rows)
+
+    pprint(formated_rows)
+    return jsonify(formated_rows)
+
+@app.route("/api/permiso/all", methods=["GET"])
+def get_all_permisos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    sql_permisos = """
+        SELECT * FROM Permiso
+    """
+    cur.execute(sql_permisos)
+    rows = cur.fetchall()
+    cur.close()
+
+    pprint(rows)
+    return jsonify(rows)
+
+
+# No se si funciona
+# @app.route("/api/rol/modificar", methods=["PUT"])
+# def modificar_roles():
+#     cur = conn.cursor()
+#     data = request.get_json()
+#     pprint(data)
+#     rol_codigo = data.get('rol_codigo')
+#     rol_nombre = data.get('rol_nombre')
+#     permisos = data.get('permisos')
+
+#     sql_rol = """
+#         UPDATE Rol SET rol_nombre = %s WHERE rol_codigo = %s
+#     """
+#     sql_rol_permiso = """
+#         INSERT INTO Rol_Permiso (fk_rol, fk_permiso) VALUES (%s, %s)
+#     """
+#     sql_delete_rol_permiso = """
+#         DELETE FROM Rol_Permiso WHERE fk_rol = %s AND fk_permiso = %s
+#     """
+#     try:
+#         cur.execute(sql_rol, (rol_nombre, rol_codigo))
+#         cur.execute("SELECT fk_permiso FROM Rol_Permiso WHERE fk_rol = %s", (rol_codigo,))
+#         existing_permisos = cur.fetchall()
+#         existing_permisos = set(permiso['fk_permiso'] for permiso in existing_permisos)
+#         for permiso in permisos:
+#             if permiso['permiso_codigo'] not in existing_permisos:
+#                 cur.execute(sql_rol_permiso, (rol_codigo, permiso['permiso_codigo']))
+#         for permiso in existing_permisos:
+#             if permiso not in set(permiso['permiso_codigo'] for permiso in permisos):
+#                 cur.execute(sql_delete_rol_permiso, (rol_codigo, permiso))
+#         conn.commit()
+#     except Exception as e:
+#         tb = traceback.format_exc()
+#         print(f"An error occurred: {e}\n{tb}")
+#         conn.rollback()   
+#         cur.close()
+#         return Response(status=500, response=str(e))
+    
+#     cur.close()
+    
+#     return Response(status=200, response="Rol modificado exitosamente")
+
+# ponerle cascade a rol_permiso
+@app.route("/api/rol/eliminar/<int:id>", methods=["POST"])
+def eliminar_rol(id):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM Rol WHERE rol_codigo = %s", (id,))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Rol eliminado exitosamente")
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRODUCTO
