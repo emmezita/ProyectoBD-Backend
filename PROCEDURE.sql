@@ -1014,16 +1014,6 @@ BEGIN
 END;
 $$;
 
--- Funcion que devuelve los datos para un carnet 
-CREATE OR REPLACE FUNCTION ObtenerDatosCarnet(_usuario_id INT)
-RETURNS TABLE (datos_perfil TEXT)
-LANGUAGE plpgsql
-AS $$
-BEGIN
-    RETURN QUERY
-
-END;
-
 DROP FUNCTION IF EXISTS ObtenerCarnet(INT);
 
 CREATE OR REPLACE FUNCTION ObtenerCarnet(_usuario_id INT)
