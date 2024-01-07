@@ -177,6 +177,12 @@ function eliminarPresentacion(eso) {
 }
 
 function finalizarCompra() {
+    
+    // actualizamos la cantidad de cada presentacion
+    var presentaciones = $('.body-carrito').find('tr');
+    var data = [];
+    
+    
     // vamos a la pestaña de pago
     window.location.href = "http://dilodev.co/finalizar-compra-online";
 }
