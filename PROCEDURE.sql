@@ -799,6 +799,83 @@ BEGIN
 END;
 $$;
 
+-- Procedimiento para actualizar la cantidad de un producto del pedido
+CREATE OR REPLACE PROCEDURE ActualizarCantidadProducto(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT, _cantidad INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE detalle_pedido
+    SET detalle_pedido_cantidad = _cantidad
+    WHERE fk_pedido = _codigoPedido AND fk_inventario_almacen_1 = 1 AND 
+    fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3;
+END;
+$$;
+
+-- Funcion para obtener los puntos de un cliente
+CREATE OR REPLACE FUNCTION ObtenerPuntosCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(puntosTotal INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT puntos
+    FROM (
+        SELECT cn.cliente_nat_puntos_acumulados as puntos
+        FROM cliente_natural cn
+        WHERE cn.cliente_nat_codigo = _codigoPN
+        UNION
+        SELECT cj.cliente_jur_puntos_acumulados as puntos
+        FROM cliente_juridico cj
+        WHERE cj.cliente_jur_codigo = _codigoPJ
+    ) AS subquery;
+END;
+$$;
+
+-- Procedimiento para obtener las TDCs de un cliente
+CREATE OR REPLACE FUNCTION ObtenerTDCsCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(codigo INT, numero character varying(16), cvv character varying(3), fechaVencimiento DATE, fk_banco INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT tdc.tdc_codigo, tdc.tdc_numero_tarjeta, tdc.tdc_cvv, tdc.tdc_fecha_vencimiento, tdc.fk_banco
+    FROM tdc
+    WHERE tdc.fk_persona_natural = _codigoPN
+    UNION
+    SELECT tdc.tdc_codigo, tdc.tdc_numero_tarjeta, tdc.tdc_cvv, tdc.tdc_fecha_vencimiento, tdc.fk_banco
+    FROM tdc
+    WHERE tdc.fk_persona_juridica = _codigoPJ;
+END;
+$$;
+
+-- Funcion para obtener la tasa del punto
+CREATE OR REPLACE FUNCTION ObtenerTasaPunto()
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN (
+        SELECT punto_valor as tasa_punto
+        FROM Historico_Punto
+        WHERE punto_fecha_fin IS NULL
+    );
+END;
+$$;
+
+-- Funcion para obtener la tasa del dolar
+CREATE OR REPLACE FUNCTION ObtenerTasaDolar()
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN (
+        SELECT tasa_valor as tasa_dolar
+        FROM Historico_Tasa_Dolar
+        WHERE tasa_fecha_fin IS NULL
+    );
+END;
+$$;
+
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Afiliacion
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

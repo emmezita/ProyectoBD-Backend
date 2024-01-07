@@ -42,6 +42,10 @@
         .subTotal {
             font-weight: bold;   
         }
+        input:disabled {
+            background-color: #f3f3f3af;
+        }
+        
     </style>
     
     <table class="table-carrito">
@@ -181,10 +185,52 @@ function finalizarCompra() {
     // actualizamos la cantidad de cada presentacion
     var presentaciones = $('.body-carrito').find('tr');
     var data = [];
-    
-    
-    // vamos a la pestaña de pago
-    window.location.href = "http://dilodev.co/finalizar-compra-online";
+    for (var i = 0; i < presentaciones.length; i++) {
+        var idPresentacion = $(presentaciones[i]).find('td').eq(1).text();
+        var cantidad = $(presentaciones[i]).find('td').eq(2).find('input').val();
+        var precio = $(presentaciones[i]).find('td').eq(4).text();
+
+        var pres = idPresentacion.split("-");
+        var id1 = pres[0];
+        var id2 = pres[1];
+        var id3 = pres[2];
+
+        var obj = {
+            "ids" : {
+                "id1" : id1,
+                "id2" : id2,
+                "id3" : id3
+            },
+            "cantidad" : cantidad,
+            "precio" : precio
+        }
+
+        // solo actualizamos la cantidad si es mayor a 1
+        if (cantidad > 1) {
+            data.push(obj);
+        }
+
+    }
+
+    data = JSON.stringify(data);
+    console.log(data);
+
+    $.ajax({
+        url: "http://localhost:5000/api/carrito/"+idUsuario+"/cantidades",
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        data: data,
+        success: (data) => {
+            console.log(data);
+            // vamos a la pestaña de pago
+            window.location.href = "http://dilodev.co/finalizar-compra-online";
+        },
+        error: (error) => {
+            console.log(error);
+        },
+    });
 }
 
 </script>

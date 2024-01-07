@@ -2832,7 +2832,68 @@ def eliminar_presentacion_carrito(id):
     cur.close()
 
     return Response(status=200, response="Producto eliminado exitosamente")
-    
+
+# Ruta para guardar las cantidades de los productos del carrito de un usuario (id de usuario)
+# y luego proceder a realizar el pedido
+@app.route("/api/carrito/<int:id>/cantidades", methods=["PUT"])
+def guardar_cantidades_carrito(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    productos = request.get_json()
+    pprint(productos)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    for producto in productos:
+        ids = producto.get("ids")
+        id1 = ids.get("id1")
+        id2 = ids.get("id2")
+        id3 = ids.get("id3")
+        cantidad = producto.get("cantidad")
+        cur.execute(' CALL ActualizarCantidadProducto(%s, %s, %s, %s, %s) ', (pedido_codigo, id1, id2, id3, cantidad))
+        conn.commit()
+
+    cur.close()
+
+    return Response(status=200, response="Cantidades guardadas exitosamente")
+
+# Obtener las tarjetas de credito de un usuario (id de usuario)
+@app.route("/api/usuario/<int:id>/tarjetas", methods=["GET"])
+def obtener_tarjetas(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.execute('SELECT * FROM ObtenerTDCsCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    # codigo, numero, cvv, fechavencimiento, fk_banco
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
 
 # Ruta para obtener la tasa del dia
 @app.route("/api/tasa", methods=["GET"])
@@ -3178,6 +3239,46 @@ def obtener_pagos_afiliacion():
     cur.close()
     pprint(rows)
     return jsonify(rows), 200
+    
+# >>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA PUNTOS
+# >>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener los puntos de una persona
+@app.route("/api/puntos/<int:id>", methods=["GET"])
+def obtener_puntos(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+
+    cur.execute('SELECT * FROM ObtenerPuntosCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    puntos = cur.fetchone()
+    print("Puntos: %s", puntos)
+
+    if puntos is None:
+        return Response(status=404, response="No hay puntos")
+    else:
+        cur.close()
+        return jsonify(puntos), 200
+
+# Ruta para obtener la tasa del punto
+@app.route("/api/puntos/tasa", methods=["GET"])
+def obtener_tasa_punto():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT obtenertasapunto as tasa_punto FROM ObtenerTasaPunto()')
+    rows = cur.fetchone()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
 
 # Ruta para obtener los detalles de un pago por afiliacion
 @app.route("/api/pago/afiliacion/detalle/<int:id>", methods=["GET"])
@@ -3185,6 +3286,16 @@ def obtener_detalle_pago_afiliacion(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('SELECT * FROM ObtenerDetallesPagoPorCodigo(%s)', (id,))
     rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+# Ruta para obtener la tasa del dolar
+
+@app.route("/api/dolar/tasa", methods=["GET"])
+def obtener_tasa_dolar():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT obtenertasadolar as tasa_dolar FROM ObtenerTasaDolar()')
+    rows = cur.fetchone()
     cur.close()
     pprint(rows)
     return jsonify(rows), 200

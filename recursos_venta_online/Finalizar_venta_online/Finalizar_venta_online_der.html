@@ -1,0 +1,71 @@
+
+<label for="tdcs"> Tarjetas de C. Guardadas</label>
+<select id="tdcs" name="tdcs">
+    <option value="default">Elegir TDC</option>
+</select>
+
+<button class="button-primary mt-5 p-4" style="margin-left:30%" id="finalizarCompra">
+    Finalizar Compra
+</button>
+
+<script>
+
+    // obtener las tarjetas de credito guardadas del usuario
+    $.ajax({
+        url: "http://localhost:5000/api/usuario/" + idUsuario + "/tarjetas",
+        method: "GET",
+        dataType: "json",
+        success: (data) => {
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var option = $('<option value="' + data[i].codigo + '">');
+                option.text(data[i].numero);
+                $('#tdcs').append(option);
+            }
+        },
+        error: (error) => {
+            console.log(error);
+            alert("Error al cargar las tarjetas de credito");
+        },
+    });
+
+    // finalizar la compra
+    $('#finalizarCompra').click(() => {
+
+        var tdc = $('#tdcs').val();
+
+        if (tdc == "default") {
+            alert("Debe seleccionar una tarjeta de credito");
+            return;
+        }
+
+        var data = {
+            "idUsuario": idUsuario,
+            "idTarjeta": tdc,
+            "puntos": puntosUsuario,
+            "tasaPunto": tasaPunto,
+            "total": subTotal
+        }
+
+        data = JSON.stringify(data);
+
+        $.ajax({
+            url: "http://localhost:5000/api/carrito/compra/" + idUsuario,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: data,
+            success: (data) => {
+                console.log(data);
+                alert("Compra realizada con exito");
+                // window.location.href = "http://dilodev.co/";
+            },
+            error: (error) => {
+                console.log(error);
+                alert("Error al realizar la compra");
+            },
+        });
+    });
+
+</script>
