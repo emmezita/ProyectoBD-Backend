@@ -4619,27 +4619,26 @@ VALUES
 
 INSERT INTO Factura (factura_fecha, factura_subtotal, factura_total, factura_puntos_obtenidos, factura_puntos_utilizados, fk_tdc, fk_tdd, fk_cheque, fk_efectivo, fk_punto, fk_cliente_natural, fk_cliente_juridico, fk_contrato_empleo)
 VALUES
-  ('2023-01-05', 575.5, 575.5, 3, 5, NULL, NULL, 1, 1, 1, 21, NULL, 15), --1
+  ('2023-01-05', 585.5, 575.5, 3, 5, NULL, NULL, 1, 1, 1, 21, NULL, 15), --1
   ('2023-01-06', 680.43, 680.43, 4, 0, NULL, 1, NULL, 2, NULL, 22, NULL, 15), --2
-  ('2023-01-07', 390.0, 390.0, 2, 2, NULL, 2, NULL, NULL, 1, 23, NULL, 15), --3
-  ('2023-01-08', 683.65, 300.00, 4, 0, 4, NULL, 3, NULL, NULL, 24, NULL, 15), --4
-  ('2023-01-09', 287.05, 287.05, 1, 3, NULL, 4, NULL, 1, 1, 25, NULL, 15), --5
+  ('2023-01-07', 400.0, 390.0, 2, 2, NULL, 2, NULL, NULL, 1, 23, NULL, 15), --3
+  ('2023-01-08', 683.65, 683.65, 4, 0, 4, NULL, 3, NULL, NULL, 24, NULL, 15), --4
+  ('2023-01-09', 292.05, 287.05, 1, 3, NULL, 4, NULL, 1, 1, 25, NULL, 15), --5
   ('2023-01-10', 568.2, 568.2, 0, 0, NULL, NULL, 4, 2, NULL, 26, NULL, 15), --6
   ('2023-01-11', 450.05, 450.05, 0, 0, NULL, 5, NULL, 1, NULL, 27, NULL, 15), --7
-  ('2023-01-12', 45.75, 45.75, 0, 0, NULL, NULL, NULL, 2, NULL, 28, NULL, 15), --8
-
-  ('2023-01-13', 175.00, 175.00, 0, 0, NULL, 6, NULL, NULL, NULL, 29, NULL, 15), --9
-  ('2023-01-14', 60.25, 60.25, 6, 4, NULL, NULL, 5, NULL, 1, 30, NULL, 15), --10
-  ('2023-01-15', 95.50, 95.50, 2, 5, NULL, NULL, NULL, 2, 1, NULL, 1, 15), --11
-  ('2023-01-16', 180.00, 180.00, 1, 8, NULL, 7, 6, NULL, 1, NULL, 2, 15), --12
-  ('2023-01-17', 110.75, 110.75, 4, 2, NULL, NULL, NULL, 2, 1, NULL, 3, 15), --13
-  ('2023-01-18', 40.00, 40.00, 3, 2, NULL, 8, NULL, NULL, 1, NULL, 4, 15), --14
-  ('2023-01-19', 220.00, 220.00, 1, 0, NULL, NULL, 7, 1, NULL, NULL, 5, 15), --15
-  ('2023-01-20', 85.25, 85.25, 0, 0, NULL, NULL, NULL, 2, NULL, NULL, 6, 15), --16
-  ('2023-01-21', 130.00, 130.00, 0, 0, NULL, 9, NULL, NULL, NULL, NULL, 7, 15), --17
-  ('2023-01-22', 95.75, 95.75, 0, 0, NULL, NULL, 8, 2, NULL, NULL, 8, 15), --18
-  ('2023-01-23', 65.00, 65.00, 0, 0, NULL, NULL, NULL, 2, NULL, NULL, 9, 15), --19
-  ('2023-01-24', 105.50, 105.50, 0, 0, NULL, 10, 9, NULL, NULL, NULL, 10, 15); --20
+  ('2023-01-12', 475.46, 475.46, 0, 0, NULL, NULL, NULL, 2, NULL, 28, NULL, 15), --8
+  ('2023-01-13', 67.15, 67.15, 0, 0, NULL, 6, NULL, NULL, NULL, 29, NULL, 15), --9
+  ('2023-01-14', 431.9, 421.9, 6, 4, NULL, NULL, 5, NULL, 1, 30, NULL, 15), --10
+  ('2023-01-15', 2130.25, 2125.25, 2, 5, NULL, NULL, NULL, 2, 1, NULL, 1, 15), --11
+  ('2023-01-16', 1503.75, 1495.75, 1, 8, NULL, 7, 6, NULL, 1, NULL, 2, 15), --12
+  ('2023-01-17', 7122.25, 7120.25, 4, 2, NULL, NULL, NULL, 2, 1, NULL, 3, 15), --13
+  ('2023-01-18', 5742.25, 5740.25, 3, 2, NULL, 8, NULL, NULL, 1, NULL, 4, 15), --14
+  ('2023-01-19', 1515.6, 1515.6, 1, 0, NULL, NULL, 7, 1, NULL, NULL, 5, 15), --15
+  ('2023-01-20', 9011.75, 9011.75, 0, 0, NULL, NULL, NULL, 2, NULL, NULL, 6, 15), --16
+  ('2023-01-21', 4436.24, 4436.24, 0, 0, NULL, 9, NULL, NULL, NULL, NULL, 7, 15), --17
+  ('2023-01-22', 6962.05, 6962.05, 0, 0, NULL, NULL, 8, 2, NULL, NULL, 8, 15), --18
+  ('2023-01-23', 10904.55, 10904.55, 0, 0, NULL, NULL, NULL, 2, NULL, NULL, 9, 15), --19
+  ('2023-01-24', 4057.5, 4057.5, 0, 0, NULL, 10, 9, NULL, NULL, NULL, 10, 15); --20
 
 INSERT INTO Orden_De_Reposicion (orden_fecha, orden_subtotal, orden_total, fk_contrato_empleo)
 VALUES 
