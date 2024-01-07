@@ -4,12 +4,28 @@
     <option value="default">Elegir TDC</option>
 </select>
 
+
+<h5 class="mt-4">
+    Detalle de Entrega
+</h5>
+<div class="mt-3">
+    Ubicacion
+</div>
+<div class="mt-1">
+    <select id="form-field-estado" name="estado"></select>
+    <select id="form-field-municipio" name="municipio"></select>
+    <select id="form-field-parroquia" name="parroquia"></select>
+</div>
+<div class="mt-3">
+    <label for="direccion">Direccion</label>
+    <input type="text" id="direccion" placeholder="Direccion">
+</div>
+
 <button class="button-primary mt-5 p-4" style="margin-left:30%" id="finalizarCompra">
     Finalizar Compra
 </button>
 
 <script>
-
     // obtener las tarjetas de credito guardadas del usuario
     $.ajax({
         url: "http://localhost:5000/api/usuario/" + idUsuario + "/tarjetas",
@@ -39,12 +55,30 @@
             return;
         }
 
+        var total = $('#total b').text().substring(1);
+        var puntosUsados = $('#inputPuntos').val();
+        var parroquia = $('#form-field-parroquia').val();
+        var direccion = $('#direccion').val();
+        var subTotal = $('#subTotal').text().substring(1);
+
+        if (direccion == "") {
+            alert("Debe ingresar una direccion");
+            return;
+        }
+
+        if (parroquia == "") {
+            alert("Debe seleccionar una parroquia");
+            return;
+        }
+
         var data = {
-            "idUsuario": idUsuario,
             "idTarjeta": tdc,
-            "puntos": puntosUsuario,
+            "puntosUsados": puntosUsados,
             "tasaPunto": tasaPunto,
-            "total": subTotal
+            "subTotal": subTotal,
+            "total": total,
+            "parroquia": parroquia,
+            "direccion": direccion
         }
 
         data = JSON.stringify(data);
@@ -59,7 +93,7 @@
             success: (data) => {
                 console.log(data);
                 alert("Compra realizada con exito");
-                // window.location.href = "http://dilodev.co/";
+                window.location.href = "http://dilodev.co/";
             },
             error: (error) => {
                 console.log(error);
@@ -68,4 +102,69 @@
         });
     });
 
+</script>
+
+<script>
+    var EMP = null;
+    
+    function llenarEMP(estado, municipio, parroquia) { 
+        // llenar los cb de estado, municipio y parroquia
+        $("#form-field-estado").val(estado);
+        $("#form-field-municipio").empty();
+        $("#form-field-parroquia").empty();
+    
+        $.each(EMP.municipios[estado], function(i, municipio) {
+            $("#form-field-municipio").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+        });
+        $("#form-field-municipio").val(municipio);
+    
+        $.each(EMP.parroquias[municipio], function(i, parroquia) {
+            $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+        });
+        $("#form-field-parroquia").val(parroquia);    
+    }
+    
+        $(document).ready(function() {
+            var data = null;
+            $.ajax({
+                url: 'http://localhost:5000/api/usuario/ubicaciones/all',
+                type: 'GET',
+                dataType: 'json',
+                success: function(d) {
+                    data = d;
+                    EMP = data;
+                    console.log(data);
+                    // Llena el campo estado con los datos del JSON
+                    data.estados.forEach(estado => {
+                        $("#form-field-estado").append('<option value="'+estado.id+'">'+estado.nombre+'</option>');
+                    });
+        
+                    // Cuando el estado cambia, llena el campo municipio con los municipios correspondientes
+                    $("#form-field-estado").change(function() {
+                        var estadoId = $(this).val();
+                        $("#form-field-municipio").empty();
+                        $("#form-field-parroquia").empty();
+                        $.each(data.municipios[estadoId], function(i, municipio) {
+                            $("#form-field-municipio").append('<option value="'+municipio.id+'">'+municipio.nombre+'</option>');
+                        });
+                        // Trigger the change event if there's only one municipality
+                        if (data.municipios[estadoId].length === 1) {
+                            $("#form-field-municipio").trigger('change');
+                        }
+                    });
+        
+                    // Cuando el municipio cambia, llena el campo parroquia con las parroquias correspondientes
+                    $("#form-field-municipio").change(function() {
+                        var municipioId = $(this).val();
+                        $("#form-field-parroquia").empty();
+                        $.each(data.parroquias[municipioId], function(i, parroquia) {
+                            $("#form-field-parroquia").append('<option value="'+parroquia.id+'">'+parroquia.nombre+'</option>');
+                        });
+                    });
+                },
+                error: function() {
+                    alert('Error obteniendo ubicaciones');
+                }
+            });
+        });
 </script>

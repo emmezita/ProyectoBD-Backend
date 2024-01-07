@@ -2895,6 +2895,65 @@ def obtener_tarjetas(id):
     pprint(rows)
     return jsonify(rows)
 
+# Ruta para pagar el pedido de un usuario (id de usuario)
+@app.route("/api/carrito/compra/<int:id>", methods=["POST"])
+def pagar_pedido(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    pedido = request.get_json()
+    pprint(pedido)
+    # ids de la presentacion que se desea eliminar
+    tarjeta = pedido.get("idTarjeta")
+    tarjeta = int(tarjeta) # id de la tarjeta
+    puntosUsados = pedido.get("puntosUsados")
+    puntosUsados = int(puntosUsados)
+
+    fk_punto = 1
+    if puntosUsados == 0:
+        fk_punto = None
+
+    tasaPunto = pedido.get("tasaPunto")
+    subTotal = pedido.get("subTotal")
+    subTotal = float(subTotal)
+    total = pedido.get("total")
+    total = float(total)
+    parroquia = pedido.get("parroquia") # id de la parroquia
+    parroquia = int(parroquia)
+    direccion = pedido.get("direccion")
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    # Actualizamos el pedido
+    cur.execute('CALL ActualizarPedido(%s, %s, %s, %s, %s, %s, %s, %s)', (tarjeta, pedido_codigo, direccion, parroquia, subTotal, total, puntosUsados, fk_punto))
+
+    # cambiamos el historico
+    cur.execute('SELECT * FROM CambiarEstatusPedido(%s, %s)', (pedido_codigo, 2))
+    estatus = cur.fetchone()
+
+    # restamos los puntos de la persona
+    cur.execute('CALL RestarPuntosCliente(%s, %s, %s)', (codigo_persona_natural, codigo_persona_juridica, puntosUsados))
+
+    conn.commit()
+    cur.close()
+
+    return Response(status=200, response="Pedido pagado exitosamente")
+
 # Ruta para obtener la tasa del dia
 @app.route("/api/tasa", methods=["GET"])
 def get_tasa():

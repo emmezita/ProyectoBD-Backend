@@ -4604,7 +4604,7 @@ VALUES
 INSERT INTO Estatus_Pedido (estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion) 
 VALUES
   (1, 'Carrito', 'El pedido se encuentra creado, pero el usuario esta agregando presentaciones.'),
-  (2, 'Pagado', 'El pedido ya esta pagado y en espera de ser despachado.'),
+  (2, 'Pendiente', 'El pedido ya esta pagado y en espera de ser despachado.'),
   (3, 'Listo para la Entrega', 'El pedido esta listo para la entrega, es decir, esta pronto por salir del almacen'),
   (4, 'Entregado', 'El pedido ha sido entregad de manera satisfactoria al cliente.'),
   (5, 'En Retraso', 'El pedido se encuentra retrasada ya que ha superado el tiempo de espera estimado'),

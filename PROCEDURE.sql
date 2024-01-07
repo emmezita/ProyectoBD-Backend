@@ -848,6 +848,83 @@ BEGIN
 END;
 $$;
 
+-- Procedimiento para restar los puntos de un cliente
+CREATE OR REPLACE PROCEDURE RestarPuntosCliente(_codigoPN INT, _codigoPJ INT, _puntos INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE cliente_natural
+    SET cliente_nat_puntos_acumulados = cliente_nat_puntos_acumulados - _puntos
+    WHERE cliente_nat_codigo = _codigoPN;
+
+    UPDATE cliente_juridico
+    SET cliente_jur_puntos_acumulados = cliente_jur_puntos_acumulados - _puntos
+    WHERE cliente_jur_codigo = _codigoPJ;
+END;
+$$;
+
+-- Procedimiento para cambiar el estatus de un pedido (Se le suma 1 al codigo del estatus)
+CREATE OR REPLACE FUNCTION CambiarEstatusPedido(_codigoPedido INT, _nuevoEstatus INT)
+RETURNS TABLE(estatus_codigo INT, estatus_nombre character varying(50), estatus_descripcion character varying(200))
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    -- Actualizamos el estatus actual
+    UPDATE historico_estatus_pedido
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_pedido = _codigoPedido AND fecha_hora_fin_estatus IS NULL;
+
+    -- Insertamos el nuevo estatus
+    INSERT INTO historico_estatus_pedido(fecha_hora_inicio_estatus, fk_estatus_pedido, fk_pedido)
+    VALUES (CURRENT_TIMESTAMP, _nuevoEstatus, _codigoPedido);
+
+    -- Buscamos el nombre y la descripcion del nuevo estatus
+    RETURN QUERY
+        SELECT estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion
+        FROM estatus_pedido
+        WHERE estatus_pedido_codigo = _nuevoEstatus;
+
+END;
+$$;
+
+-- Procedimiento para actualizar un pedido (direccion, luagar, subtotal, total, puntos)
+CREATE OR REPLACE PROCEDURE ActualizarPedido(_codigoTarjeta INT,_codigoPedido INT, _direccion character varying(200), _lugar INT, _subtotal NUMERIC, _total NUMERIC, _puntos INT, _fk_punto INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE pedido
+    SET pedido_direccion = _direccion, fk_lugar = _lugar, pedido_subtotal = _subtotal, 
+    pedido_total = _total, pedido_puntos_utilizados = _puntos, fk_punto = _fk_punto, fk_tdc = _codigoTarjeta
+    WHERE pedido_codigo = _codigoPedido;
+END;
+$$;
+
+-- Trigger para restar el inventario del almacen cuando el pedido pasa a pagado (estatus 2 | pendiente)
+CREATE OR REPLACE FUNCTION actualizarAlmacen() RETURNS TRIGGER AS $$
+DECLARE
+    detalle RECORD;
+BEGIN
+    -- Check if the new status is 'paid'
+    IF NEW.fk_estatus_pedido = 2 THEN
+        -- Debemos buscar el detalle del pedido y hacer un loop para restar el inventario
+        FOR detalle IN SELECT * FROM detalle_pedido WHERE fk_pedido = NEW.fk_pedido LOOP
+            UPDATE inventario_almacen
+            SET inv_almacen_cantidad = inv_almacen_cantidad - detalle.detalle_pedido_cantidad
+            WHERE fk_almacen = detalle.fk_inventario_almacen_1  AND fk_presentacion_1 = detalle.fk_inventario_almacen_2 
+            AND fk_presentacion_2 = detalle.fk_inventario_almacen_3 AND fk_presentacion_3 = detalle.fk_inventario_almacen_4;
+        END LOOP;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_inventory_trigger
+AFTER INSERT ON historico_estatus_pedido
+FOR EACH ROW
+EXECUTE FUNCTION actualizarAlmacen();
+
 -- Funcion para obtener la tasa del punto
 CREATE OR REPLACE FUNCTION ObtenerTasaPunto()
 RETURNS NUMERIC
