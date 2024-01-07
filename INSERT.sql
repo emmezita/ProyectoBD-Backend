@@ -3052,11 +3052,11 @@ VALUES
 
 INSERT INTO Cliente_Juridico (cliente_jur_codigo, cliente_jur_puntos_acumulados)
 VALUES
-  (1, 0),
-  (2, 0),
-  (3, 0),
-  (4, 0),
-  (5, 0),
+  (1, 20),
+  (2, 22),
+  (3, 25),
+  (4, 21),
+  (5, 17),
   (6, 0),
   (7, 0),
   (8, 0),
@@ -3179,11 +3179,11 @@ VALUES
 
 INSERT INTO Cliente_Natural (cliente_nat_codigo, cliente_nat_puntos_acumulados)
 VALUES
-  (21, 0),
-  (22, 0),
-  (23, 0),
-  (24, 0),
-  (25, 0),
+  (21, 21),
+  (22, 31),
+  (23, 25),
+  (24, 24),
+  (25, 22),
   (26, 0),
   (27, 0),
   (28, 0),
@@ -3472,21 +3472,68 @@ VALUES
   ('Banplus'),
   ('Banco Fondo Común');
 
-INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural)
-VALUES
-  ('1234123412341234', '2026-01-01', '312', 4, 21),
-  ('1234123412341235', '2027-02-01', '320', 5, 22),
-  ('1234123412341236', '2025-03-01', '354', 6, 23),
-  ('1234123412341237', '2026-04-01', '141', 7, 24),
-  ('1234123412341238', '2030-05-01', '545', 8, 25);
+INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_natural, fk_persona_juridica) VALUES
+  ('1234567890123456', '2025-12-01', '123', 1, 21, NULL),
+  ('2345678901234567', '2024-11-01', '234', 2, 22, NULL),
+  ('3456789012345678', '2023-10-01', '345', 3, 23, NULL),
+  ('4567890123456789', '2026-09-01', '456', 4, 24, NULL),
+  ('5678901234567890', '2027-08-01', '567', 5, 25, NULL),
+  ('6789012345678901', '2022-07-01', '678', 6, 26, NULL),
+  ('7890123456789012', '2028-06-01', '789', 7, 27, NULL),
+  ('8901234567890123', '2029-05-01', '890', 8, 28, NULL),
+  ('9012345678901234', '2023-04-01', '901', 9, 29, NULL),
+  ('0123456789012345', '2024-03-01', '012', 10, 30, NULL),
+  ('1122334455667788', '2025-02-01', '112', 11, NULL, 1),
+  ('2233445566778899', '2026-01-01', '223', 12, NULL, 2),
+  ('3344556677889900', '2022-12-01', '334', 13, NULL, 3),
+  ('4455667788990011', '2024-11-01', '445', 14, NULL, 4),
+  ('5566778899001122', '2023-10-01', '556', 15, NULL, 5),
+  ('6677889900112233', '2027-09-01', '667', 16, NULL, 6),
+  ('7788990011223344', '2028-08-01', '778', 17, NULL, 7),
+  ('8899001122334455', '2029-07-01', '889', 18, NULL, 8),
+  ('9900112233445566', '2023-06-01', '990', 19, NULL, 9),
+  ('0011223344556677', '2024-05-01', '001', 20, NULL, 10),
+  ('2234123412341235', '2026-01-01', '110', 1, NULL, 11),
+  ('3234123412341235', '2027-02-01', '240', 2, NULL, 12),
+  ('4234123412341235', '2025-03-01', '350', 3, NULL, 13),
+  ('5234123412341235', '2026-04-01', '413', 4, NULL, 14),
+  ('6234123412341235', '2030-05-01', '545', 5, NULL, 15);
 
-INSERT INTO TDC (tdc_numero_tarjeta, tdc_fecha_vencimiento, tdc_cvv, fk_banco, fk_persona_juridica)
+INSERT INTO TDD (tdd_numero_tarjeta, tdd_fecha_vencimiento, tdd_cvv, fk_banco)
 VALUES
-  ('2234123412341235', '2026-01-01', '110', 1, 1),
-  ('3234123412341235', '2027-02-01', '240', 2, 2),
-  ('4234123412341235', '2025-03-01', '350', 3, 3),
-  ('5234123412341235', '2026-04-01', '413', 4, 4),
-  ('6234123412341235', '2030-05-01', '545', 5, 5);
+  ('4567890123456789', '2025-01-01', '123', 1),
+  ('1234567890123456', '2026-02-01', '456', 2),
+  ('7890123456789012', '2027-03-01', '789', 3),
+  ('9012345678901234', '2028-04-01', '012', 4),
+  ('5432109876543210', '2029-05-01', '345', 5),
+  ('3210987654321098', '2030-06-01', '678', 6),
+  ('8765432109876543', '2031-07-01', '901', 7),
+  ('0987654321098765', '2032-08-01', '234', 8),
+  ('6543210987654321', '2033-09-01', '567', 9),
+  ('4321098765432109', '2034-10-01', '890', 10);
+
+INSERT INTO Cheque (cheque_numero, fk_banco)
+VALUES
+  ('1234567', 1),
+  ('2345678', 2),
+  ('3456789', 3),
+  ('4567890', 4),
+  ('5678901', 5),
+  ('6789012', 6),
+  ('7890123', 7),
+  ('8901234', 8),
+  ('9012345', 9),
+  ('0123456', 10);
+
+INSERT INTO Efectivo (efectivo_denominacion)
+VALUES
+  ('Bolívares'),
+  ('Dólares'),
+  ('Euros');
+
+INSERT INTO Punto (punto_codigo)
+VALUES
+  (1);
 
 INSERT INTO ficha_afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural) 
 VALUES
@@ -3498,15 +3545,32 @@ VALUES
 
 INSERT INTO ficha_afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_persona_juridica)
 VALUES
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2020-01-01', 50, 1),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2021-02-01', 60, 2),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2022-03-01', 70, 3),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2023-04-01', 80, 4),
+  (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2024-05-01', 90, 5),
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2020-01-01', 50, 11),
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2021-02-01', 60, 12),
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2022-03-01', 70, 13),
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2023-04-01', 80, 14),
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2024-05-01', 90, 15);
 
---INSERT INTO pago_afiliacion (pago_fecha, pago_afiliacion_total, pago_mes_pagado, fk_ficha_afiliacion, fk_tdc)
---VALUES
-  
+INSERT INTO pago_afiliacion (pago_fecha, pago_afiliacion_total, pago_mes_pagado, fk_ficha_afiliacion, fk_tdc)
+VALUES
+  ('2020-01-01', 10, '2020-01-01', '00000001', 1),
+  ('2020-02-01', 10, '2020-02-01', '00000001', 1),
+  ('2020-03-01', 10, '2020-03-01', '00000001', 1),
+  ('2020-04-01', 10, '2020-04-01', '00000001', 1),
+  ('2020-05-01', 10, '2020-05-01', '00000001', 1),
+  ('2020-06-01', 10, '2020-06-01', '00000001', 1),
+  ('2020-07-01', 10, '2020-07-01', '00000001', 1),
+  ('2020-08-01', 10, '2020-08-01', '00000001', 1),
+  ('2020-09-01', 10, '2020-09-01', '00000001', 1),
+  ('2020-10-01', 10, '2020-10-01', '00000001', 1),
+  ('2020-11-01', 10, '2020-11-01', '00000001', 1),
+  ('2020-12-01', 10, '2020-12-01', '00000001', 1),
+  ('2021-01-01', 10, '2021-01-01', '00000001', 1);
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES
@@ -4553,6 +4617,30 @@ VALUES
   (3, 'Completada', 'La orden se ha completado correctamente y el producto está disponible en la tienda o en el almacén.'),
   (4, 'Cancelada', 'La orden se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
 
+INSERT INTO Factura (factura_fecha, factura_subtotal, factura_total, factura_puntos_obtenidos, factura_puntos_utilizados, fk_tdc, fk_tdd, fk_cheque, fk_efectivo, fk_punto, fk_cliente_natural, fk_cliente_juridico, fk_contrato_empleo)
+VALUES
+  ('2023-01-05', 575.5, 575.5, 3, 5, NULL, NULL, 1, 1, 1, 21, NULL, 15), --1
+  ('2023-01-06', 680.43, 680.43, 4, 0, NULL, 1, NULL, 2, NULL, 22, NULL, 15), --2
+  ('2023-01-07', 390.0, 390.0, 2, 2, NULL, 2, NULL, NULL, 1, 23, NULL, 15), --3
+  ('2023-01-08', 683.65, 300.00, 4, 0, 4, NULL, 3, NULL, NULL, 24, NULL, 15), --4
+  ('2023-01-09', 287.05, 287.05, 1, 3, NULL, 4, NULL, 1, 1, 25, NULL, 15), --5
+  ('2023-01-10', 568.2, 568.2, 0, 0, NULL, NULL, 4, 2, NULL, 26, NULL, 15), --6
+  ('2023-01-11', 450.05, 450.05, 0, 0, NULL, 5, NULL, 1, NULL, 27, NULL, 15), --7
+  ('2023-01-12', 45.75, 45.75, 0, 0, NULL, NULL, NULL, 2, NULL, 28, NULL, 15), --8
+
+  ('2023-01-13', 175.00, 175.00, 0, 0, NULL, 6, NULL, NULL, NULL, 29, NULL, 15), --9
+  ('2023-01-14', 60.25, 60.25, 6, 4, NULL, NULL, 5, NULL, 1, 30, NULL, 15), --10
+  ('2023-01-15', 95.50, 95.50, 2, 5, NULL, NULL, NULL, 2, 1, NULL, 1, 15), --11
+  ('2023-01-16', 180.00, 180.00, 1, 8, NULL, 7, 6, NULL, 1, NULL, 2, 15), --12
+  ('2023-01-17', 110.75, 110.75, 4, 2, NULL, NULL, NULL, 2, 1, NULL, 3, 15), --13
+  ('2023-01-18', 40.00, 40.00, 3, 2, NULL, 8, NULL, NULL, 1, NULL, 4, 15), --14
+  ('2023-01-19', 220.00, 220.00, 1, 0, NULL, NULL, 7, 1, NULL, NULL, 5, 15), --15
+  ('2023-01-20', 85.25, 85.25, 0, 0, NULL, NULL, NULL, 2, NULL, NULL, 6, 15), --16
+  ('2023-01-21', 130.00, 130.00, 0, 0, NULL, 9, NULL, NULL, NULL, NULL, 7, 15), --17
+  ('2023-01-22', 95.75, 95.75, 0, 0, NULL, NULL, 8, 2, NULL, NULL, 8, 15), --18
+  ('2023-01-23', 65.00, 65.00, 0, 0, NULL, NULL, NULL, 2, NULL, NULL, 9, 15), --19
+  ('2023-01-24', 105.50, 105.50, 0, 0, NULL, 10, 9, NULL, NULL, NULL, 10, 15); --20
+
 INSERT INTO Orden_De_Reposicion (orden_fecha, orden_subtotal, orden_total, fk_contrato_empleo)
 VALUES 
   ('2023-12-30', 0, 0, null),
@@ -4721,6 +4809,61 @@ VALUES
   (100, 25.23, 13, 1, 6, 2, 3, NULL, NULL, NULL, NULL),
   (100, 20.25, 13, 1, 6, 2, 4, NULL, NULL, NULL, NULL);
 
+INSERT INTO Detalle_Factura(
+	detalle_factura_cantidad, detalle_factura_precio_unitario, fk_factura, fk_inventario_tienda_1, fk_inventario_tienda_2, fk_inventario_tienda_3, fk_inventario_tienda_4)
+VALUES
+  (1, 53.15, 1, 1, 6, 2, 5),
+  (4, 54.15, 1, 1, 9, 2, 20),
+  (5, 63.15, 1, 1, 6, 2, 4),
+  (1, 54.15, 2, 1, 7, 2, 23),
+  (3, 57.41, 2, 1, 6, 2, 24),
+  (2, 59.15, 2, 1, 9, 2, 22),
+  (5, 67.15, 2, 1, 9, 2, 11),
+  (5, 68.15, 3, 1, 9, 6, 13),
+  (1, 60.15, 3, 1, 9, 2, 10),
+  (7, 59.15, 4, 1, 7, 2, 16),
+  (2, 64.15, 4, 1, 6, 2, 2),
+  (1, 81.15, 4, 1, 9, 2, 21),
+  (1, 60.15, 4, 1, 9, 2, 10),
+  (5, 57.41, 5, 1, 6, 2, 6),
+  (4, 78.15, 6, 1, 9, 2, 12),
+  (1, 60.15, 6, 1, 9, 2, 9),
+  (3, 65.15, 6, 1, 9, 3, 8),
+  (5, 67.15, 7, 1, 7, 2, 17),
+  (2, 57.41, 7, 1, 6, 2, 24),
+  (1, 63.15, 8, 1, 6, 2, 4),
+  (2, 67.15, 8, 1, 9, 2, 11),
+  (4, 55.15, 8, 1, 6, 2, 1),
+  (1, 57.41, 8, 1, 6, 2, 24),
+  (1, 67.15, 9, 1, 9, 2, 11),
+  (3, 78.15, 10, 1, 9, 2, 12),
+  (2, 65.15, 10, 1, 9, 3, 8),
+  (1, 67.15, 10, 1, 7, 2, 17),
+  (20, 65.15, 11, 1, 9, 3, 8),
+  (15, 55.15, 11, 1, 6, 2, 1),
+  (25, 60.15, 12, 1, 9, 2, 10),
+  (30, 54.15, 13, 1, 7, 2, 23),
+  (25, 81.15, 13, 1, 9, 2, 21),
+  (20, 63.15, 13, 1, 9, 2, 19),
+  (40, 55.15, 13, 1, 6, 2, 7),
+  (50, 58.41, 14, 1, 9, 2, 15),
+  (20, 57.15, 14, 1, 9, 2, 14),
+  (25, 67.15, 14, 1, 9, 2, 11),
+  (24, 63.15, 15, 1, 6, 2, 4),
+  (53, 78.15, 16, 1, 9, 2, 12),
+  (35, 68.15, 16, 1, 9, 6, 13),
+  (37, 67.15, 16, 1, 6, 2, 3),
+  (34, 57.41, 17, 1, 6, 2, 24),
+  (42, 59.15, 17, 1, 9, 2, 22),
+  (28, 67.15, 18, 1, 7, 2, 17),
+  (45, 58.41, 18, 1, 9, 2, 15),
+  (36, 68.15, 18, 1, 9, 6, 13),
+  (47, 64.15, 19, 1, 6, 2, 2),
+  (52, 65.15, 19, 1, 9, 2, 18),
+  (40, 60.15, 19, 1, 9, 2, 9),
+  (38, 55.15, 19, 1, 6, 2, 7),
+  (50, 81.15, 20, 1, 9, 2, 21);
+
 INSERT INTO Historico_Punto (
   punto_valor, punto_fecha_inicio, punto_fecha_fin, fk_tienda)
 VALUES
@@ -4749,7 +4892,7 @@ VALUES
   (35.65, '2023-12-18', '2023-12-19'),
   (35.72, '2023-12-15', '2023-12-18');
 
-INSERT INTO historico_precio_compra(precio_compra_valor,precio_compra_fecha_inicio, fk_historico_tasa_dolar,
+INSERT INTO Historico_Precio_Compra(precio_compra_valor,precio_compra_fecha_inicio, fk_historico_tasa_dolar,
 	fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
 VALUES
   (30.25, '2023/05/12', 1, 6, 2, 5),
@@ -4777,7 +4920,7 @@ VALUES
   (33.25, '2023/06/03', 1, 7, 2, 16),
   (41.25, '2023/06/04', 1, 7, 2, 17);
 
-INSERT INTO historico_precio_venta(precio_venta_valor, precio_venta_fecha_inicio,
+INSERT INTO Historico_Precio_Venta(precio_venta_valor, precio_venta_fecha_inicio,
   fk_historico_tasa_dolar, fk_inventario_almacen_1, fk_inventario_almacen_2,
   fk_inventario_almacen_3, fk_inventario_almacen_4)
 VALUES
@@ -4806,7 +4949,7 @@ VALUES
   (52.15, '2023/07/23', 1, 1, 7, 2, 16),
   (60.15, '2023/07/24', 1, 1, 7, 2, 17);
 
-INSERT INTO historico_precio_venta(precio_venta_valor, precio_venta_fecha_inicio,
+INSERT INTO Historico_Precio_Venta(precio_venta_valor, precio_venta_fecha_inicio,
   fk_historico_tasa_dolar, fk_inventario_tienda_1, fk_inventario_tienda_2,
   fk_inventario_tienda_3, fk_inventario_tienda_4)
 VALUES
