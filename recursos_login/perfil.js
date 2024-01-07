@@ -18,7 +18,7 @@ function mostrarDatosPersonaJuridica(datos) {
     texto.innerHTML = "<strong>Denominación: </strong>" + datos.persona_jur_denom_comercial
              + "<br><strong>Razón Social: </strong>" + datos.persona_jur_razon_social
              + "<br><strong>RIF: </strong>" + datos.persona_jur_rif
-             + "<br><strong>Capital: </strong>" + datos.persona_jur_capital
+             + "<br><strong>Capital: </strong>" + datos.persona_jur_capital_disp
              + "<br><strong>Página Web: </strong>" + datos.persona_jur_pagina_web
              + "<br><strong>Dirección fiscal: </strong>" + datos.persona_jur_direccion_fiscal
              + "<br><strong>Dirección física: </strong>" + datos.persona_jur_direccion_fisica;

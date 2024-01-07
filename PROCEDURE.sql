@@ -889,8 +889,7 @@ BEGIN
     LEFT JOIN Persona_Natural pn ON u.fk_persona_natural = pn.persona_nat_codigo
     LEFT JOIN Persona_Juridica pj ON u.fk_persona_juridica = pj.persona_jur_codigo
     LEFT JOIN Cliente_Natural cn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
-    LEFT JOIN Cliente_Juridico cj ON pj.persona_jur_codigo = cj.cliente_jur_codigo
-    LEFT JOIN Ficha_Afiliacion fa ON (cn.cliente_nat_codigo = fa.fk_cliente_natural OR cj.cliente_jur_codigo = fa.fk_persona_juridica)
+    LEFT JOIN Ficha_Afiliacion fa ON (cn.cliente_nat_codigo = fa.fk_cliente_natural OR pj.persona_jur_codigo = fa.fk_persona_juridica)
     WHERE u.usuario_codigo = _usuario_id AND fa.afiliacion_numero IS NOT NULL;
 END;
 $$;

@@ -3442,6 +3442,9 @@ VALUES
 
 INSERT INTO Usuario (usuario_nombre, usuario_contrasena, fk_persona_natural, fk_persona_juridica, fk_rol)
 VALUES
+  ('abccomp', '123456', NULL, 1, 8),
+  ('xyzcorpo', '123456', NULL, 2, 8),
+  ('santateresa', '123456', NULL, 11, 10),
   ('monicag', '123456', 10, NULL, 2),
   ('luisA', '123456', 21, NULL, 9),
   ('mariajo', '123456', 26, NULL, 9);
@@ -3500,6 +3503,10 @@ VALUES
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2022-03-01', 70, 13),
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2023-04-01', 80, 14),
   (LPAD(nextval('secuencia_ficha')::text, 8, '0'),'2024-05-01', 90, 15);
+
+--INSERT INTO pago_afiliacion (pago_fecha, pago_afiliacion_total, pago_mes_pagado, fk_ficha_afiliacion, fk_tdc)
+--VALUES
+  
 
 INSERT INTO Contrato_De_Empleo (contrato_fecha_ingreso, contrato_fecha_salida,fk_empleado) 
 VALUES

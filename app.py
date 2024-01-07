@@ -3122,7 +3122,7 @@ def obtener_carnet(id):
     rows = cur.fetchone()
     cur.close()
     if rows is None:
-        return Response(status=404, response="Usuario no encontrado")
+        return Response(status=404, response="Persona no Afiliada")
     return jsonify(rows), 200
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -3137,7 +3137,7 @@ def obtener_pago_afiliacion(codigo):
     rows = cur.fetchone()
     cur.close()
     if rows is None:
-        return Response(status=404, response="Usuario no encontrado")
+        return Response(status=404, response="Persona No Afiliada")
     return jsonify(rows), 200
 
 # Ruta para obtener monto de pago de afiliacion y tarjetas de credito de una persona
@@ -3148,7 +3148,7 @@ def obtener_monto_pago_afiliacion(id):
     rows = cur.fetchone()
     cur.close()
     if rows is None:
-        return Response(status=404, response="Usuario no encontrado")
+        return Response(status=404, response="Persona No Afiliada")
     return jsonify(rows), 200
 
 # Ruta para procesar pago de afiliacion
