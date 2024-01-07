@@ -1098,3 +1098,122 @@ BEGIN
     WHERE pa.pago_codigo = _pago_codigo;
 END;
 $$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Facturas
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Funcion para obtener todas las facturas
+
+DROP FUNCTION IF EXISTS ObtenerFacturas();
+
+CREATE OR REPLACE FUNCTION ObtenerFacturas()
+RETURNS TABLE(
+    factura_codigo INT,
+    factura_fecha DATE,
+    empleado_nombre TEXT,
+    factura_total DECIMAL(10,2),
+    cliente_nombre TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        f.factura_codigo,
+        f.factura_fecha,
+        CONCAT(pn.persona_nat_p_nombre, ' ', pn.persona_nat_p_apellido)::TEXT AS empleado_nombre,
+        f.factura_total,
+		COALESCE(pn2.persona_nat_p_nombre || ' ' || pn2.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente
+    FROM Factura f
+    LEFT JOIN Contrato_De_Empleo ce ON f.fk_contrato_empleo = ce.contrato_codigo
+    LEFT JOIN Empleado e ON ce.fk_empleado = e.empleado_codigo
+    LEFT JOIN Persona_Natural pn ON e.empleado_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Natural cn ON f.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn2 ON cn.cliente_nat_codigo = pn2.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON f.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
+END; $$
+LANGUAGE plpgsql;
+
+
+-- Funcion para obtener los detalles de una factura
+
+DROP FUNCTION IF EXISTS ObtenerDetallesFactura(INT);
+
+CREATE OR REPLACE FUNCTION ObtenerDetallesFactura(factura_id INT)
+RETURNS SETOF refcursor
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    datos_factura_cursor REFCURSOR:= 'datos_factura_cursor';
+    presentaciones_cursor REFCURSOR:= 'presentaciones_cursor';
+	metodos_pago_cursor REFCURSOR := 'metodos_pago_cursor'; -- Nuevo cursor
+    metodos_pago TEXT;
+BEGIN
+    -- Parte 1: Obtener datos de la factura, del cliente y del empleado
+    OPEN datos_factura_cursor FOR
+    SELECT 
+        f.factura_codigo,
+        f.factura_fecha,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente,
+        f.factura_subtotal,
+        f.factura_total,
+        e.empleado_codigo,
+        CONCAT(pn2.persona_nat_p_nombre, ' ', pn2.persona_nat_p_apellido) as empleado_nombre
+    FROM Factura f
+    LEFT JOIN Cliente_Natural cn ON f.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON f.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    LEFT JOIN Contrato_De_Empleo ce ON f.fk_contrato_empleo = ce.contrato_codigo
+    LEFT JOIN Empleado e ON ce.fk_empleado = e.empleado_codigo
+    LEFT JOIN Persona_Natural pn2 ON e.empleado_codigo = pn2.persona_nat_codigo
+    WHERE f.factura_codigo = factura_id;
+
+    RETURN NEXT datos_factura_cursor;
+
+    -- Parte 2: Determinar los métodos de pago utilizados
+    OPEN metodos_pago_cursor FOR
+
+    SELECT 'TDC' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_tdc IS NOT NULL
+    UNION
+    SELECT 'TDD' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_tdd IS NOT NULL
+    UNION
+    SELECT 'Cheque' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_cheque IS NOT NULL
+    UNION
+    SELECT 'Efectivo' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_efectivo IS NOT NULL
+    UNION
+    SELECT 'Punto' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_punto IS NOT NULL;
+
+    RETURN NEXT metodos_pago_cursor;
+
+    -- Parte 3: Obtener detalles de las presentaciones
+    OPEN presentaciones_cursor FOR
+
+    SELECT (d.fk_inventario_tienda_2 || '-' ||d.fk_inventario_tienda_3 || '-' ||d.fk_inventario_tienda_4)
+            as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+            d.detalle_factura_precio_unitario,
+            d.detalle_factura_cantidad as cantidad, img.imagen_nombre::TEXT 
+    FROM Detalle_Factura d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_tienda_2 
+        AND img.fk_presentacion_2 = d.fk_inventario_tienda_3 
+        AND img.fk_presentacion_3 = d.fk_inventario_tienda_4)
+    JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
+    WHERE d.fk_factura = factura_id
+    UNION
+    SELECT (d.fk_evento_lista_producto_3 || '-' ||d.fk_evento_lista_producto_4 || '-' ||d.fk_evento_lista_producto_5)
+            as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+            d.detalle_factura_precio_unitario,
+            d.detalle_factura_cantidad as cantidad, img.imagen_nombre::TEXT
+    FROM Detalle_Factura d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_evento_lista_producto_5
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_evento_lista_producto_3
+        AND img.fk_presentacion_2 = d.fk_evento_lista_producto_4 
+        AND img.fk_presentacion_3 = d.fk_evento_lista_producto_5)
+    JOIN botella bo ON d.fk_evento_lista_producto_4 = bo.botella_codigo
+    WHERE d.fk_factura = factura_id;
+
+    RETURN NEXT presentaciones_cursor;
+END;
+$$;

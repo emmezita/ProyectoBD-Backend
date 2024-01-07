@@ -3239,6 +3239,16 @@ def obtener_pagos_afiliacion():
     cur.close()
     pprint(rows)
     return jsonify(rows), 200
+
+# Ruta para obtener los detalles de un pago por afiliacion
+@app.route("/api/pago/afiliacion/detalle/<int:id>", methods=["GET"])
+def obtener_detalle_pago_afiliacion(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerDetallesPagoPorCodigo(%s)', (id,))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
     
 # >>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA PUNTOS
@@ -3280,17 +3290,7 @@ def obtener_tasa_punto():
     pprint(rows)
     return jsonify(rows), 200
 
-# Ruta para obtener los detalles de un pago por afiliacion
-@app.route("/api/pago/afiliacion/detalle/<int:id>", methods=["GET"])
-def obtener_detalle_pago_afiliacion(id):
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute('SELECT * FROM ObtenerDetallesPagoPorCodigo(%s)', (id,))
-    rows = cur.fetchall()
-    cur.close()
-    pprint(rows)
-    return jsonify(rows), 200
 # Ruta para obtener la tasa del dolar
-
 @app.route("/api/dolar/tasa", methods=["GET"])
 def obtener_tasa_dolar():
     cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -3299,3 +3299,58 @@ def obtener_tasa_dolar():
     cur.close()
     pprint(rows)
     return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# FACTURAS
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todas las facturas de la base de datos
+@app.route("/api/factura/all", methods=["GET"])
+def obtener_facturas():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerFacturas()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener los detalles de una factura
+@app.route("/api/factura/detalle/<int:id>", methods=["GET"])
+def obtener_detalle_factura(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    
+    datos_factura = []
+    presentaciones = []
+    metodos_pago = []
+    
+    try:
+        cur.execute ('SELECT * FROM ObtenerDetallesFactura(%s)',(id,))
+        # Obtener los resultados de los cursores
+        
+        cur.execute(f'FETCH ALL FROM datos_factura_cursor;')
+        datos_factura = cur.fetchall()
+        
+        cur.execute(f'FETCH ALL FROM metodos_pago_cursor;')
+        metodos_pago = cur.fetchall()
+        
+        cur.execute(f'FETCH ALL FROM presentaciones_cursor;')
+        presentaciones = cur.fetchall()
+        
+        base_url = "https://asoronucab.blob.core.windows.net/images/"
+
+        for i in range(len(presentaciones)):
+            presentacion = list(presentaciones[i])
+            presentacion[-1] = base_url + presentacion[-1]
+            presentaciones[i] = tuple(presentacion)
+        
+        pprint(datos_factura)
+        pprint(presentaciones)
+        pprint(metodos_pago)
+
+    except Exception as e:
+            print(e)
+
+    # Cerrar la conexión
+    cur.close()
+    
+    return jsonify({'datos_factura': datos_factura, 'metodos_pago': metodos_pago,'presentaciones': presentaciones})
