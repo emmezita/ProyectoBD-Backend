@@ -2340,6 +2340,40 @@ def get_all_presentaciones():
     pprint(rows)
     return jsonify(rows)
 
+# Ruta para obtener todas las presentaciones de un producto
+@app.route("/api/presentacion/tienda/all", methods=["GET"])
+def get_all_presentaciones_tienda():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
+                        (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
+                        pre.presentacion_peso as peso, i.imagen_nombre as imagen,
+                        hpv.precio_venta_valor as precio_venta_tienda
+                FROM presentacion pre
+                JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
+                JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
+                JOIN producto pro ON pre.fk_producto = pro.producto_codigo
+                JOIN imagen i ON (pre.fk_material_botella_1 = i.fk_presentacion_1
+                                AND pre.fk_material_botella_2 = i.fk_presentacion_2
+                                AND pre.fk_producto = i.fk_presentacion_3)
+                JOIN historico_precio_venta hpv ON (hpv.fk_inventario_tienda_1 = 1
+												AND pre.fk_material_botella_1 = hpv.fk_inventario_tienda_2
+												AND pre.fk_material_botella_2 = hpv.fk_inventario_tienda_3
+												AND pre.fk_producto = hpv.fk_inventario_tienda_4
+												AND hpv.precio_venta_fecha_fin is null)
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+
+    # cambiar la imagen por la ruta de la imagen
+    for row in rows:
+        # filename = row['imagen']
+        # row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
+        row['imagen'] = "https://asoronucab.blob.core.windows.net/images/" + row['imagen']
+
+    pprint(rows)
+    return jsonify(rows)
+
 
 # Ruta para obtener los productos de la base de datos
 @app.route("/api/presentacion/producto/all", methods=["GET"])
