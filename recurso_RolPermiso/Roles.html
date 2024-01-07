@@ -79,34 +79,53 @@
         }
 
     </style>
-    
-    <div class="container">
-        <div class="row px-0">
-            <div class="col-4" id="roles">
-                <!-- lista vertical de roles con scrollbar -->
-                <div class="column">
-                    <ul class="lista-roles">
-                    </ul>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="tabs" role="tablist">
+        <li class="nav-item" role="roles">
+        <button class="nav-link active" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab" aria-controls="roles" aria-selected="true">Roles</button>
+        </li>
+        <li class="nav-item" role="acciones">
+        <button class="nav-link" id="acciones-tab" data-bs-toggle="tab" data-bs-target="#acciones" type="button" role="tab" aria-controls="cargo" aria-selected="false">Acciones</button>
+        </li>
+    </ul>
+
+    <!-- Contenido -->
+    <div class="tab-content" id="content">
+        <div class="tab-pane fade show active" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+            <div class="container">
+                <div class="row px-0">
+                    <div class="col-4" id="roles">
+                        <!-- lista vertical de roles con scrollbar -->
+                        <div class="column">
+                            <ul class="lista-roles">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-8 px-0" id="permisos">
+                        <!-- lista de permisos de filas de 4 (fila por tipo de permio) cada permiso es un checkbox -->
+                        <div class="row px-0" id="lista-permisos">
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-8 px-0" id="permisos">
-                <!-- lista de permisos de filas de 4 (fila por tipo de permio) cada permiso es un checkbox -->
-                <div class="row px-0" id="lista-permisos">
+                <!-- Fila de Botones -->
+                <div class="row px-0 mt-3 justify-content-between">
+                    <div class="col-3">
+                        <button class="btn btn-primary primary" id="button-nuevo" onclick="modalAgregarRol()">Nuevo</button>
+                        <button class="btn btn-danger primary" id="button-eliminar" onclick="eliminarRol()">Eliminar</button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-primary primary" id="button-guardar" onclick="guardarRoles()">Guardar</button>
+                        <button class="btn btn-primary primary" id="button-cancelar" onclick="reloadPage()">Cancelar</button>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- Fila de Botones -->
-        <div class="row px-0 mt-3 justify-content-between">
-            <div class="col-3">
-                <button class="btn btn-primary primary" id="button-nuevo" onclick="modalAgregarRol()">Nuevo</button>
-                <button class="btn btn-danger primary" id="button-eliminar" onclick="eliminarRol()">Eliminar</button>
-            </div>
-            <div class="col-3">
-                <button class="btn btn-primary primary" id="button-guardar" onclick="guardarRoles()">Guardar</button>
-                <button class="btn btn-primary primary" id="button-cancelar" onclick="reloadPage()">Cancelar</button>
-            </div>
+        <div class="tab-pane fade" id="acciones" role="tabpanel" aria-labelledby="acciones-tab">
+            por hacer
         </div>
     </div>
+    
 
     <script>
 
@@ -271,7 +290,6 @@
             $.ajax({
                 url: 'http://localhost:5000/api/rol/eliminar/' + rolId,
                 type: 'DELETE',
-                dataType: 'json',
                 success: function(data) {
                     console.log(data)
                     alert('Rol eliminado')
@@ -321,15 +339,19 @@
                 }
             })
 
+            if (rolesModificados.length == 0) {
+                alert('No hay roles modificados')
+                return
+            }
+
             $.ajax({
-                url: 'http://localhost:5000/api/rol/update',
+                url: 'http://localhost:5000/api/rol/modificar',
                 type: 'PUT',
-                dataType: 'json',
                 contentType: 'application/json',
                 data: JSON.stringify(rolesModificados),
                 success: function(data) {
                     console.log(data)
-                    alert('Roles actualizado')
+                    alert('Roles actualizados')
                     reloadPage()
                 },
                 error: function(error) {
@@ -342,3 +364,4 @@
 
 </body>
 </html>
+

@@ -39,6 +39,9 @@
         } table {
         border-collapse: collapse;
         }
+        .subTotal {
+            font-weight: bold;   
+        }
     </style>
     
     <table class="table-carrito">
@@ -53,29 +56,23 @@
         <tbody class="body-carrito">
         </tbody>
     </table>
+    <div class="row justify-content-end">
+        <div class="col-6">
+            <button class="btn btn-success" onclick="finalizarCompra()">Finalizar Compra</button>
+        </div>
+    </div>
+
 <script>
 
-var urlParams = new URLSearchParams(window.location.search);
-var idOrden = urlParams.get('id');
+var idUsuario = localStorage.getItem("idUsuario");
 
-function eliminarPresentacion(idPresentacion) {
-    // $.ajax({
-    //     url: "http://localhost:5000/api/venta/carrito/" + idOrden + "/" + idPresentacion,
-    //     method: "DELETE",
-    //     dataType: "json",
-    //     success: (data) => {
-    //         console.log(data);
-    //         location.reload();
-    //     },
-    //     error: (error) => {
-    //         console.log(error);
-    //     },
-    // });
+if (idUsuario == null) {
+    window.location.href = "http://dilodev.co/inicio-de-sesion";
 }
 
-    $(document).ready(() => {
+$(document).ready(() => {
         $.ajax({
-            url: "http://localhost:5000/api/venta/carrito/" + idOrden,
+            url: "http://localhost:5000/api/carrito/" + idUsuario,
             method: "GET",
             dataType: "json",
             success: (data) => {
@@ -83,18 +80,39 @@ function eliminarPresentacion(idPresentacion) {
 
                 for (var i = 0; i < data.length; i++) {
                     var row = $('<tr>');
-                    row.append('<td><button class="btn btn-danger" onclick=eliminarPresentacion('+data[i].presentacion_codigo+')>X</button></td>');
-                    row.append('<td>' + data[i].cantidad + '</td>');
+                    row.append('<td><button class="btn btn-danger" onclick=eliminarPresentacion(this)>X</button></td>');
+                    row.append('<td>' + data[i].codigo + '</td>');
+
+                    row.append('<td><input type="number" class="form-control cantidad" value="' + data[i].cantidad + '"></td>');
 
                     var td  = $('<td class="row ps-0 py-0 gx-0 jusify-content-center align-items-center">');
-                    td.append('<img class="col-2" src="' + data[i].imagen_nombre + '" width="50px" height="50px">');
-                    td.append('<p class="col-9 my-0">' + data[i].producto_nombre + '</p>');
+                    var imagen = " https://asoronucab.blob.core.windows.net/images/" + data[i].imagen;
+
+                    td.append('<img class="col-2" src="' + imagen + '" width="50px" height="50px">');
+                    td.append('<p class="col-9 my-0">' + data[i].nombre + '</p>');
                     row.append(td);
 
-                    row.append('<td>0.00</td>');
-                    row.append('<td>0.00</td>');
+                    row.append('<td class=precioU>' + data[i].precio + '</td>');
+                    row.append('<td class=subTotal>' + data[i].precio + '</td>');
                     $('.body-carrito').append(row);
+
                 }
+                
+                // evento para cambiar la cantidadx
+                $('.form-control.cantidad').change(function() {
+                    var cantidad = $(this).val();
+
+                    if (cantidad < 1) {
+                        cantidad = 1;
+                        $(this).val(cantidad);
+                        return;
+                    }
+
+                    var precioU = $(this).parent().parent().find('.precioU').text();
+                    var subTotal = cantidad * precioU;
+                    $(this).parent().parent().find('.subTotal').text(subTotal);
+
+                });
 
                 $('.table-carrito').DataTable({
                     paging: false,
@@ -113,9 +131,56 @@ function eliminarPresentacion(idPresentacion) {
             },
             error: (error) => {
                 console.log(error);
+                alert("Error al cargar el carrito");
             },
         });
     })
+
+function eliminarPresentacion(eso) {
+
+    var idPresentacion = $(eso).parent().parent().find('td').eq(1).text();
+    console.log(idPresentacion);
+
+    var pres = idPresentacion.split("-");
+    var id1 = pres[0];
+    var id2 = pres[1];
+    var id3 = pres[2];
+
+    var data = {
+        "ids" : {
+            "id1" : id1,
+            "id2" : id2,
+            "id3" : id3
+        }
+    }
+
+    data = JSON.stringify(data);
+
+    $.ajax({
+        url: "http://localhost:5000/api/carrito/"+idUsuario+"/presentacion",
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        data: data,
+        success: (data) => {
+            // eliminamos la fila de la tabla
+            var row = $('.body-carrito').find('tr').filter(function() {
+                return $(this).find('td').eq(1).text() == idPresentacion;
+            });
+            row.remove();
+        },
+        error: (error) => {
+            console.log(error);
+        },
+    });
+}
+
+function finalizarCompra() {
+    // vamos a la pestaña de pago
+    window.location.href = "http://dilodev.co/finalizar-compra-online";
+}
+
 </script>
 
 

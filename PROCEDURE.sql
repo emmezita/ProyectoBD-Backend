@@ -641,7 +641,19 @@ BEGIN
 END;
 $$;
 
-
+-- Obtener el valor de la tasa del dolar
+CREATE OR REPLACE FUNCTION ObtenerTasaDolar()
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN (
+        SELECT tasa_valor
+        FROM Historico_Tasa_Dolar
+        WHERE tasa_fecha_fin IS NULL
+    );
+END;
+$$;
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Cliente
@@ -704,7 +716,7 @@ BEGIN
     ) AS subquery;
 
     -- Insertar un nuevo pedido en la tabla Pedido
-    INSERT INTO Pedido (fk_cliente_juridico, fk_cliente_natural, pedido_fecha, fk_lugar)
+    INSERT INTO Pedido (fk_cliente_natural, fk_cliente_juridico, pedido_fecha, fk_lugar)
     VALUES (_codigoPN, _codigoPJ, CURRENT_DATE, _codigoLugar)
     RETURNING pedido_codigo INTO _nuevoPedidoID;
 
@@ -714,6 +726,76 @@ BEGIN
 
     RETURN QUERY
     SELECT _nuevoPedidoID;
+END;
+$$;
+
+-- Procedimiento para saber si un producto ya esta en el pedido
+CREATE OR REPLACE FUNCTION BuscarProductoEnPedido(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_exists BOOLEAN;
+BEGIN
+    SELECT EXISTS (
+        SELECT 1
+        FROM detalle_pedido
+        WHERE fk_pedido = _codigoPedido AND fk_inventario_almacen_1 = 1 AND 
+        fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3
+    ) INTO v_exists;
+
+    RETURN v_exists;
+END;
+$$;
+
+-- Procedimiento para agregar un producto al pedido (carrito)
+CREATE OR REPLACE PROCEDURE AgregarProductoAlPedido(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _precioPresentacion NUMERIC;
+BEGIN
+
+    -- Buscamos el precio de la presentacion
+    SELECT precio_venta_valor INTO _precioPresentacion
+    FROM historico_precio_venta
+    WHERE fk_inventario_almacen_1 = 1 AND fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3 AND precio_venta_fecha_fin IS NULL;
+
+    INSERT INTO detalle_pedido(fk_pedido, detalle_pedido_cantidad, detalle_pedido_precio_unitario,
+    fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+    VALUES (_codigoPedido, 1, _precioPresentacion, 1, _PC1, _PC2, _PC3);
+
+END;
+$$;
+
+-- Procedimiento para obtener los productos del pedido
+CREATE OR REPLACE FUNCTION ObtenerProductosDelPedido(_codigoPedido INT)
+RETURNS TABLE(codigo TEXT, nombre TEXT, cantidad INT, precio NUMERIC, imagen TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT (d.fk_inventario_almacen_2 || '-' ||d.fk_inventario_almacen_3 || '-' ||d.fk_inventario_almacen_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_pedido_cantidad as cantidad, d.detalle_pedido_precio_unitario as precio, img.imagen_nombre::TEXT 
+    FROM Detalle_Pedido d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_almacen_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_almacen_2 
+                        AND img.fk_presentacion_2 = d.fk_inventario_almacen_3 
+                        AND img.fk_presentacion_3 = d.fk_inventario_almacen_4)
+    JOIN botella bo ON d.fk_inventario_almacen_3 = bo.botella_codigo
+    WHERE d.fk_pedido = _codigoPedido;
+END;
+$$;
+
+-- Procedimiento para eliminar un producto del pedido
+CREATE OR REPLACE PROCEDURE EliminarProductoDelPedido(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM detalle_pedido
+    WHERE fk_pedido = _codigoPedido AND fk_inventario_almacen_1 = 1 AND 
+    fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3;
 END;
 $$;
 

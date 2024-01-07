@@ -1489,51 +1489,74 @@ def get_all_permisos():
     pprint(rows)
     return jsonify(rows)
 
+# Modificar y crear roles en grupo (batch)
+@app.route("/api/rol/modificar", methods=["PUT"])
+def modificar_roles():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    roles = request.get_json()
+    pprint(roles)
 
-# No se si funciona
-# @app.route("/api/rol/modificar", methods=["PUT"])
-# def modificar_roles():
-#     cur = conn.cursor()
-#     data = request.get_json()
-#     pprint(data)
-#     rol_codigo = data.get('rol_codigo')
-#     rol_nombre = data.get('rol_nombre')
-#     permisos = data.get('permisos')
+    for rol in roles:
+        rol_codigo = rol['rol_codigo']
+        rol_nombre = rol['rol_nombre']
+        permisos = rol['permisos']
 
-#     sql_rol = """
-#         UPDATE Rol SET rol_nombre = %s WHERE rol_codigo = %s
-#     """
-#     sql_rol_permiso = """
-#         INSERT INTO Rol_Permiso (fk_rol, fk_permiso) VALUES (%s, %s)
-#     """
-#     sql_delete_rol_permiso = """
-#         DELETE FROM Rol_Permiso WHERE fk_rol = %s AND fk_permiso = %s
-#     """
-#     try:
-#         cur.execute(sql_rol, (rol_nombre, rol_codigo))
-#         cur.execute("SELECT fk_permiso FROM Rol_Permiso WHERE fk_rol = %s", (rol_codigo,))
-#         existing_permisos = cur.fetchall()
-#         existing_permisos = set(permiso['fk_permiso'] for permiso in existing_permisos)
-#         for permiso in permisos:
-#             if permiso['permiso_codigo'] not in existing_permisos:
-#                 cur.execute(sql_rol_permiso, (rol_codigo, permiso['permiso_codigo']))
-#         for permiso in existing_permisos:
-#             if permiso not in set(permiso['permiso_codigo'] for permiso in permisos):
-#                 cur.execute(sql_delete_rol_permiso, (rol_codigo, permiso))
-#         conn.commit()
-#     except Exception as e:
-#         tb = traceback.format_exc()
-#         print(f"An error occurred: {e}\n{tb}")
-#         conn.rollback()   
-#         cur.close()
-#         return Response(status=500, response=str(e))
+        if (rol.get('nuevo')): # rol nuevo
+            sql_rol = """
+                INSERT INTO Rol (rol_nombre) VALUES (%s) RETURNING rol_codigo
+            """
+            try:
+                cur.execute(sql_rol, (rol_nombre,))
+                result = cur.fetchone()
+                rol_codigo = result['rol_codigo'] if result is not None else None
+                sql_rol_permiso = """
+                    INSERT INTO Rol_Permiso (fk_rol, fk_permiso) VALUES (%s, %s)
+                """
+                for permiso in permisos:
+                    cur.execute(sql_rol_permiso, (rol_codigo, permiso['permiso_codigo']))
+                conn.commit()
+            except Exception as e:
+                tb = traceback.format_exc()
+                print(f"An error occurred: {e}\n{tb}")
+                conn.rollback()   
+                cur.close()
+                return Response(status=500, response=str(e))
+        else: # rol existente
+            sql_rol = """
+                UPDATE Rol SET rol_nombre = %s WHERE rol_codigo = %s
+            """
+            sql_rol_permiso = """
+                INSERT INTO Rol_Permiso (fk_rol, fk_permiso) VALUES (%s, %s)
+            """
+            sql_delete_rol_permiso = """
+                DELETE FROM Rol_Permiso WHERE fk_rol = %s AND fk_permiso = %s
+            """
+            try:
+                cur.execute(sql_rol, (rol_nombre, rol_codigo))
+                cur.execute("SELECT fk_permiso FROM Rol_Permiso WHERE fk_rol = %s", (rol_codigo,))
+                existing_permisos = cur.fetchall()
+                existing_permisos = set(permiso['fk_permiso'] for permiso in existing_permisos)
+                for permiso in permisos:
+                    if permiso['permiso_codigo'] not in existing_permisos:
+                        cur.execute(sql_rol_permiso, (rol_codigo, permiso['permiso_codigo']))
+                for permiso in existing_permisos:
+                    if permiso not in set(permiso['permiso_codigo'] for permiso in permisos):
+                        cur.execute(sql_delete_rol_permiso, (rol_codigo, permiso))
+                conn.commit()
+            except Exception as e:
+                tb = traceback.format_exc()
+                print(f"An error occurred: {e}\n{tb}")
+                conn.rollback()   
+                cur.close()
+                return Response(status=500, response=str(e))
     
-#     cur.close()
-    
-#     return Response(status=200, response="Rol modificado exitosamente")
+    cur.close()
+    print('responde 200')
+    return "Roles modificados exitosamente", 200
 
+# Ruta para eliminar un rol de la base de datos
 # ponerle cascade a rol_permiso
-@app.route("/api/rol/eliminar/<int:id>", methods=["POST"])
+@app.route("/api/rol/eliminar/<int:id>", methods=["DELETE"])
 def eliminar_rol(id):
     cur = conn.cursor()
     try:
@@ -2691,14 +2714,17 @@ def add_product(id):
     # Si hay uno, se verifica si el producto que se quiere agregar ya esta en el pedido y se informa al usuario
     # Si no esta, se agrega el producto al pedido
 
+    # Puede retornar un cliente natural o juridico 
     cur.callproc('ObtenerCodigoCliente', (id,))
     personas = cur.fetchone()
     print(personas)
 
-    # Procedimiento de buscar_codigo_persona ^
     if personas is None:
         return Response(status=404, response="Usuario no encontrado")
-    codigo_persona_natural, codigo_persona_juridica = personas
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    print(codigo_persona_natural, codigo_persona_juridica)
 
     cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
     codigoCarrito = cur.fetchone()
@@ -2711,29 +2737,20 @@ def add_product(id):
     else:
         pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
 
-    # Procedimiento de buscar_pedido ^
-
-    # Verificar si el producto ya esta en el pedido
-    sql_buscar_producto = """
-        SELECT fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4
-        FROM detalle_pedido
-        WHERE fk_pedido = %s AND fk_inventario_almacen_1 = 1
-    """
-    cur.execute(sql_buscar_producto, (pedido_codigo,))
+    cur.callproc('BuscarProductoEnPedido', (pedido_codigo, id1, id2, id3))
     result = cur.fetchone()
+    print(result)
 
     if result is not None:
-        if result['fk_inventario_almacen_2'] == id1 and result['fk_inventario_almacen_3'] == id2 and result['fk_inventario_almacen_4'] == id3:
+        exists = result['buscarproductoenpedido']
+    else:
+        exists = False
+
+    if exists:
             return Response(status=404, response="Producto ya agregado al carrito")
     else:
-        sql_agregar_producto = """
-            INSERT INTO detalle_pedido(fk_pedido, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
-            VALUES (%s, 1, %s, %s, %s)
-        """
-        cur.execute(sql_agregar_producto, (pedido_codigo, id1, id2, id3))
+        cur.execute('CALL AgregarProductoAlPedido(%s, %s, %s, %s)', (pedido_codigo, id1, id2, id3))
         conn.commit()
-
-    # Procedimiento de agregar_producto ^
 
     cur.close()
     
@@ -2743,20 +2760,93 @@ def add_product(id):
 # este funcionara como un carrito de compras (Pedido que no se ha realizado)
 
 # Ruta para conocer los productos que hay en el carrito de un usuario (id de usuario)
-@app.route("/api/carrito/<int:id>", methods=["POST"])
+@app.route("/api/carrito/<int:id>", methods=["GET"])
 def ver_carrito(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
 
     # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
 
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
 
-    sql_algo = """ """
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    cur.callproc('ObtenerProductosDelPedido', (pedido_codigo,))
+    productos = cur.fetchall()
+    print(productos)
+
+    if productos is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        cur.close()
+        return jsonify(productos), 200
+    
+# Ruta para eliminar un producto del carrito de un usuario (id de usuario)
+@app.route("/api/carrito/<int:id>/presentacion", methods=["DELETE"])
+def eliminar_presentacion_carrito(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    producto = request.get_json()
+    pprint(producto)
+    # ids de la presentacion que se desea eliminar
+    ids = producto.get("ids")
+    id1 = ids.get("id1")
+    id2 = ids.get("id2")
+    id3 = ids.get("id3")
+
+    print(id1, id2, id3)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    cur.execute(' CALL EliminarProductoDelPedido(%s, %s, %s, %s) ', (pedido_codigo, id1, id2, id3))
+    conn.commit()
 
     cur.close()
+
+    return Response(status=200, response="Producto eliminado exitosamente")
     
-    return 
 
+# Ruta para obtener la tasa del dia
+@app.route("/api/tasa", methods=["GET"])
+def get_tasa():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerTasaDolar()')
+    rows = cur.fetchone()
+    cur.close()
 
+    if rows is None:
+        return Response(status=404, response="Tasa no encontrada")
+    
+    tasa = jsonify({"tasa": rows['obtenertasadolar']})
+    return tasa, 200
 
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

@@ -245,7 +245,7 @@ CREATE TABLE Rol_Permiso (
 
   CONSTRAINT pk_rol_permiso PRIMARY KEY (fk_rol, fk_permiso),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_rol_permiso_rol_ejecuta FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo),
+  CONSTRAINT fk_rol_permiso_rol_ejecuta FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Rol.
   CONSTRAINT fk_rol_permiso_permiso_ejecutadopor FOREIGN KEY (fk_permiso) REFERENCES Permiso (permiso_codigo)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Permiso.
@@ -262,7 +262,7 @@ CREATE TABLE Usuario (
   -- Relación con la entidad Persona Natural
   fk_persona_juridica integer,
   -- Relación con la entidad Persona Jurídica
-  fk_rol integer NOT NULL,
+  fk_rol integer, -- Cuando el rol que tenia el usuario se elimina, se debe activar un trigger que cambie el rol a 1 (algun rol basico)
   -- Relación con la entidad Rol
 
   CONSTRAINT pk_usuario_codigo PRIMARY KEY (usuario_codigo),
@@ -271,7 +271,7 @@ CREATE TABLE Usuario (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
   CONSTRAINT fk_usuario_persona_juridica_crea FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
-  CONSTRAINT fk_rol_seleasigna FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo),
+  CONSTRAINT fk_rol_seleasigna FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Rol.
   CONSTRAINT ck_usuario_nombre CHECK (usuario_nombre ~ '^[^\s]+$'),
   -- Constrain. No debe contener espacios en blanco

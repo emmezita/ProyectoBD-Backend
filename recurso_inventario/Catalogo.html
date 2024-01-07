@@ -101,6 +101,8 @@
 
 $(document).ready(function() {
 
+    var idUsuario = localStorage.getItem('idUsuario');
+
     // limpiamos los productos que vienen de la plantilla
     $('ul.products').html('');
 
@@ -166,8 +168,13 @@ $(document).ready(function() {
                         success: function() {
                             alert('Presentacion agregado al carrito exitosamente');
                         },
-                        error: function() {
-                            alert('Hubo un error agregando la Presentacion al carrito');
+                        error: function(r) {
+                            var text = r.responseText;
+                            if (text != null && text != '') {
+                                alert(text);
+                            } else {
+                                alert('Hubo un error agregando el producto al carrito');
+                            }
                         }
                     });
                 });
