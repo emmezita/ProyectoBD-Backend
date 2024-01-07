@@ -148,8 +148,8 @@ $(document).ready(function() {
                 row.append('<td>' + data[i].empleado_nombre + '</td>');
                 row.append('<td>' + data[i].factura_total + '</td>');
                 row.append('<td>' + data[i].cliente_nombre + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="verFactura(' + data[i].codigo + ')">Ver</button></td>');
-                row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarFactura(' + data[i].codigo + ')">Eliminar</button></td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="verFactura(' + data[i].factura_codigo + ')">Ver</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarFactura(' + data[i].factura_codigo + ')">Eliminar</button></td>');
                 
                 $('#body-facturas').append(row);
             }

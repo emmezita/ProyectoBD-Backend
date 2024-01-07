@@ -3317,7 +3317,7 @@ def obtener_facturas():
 # Ruta para obtener los detalles de una factura
 @app.route("/api/factura/detalle/<int:id>", methods=["GET"])
 def obtener_detalle_factura(id):
-    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur = conn.cursor()
     
     datos_factura = []
     presentaciones = []
@@ -3336,16 +3336,16 @@ def obtener_detalle_factura(id):
         cur.execute(f'FETCH ALL FROM presentaciones_cursor;')
         presentaciones = cur.fetchall()
         
+        cur.execute('CLOSE datos_factura_cursor;')
+        cur.execute('CLOSE metodos_pago_cursor;')
+        cur.execute('CLOSE presentaciones_cursor;')
+        
         base_url = "https://asoronucab.blob.core.windows.net/images/"
 
         for i in range(len(presentaciones)):
             presentacion = list(presentaciones[i])
             presentacion[-1] = base_url + presentacion[-1]
             presentaciones[i] = tuple(presentacion)
-        
-        pprint(datos_factura)
-        pprint(presentaciones)
-        pprint(metodos_pago)
 
     except Exception as e:
             print(e)

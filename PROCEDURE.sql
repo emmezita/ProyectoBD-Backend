@@ -1159,7 +1159,9 @@ BEGIN
         f.factura_subtotal,
         f.factura_total,
         e.empleado_codigo,
-        CONCAT(pn2.persona_nat_p_nombre, ' ', pn2.persona_nat_p_apellido) as empleado_nombre
+        CONCAT(pn2.persona_nat_p_nombre, ' ', pn2.persona_nat_p_apellido) as empleado_nombre,
+        f.factura_puntos_obtenidos,
+        f.factura_puntos_utilizados
     FROM Factura f
     LEFT JOIN Cliente_Natural cn ON f.fk_cliente_natural = cn.cliente_nat_codigo
     LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo

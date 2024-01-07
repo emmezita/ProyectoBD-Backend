@@ -40,14 +40,71 @@
         }
     </style>
     
-    <table class="table-ordenes">
-        <thead class="head-ordenes">
+    <table class="table-facturas">
+        <thead class="head-facturas">
             <th>ID</th>
             <th>Cantidad</th>
             <th style="text-align: left !important;">Descripcion del producto</th>
             <th>Precio unitario</th>
             <th>Sub-total</th>
         </thead>
-        <tbody class="body-ordenes">
+        <tbody class="body-facturas">
         </tbody>
     </table>
+
+    <script>
+    var urlParams = new URLSearchParams(window.location.search);
+    var idFactura = urlParams.get('id');
+    
+    $(document).ready(() => {
+        $.ajax({
+            url: "http://localhost:5000/api/factura/detalle/" + idFactura,
+            method: "GET",
+            dataType: "json",
+            success: (data) => {
+                console.log(data)
+    
+                $.each(data.presentaciones, function(i, presentacion) {
+                    var row = $('<tr>');
+                    // el id llega como #-#-# y debo separarlos
+                    var idP = presentacion[0].split('-');
+                    var idPLimpio = idP[0] + idP[1] + idP[2];
+                    row.append('<td idm='+ idP[0] +' idb='+ idP[1] +' ido='+idP[2]+'>' + idPLimpio + '</td>');  // Código del producto
+
+    
+                    var cantidad = $('<td>' + presentacion[3] + '</td>');
+                    row.append(cantidad);
+    
+                    var td  = $('<td class="row ps-0 py-0 gx-0 jusify-content-center align-items-center">');
+                    td.append('<img class="col-2" src="' + presentacion[4] + '" width="50px" height="50px">');  // Nombre de la imagen
+                    td.append('<p class="col-9 my-0">' + presentacion[1] + '</p>');  // Nombre del producto
+                    row.append(td);
+    
+                    // Campo de precio editable
+                    var precio = $('<td>' + presentacion[2] + '</td>');
+
+                    row.append(precio);
+    
+                    // Calcular el subtotal y añadirlo a la fila
+                    var subtotal = $('<td class="subtotal">' + (presentacion[2] * presentacion[3]) + '</td>');
+                    row.append(subtotal);
+    
+                    $('.body-facturas').append(row);
+                });
+    
+                $('.table-facturas').DataTable({
+                    paging: false,
+                    searching: false,
+                    info: false,
+                    ordering: false,
+                });
+            },
+            error: (error) => {
+                console.log(error);
+            },
+        });
+    })
+    </script>
+    
+    </body>
+    </html>
