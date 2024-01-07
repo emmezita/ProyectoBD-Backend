@@ -894,3 +894,131 @@ BEGIN
     WHERE u.usuario_codigo = _usuario_id AND fa.afiliacion_numero IS NOT NULL;
 END;
 $$;
+
+--Funcion para buscar el mes que debe pagar el cliente
+CREATE OR REPLACE FUNCTION ProximoMesPago(_ficha_numero VARCHAR(8))
+RETURNS DATE
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    ultimo_pago DATE;
+    fecha_afiliacion DATE;
+    proximo_pago DATE;
+BEGIN
+    -- Buscar el último mes pagado
+    SELECT MAX(pago_mes_pagado) INTO ultimo_pago
+    FROM Pago_Afiliacion
+    WHERE fk_ficha_afiliacion = _ficha_numero;
+
+    -- Si no hay pagos, usar la fecha de afiliación
+    IF ultimo_pago IS NULL THEN
+        SELECT afiliacion_fecha INTO fecha_afiliacion
+        FROM Ficha_Afiliacion
+        WHERE afiliacion_numero = _ficha_numero;
+        
+        proximo_pago := (fecha_afiliacion + INTERVAL '1 MONTH')::DATE;
+    ELSE
+        -- Calcular el próximo mes después del último pago
+        proximo_pago := (ultimo_pago + INTERVAL '1 MONTH')::DATE;
+    END IF;
+
+    RETURN proximo_pago;
+END;
+$$;
+
+DROP FUNCTION IF EXISTS ObtenerMontoYTDC(INT);
+
+--Funcion que devuelve las tarjetas del afiliado y el monto a pagar
+CREATE OR REPLACE FUNCTION ObtenerMontoYTDC(_usuario_id INT)
+RETURNS TABLE (monto DECIMAL, tdcs TEXT[]) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT fa.afiliacion_monto_mensual,
+           array_agg(td.tdc_codigo || ':' || td.tdc_numero_tarjeta) AS tdcs
+    FROM Usuario u
+    LEFT JOIN Cliente_Natural cn ON u.fk_persona_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON u.fk_persona_juridica = pj.persona_jur_codigo
+    LEFT JOIN Ficha_Afiliacion fa ON (cn.cliente_nat_codigo = fa.fk_cliente_natural OR pj.persona_jur_codigo = fa.fk_persona_juridica)
+    LEFT JOIN TDC td ON (cn.cliente_nat_codigo = td.fk_persona_natural OR pj.persona_jur_codigo = td.fk_persona_juridica)
+    WHERE u.usuario_codigo = _usuario_id
+    GROUP BY fa.afiliacion_monto_mensual;
+END;
+$$;
+
+--Procedimiento para registrar un pago de afiliacion
+CREATE OR REPLACE PROCEDURE RegistrarPagoAfiliacion(_ficha_numero VARCHAR(8), _monto DECIMAL, _tdc_codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    mes_pago DATE;
+BEGIN
+    -- Obtener el próximo mes que se debe pagar
+    mes_pago := ProximoMesPago(_ficha_numero);
+
+    -- Registrar el pago en la tabla Pago_Afiliacion
+    INSERT INTO Pago_Afiliacion (pago_fecha, pago_afiliacion_total, pago_mes_pagado, fk_ficha_afiliacion, fk_tdc)
+    VALUES (CURRENT_DATE, _monto, mes_pago, _ficha_numero, _tdc_codigo);
+END;
+$$;
+
+
+-- Funcion para devolver los pagos de afiliacion
+CREATE OR REPLACE FUNCTION ObtenerPagosAfiliacion()
+RETURNS TABLE (
+    pago_codigo INT,
+    pago_fecha DATE,
+    pago_mes DATE,
+    nombre_cliente TEXT,
+    codigo_afiliacion VARCHAR(8),
+    monto_pago DECIMAL
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pa.pago_codigo, 
+           pa.pago_fecha, 
+           pa.pago_mes_pagado, 
+           COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social) AS nombre_cliente,
+           pa.fk_ficha_afiliacion, 
+           pa.pago_afiliacion_total
+    FROM Pago_Afiliacion pa
+    JOIN Ficha_Afiliacion fa ON pa.fk_ficha_afiliacion = fa.afiliacion_numero
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_persona_juridica = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
+END;
+$$;
+
+-- Funcion para obtener los detalles de un pago de afiliacion
+CREATE OR REPLACE FUNCTION ObtenerDetallesPagoPorCodigo(_pago_codigo INT)
+RETURNS TABLE (
+    pago_fecha DATE,
+    pago_mes DATE,
+    nombre_cliente TEXT,
+    identificacion_cliente TEXT,
+    codigo_afiliacion VARCHAR(8),
+    monto_pago DECIMAL
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pa.pago_fecha, 
+           pa.pago_mes_pagado, 
+           COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+           COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente,
+           pa.fk_ficha_afiliacion, 
+           pa.pago_afiliacion_total
+    FROM Pago_Afiliacion pa
+    JOIN Ficha_Afiliacion fa ON pa.fk_ficha_afiliacion = fa.afiliacion_numero
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_persona_juridica = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE pa.pago_codigo = _pago_codigo;
+END;
+$$;

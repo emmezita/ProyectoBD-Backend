@@ -939,7 +939,7 @@ def get_cliente_natural(id):
 # Ruta para editar los datos de un cliente natural de la base de datos
 @app.route("/api/cliente/natural/editar/<int:id>", methods=["PUT"])
 def editar_cliente_natural(id):
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
     cliente = request.get_json()
     pprint(cliente)
     p_nombre = cliente.get("pnombre")
@@ -3124,4 +3124,67 @@ def obtener_carnet(id):
     if rows is None:
         return Response(status=404, response="Usuario no encontrado")
     return jsonify(rows), 200
-    
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# PAGO AFILIACION
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el siguiente pago de afiliacion de una persona
+@app.route("/api/pago/afiliacion/<codigo>", methods=["GET"])
+def obtener_pago_afiliacion(codigo):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ProximoMesPago', (codigo,))
+    rows = cur.fetchone()
+    cur.close()
+    if rows is None:
+        return Response(status=404, response="Usuario no encontrado")
+    return jsonify(rows), 200
+
+# Ruta para obtener monto de pago de afiliacion y tarjetas de credito de una persona
+@app.route("/api/pago/afiliacion/monto/<int:id>", methods=["GET"])
+def obtener_monto_pago_afiliacion(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ObtenerMontoYTDC', (id,))
+    rows = cur.fetchone()
+    cur.close()
+    if rows is None:
+        return Response(status=404, response="Usuario no encontrado")
+    return jsonify(rows), 200
+
+# Ruta para procesar pago de afiliacion
+@app.route("/api/pago/afiliacion/procesar/<codigo>", methods=["POST"])
+def procesar_pago_afiliacion(codigo):
+    cur = conn.cursor()
+    try:
+        pago = request.get_json()
+        monto = pago.get('montopagado')
+        tdc = pago.get('tdc')
+        
+        cur.execute('CALL RegistrarPagoAfiliacion(%s,%s,%s)', (codigo,monto,tdc))
+        conn.commit()
+        return jsonify({"message": "Pago de afiliacion procesado exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# Ruta para obtener todos los pagos de afiliacion de la base de datos
+@app.route("/api/pago/afiliacion/all", methods=["GET"])
+def obtener_pagos_afiliacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerPagosAfiliacion()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener los detalles de un pago por afiliacion
+@app.route("/api/pago/afiliacion/detalle/<int:id>", methods=["GET"])
+def obtener_detalle_pago_afiliacion(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerDetallesPagoPorCodigo(%s)', (id,))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200

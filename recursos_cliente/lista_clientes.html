@@ -108,6 +108,9 @@
         <li class="nav-item" role="fichaafiliacion">
             <button class="nav-link" id="fichaafiliacion-tab" data-bs-toggle="tab" data-bs-target="#fichaafiliacion" type="button" role="tab" aria-controls="fichaafiliacion" aria-selected="false">Ficha de Afiliación</button>
         </li>
+        <li class="nav-item" role="reciboafiliacion">
+            <button class="nav-link" id="reciboafiliacion-tab" data-bs-toggle="tab" data-bs-target="#reciboafiliacion" type="button" role="tab" aria-controls="reciboafiliacion" aria-selected="false">Recibo de Afiliación</button>
+        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -167,6 +170,25 @@
                 </table>
             </div>
         </div>
+        <div class="tab-pane fade" id="reciboafiliacion" role="tabpanel" aria-labelledby="reciboafiliacion-tab">
+            <div class="mt-4 mx-auto">
+                <table id="table-reciboafiliacion" class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Fecha</th>
+                            <th>Persona</th>
+                            <th>Nro. Afiliación</th>
+                            <th>Monto pagado</th>
+                            <th>Mes</th>
+                            <th></th> <!-- no ordenar estas columnas -->
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-reciboafiliacion"> </tbody>
+                </table>
+            </div>
+        </div>
 
         <!-- Modales -->
             <!-- Modal Delete NCostumer -->
@@ -208,143 +230,187 @@
 <script>
 $(document).ready(function() {
     var data = null;
-        $.ajax({
-            url: 'http://localhost:5000/api/cliente/natural/all',
-            type: 'GET',
-            dataType: 'json',
-            success: function(d) {
-                data = d;
-                console.log(data);
-                for (var i = 0; i < data.length; i++) {
-                    var row = $('<tr>');
-                    row.append('<td>' + data[i].cedula + '</td>');
-                    row.append('<td>' + data[i].nombre + '</td>');
-                    var fecha = formatDate(data[i].fecha_nacimiento);
-                    row.append('<td>' + fecha + '</td>');
-                    if (data[i].afiliacion != null) {
-                        row.append('<td>Si</td>');
-                    } else {
-                        row.append('<td>No</td>');
-                    }
-                    row.append('<td>' + data[i].puntos_acumulados + '</td>');
-                    row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
-                    row.append('<td><button type="button" class="btn btn-danger" id="delete-ncostumer-button" data-bs-toggle="modal" data-bs-target="#deleteNCostumerModal" data-ncostumer-name="'+ data[i].nombre+'" data-ncostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
-
-                    $('#body-clientesnaturales').append(row);
+    $.ajax({
+        url: 'http://localhost:5000/api/cliente/natural/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].cedula + '</td>');
+                row.append('<td>' + data[i].nombre + '</td>');
+                var fecha = formatDate(data[i].fecha_nacimiento);
+                row.append('<td>' + fecha + '</td>');
+                if (data[i].afiliacion != null) {
+                    row.append('<td>Si</td>');
+                } else {
+                    row.append('<td>No</td>');
                 }
+                row.append('<td>' + data[i].puntos_acumulados + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-ncostumer-button" data-bs-toggle="modal" data-bs-target="#deleteNCostumerModal" data-ncostumer-name="'+ data[i].nombre+'" data-ncostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
 
-                $('#table-clientesnaturales').DataTable({
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ registros por página",
-                        "zeroRecords": "No se encontraron resultados",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "No hay registros disponibles",
-                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                        "search": "Buscar:",
-                        "paginate": {
-                            "first": "Primero",
-                            "last": "Último",
-                            "next": "Siguiente",
-                            "previous": "Anterior"
-                        },
-                    }
-                });
-            },
-            error: function() {
-                alert('Hubo un error obteniendo a los clientes naturales');
+                $('#body-clientesnaturales').append(row);
             }
-        });
 
-        $.ajax({
-            url: 'http://localhost:5000/api/cliente/juridico/all',
-            type: 'GET',
-            dataType: 'json',
-            success: function(d) {
-                data = d;
-                console.log(data);
-                for (var i = 0; i < data.length; i++) {
-                    var row = $('<tr>');
-                    row.append('<td>' + data[i].rif + '</td>');
-                    row.append('<td>' + data[i].denom + '</td>');
-                    row.append('<td>' + data[i].capital + '</td>');
-                    if (data[i].afiliacion != null) {
-                        row.append('<td>Si</td>');
-                    } else {
-                        row.append('<td>No</td>');
-                    }
-                    row.append('<td>' + data[i].puntos_acumulados + '</td>');
-                    row.append('<td><button type="button" class="btn btn-warning" onclick="editarj(' + data[i].codigo + ')">Editar</button></td>');
-                    row.append('<td><button type="button" class="btn btn-danger" id="delete-jcostumer-button" data-bs-toggle="modal" data-bs-target="#deleteJCostumerModal" data-jcostumer-name="'+ data[i].denom+'" data-jcostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
-                    
-                    $('#body-clientesjuridicos').append(row);
+            $('#table-clientesnaturales').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
                 }
+            });
+        },
+        error: function() {
+            alert('Hubo un error obteniendo a los clientes naturales');
+        }
+    });
 
-                $('#table-clientesjuridicos').DataTable({
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ registros por página",
-                        "zeroRecords": "No se encontraron resultados",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "No hay registros disponibles",
-                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                        "search": "Buscar:",
-                        "paginate": {
-                            "first": "Primero",
-                            "last": "Último",
-                            "next": "Siguiente",
-                            "previous": "Anterior"
-                        },
-                    }
-                });
-            },
-            error: function() {
-                alert('Hubo un error obteniendo a los clientes juridicos');
-            }
-        });
-
-        $.ajax({
-            url: 'http://localhost:5000/api/afiliacion/all',
-            type: 'GET',
-            dataType: 'json',
-            success: function(d) {
-                data = d;
-                console.log(data);
-                for (var i = 0; i < data.length; i++) {
-                    var row = $('<tr>');
-                    row.append('<td>' + data[i].codigo + '</td>');
-                    var fecha = formatDate(data[i].fecha);
-                    row.append('<td>' + fecha + '</td>');
-                    row.append('<td>' + data[i].nombre + '</td>');
-                    row.append('<td>' + data[i].cedularif + '</td>');
-                    row.append('<td>' + data[i].montomensual + '</td>');
-                    row.append('<td>' + data[i].puntos + '</td>');
-                    row.append('<td><button type="button" class="btn btn-warning" onclick="editarFicha(' + data[i].codigo + ')">Editar</button></td>');
-                    row.append('<td><button type="button" class="btn btn-danger" id="delete-fichaafiliacion-button" data-bs-toggle="modal" data-bs-target="#deleteFichaAfiliacionModal" data-fichaafiliacion-name="'+ data[i].nombre+'" data-fichaafiliacion-id="'+ data[i].codigo+'">Eliminar</button></td>');
-
-                    $('#body-fichaafiliacion').append(row);
+    $.ajax({
+        url: 'http://localhost:5000/api/cliente/juridico/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].rif + '</td>');
+                row.append('<td>' + data[i].denom + '</td>');
+                row.append('<td>' + data[i].capital + '</td>');
+                if (data[i].afiliacion != null) {
+                    row.append('<td>Si</td>');
+                } else {
+                    row.append('<td>No</td>');
                 }
-
-                $('#table-fichaafiliacion').DataTable({
-                    "language": {
-                        "lengthMenu": "Mostrar _MENU_ registros por página",
-                        "zeroRecords": "No se encontraron resultados",
-                        "info": "Mostrando página _PAGE_ de _PAGES_",
-                        "infoEmpty": "No hay registros disponibles",
-                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                        "search": "Buscar:",
-                        "paginate": {
-                            "first": "Primero",
-                            "last": "Último",
-                            "next": "Siguiente",
-                            "previous": "Anterior"
-                        },
-                    }
-                });
-            },
-            error: function() {
-                alert('Hubo un error obteniendo las fichas de afiliacion');
+                row.append('<td>' + data[i].puntos_acumulados + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="editarj(' + data[i].codigo + ')">Editar</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-jcostumer-button" data-bs-toggle="modal" data-bs-target="#deleteJCostumerModal" data-jcostumer-name="'+ data[i].denom+'" data-jcostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
+                
+                $('#body-clientesjuridicos').append(row);
             }
-        });
 
+            $('#table-clientesjuridicos').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Hubo un error obteniendo a los clientes juridicos');
+        }
+    });
+
+    $.ajax({
+        url: 'http://localhost:5000/api/afiliacion/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].codigo + '</td>');
+                var fecha = formatDate(data[i].fecha);
+                row.append('<td>' + fecha + '</td>');
+                row.append('<td>' + data[i].nombre + '</td>');
+                row.append('<td>' + data[i].cedularif + '</td>');
+                row.append('<td>' + data[i].montomensual + '</td>');
+                row.append('<td>' + data[i].puntos + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="editarFicha(' + data[i].codigo + ')">Editar</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-fichaafiliacion-button" data-bs-toggle="modal" data-bs-target="#deleteFichaAfiliacionModal" data-fichaafiliacion-name="'+ data[i].nombre+'" data-fichaafiliacion-id="'+ data[i].codigo+'">Eliminar</button></td>');
+
+                $('#body-fichaafiliacion').append(row);
+            }
+
+            $('#table-fichaafiliacion').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Hubo un error obteniendo las fichas de afiliacion');
+        }
+    });
+
+    $.ajax({
+        url: 'http://localhost:5000/api/pago/afiliacion/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].pago_codigo + '</td>');
+                var fecha = formatDate(data[i].pago_fecha);
+                row.append('<td>' + fecha + '</td>');
+                row.append('<td>' + data[i].nombre_cliente + '</td>');
+                row.append('<td>' + data[i].codigo_afiliacion + '</td>');
+                row.append('<td>' + data[i].monto_pago + '</td>');
+                var mes = formatDate(data[i].pago_mes);
+                row.append('<td>' + mes + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="verRecibo(' + data[i].codigo + ')">Ver</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-reciboafiliacion-button" data-bs-toggle="modal" data-bs-target="#deleteReciboAfiliacionModal" data-reciboafiliacion-name="'+ data[i].nombre+'" data-reciboafiliacion-id="'+ data[i].codigo+'">Eliminar</button></td>');
+
+                $('#body-reciboafiliacion').append(row);
+            }
+
+            $('#table-reciboafiliacion').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Hubo un error obteniendo los pagos por afiliacion');
+        }
+    });
 });     
 
 // como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
@@ -423,6 +489,11 @@ function editarn(id){
 function editarj(id){
     console.log('editar Cliente Juridico');
     window.location.href = 'http://dilodev.co/formulario-editar-cliente-juridico?id=' + id;
+}
+
+function verRecibo(id){
+    console.log('ver Recibo');
+    window.location.href = 'https://dilodev.co/recibo-pago-afiliacion?id=' + id;
 }
 
 </script>
