@@ -146,8 +146,8 @@ BEGIN
         SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
         WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
 
-        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_orden, fk_orden)
-        VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 3, _orden_codigo);
+        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+        VALUES (CURRENT_TIMESTAMP, 3, _orden_codigo);
 
     -- Si no hay suficiente inventario, cambiar el estatus a "Cancelada"
     ELSE
@@ -156,8 +156,8 @@ BEGIN
         WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
 
         -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
-        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_orden, fk_orden)
-        VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 4, _orden_codigo);
+        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+        VALUES (CURRENT_TIMESTAMP, 4, _orden_codigo);
     END IF;
 EXCEPTION
     WHEN OTHERS THEN
@@ -539,8 +539,8 @@ BEGIN
     SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
     WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
 
-    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_orden, fk_orden)
-    VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
 END;
 $$;
 
@@ -558,8 +558,8 @@ BEGIN
     SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
     WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
 
-    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_orden, fk_orden)
-    VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
 
     -- Loop a través de cada presentación en la orden de compra
     FOR presentacion IN SELECT * FROM Detalle_Orden_De_Reposicion WHERE fk_orden = _orden_codigo

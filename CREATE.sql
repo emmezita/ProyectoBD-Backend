@@ -417,7 +417,7 @@ CREATE TABLE Ficha_Afiliacion (
 
   CONSTRAINT pk_ficha_codigo PRIMARY KEY (afiliacion_numero),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_ficha_cliente_natural_matricula FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_ficha_cliente_natural_matricula FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente Natural.
   CONSTRAINT fk_ficha_persona_juridica_inscribe FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
@@ -441,7 +441,7 @@ CREATE TABLE Pago_Afiliacion (
 
   CONSTRAINT pk_pago_codigo PRIMARY KEY (pago_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_pago_ficha_afiliacion_conlleva FOREIGN KEY (fk_ficha_afiliacion) REFERENCES Ficha_Afiliacion (afiliacion_numero),
+  CONSTRAINT fk_pago_ficha_afiliacion_conlleva FOREIGN KEY (fk_ficha_afiliacion) REFERENCES Ficha_Afiliacion (afiliacion_numero) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Ficha de Afiliación.
   CONSTRAINT fk_pago_tdc_llevaacabo FOREIGN KEY (fk_tdc) REFERENCES TDC (tdc_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla TDC.
@@ -1207,9 +1207,9 @@ CREATE TABLE Pago_Entrada (
 
   CONSTRAINT pk_pago_ent_codigo PRIMARY KEY (pago_ent_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_pago_ent_cliente_natural_concreta FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_pago_ent_cliente_natural_concreta FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
-  CONSTRAINT fk_pago_ent_cliente_juridico_efectua FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
+  CONSTRAINT fk_pago_ent_cliente_juridico_efectua FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
   CONSTRAINT fk_pago_ent_tdc_cubre FOREIGN KEY (fk_tdc) REFERENCES TDC (tdc_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla TDC.
@@ -1381,9 +1381,9 @@ CREATE TABLE Pedido (
   -- Clave foránea que hace referencia a la clave primaria de la tabla TDC.
   CONSTRAINT fk_pedido_punto_requerido FOREIGN KEY (fk_punto) REFERENCES Punto (punto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Punto.
-  CONSTRAINT fk_pedido_cliente_natural_confecciona FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_pedido_cliente_natural_confecciona FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
-  CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
+  CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
   CONSTRAINT fk_pedido_lugar_enviadoa FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
@@ -1409,7 +1409,7 @@ CREATE TABLE Historico_Estatus_Pedido (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_historico_estatus_pedido_estatus_pedido FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Estatus_Pedido.
-  CONSTRAINT fk_historico_estatus_pedido_pedido FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo),
+  CONSTRAINT fk_historico_estatus_pedido_pedido FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pedido.
   CONSTRAINT ck_historico_estatus_pedido CHECK (fecha_hora_fin_estatus IS NULL OR fecha_hora_fin_estatus > fecha_hora_inicio_estatus)
   -- Constrain. Debe ser mayor que la fecha y hora de inicio
@@ -1445,7 +1445,7 @@ CREATE TABLE Orden_De_Reposicion (
 
   CONSTRAINT pk_orden_codigo PRIMARY KEY (orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION
+  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
 );
 
@@ -1463,7 +1463,7 @@ CREATE TABLE Historico_Estatus_Orden (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_historico_estatus_orden_estatus_orden FOREIGN KEY (fk_estatus_orden) REFERENCES Estatus_Orden (estatus_orden_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Estatus_Orden.
-  CONSTRAINT fk_historico_estatus_orden_orden FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo)
+  CONSTRAINT fk_historico_estatus_orden_orden FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Orden_De_Reposicion.
 );
 
@@ -1510,11 +1510,11 @@ CREATE TABLE Factura (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Efectivo.
   CONSTRAINT fk_factura_punto_genera FOREIGN KEY (fk_punto) REFERENCES Punto (punto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Punto.
-  CONSTRAINT fk_factura_cliente_natural_contrae FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_factura_cliente_natural_contrae FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
-  CONSTRAINT fk_factura_cliente_juridico_adquiere FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
+  CONSTRAINT fk_factura_cliente_juridico_adquiere FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
+  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_factura_subtotal CHECK (factura_subtotal > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1662,7 +1662,7 @@ CREATE TABLE Detalle_Orden_De_Reposicion (
 
   CONSTRAINT pk_detalle_orden PRIMARY KEY (detalle_orden_codigo, fk_orden),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_detalle_orden_orden_especifica FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo),
+  CONSTRAINT fk_detalle_orden_orden_especifica FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Orden_De_Reposicion.
   CONSTRAINT fk_detalle_orden_inventario_almacen_compra FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
@@ -1690,7 +1690,7 @@ CREATE TABLE Detalle_Pedido (
 
   CONSTRAINT pk_detalle_pedido PRIMARY KEY (fk_pedido, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_detalle_pedido_pedido_esprocesado FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo),
+  CONSTRAINT fk_detalle_pedido_pedido_esprocesado FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pedido.
   CONSTRAINT fk_detalle_pedido_inventario_almacen_procesa FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
@@ -1730,7 +1730,7 @@ CREATE TABLE Detalle_Factura(
 
   CONSTRAINT pk_detalle_factura PRIMARY KEY (detalle_factura_codigo, fk_factura),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_detalle_factura_factura_precisa FOREIGN KEY (fk_factura) REFERENCES Factura (factura_codigo),
+  CONSTRAINT fk_detalle_factura_factura_precisa FOREIGN KEY (fk_factura) REFERENCES Factura (factura_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Factura.
   CONSTRAINT fk_detalle_factura_inventario_tienda_expide FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.

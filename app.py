@@ -1031,8 +1031,8 @@ def editar_cliente_natural(id):
 def delete_cliente_natural(id):
     cur = conn.cursor()
 
-    # cur.execute("DELETE FROM cliente_natural WHERE cliente_nat_codigo = %s", (id,))
-    print("entra n")
+    cur.execute("DELETE FROM cliente_natural WHERE cliente_nat_codigo = %s", (id,))
+    
     conn.commit()
     cur.close()
 
@@ -1423,7 +1423,7 @@ def editar_cliente_juridico(id):
 def delete_cliente_juridico(id):
     cur = conn.cursor()
 
-    # cur.execute("DELETE FROM cliente_juridico WHERE cliente_jur_codigo = %s", (id,))
+    cur.execute("DELETE FROM cliente_juridico WHERE cliente_jur_codigo = %s", (id,))
     print("entra j")
     conn.commit()
     cur.close()
