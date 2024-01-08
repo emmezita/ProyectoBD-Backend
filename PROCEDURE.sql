@@ -771,25 +771,6 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION actualizarAlmacen() 
-DECLARE
-    detalle RECORD;
-BEGIN
-    -- Check if the new status is 'paid'
-    IF NEW.fk_estatus_pedido = 2 THEN
-        -- Debemos buscar el detalle del pedido y hacer un loop para restar el inventario
-        FOR detalle IN SELECT * FROM detalle_pedido WHERE fk_pedido = NEW.fk_pedido LOOP
-            UPDATE inventario_almacen
-            SET inv_almacen_cantidad = inv_almacen_cantidad - detalle.detalle_pedido_cantidad
-            WHERE fk_almacen = detalle.fk_inventario_almacen_1  AND fk_presentacion_1 = detalle.fk_inventario_almacen_2 
-            AND fk_presentacion_2 = detalle.fk_inventario_almacen_3 AND fk_presentacion_3 = detalle.fk_inventario_almacen_4;
-        END LOOP;
-    END IF;
-
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
 -- Funcion para obtener las presentaciones de una factura
 CREATE OR REPLACE FUNCTION ObtenerPresentacionesDeFactura(_codigoFactura INT)
 RETURNS TABLE(codigo TEXT, nombre TEXT, cantidad INT, precio NUMERIC, imagen TEXT)
@@ -1541,3 +1522,9 @@ BEGIN
     RETURN NEXT presentaciones_cursor;
 END;
 $$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- LISTADO DE ACCIONES DE LOS USUARIOS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Funcion para obtener las acciones de los usuarios
