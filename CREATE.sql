@@ -1242,15 +1242,15 @@ CREATE TABLE Entrada (
 CREATE TABLE Cata (
   cata_codigo serial,
   -- Código identificador de la entidad Cata
-  cata_nombre varchar(20) NOT NULL,
+  cata_nombre varchar(50) NOT NULL,
   -- Nombre de la persona que escribio la Cata.
-  cata_fase_visual varchar(50) NOT NULL,
+  cata_fase_visual varchar(100) NOT NULL,
   -- Fase visual de la Cata.
-  cata_fase_olfativa varchar(50) NOT NULL,
+  cata_fase_olfativa varchar(100) NOT NULL,
   -- Fase olfativa de la Cata.
-  cata_fase_gustativa varchar(50) NOT NULL,
+  cata_fase_gustativa varchar(100) NOT NULL,
   -- Fase gustativa de la Cata.
-  cata_nota varchar(50),
+  cata_nota varchar(100),
   -- Nota de la Cata.
   fk_producto integer NOT NULL,
   -- Relación con la entidad Producto
@@ -1278,9 +1278,9 @@ CREATE TABLE Cata (
 CREATE TABLE Premio (
   premio_codigo serial,
   -- Código identificador de la entidad Premio
-  premio_nombre varchar(20) NOT NULL,
+  premio_nombre varchar(50) NOT NULL,
   -- Nombre del premio.
-  premio_descripcion varchar(50) NOT NULL,
+  premio_descripcion varchar(150) NOT NULL,
   -- Descripción del premio.
 
   CONSTRAINT pk_premio_codigo PRIMARY KEY (premio_codigo),

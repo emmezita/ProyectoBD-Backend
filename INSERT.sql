@@ -3234,180 +3234,180 @@ VALUES
 
 INSERT INTO Permiso (permiso_descripcion, permiso_tipo)
 VALUES
-  ('Consultar datos de cualquier producto','Producto'),
-  ('Crear nuevos productos','Producto'),
-  ('Actualizar datos de cualquier producto','Producto'),
-  ('Eliminar cualquier producto','Producto'),
-  ('Consultar datos de cualquier premio','Premio'),
-  ('Crear nuevos premios','Premio'),
-  ('Actualizar datos de cualquier premio','Premio'),
-  ('Eliminar cualquier premio','Premio'),
-  ('Consultar datos de cualquier clasificación','Clasificacion'),
-  ('Crear nuevas clasificaciones','Clasificacion'),
-  ('Actualizar datos de cualquier clasificación','Clasificacion'),
-  ('Eliminar cualquier clasificación','Clasificacion'),
-  ('Consultar datos de cualquier categoría','Categoria'),
-  ('Crear nuevas categorías','Categoria'),
-  ('Actualizar datos de cualquier categoría','Categoria'),
-  ('Eliminar cualquier categoría','Categoria'),
-  ('Consultar datos de cualquier servido','Servido'),
-  ('Crear nuevos servidos','Servido'),
-  ('Actualizar datos de cualquier servido','Servido'),
-  ('Eliminar cualquier servido','Servido'),
-  ('Consultar datos de cualquier sabor','Sabor'),
-  ('Crear nuevos sabores','Sabor'),
-  ('Actualizar datos de cualquier sabor','Sabor'),
-  ('Eliminar cualquier sabor','Sabor'),
-  ('Consultar datos de cualquier aroma','Aroma'),
-  ('Crear nuevos aromas','Aroma'),
-  ('Actualizar datos de cualquier aroma','Aroma'),
-  ('Eliminar cualquier aroma','Aroma'),
-  ('Consultar datos de cualquier color','Color'),
-  ('Crear nuevos colores','Color'),
-  ('Actualizar datos de cualquier color','Color'),
-  ('Eliminar cualquier color','Color'),
-  ('Consultar datos de cualquier ingrediente','Ingrediente'),
-  ('Crear nuevos ingredientes','Ingrediente'),
-  ('Actualizar datos de cualquier ingrediente','Ingrediente'),
-  ('Eliminar cualquier ingrediente','Ingrediente'),
-  ('Consultar datos de cualquier barrica','Barrica'),
-  ('Crear nuevas barricas','Barrica'),
-  ('Actualizar datos de cualquier barrica','Barrica'),
-  ('Eliminar cualquier barrica','Barrica'),
-  ('Consultar datos de cualquier añejamiento','Añejamiento'),
-  ('Crear nuevos añejamientos','Añejamiento'),
-  ('Actualizar datos de cualquier añejamiento','Añejamiento'),
-  ('Eliminar cualquier añejamiento','Añejamiento'),
-  ('Consultar datos de cualquier destilación','Destilacion'),
-  ('Crear nuevas destilaciones','Destilacion'),
-  ('Actualizar datos de cualquier destilación','Destilacion'),
-  ('Eliminar cualquier destilación','Destilacion'),
-  ('Consultar datos de cualquier fermentación','Fermentacion'),
-  ('Crear nuevas fermentaciones','Fermentacion'),
-  ('Actualizar datos de cualquier fermentación','Fermentacion'),
-  ('Eliminar cualquier fermentación','Fermentacion'),
-  ('Consultar datos de cualquier diario ronero','Diario Ronero'),
-  ('Crear nuevos diarios roneros','Diario Ronero'),
-  ('Actualizar datos de cualquier diario ronero','Diario Ronero'),
-  ('Eliminar cualquier diario ronero','Diario Ronero'),
-  ('Consultar datos de cualquier tapa','Tapa'),
-  ('Crear nuevas tapas','Tapa'),
-  ('Actualizar datos de cualquier tapa','Tapa'),
-  ('Eliminar cualquier tapa','Tapa'),
-  ('Consultar datos de cualquier caja','Caja'),
-  ('Crear nuevas cajas','Caja'),
-  ('Actualizar datos de cualquier caja','Caja'),
-  ('Eliminar cualquier caja','Caja'),
-  ('Consultar datos de cualquier material','Material'),
-  ('Crear nuevos materiales','Material'),
-  ('Actualizar datos de cualquier material','Material'),
-  ('Eliminar cualquier material','Material'),
-  ('Consultar datos de cualquier botella','Botella'),
-  ('Crear nuevas botellas','Botella'),
-  ('Actualizar datos de cualquier botella','Botella'),
-  ('Eliminar cualquier botella','Botella'),
-  ('Consultar datos de cualquier cata','Cata'),
-  ('Crear nuevas catas','Cata'),
-  ('Actualizar datos de cualquier cata','Cata'),
-  ('Eliminar cualquier cata','Cata'),
-  ('Consultar datos de cualquier evento','Evento'),
-  ('Crear nuevos eventos','Evento'),
-  ('Actualizar datos de cualquier evento','Evento'),
-  ('Eliminar cualquier evento','Evento'),
-  ('Consultar datos de cualquier pago de entrada','Pago Entrada'),
-  ('Crear nuevos pagos de entrada','Pago Entrada'),
-  ('Actualizar datos de cualquier pago de entrada','Pago Entrada'),
-  ('Eliminar cualquier pago de entrada','Pago Entrada'),
-  ('Consultar datos de cualquier histórico de precio de venta','HistoricoPrecioVenta'),
-  ('Consultar datos de cualquier histórico de precio de compra','HistoricoPrecioCompra'),
-  ('Consultar datos de cualquier histórico de tasa de dólar','HistoricoTasaDolar'),
-  ('Consultar datos de cualquier inventario de tienda','Inventario Tienda'),
-  ('Actualizar datos de cualquier inventario de tienda','Inventario Tienda'),
-  ('Consultar datos de cualquier inventario de almacén','Inventario Almacen'),
-  ('Actualizar datos de cualquier inventario de almacén','Inventario Almacen'),
-  ('Consultar datos de cualquier inventario de eventos','Inventario Eventos'),
-  ('Actualizar datos de cualquier inventario de eventos','Inventario Eventos'),
-  ('Consultar datos de cualquier factura','Factura'),
-  ('Crear nuevas facturas','Factura'),
-  ('Actualizar datos de cualquier factura','Factura'),
-  ('Eliminar cualquier factura','Factura'),
-  ('Consultar datos de cualquier pedido','Pedido'),
-  ('Crear nuevos pedidos','Pedido'),
-  ('Actualizar datos de cualquier pedido','Pedido'),
-  ('Eliminar cualquier pedido','Pedido'),
+  ('Consultar datos de cualquier producto','Producto'), --1
+  ('Crear nuevos productos','Producto'), --2
+  ('Actualizar datos de cualquier producto','Producto'), --3
+  ('Eliminar cualquier producto','Producto'), --4
+  ('Consultar datos de cualquier premio','Premio'), --5
+  ('Crear nuevos premios','Premio'), --6
+  ('Actualizar datos de cualquier premio','Premio'), --7
+  ('Eliminar cualquier premio','Premio'), --8
+  ('Consultar datos de cualquier clasificación','Clasificacion'), --9
+  ('Crear nuevas clasificaciones','Clasificacion'), --10
+  ('Actualizar datos de cualquier clasificación','Clasificacion'), --11
+  ('Eliminar cualquier clasificación','Clasificacion'), --12
+  ('Consultar datos de cualquier categoría','Categoria'), --13
+  ('Crear nuevas categorías','Categoria'), --14
+  ('Actualizar datos de cualquier categoría','Categoria'), --15
+  ('Eliminar cualquier categoría','Categoria'), --16
+  ('Consultar datos de cualquier servido','Servido'), --17
+  ('Crear nuevos servidos','Servido'), --18
+  ('Actualizar datos de cualquier servido','Servido'), --19
+  ('Eliminar cualquier servido','Servido'), --20
+  ('Consultar datos de cualquier sabor','Sabor'), --21
+  ('Crear nuevos sabores','Sabor'), --22
+  ('Actualizar datos de cualquier sabor','Sabor'), --23
+  ('Eliminar cualquier sabor','Sabor'), --24
+  ('Consultar datos de cualquier aroma','Aroma'), --25
+  ('Crear nuevos aromas','Aroma'), --26
+  ('Actualizar datos de cualquier aroma','Aroma'), --27
+  ('Eliminar cualquier aroma','Aroma'), --28
+  ('Consultar datos de cualquier color','Color'), --29
+  ('Crear nuevos colores','Color'), --30
+  ('Actualizar datos de cualquier color','Color'), --31
+  ('Eliminar cualquier color','Color'), --32
+  ('Consultar datos de cualquier ingrediente','Ingrediente'), --33
+  ('Crear nuevos ingredientes','Ingrediente'), --34
+  ('Actualizar datos de cualquier ingrediente','Ingrediente'), --35
+  ('Eliminar cualquier ingrediente','Ingrediente'), --36
+  ('Consultar datos de cualquier barrica','Barrica'), --37
+  ('Crear nuevas barricas','Barrica'), --38
+  ('Actualizar datos de cualquier barrica','Barrica'), --39
+  ('Eliminar cualquier barrica','Barrica'), --40
+  ('Consultar datos de cualquier añejamiento','Añejamiento'), --41
+  ('Crear nuevos añejamientos','Añejamiento'), --42
+  ('Actualizar datos de cualquier añejamiento','Añejamiento'), --43
+  ('Eliminar cualquier añejamiento','Añejamiento'), --44
+  ('Consultar datos de cualquier destilación','Destilacion'), --45
+  ('Crear nuevas destilaciones','Destilacion'), --46
+  ('Actualizar datos de cualquier destilación','Destilacion'), --47
+  ('Eliminar cualquier destilación','Destilacion'), --48
+  ('Consultar datos de cualquier fermentación','Fermentacion'), --49
+  ('Crear nuevas fermentaciones','Fermentacion'), --50
+  ('Actualizar datos de cualquier fermentación','Fermentacion'), --51
+  ('Eliminar cualquier fermentación','Fermentacion'), --52
+  ('Consultar datos de cualquier diario ronero','Diario Ronero'), --53
+  ('Crear nuevos diarios roneros','Diario Ronero'), --54
+  ('Actualizar datos de cualquier diario ronero','Diario Ronero'), --55
+  ('Eliminar cualquier diario ronero','Diario Ronero'), --56
+  ('Consultar datos de cualquier tapa','Tapa'), --57
+  ('Crear nuevas tapas','Tapa'), --58
+  ('Actualizar datos de cualquier tapa','Tapa'), --59
+  ('Eliminar cualquier tapa','Tapa'), --60
+  ('Consultar datos de cualquier caja','Caja'), --61
+  ('Crear nuevas cajas','Caja'), --62
+  ('Actualizar datos de cualquier caja','Caja'), --63
+  ('Eliminar cualquier caja','Caja'), --64
+  ('Consultar datos de cualquier material','Material'), --65
+  ('Crear nuevos materiales','Material'), --66
+  ('Actualizar datos de cualquier material', 'Material'), --67
+  ('Eliminar cualquier material','Material'), --68
+  ('Consultar datos de cualquier botella','Botella'), --69
+  ('Crear nuevas botellas','Botella'), --70
+  ('Actualizar datos de cualquier botella','Botella'), --71
+  ('Eliminar cualquier botella','Botella'), --72
+  ('Consultar datos de cualquier cata','Cata'), --73
+  ('Crear nuevas catas','Cata'), --74
+  ('Actualizar datos de cualquier cata','Cata'), --75
+  ('Eliminar cualquier cata','Cata'), --76
+  ('Consultar datos de cualquier evento','Evento'), --77
+  ('Crear nuevos eventos','Evento'), --78
+  ('Actualizar datos de cualquier evento','Evento'), --79
+  ('Eliminar cualquier evento','Evento'), --80
+  ('Consultar datos de cualquier pago de entrada','Pago Entrada'), --81
+  ('Crear nuevos pagos de entrada','Pago Entrada'), --82
+  ('Actualizar datos de cualquier pago de entrada','Pago Entrada'), --83
+  ('Eliminar cualquier pago de entrada','Pago Entrada'), --84
+  ('Consultar datos de cualquier histórico de precio de venta','HistoricoPrecioVenta'), --85
+  ('Consultar datos de cualquier histórico de precio de compra','HistoricoPrecioCompra'), --86
+  ('Consultar datos de cualquier histórico de tasa de dólar','HistoricoTasaDolar'), --87
+  ('Consultar datos de cualquier inventario de tienda','Inventario Tienda'), --88
+  ('Actualizar datos de cualquier inventario de tienda','Inventario Tienda'), --89
+  ('Consultar datos de cualquier inventario de almacén','Inventario Almacen'), --90
+  ('Actualizar datos de cualquier inventario de almacén','Inventario Almacen'), --91
+  ('Consultar datos de cualquier inventario de eventos','Inventario Eventos'), --92
+  ('Actualizar datos de cualquier inventario de eventos','Inventario Eventos'), --93
+  ('Consultar datos de cualquier factura','Factura'), --94
+  ('Crear nuevas facturas','Factura'), --95
+  ('Actualizar datos de cualquier factura','Factura'), --96
+  ('Eliminar cualquier factura','Factura'), --97
+  ('Consultar datos de cualquier pedido','Pedido'), --98
+  ('Crear nuevos pedidos','Pedido'), --99
+  ('Actualizar datos de cualquier pedido','Pedido'), --100
+  ('Eliminar cualquier pedido','Pedido'), --101
   ('Consultar datos de cualquier orden de reposición','Orden Reposicion'), --102
-  ('Crear nuevas órdenes de reposición','Orden Reposicion'),
-  ('Actualizar datos de cualquier orden de reposición','Orden Reposicion'),
-  ('Eliminar cualquier orden de reposición','Orden Reposicion'),
-  ('Consultar datos de cualquier estatus de orden','Estatus Orden'),
-  ('Crear nuevos estatus de orden','Estatus Orden'),
-  ('Actualizar datos de cualquier estatus de orden','Estatus Orden'),
+  ('Crear nuevas órdenes de reposición','Orden Reposicion'), --103
+  ('Actualizar datos de cualquier orden de reposición','Orden Reposicion'), --104
+  ('Eliminar cualquier orden de reposición','Orden Reposicion'), --105
+  ('Consultar datos de cualquier estatus de orden','Estatus Orden'), --106
+  ('Crear nuevos estatus de orden','Estatus Orden'), --107
+  ('Actualizar datos de cualquier estatus de orden','Estatus Orden'), --108
   ('Eliminar datos de cualquier estatus de orden', 'Estatus Orden'), --109
-  ('Consultar datos de cualquier estatus de pedido','Estatus Pedido'),
-  ('Crear nuevos estatus de pedido','Estatus Pedido'),
-  ('Actualizar datos de cualquier estatus de pedido','Estatus Pedido'),
-  ('Eliminar datos de cualquier estatus de pedido', 'Estatus Pedido'),
-  ('Consultar datos de cualquier clientes jurídico', 'Cliente Juridico'),
-  ('Crear nuevos clientes jurídicos', 'Cliente Juridico'),
-  ('Actualizar datos de cualquier clientes jurídico', 'Cliente Juridico'),
-  ('Eliminar datos de cualquier clientes jurídico', 'Cliente Juridico'),
-  ('Consultar datos de cualquier clientes natural', 'Cliente Natural'),
-  ('Crear nuevos clientes natural', 'Cliente Natural'),
-  ('Actualizar datos de cualquier clientes natural', 'Cliente Natural'),
-  ('Eliminar datos de cualquier clientes natural', 'Cliente Natural'),
-  ('Consultar datos de cualquier proveedor', 'Proveedor'),
-  ('Crear nuevos proveedores', 'Proveedor'),
-  ('Actualizar datos de cualquier proveedor', 'Proveedor'),
-  ('Eliminar datos de cualquier proveedor', 'Proveedor'),
-  ('Consultar datos de cualquier empleado', 'Empleado'),
-  ('Crear nuevos empleados', 'Empleado'),
-  ('Actualizar datos de cualquier empleado', 'Empleado'),
-  ('Eliminar datos de cualquier empleado', 'Empleado'),
-  ('Consultar datos de cualquier departamento', 'Departamento'),
-  ('Crear nuevos departamentos', 'Departamento'),
-  ('Actualizar datos de cualquier departamento', 'Departamento'),
-  ('Eliminar datos de cualquier departamento', 'Departamento'),
-  ('Consultar datos de cualquier horario', 'Horario'),
-  ('Crear nuevos horarios', 'Horario'),
-  ('Actualizar datos de cualquier horario', 'Horario'),
-  ('Eliminar datos de cualquier horario', 'Horario'),
-  ('Consultar datos de cualquier cargo', 'Cargo'),
-  ('Crear nuevos cargos', 'Cargo'),
-  ('Actualizar datos de cualquier cargo', 'Cargo'),
-  ('Eliminar datos de cualquier cargo', 'Cargo'),
-  ('Consultar datos de cualquier beneficio', 'Beneficio'),
-  ('Crear nuevos beneficios', 'Beneficio'),
-  ('Actualizar datos de cualquier beneficio', 'Beneficio'),
-  ('Eliminar datos de cualquier beneficio', 'Beneficio'),
-  ('Consultar datos de cualquier banco', 'Banco'),
-  ('Crear nuevos bancos', 'Banco'),
-  ('Actualizar datos de cualquier banco', 'Banco'),
-  ('Eliminar datos de cualquier banco', 'Banco'),
-  ('Consultar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'),
-  ('Crear nuevos fichas de afiliación', 'Ficha Afiliacion'),
-  ('Actualizar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'),
-  ('Eliminar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'),
-  ('Consultar datos de cualquier pago por afiliación', 'Pago de Afiliacion'),
-  ('Crear nuevos pagos por afiliación', 'Pago de Afiliacion'),
-  ('Actualizar datos de cualquier pago por afiliación', 'Pago de Afiliacion'),
-  ('Eliminar datos de cualquier pago por afiliación', 'Pago de Afiliacion'),
-  ('Consultar datos de cualquier rol', 'Rol'),
-  ('Crear nuevos roles', 'Rol'),
-  ('Actualizar datos de cualquier rol', 'Rol'),
-  ('Eliminar datos de cualquier rol', 'Rol'),
-  ('Consultar datos de cualquier usuario', 'Usuario'),
-  ('Crear nuevos usuarios', 'Usuario'),
-  ('Actualizar datos de cualquier usuario', 'Usuario'),
-  ('Eliminar datos de cualquier usuario', 'Usuario'),
-  ('Consultar acciones de usuario', 'Usuario'),
-  ('Consultar datos de cualquier permiso', 'Permiso'),
-  ('Crear nuevos permisos', 'Permiso'),
-  ('Actualizar datos de cualquier permiso', 'Permiso'),
-  ('Eliminar datos de cualquier permiso', 'Permiso'),
-  ('Consultar datos de cualquier metodo de pago', 'Metodos de Pago'),
-  ('Crear nuevos metodos de pago', 'Metodos de Pago'),
-  ('Actualizar datos de cualquier metodo de pago', 'Metodos de Pago'),
-  ('Eliminar datos de cualquier metodo de pago', 'Metodos de Pago');
+  ('Consultar datos de cualquier estatus de pedido','Estatus Pedido'), --110
+  ('Crear nuevos estatus de pedido','Estatus Pedido'), --111
+  ('Actualizar datos de cualquier estatus de pedido','Estatus Pedido'), --112
+  ('Eliminar datos de cualquier estatus de pedido', 'Estatus Pedido'), --113
+  ('Consultar datos de cualquier clientes jurídico', 'Cliente Juridico'), --114
+  ('Crear nuevos clientes jurídicos', 'Cliente Juridico'), --115
+  ('Actualizar datos de cualquier clientes jurídico', 'Cliente Juridico'), --116
+  ('Eliminar datos de cualquier clientes jurídico', 'Cliente Juridico'), --117
+  ('Consultar datos de cualquier clientes natural', 'Cliente Natural'), --118
+  ('Crear nuevos clientes natural', 'Cliente Natural'), --119
+  ('Actualizar datos de cualquier clientes natural', 'Cliente Natural'), --120
+  ('Eliminar datos de cualquier clientes natural', 'Cliente Natural'), --121
+  ('Consultar datos de cualquier proveedor', 'Proveedor'), --122
+  ('Crear nuevos proveedores', 'Proveedor'), --123
+  ('Actualizar datos de cualquier proveedor', 'Proveedor'), --124
+  ('Eliminar datos de cualquier proveedor', 'Proveedor'), --125
+  ('Consultar datos de cualquier empleado', 'Empleado'), --126
+  ('Crear nuevos empleados', 'Empleado'), --127
+  ('Actualizar datos de cualquier empleado', 'Empleado'), --128
+  ('Eliminar datos de cualquier empleado', 'Empleado'), --129
+  ('Consultar datos de cualquier departamento', 'Departamento'), --130
+  ('Crear nuevos departamentos', 'Departamento'), --131
+  ('Actualizar datos de cualquier departamento', 'Departamento'), --132
+  ('Eliminar datos de cualquier departamento', 'Departamento'), --133
+  ('Consultar datos de cualquier horario', 'Horario'), --134
+  ('Crear nuevos horarios', 'Horario'), --135
+  ('Actualizar datos de cualquier horario', 'Horario'), --136
+  ('Eliminar datos de cualquier horario', 'Horario'), --137
+  ('Consultar datos de cualquier cargo', 'Cargo'), --138
+  ('Crear nuevos cargos', 'Cargo'), --139
+  ('Actualizar datos de cualquier cargo', 'Cargo'), --140
+  ('Eliminar datos de cualquier cargo', 'Cargo'), --141
+  ('Consultar datos de cualquier beneficio', 'Beneficio'), --142
+  ('Crear nuevos beneficios', 'Beneficio'), --143
+  ('Actualizar datos de cualquier beneficio', 'Beneficio'), --144
+  ('Eliminar datos de cualquier beneficio', 'Beneficio'), --145
+  ('Consultar datos de cualquier banco', 'Banco'), --146
+  ('Crear nuevos bancos', 'Banco'), --147
+  ('Actualizar datos de cualquier banco', 'Banco'), --148
+  ('Eliminar datos de cualquier banco', 'Banco'), --149
+  ('Consultar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'), --150
+  ('Crear nuevos fichas de afiliación', 'Ficha Afiliacion'), --151
+  ('Actualizar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'), --152
+  ('Eliminar datos de cualquier ficha de afiliación', 'Ficha Afiliacion'), --153
+  ('Consultar datos de cualquier pago por afiliación', 'Pago de Afiliacion'), --154
+  ('Crear nuevos pagos por afiliación', 'Pago de Afiliacion'), --155
+  ('Actualizar datos de cualquier pago por afiliación', 'Pago de Afiliacion'), --156
+  ('Eliminar datos de cualquier pago por afiliación', 'Pago de Afiliacion'), --157
+  ('Consultar datos de cualquier rol', 'Rol'), --158
+  ('Crear nuevos roles', 'Rol'), --159
+  ('Actualizar datos de cualquier rol', 'Rol'), --160
+  ('Eliminar datos de cualquier rol', 'Rol'), --161
+  ('Consultar datos de cualquier usuario', 'Usuario'), --162
+  ('Crear nuevos usuarios', 'Usuario'), --163
+  ('Actualizar datos de cualquier usuario', 'Usuario'), --164
+  ('Eliminar datos de cualquier usuario', 'Usuario'), --165
+  ('Consultar acciones de usuario', 'Usuario'), --166
+  ('Consultar datos de cualquier permiso', 'Permiso'), --167
+  ('Crear nuevos permisos', 'Permiso'), --168
+  ('Actualizar datos de cualquier permiso', 'Permiso'), --169
+  ('Eliminar datos de cualquier permiso', 'Permiso'), --170
+  ('Consultar datos de cualquier metodo de pago', 'Metodos de Pago'), --171
+  ('Crear nuevos metodos de pago', 'Metodos de Pago'), --172
+  ('Actualizar datos de cualquier metodo de pago', 'Metodos de Pago'), --173
+  ('Eliminar datos de cualquier metodo de pago', 'Metodos de Pago'); --174
 
 INSERT INTO Rol (rol_nombre)
 VALUES
@@ -3426,11 +3426,46 @@ VALUES
   ('Empleado ventas'),
   ('Empleado promoción'),
   ('Empleado administración'),
-  ('Seguridad'),
   ('Empleado almacén');
 
 INSERT INTO Rol_Permiso (fk_rol, fk_permiso)
 VALUES
+  (1, 114),
+  (1, 115),
+  (1, 116),
+  (1, 117),
+  (1, 118),
+  (1, 119),
+  (1, 120),
+  (1, 121),
+  (1, 122),
+  (1, 123),
+  (1, 124),
+  (1, 125),
+  (1, 126),
+  (1, 127),
+  (1, 128),
+  (1, 129),
+  (1, 130),
+  (1, 131),
+  (1, 132),
+  (1, 133),
+  (1, 134),
+  (1, 135),
+  (1, 136),
+  (1, 137),
+  (1, 138),
+  (1, 139),
+  (1, 140),
+  (1, 141),
+  (1, 142),
+  (1, 143),
+  (1, 144),
+  (1, 145),
+  (1, 150),
+  (1, 151),
+  (1, 152),
+  (1, 153),
   (2, 102),
   (2, 103),
   (2, 104),
@@ -3438,7 +3473,453 @@ VALUES
   (2, 106),
   (2, 107),
   (2, 108),
-  (2, 109);
+  (2, 109),
+  (3, 80),
+  (3, 81),
+  (3, 82),
+  (3, 83),
+  (3, 84),
+  (3, 85),
+  (3, 86),
+  (3, 87),
+  (3, 88),
+  (3, 89),
+  (3, 90),
+  (3, 91),
+  (3, 92),
+  (3, 93),
+  (3, 94),
+  (3, 95),
+  (3, 96),
+  (3, 97),
+  (3, 98),
+  (3, 99),
+  (3, 100),
+  (3, 101),
+  (4, 53),
+  (4, 54),
+  (4, 55),
+  (4, 56),
+  (5, 1),
+  (5, 2),
+  (5, 3),
+  (5, 4),
+  (5, 6),
+  (5, 7),
+  (5, 8),
+  (5, 9),
+  (5, 10),
+  (5, 11),
+  (5, 12),
+  (5, 13),
+  (5, 14),
+  (5, 15),
+  (5, 16),
+  (5, 17),
+  (5, 18),
+  (5, 19),
+  (5, 20),
+  (5, 21),
+  (5, 22),
+  (5, 23),
+  (5, 24),
+  (5, 25),
+  (5, 26),
+  (5, 27),
+  (5, 28),
+  (5, 29),
+  (5, 30),
+  (5, 31),
+  (5, 32),
+  (5, 33),
+  (5, 34),
+  (5, 35),
+  (5, 36),
+  (5, 37),
+  (5, 38),
+  (5, 39),
+  (5, 40),
+  (5, 41),
+  (5, 42),
+  (5, 43),
+  (5, 44),
+  (5, 45),
+  (5, 46),
+  (5, 47),
+  (5, 48),
+  (5, 49),
+  (5, 50),
+  (5, 51),
+  (5, 52),
+  (5, 57),
+  (5, 58),
+  (5, 59),
+  (5, 60),
+  (5, 61),
+  (5, 62),
+  (5, 63),
+  (5, 64),
+  (5, 65),
+  (5, 66),
+  (5, 67),
+  (5, 68),
+  (5, 69),
+  (5, 70),
+  (5, 71),
+  (5, 72),
+  (5, 73),
+  (5, 74),
+  (5, 75),
+  (5, 76),
+  (5, 77),
+  (5, 78),
+  (5, 79),
+  (5, 80),
+  (5, 81),
+  (5, 82),
+  (5, 83),
+  (5, 84),
+  (5, 85),
+  (5, 86),
+  (5, 87),
+  (5, 88),
+  (5, 89),
+  (5, 90),
+  (5, 91),
+  (5, 92),
+  (5, 93),
+  (5, 94),
+  (5, 95),
+  (5, 96),
+  (5, 97),
+  (5, 98),
+  (5, 99),
+  (5, 100),
+  (5, 101),
+  (5, 102),
+  (5, 103),
+  (5, 104),
+  (5, 105),
+  (5, 106),
+  (5, 107),
+  (5, 108),
+  (5, 109),
+  (5, 110),
+  (5, 111),
+  (5, 112),
+  (5, 113),
+  (5, 114),
+  (5, 115),
+  (5, 116),
+  (5, 117),
+  (5, 118),
+  (5, 119),
+  (5, 120),
+  (5, 121),
+  (5, 122),
+  (5, 123),
+  (5, 124),
+  (5, 125),
+  (5, 126),
+  (5, 127),
+  (5, 128),
+  (5, 129),
+  (5, 130),
+  (5, 131),
+  (5, 132),
+  (5, 133),
+  (5, 134),
+  (5, 135),
+  (5, 136),
+  (5, 137),
+  (5, 138),
+  (5, 139),
+  (5, 140),
+  (5, 141),
+  (5, 142),
+  (5, 143),
+  (5, 144),
+  (5, 145),
+  (5, 150),
+  (5, 151),
+  (5, 152),
+  (5, 153),
+  (5, 154),
+  (5, 155),
+  (5, 156),
+  (5, 157),
+  (5, 158),
+  (5, 159),
+  (5, 160),
+  (5, 161),
+  (5, 162),
+  (5, 163),
+  (5, 164),
+  (5, 165),
+  (5, 166),
+  (5, 167),
+  (5, 168),
+  (5, 169),
+  (5, 170),
+  (5, 171),
+  (5, 172),
+  (5, 173),
+  (5, 174),
+  (6, 90),
+  (6, 91),
+  (7, 100),
+  (8, 1),
+  (8, 5),
+  (8, 53),
+  (8, 77),
+  (8, 155),
+  (9, 1),
+  (9, 5),
+  (9, 53),
+  (9, 77),
+  (9, 155),
+  (10, 1),
+  (10, 5),
+  (10, 53),
+  (10, 77),
+  (10, 155),
+  (11, 114),
+  (11, 115),
+  (11, 116),
+  (11, 117),
+  (11, 118),
+  (11, 119),
+  (11, 120),
+  (11, 121),
+  (11, 122),
+  (11, 123),
+  (11, 124),
+  (11, 125),
+  (11, 126),
+  (11, 127),
+  (11, 128),
+  (11, 129),
+  (11, 130),
+  (11, 131),
+  (11, 132),
+  (11, 133),
+  (11, 134),
+  (11, 135),
+  (11, 136),
+  (11, 137),
+  (11, 138),
+  (11, 139),
+  (11, 140),
+  (11, 141),
+  (11, 142),
+  (11, 143),
+  (11, 144),
+  (11, 145),
+  (11, 150),
+  (11, 151),
+  (11, 152),
+  (11, 153),
+  (12, 102),
+  (12, 103),
+  (12, 104),
+  (12, 105),
+  (12, 106),
+  (12, 107),
+  (12, 108),
+  (12, 109),
+  (13, 80),
+  (13, 81),
+  (13, 82),
+  (13, 83),
+  (13, 84),
+  (13, 85),
+  (13, 86),
+  (13, 87),
+  (13, 88),
+  (13, 89),
+  (13, 90),
+  (13, 91),
+  (13, 92),
+  (13, 93),
+  (13, 94),
+  (13, 95),
+  (13, 96),
+  (13, 97),
+  (13, 98),
+  (13, 99),
+  (13, 100),
+  (13, 101),
+  (14, 53),
+  (14, 54),
+  (14, 55),
+  (14, 56),
+  (15, 1),
+  (15, 2),
+  (15, 3),
+  (15, 4),
+  (15, 6),
+  (15, 7),
+  (15, 8),
+  (15, 9),
+  (15, 10),
+  (15, 11),
+  (15, 12),
+  (15, 13),
+  (15, 14),
+  (15, 15),
+  (15, 16),
+  (15, 17),
+  (15, 18),
+  (15, 19),
+  (15, 20),
+  (15, 21),
+  (15, 22),
+  (15, 23),
+  (15, 24),
+  (15, 25),
+  (15, 26),
+  (15, 27),
+  (15, 28),
+  (15, 29),
+  (15, 30),
+  (15, 31),
+  (15, 32),
+  (15, 33),
+  (15, 34),
+  (15, 35),
+  (15, 36),
+  (15, 37),
+  (15, 38),
+  (15, 39),
+  (15, 40),
+  (15, 41),
+  (15, 42),
+  (15, 43),
+  (15, 44),
+  (15, 45),
+  (15, 46),
+  (15, 47),
+  (15, 48),
+  (15, 49),
+  (15, 50),
+  (15, 51),
+  (15, 52),
+  (15, 57),
+  (15, 58),
+  (15, 59),
+  (15, 60),
+  (15, 61),
+  (15, 62),
+  (15, 63),
+  (15, 64),
+  (15, 65),
+  (15, 66),
+  (15, 67),
+  (15, 68),
+  (15, 69),
+  (15, 70),
+  (15, 71),
+  (15, 72),
+  (15, 73),
+  (15, 74),
+  (15, 75),
+  (15, 76),
+  (15, 77),
+  (15, 78),
+  (15, 79),
+  (15, 80),
+  (15, 81),
+  (15, 82),
+  (15, 83),
+  (15, 84),
+  (15, 85),
+  (15, 86),
+  (15, 87),
+  (15, 88),
+  (15, 89),
+  (15, 90),
+  (15, 91),
+  (15, 92),
+  (15, 93),
+  (15, 94),
+  (15, 95),
+  (15, 96),
+  (15, 97),
+  (15, 98),
+  (15, 99),
+  (15, 100),
+  (15, 101),
+  (15, 102),
+  (15, 103),
+  (15, 104),
+  (15, 105),
+  (15, 106),
+  (15, 107),
+  (15, 108),
+  (15, 109),
+  (15, 110),
+  (15, 111),
+  (15, 112),
+  (15, 113),
+  (15, 114),
+  (15, 115),
+  (15, 116),
+  (15, 117),
+  (15, 118),
+  (15, 119),
+  (15, 120),
+  (15, 121),
+  (15, 122),
+  (15, 123),
+  (15, 124),
+  (15, 125),
+  (15, 126),
+  (15, 127),
+  (15, 128),
+  (15, 129),
+  (15, 130),
+  (15, 131),
+  (15, 132),
+  (15, 133),
+  (15, 134),
+  (15, 135),
+  (15, 136),
+  (15, 137),
+  (15, 138),
+  (15, 139),
+  (15, 140),
+  (15, 141),
+  (15, 142),
+  (15, 143),
+  (15, 144),
+  (15, 145),
+  (15, 150),
+  (15, 151),
+  (15, 152),
+  (15, 153),
+  (15, 154),
+  (15, 155),
+  (15, 156),
+  (15, 157),
+  (15, 158),
+  (15, 159),
+  (15, 160),
+  (15, 161),
+  (15, 162),
+  (15, 163),
+  (15, 164),
+  (15, 165),
+  (15, 166),
+  (15, 167),
+  (15, 168),
+  (15, 169),
+  (15, 170),
+  (15, 171),
+  (15, 172),
+  (15, 173),
+  (15, 174),
+  (16, 90),
+  (16, 91);
 
 INSERT INTO Usuario (usuario_nombre, usuario_contrasena, fk_persona_natural, fk_persona_juridica, fk_rol)
 VALUES
@@ -3448,6 +3929,18 @@ VALUES
   ('monicag', '123456', 10, NULL, 2),
   ('luisA', '123456', 21, NULL, 9),
   ('mariajo', '123456', 26, NULL, 9);
+
+INSERT INTO Accion (accion_fecha_hora, accion_detalle, fk_usuario)
+VALUES
+  ('2024-01-08 12:00:00', 'Ingresó al sistema', 1),
+  ('2024-01-08 12:01:00', 'Creó un pedido', 1),
+  ('2024-01-08 12:02:00', 'Modificó un pedido', 1),
+  ('2024-01-08 12:03:00', 'Realizó un pago', 1),
+  ('2024-01-08 12:04:00', 'Agrego una tarjeta de crédito', 1),
+  ('2024-01-08 12:05:00', 'Eliminó una tarjeta de crédito', 1),
+  ('2024-01-08 12:06:00', 'Creó un pedido', 2),
+  ('2024-01-08 12:07:00', 'Consultó tarjetas de crédito', 2),
+  ('2024-01-08 12:08:00', 'Cerró sesión', 2);
 
 INSERT INTO Banco (banco_nombre)
 VALUES
@@ -3594,6 +4087,29 @@ VALUES
   ('2017-02-05', NULL, 18),
   ('2018-04-22', NULL, 19),
   ('2019-06-18', NULL, 20);
+
+INSERT INTO Vacacion (vacacion_fecha_inicio, vacacion_fecha_cierre, vacacion_total_dias, fk_contrato_empleo)
+VALUES
+  ('2024-01-08', '2024-01-14', 7, 1),
+  ('2024-01-15', '2024-01-21', 7, 2),
+  ('2024-01-22', '2024-01-28', 7, 3),
+  ('2024-01-29', '2024-02-04', 7, 4),
+  ('2024-02-05', '2024-02-11', 7, 5),
+  ('2024-02-12', '2024-02-18', 7, 6),
+  ('2024-02-19', '2024-02-25', 7, 7),
+  ('2024-02-26', '2024-03-04', 7, 8),
+  ('2024-03-05', '2024-03-11', 7, 9);
+
+INSERT INTO Empleado_Entrada_Salida (emp_ent_sal_fecha_hora_entrada, emp_ent_sal_fecha_hora_salida, fk_contrato_empleo)
+VALUES
+  ('2023-05-9 10:30:00', '2023-05-9 19:00:00', 15),
+  ('2023-05-10 09:00:00', '2023-05-10 18:00:00', 6),
+  ('2023-05-8 08:00:00', '2023-05-8 16:30:00', 20),
+  ('2023-05-12 07:00:00', '2023-05-12 16:30:00', 15),
+  ('2023-05-17 10:00:00', '2023-05-17 18:00:00', 16),
+  ('2023-05-15 8:30:00', '2023-05-15 16:30:00', 20),
+  ('2023-05-16 10:15:00', '2023-05-16 18:15:00', 15);
+
 
 INSERT INTO Beneficio (beneficio_nombre, beneficio_descripcion, beneficio_tipo)
 VALUES
@@ -4521,17 +5037,38 @@ VALUES
   (1.15, 7, 2, 16, 1, 8), --SANTA TERESA LINAJE
   (1.6, 7, 2, 17, 2, 11); --SANTA TERESA ARAKÚ
 
+INSERT INTO Diario_Ronero (diario_fecha)
+VALUES
+  ('2024-01-08'),
+  ('2024-01-15'),
+  ('2024-01-22'),
+  ('2024-01-29'),
+  ('2024-02-05');
+
+INSERT INTO Descuento (descuento_porcentaje, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3, fk_diario_ronero)
+VALUES
+  (10.00, 9, 2, 18, 1),
+  (15.00, 9, 2, 9, 1),
+  (20.00, 6, 2, 5, 2),
+  (25.00, 6, 2, 1, 2),
+  (30.00, 7, 2, 16, 3),
+  (35.00, 9, 2, 10, 3),
+  (40.00, 9, 6, 13, 4),
+  (45.00, 7, 2, 23, 4),
+  (50.00, 6, 2, 24, 5),
+  (55.00, 9, 2, 15, 5);
+
 INSERT INTO Evento (evento_nombre, evento_descripcion, evento_num_entradas, evento_fecha_inicio, evento_fecha_cierre, evento_direccion, evento_num_cupos, fk_lugar)
 VALUES
-  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 0, '2023-02-15', '2023-02-16', 'Calle Principal 123', 150, 694),
-  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 0, '2023-03-20', '2023-03-21', 'Avenida Principal 456', 250, 695),
-  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 0, '2023-04-10', '2023-04-11', 'Calle Secundaria 789', 100, 696),
-  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 0, '2023-06-25', '2023-06-26', 'Playa Principal, Frente al Mar', 400, 697),
-  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 0, '2023-07-10', '2023-07-11', 'Calle del Chocolate 123', 70, 698),
-  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 0, '2023-08-15', '2023-08-16', 'Plaza del Jazz 789', 150, 699),
-  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 0, '2023-09-05', '2023-09-06', 'Calle de los Cocteles 456', 100, 700),
-  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 0, '2023-12-20', '2023-12-21', 'Calle de las Luces 123', 300, 701),
-  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 0, '2024-01-25', '2024-01-26', 'Avenida de los Premios 789', 500, 702),
+  ('Cata de Ron Premium', 'Cata de rones premium de diferentes regiones', 1, '2023-02-15', '2023-02-16', 'Calle Principal 123', 150, 694),
+  ('Premios Ron Excellence', 'Gala de premiación de los mejores rones del año', 1, '2023-03-20', '2023-03-21', 'Avenida Principal 456', 250, 695),
+  ('Cata de Ron Añejo', 'Degustación de rones añejos de 5 a 10 años', 1, '2023-04-10', '2023-04-11', 'Calle Secundaria 789', 100, 696),
+  ('Fiesta Ronera Veraniega', 'Gran fiesta de verano con ron y música en vivo', 1, '2023-06-25', '2023-06-26', 'Playa Principal, Frente al Mar', 400, 697),
+  ('Cata de Ron Oscuro', 'Degustación de rones oscuros y maridaje de chocolate', 1, '2023-07-10', '2023-07-11', 'Calle del Chocolate 123', 70, 698),
+  ('Noche de Ron y Jazz', 'Concierto de jazz en vivo con selección de rones', 1, '2023-08-15', '2023-08-16', 'Plaza del Jazz 789', 150, 699),
+  ('Cata de Ron Blanco', 'Degustación de rones blancos y coctelería', 1, '2023-09-05', '2023-09-06', 'Calle de los Cocteles 456', 100, 700),
+  ('Fiesta Ronera de Navidad', 'Celebra la Navidad con ron, luces y música', 1, '2023-12-20', '2023-12-21', 'Calle de las Luces 123', 300, 701),
+  ('Gran Premio Ronero', 'Evento anual de premiación de la industria del ron', 1, '2024-01-25', '2024-01-26', 'Avenida de los Premios 789', 500, 702),
   ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 0, '2024-02-10', '2024-02-11', 'Calle de las Reservas 123', 80, 703),
   ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 0, '2024-03-15', '2024-03-16', 'Plaza de la Salsa 456', 180, 704),
   ('Cata de Ron Especial', 'Degustación de rones especiales y maridaje gourmet', 0, '2024-04-10', '2024-04-11', 'Calle de la Gastronomía 789', 90, 705),
@@ -4574,6 +5111,52 @@ VALUES
   ('Cata de Ron de Reserva', 'Degustación de rones de reserva de edición limitada', 0, '2029-02-10', '2029-02-11', 'Calle de las Reservas 123', 80, 698),
   ('Noche de Ron y Salsa', 'Fiesta de salsa con los mejores rones', 0, '2029-03-15', '2029-03-16', 'Plaza de la Salsa 456', 180, 699);
 
+-- Pago_Entrada
+INSERT INTO Pago_Entrada (pago_ent_fecha, pago_ent_subtotal, pago_ent_total, fk_cliente_natural, fk_cliente_juridico, fk_tdc)
+VALUES
+  ('2024-01-08', 100.00, 120.00, 21, NULL, 1),
+  ('2024-01-09', 200.00, 240.00, NULL, 2, 12),
+  ('2024-01-10', 300.00, 360.00, 22, NULL, 2),
+  ('2024-01-11', 400.00, 480.00, NULL, 1, 11),
+  ('2024-01-12', 500.00, 600.00, NULL, 2, 12),
+  ('2024-01-13', 600.00, 720.00, 26, NULL, 6),
+  ('2024-01-14', 700.00, 840.00, NULL, 1, 11),
+  ('2024-01-15', 800.00, 960.00, 27, NULL, 7),
+  ('2024-01-16', 900.00, 1080.00, 28, NULL, 8);
+
+-- Entrada
+INSERT INTO Entrada (entrada_precio, fk_evento, fk_pago_entrada)
+VALUES
+  (100.00, 1, 1),
+  (200.00, 2, 2),
+  (300.00, 3, 3),
+  (400.00, 4, 4),
+  (500.00, 5, 5),
+  (600.00, 6, 6),
+  (700.00, 7, 7),
+  (800.00, 8, 8),
+  (900.00, 9, 9);
+
+INSERT INTO Cata (cata_nombre, cata_fase_visual, cata_fase_olfativa, cata_fase_gustativa, cata_nota, fk_producto, fk_evento)
+VALUES
+  ('Juan Pérez', 'Color rojo intenso, brillante y limpio.', 'Aromas a frutos rojos maduros, especias y vainilla.', 'En boca es un vino equilibrado, con taninos suaves y final largo y persistente.', '90 puntos', 1, 1),
+  ('Ana García', 'Color amarillo dorado claro.', 'Aromas a flores blancas, frutas tropicales y cítricos.', 'En boca es un vino fresco y frutal, con buena acidez y un final agradable.', '85 puntos', 2, 2),
+  ('Pedro Gómez', 'Color rojo cereza.', 'Aromas a frutos rojos maduros, especias y chocolate.', 'En boca es un vino potente y estructurado, con taninos firmes y final largo y complejo.', '95 puntos', 3, 3),
+  ('María López', 'Color blanco pálido.', 'Aromas a flores blancas, frutas cítricas y minerales.', 'En boca es un vino elegante y complejo, con buena acidez y un final largo y persistente.', '92 puntos', 4, 4),
+  ('Luis Sánchez', 'Color rosa intenso.', 'Aromas a frutos rojos, flores y especias.', 'En boca es un vino fresco y frutal, con buena acidez y un final agradable.', '88 puntos', 5, 5),
+  ('Carmen Rodríguez', 'Color rojo rubí.', 'Aromas a frutos rojos maduros, especias y vainilla.', 'En boca es un vino equilibrado, con taninos suaves y final largo y persistente.', '90 puntos', 6, 6),
+  ('José Fernández', 'Color blanco amarillo dorado.', 'Aromas a flores blancas, frutas tropicales y cítricos.', 'En boca es un vino fresco y frutal, con buena acidez y un final agradable.', '85 puntos', 7, 7),
+  ('Isabel Martínez', 'Color rojo cereza intenso.', 'Aromas a frutos rojos maduros, especias y chocolate.', 'En boca es un vino potente y estructurado, con taninos firmes y final largo y complejo.', '95 puntos', 8, 8),
+  ('Antonio López', 'Color blanco pálido.', 'Aromas a flores blancas, frutas cítricas y minerales.', 'En boca es un vino elegante y complejo, con buena acidez y un final largo y persistente.', '92 puntos', 9, 9);
+
+INSERT INTO Premio (premio_nombre, premio_descripcion)
+VALUES
+  ('Mejor ron del mundo', 'Un premio otorgado por un jurado internacional de expertos en ron.'),
+  ('Mejor ron de Venezuela', 'Un premio otorgado por un jurado nacional de expertos en ron.'),
+  ('Mejor ron de su categoría', 'Un premio otorgado por un jurado especializado en una categoría específica de ron, como ron añejo, ron blanco, ron dorado, etc.'),
+  ('Ron revelación del año', 'Un premio otorgado a un ron nuevo que ha tenido un impacto significativo en el mercado.'),
+  ('Ron favorito del público', 'Un premio otorgado por votación popular.');
+
 INSERT INTO Imagen (imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
 VALUES 
   ('cacique_anejo.jpg', true, 6, 2, 5),
@@ -4609,6 +5192,113 @@ VALUES
   (4, 'Entregado', 'El pedido ha sido entregad de manera satisfactoria al cliente.'),
   (5, 'En Retraso', 'El pedido se encuentra retrasada ya que ha superado el tiempo de espera estimado'),
   (6, 'Cancelada', 'El pedido se ha cancelado por algún motivo, como por ejemplo que el producto ya no esté disponible o que la orden se haya realizado por error.');
+
+INSERT INTO Pedido(
+	pedido_fecha, pedido_direccion, pedido_subtotal, pedido_total, pedido_puntos_utilizados, fk_tdc, fk_punto, fk_cliente_natural, fk_cliente_juridico, fk_lugar)
+VALUES 
+  ('2023-01-05', 'Calle Empresarial, Edif. Residencial', 585.5, 575.5, 5, 1, 1, 21, NULL, 721), --1
+  ('2023-01-06', 'Av. Principal, Edificio Comercial', 680.43, 680.43, 0, 2, NULL, 22, NULL, 722), --2
+  ('2023-01-07', 'Ruta Empresarial, Edif. Plaza', 400.0, 390.0, 2, 3, 1, 23, NULL, 723), --3
+  ('2023-01-08', 'Calle de Negocios, Torre A', 683.65, 683.65, 4, 4, 1, 24, NULL, 724), --4
+  ('2023-01-09', 'Zona Industrial, Edif. Central', 292.05, 287.05, 3, 5, 1, 25, NULL, 725), --5
+  ('2023-01-10', 'Calle Real de Catia, Edif. La Torre, Piso 10, Apto. 1001', 568.2, 568.2, 0, 6, NULL, 26, NULL, 726), --6
+  ('2023-01-11', 'Av. Francisco de Miranda, Edif. Torre Británica, Piso 20', 450.05, 450.05, 0, 7, NULL, 27, NULL, 727), --7
+  ('2023-01-12', 'Calle Urdaneta, Edif. El Capitolio, Piso 30, Apto. 3003', 475.46, 475.46, 0, 8, NULL, 28, NULL, 728), --8
+  ('2023-01-13', 'Calle Bolívar, Edif. La Catedral, Piso 40, Apto. 4004', 67.15, 67.15, 0, 9, NULL, 29, NULL, 729), --9
+  ('2023-01-14', 'Calle Sucre, Edif. El Palacio de Miraflores, Piso 50, Apto. 5005', 431.9, 421.9, 4, 10, 1, 30, NULL, 730), --10
+  ('2023-01-15', 'Av. Principal, Edificio Central', 2130.25, 2125.25, 5, 11, 1, NULL, 1, 1004), --11
+  ('2023-01-16', 'Calle Empresarial, Torre A', 1503.75, 1495.75, 8, 12, 1, NULL, 2, 695), --12
+  ('2023-01-17', 'Ruta Empresarial, Edif. Central', 7122.25, 7120.25, 2, 13, 1, NULL, 3, 697), --13
+  ('2023-01-18', 'Calle de Negocios, Centro Ejecutivo', 5742.25, 5740.25, 2, 14, 1, NULL, 4, 702), --14
+  ('2023-01-19', 'Zona Industrial, Bloque 7', 1515.6, 1515.6, 0, 15, NULL, NULL, 5, 707), --15
+  ('2023-01-20', 'Avenida Principal, Edificio Ejecutivo', 9011.75, 9011.75, 0, 16, NULL, NULL, 6, 709), --16
+  ('2023-01-21', 'Ruta Empresarial, Edif. Plaza', 4436.24, 4436.24, 0, 17, NULL, NULL, 7, 714), --17
+  ('2023-01-22', 'Calle de Negocios, Edif. Ejecutivo', 6962.05, 6962.05, 0, 18, NULL, NULL, 8, 716), --18
+  ('2023-01-23', 'Zona Industrial, Bloque 5', 10904.55, 10904.55, 0, 19, NULL, NULL, 9, 719), --19
+  ('2023-01-24', 'Calle Empresarial, Edif. Central', 4057.5, 4057.5, 0, 20, NULL, NULL, 10, 1016); --20
+
+INSERT INTO Historico_Estatus_Pedido (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_pedido, fk_pedido)
+VALUES
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 1), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 1), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 1), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 1), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 2), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 2), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 2), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 2), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 3), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 3), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 3), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 3), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 4), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 4), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 4), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 4), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 5), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 5), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 5), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 5), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 6), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 6), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 6), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 6), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 7), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 7), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 7), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 7), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 8), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 8), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 8), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 8), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 9), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 9), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 9), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 9), -- Entregado
+  ('2023-01-05 00:00:00', '2023-01-06 00:00:00', 1, 10), -- Carrito
+  ('2023-01-06 00:00:00', '2023-01-07 00:00:00', 2, 10), -- Pendiente
+  ('2023-01-07 00:00:00', '2023-01-08 00:00:00', 3, 10), -- Listo para la Entrega
+  ('2023-01-08 00:00:00', NULL, 4, 10), -- Entregado
+  ('2023-01-15 00:00:00', '2023-01-16 00:00:00', 1, 11), -- Carrito
+  ('2023-01-16 00:00:00', '2023-01-17 00:00:00', 2, 11), -- Pendiente
+  ('2023-01-17 00:00:00', '2023-01-18 00:00:00', 3, 11), -- Listo para la Entrega
+  ('2023-01-18 00:00:00', NULL, 4, 11), -- Entregado
+  ('2023-01-16 00:00:00', '2023-01-17 00:00:00', 1, 12), -- Carrito
+  ('2023-01-17 00:00:00', '2023-01-18 00:00:00', 2, 12), -- Pendiente
+  ('2023-01-18 00:00:00', '2023-01-19 00:00:00', 3, 12), -- Listo para la Entrega
+  ('2023-01-19 00:00:00', NULL, 4, 12), -- Entregado
+  ('2023-01-17 00:00:00', '2023-01-18 00:00:00', 1, 13), -- Carrito
+  ('2023-01-18 00:00:00', '2023-01-19 00:00:00', 2, 13), -- Pendiente
+  ('2023-01-19 00:00:00', '2023-01-20 00:00:00', 3, 13), -- Listo para la Entrega
+  ('2023-01-20 00:00:00', NULL, 4, 13), -- Entregado
+  ('2023-01-18 00:00:00', '2023-01-19 00:00:00', 1, 14), -- Carrito
+  ('2023-01-19 00:00:00', '2023-01-20 00:00:00', 2, 14), -- Pendiente
+  ('2023-01-20 00:00:00', '2023-01-21 00:00:00', 3, 14), -- Listo para la Entrega
+  ('2023-01-21 00:00:00', NULL, 4, 14), -- Entregado
+  ('2023-01-19 00:00:00', '2023-01-20 00:00:00', 1, 15), -- Carrito
+  ('2023-01-20 00:00:00', '2023-01-21 00:00:00', 2, 15), -- Pendiente
+  ('2023-01-21 00:00:00', '2023-01-22 00:00:00', 3, 15), -- Listo para la Entrega
+  ('2023-01-22 00:00:00', NULL, 4, 15), -- Entregado
+  ('2023-01-20 00:00:00', '2023-01-21 00:00:00', 1, 16), -- Carrito
+  ('2023-01-21 00:00:00', '2023-01-22 00:00:00', 2, 16), -- Pendiente
+  ('2023-01-22 00:00:00', '2023-01-23 00:00:00', 3, 16), -- Listo para la Entrega
+  ('2023-01-23 00:00:00', NULL, 4, 16), -- Entregado
+  ('2023-01-21 00:00:00', '2023-01-22 00:00:00', 1, 17), -- Carrito
+  ('2023-01-22 00:00:00', '2023-01-23 00:00:00', 2, 17), -- Pendiente
+  ('2023-01-23 00:00:00', '2023-01-24 00:00:00', 3, 17), -- Listo para la Entrega
+  ('2023-01-24 00:00:00', NULL, 4, 17), -- Entregado
+  ('2023-01-22 00:00:00', '2023-01-23 00:00:00', 1, 18), -- Carrito
+  ('2023-01-23 00:00:00', '2023-01-24 00:00:00', 2, 18), -- Pendiente
+  ('2023-01-24 00:00:00', '2023-01-25 00:00:00', 3, 18), -- Listo para la Entrega
+  ('2023-01-25 00:00:00', NULL, 4, 18), -- Entregado
+  ('2023-01-23 00:00:00', '2023-01-24 00:00:00', 1, 19), -- Carrito
+  ('2023-01-24 00:00:00', '2023-01-25 00:00:00', 2, 19), -- Pendiente
+  ('2023-01-25 00:00:00', '2023-01-26 00:00:00', 3, 19), -- Listo para la Entrega
+  ('2023-01-26 00:00:00', NULL, 4, 19), -- Entregado
+  ('2023-01-24 00:00:00', '2023-01-25 00:00:00', 1, 20), -- Carrito
+  ('2023-01-25 00:00:00', '2023-01-26 00:00:00', 2, 20), -- Pendiente
+  ('2023-01-26 00:00:00', '2023-01-27 00:00:00', 3, 20), -- Listo para la Entrega
+  ('2023-01-27 00:00:00', NULL, 4, 20); -- Entregado
 
 INSERT INTO Estatus_Orden (estatus_orden_codigo, estatus_orden_nombre, estatus_orden_descripcion) 
 VALUES
@@ -4754,6 +5444,15 @@ VALUES
   (60, 1, 7, 2, 16),
   (70, 1, 7, 2, 17);
 
+INSERT INTO Evento_Lista_Producto(
+	even_prod_precio_unitario, even_prod_cantidad, fk_evento, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+VALUES 
+  (53.15, 20, 50, 1, 6, 2, 5),
+  (57.41, 20, 50, 1, 6, 2, 6),
+  (55.15, 20, 50, 1, 6, 2, 7),
+  (65.15, 20, 50, 1, 9, 3, 8),
+  (60.15, 20, 50, 1, 9, 2, 9);
+
 INSERT INTO Detalle_Orden_De_Reposicion (
   detalle_orden_cantidad, detalle_orden_precio_unitario, fk_orden, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3,
   fk_inventario_almacen_4, fk_inventario_tienda_1, fk_inventario_tienda_2, fk_inventario_tienda_3, fk_inventario_tienda_4)
@@ -4807,6 +5506,61 @@ VALUES
   (100, 41.25, 13, 1, 6, 2, 2, NULL, NULL, NULL, NULL),
   (100, 25.23, 13, 1, 6, 2, 3, NULL, NULL, NULL, NULL),
   (100, 20.25, 13, 1, 6, 2, 4, NULL, NULL, NULL, NULL);
+
+INSERT INTO Detalle_Pedido(
+	detalle_pedido_cantidad, detalle_pedido_precio_unitario, fk_pedido, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+VALUES
+  (1, 53.15, 1, 1, 6, 2, 5),
+  (4, 54.15, 1, 1, 9, 2, 20),
+  (5, 63.15, 1, 1, 6, 2, 4),
+  (1, 54.15, 2, 1, 7, 2, 23),
+  (3, 57.41, 2, 1, 6, 2, 24),
+  (2, 59.15, 2, 1, 9, 2, 22),
+  (5, 67.15, 2, 1, 9, 2, 11),
+  (5, 68.15, 3, 1, 9, 6, 13),
+  (1, 60.15, 3, 1, 9, 2, 10),
+  (7, 59.15, 4, 1, 7, 2, 16),
+  (2, 64.15, 4, 1, 6, 2, 2),
+  (1, 81.15, 4, 1, 9, 2, 21),
+  (1, 60.15, 4, 1, 9, 2, 10),
+  (5, 57.41, 5, 1, 6, 2, 6),
+  (4, 78.15, 6, 1, 9, 2, 12),
+  (1, 60.15, 6, 1, 9, 2, 9),
+  (3, 65.15, 6, 1, 9, 3, 8),
+  (5, 67.15, 7, 1, 7, 2, 17),
+  (2, 57.41, 7, 1, 6, 2, 24),
+  (1, 63.15, 8, 1, 6, 2, 4),
+  (2, 67.15, 8, 1, 9, 2, 11),
+  (4, 55.15, 8, 1, 6, 2, 1),
+  (1, 57.41, 8, 1, 6, 2, 24),
+  (1, 67.15, 9, 1, 9, 2, 11),
+  (3, 78.15, 10, 1, 9, 2, 12),
+  (2, 65.15, 10, 1, 9, 3, 8),
+  (1, 67.15, 10, 1, 7, 2, 17),
+  (20, 65.15, 11, 1, 9, 3, 8),
+  (15, 55.15, 11, 1, 6, 2, 1),
+  (25, 60.15, 12, 1, 9, 2, 10),
+  (30, 54.15, 13, 1, 7, 2, 23),
+  (25, 81.15, 13, 1, 9, 2, 21),
+  (20, 63.15, 13, 1, 9, 2, 19),
+  (40, 55.15, 13, 1, 6, 2, 7),
+  (50, 58.41, 14, 1, 9, 2, 15),
+  (20, 57.15, 14, 1, 9, 2, 14),
+  (25, 67.15, 14, 1, 9, 2, 11),
+  (24, 63.15, 15, 1, 6, 2, 4),
+  (53, 78.15, 16, 1, 9, 2, 12),
+  (35, 68.15, 16, 1, 9, 6, 13),
+  (37, 67.15, 16, 1, 6, 2, 3),
+  (34, 57.41, 17, 1, 6, 2, 24),
+  (42, 59.15, 17, 1, 9, 2, 22),
+  (28, 67.15, 18, 1, 7, 2, 17),
+  (45, 58.41, 18, 1, 9, 2, 15),
+  (36, 68.15, 18, 1, 9, 6, 13),
+  (47, 64.15, 19, 1, 6, 2, 2),
+  (52, 65.15, 19, 1, 9, 2, 18),
+  (40, 60.15, 19, 1, 9, 2, 9),
+  (38, 55.15, 19, 1, 6, 2, 7),
+  (50, 81.15, 20, 1, 9, 2, 21);
 
 INSERT INTO Detalle_Factura(
 	detalle_factura_cantidad, detalle_factura_precio_unitario, fk_factura, fk_inventario_tienda_1, fk_inventario_tienda_2, fk_inventario_tienda_3, fk_inventario_tienda_4)
