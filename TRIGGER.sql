@@ -14,7 +14,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger para verificar el inventario de la tienda y crear una orden de reposicion si es necesario
-DROP TRIGGER VerificarInventarioTienda ON Inventario_Tienda;
+--DROP TRIGGER VerificarInventarioTienda ON Inventario_Tienda;
 
 CREATE TRIGGER VerificarInventarioTienda
 AFTER UPDATE ON Inventario_Tienda
@@ -55,13 +55,13 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- El trigger se mantiene igual
-DROP TRIGGER tr_restar_inventario ON Detalle_Orden_De_Reposicion;
+--DROP TRIGGER tr_restar_inventario ON Detalle_Orden_De_Reposicion;
 
 CREATE TRIGGER tr_restar_inventario
 BEFORE DELETE ON Detalle_Orden_De_Reposicion
 FOR EACH ROW EXECUTE FUNCTION restar_inventario();
 
-DROP TABLE ultimo_estatus_orden;
+--DROP TABLE ultimo_estatus_orden;
 
 CREATE TABLE ultimo_estatus_orden (
     orden_id INT PRIMARY KEY,
@@ -79,7 +79,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-DROP TRIGGER tr_almacenar_ultimo_estatus ON Orden_De_Reposicion;
+--DROP TRIGGER tr_almacenar_ultimo_estatus ON Orden_De_Reposicion;
 
 CREATE TRIGGER tr_almacenar_ultimo_estatus
 BEFORE DELETE ON Orden_De_Reposicion

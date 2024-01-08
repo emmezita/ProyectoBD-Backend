@@ -2170,6 +2170,24 @@ def editar_producto(id):
     cur.close()
     
     return Response(status=200, response="Producto editado exitosamente")
+
+# Ruta para eliminar un producto de la base de datos
+@app.route("/api/producto/eliminar/<int:id>", methods=["DELETE"])
+def eliminar_producto(id):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM producto WHERE producto_codigo = %s", (id,))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Producto eliminado exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRESENTACION
@@ -2537,6 +2555,24 @@ def editar_presentacion(id1, id2, id3):
     cur.close()
     
     return Response(status=200, response="Presentacion editada exitosamente")
+
+# Ruta para eliminar una presentacion de la base de datos
+@app.route("/api/presentacion/eliminar/<int:id1>/<int:id2>/<int:id3>", methods=["DELETE"])
+def eliminar_presentacion(id1, id2, id3):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM presentacion WHERE fk_material_botella_1 = %s AND fk_material_botella_2 = %s AND fk_producto = %s", (id1, id2, id3))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Presentacion eliminada exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL CRUD DE EVENTOS
@@ -2583,6 +2619,10 @@ def registrar_evento():
     cupos = int(cupos)
     entradas = evento.get("entradas")
     entradas = int(entradas)
+    costoentrada = evento.get("costoentrada")
+    if costoentrada:
+        costoentrada = costoentrada.replace(",", ".")
+        costoentrada = float(costoentrada)
     fecha_inicio = evento.get("fechainicio")
     fecha_cierre = evento.get("fechacierre")
     presentaciones = evento.get("presentaciones")
@@ -2602,12 +2642,22 @@ def registrar_evento():
         VALUES (%s, %s, %s, %s, %s, %s, %s);
     """
     
+    sql_entrada = """
+        INSERT INTO entrada(
+            entrada_precio, fk_evento
+        )
+        VALUES (%s, %s);
+    """
+    
     try:
         cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia))
         result = cur.fetchone()
         evento_codigo = result[0] if result is not None else None
         for presentacion in presentaciones:
             cur.execute(sql_presentacion, (presentacion['precio'], presentacion['cantidad'], evento_codigo, 1, presentacion['material'], presentacion['botella'], presentacion['producto']))
+        if (entradas > 0):
+            for i in range(entradas):
+                cur.execute(sql_entrada, (costoentrada, evento_codigo))
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -2645,6 +2695,9 @@ def get_evento(id):
         JOIN producto pro ON lista.fk_inventario_almacen_4 = pro.producto_codigo
         WHERE fk_evento = %s
     """
+    sql_costoentrada = """
+        SELECT entrada_precio FROM entrada WHERE fk_evento = %s LIMIT 1
+    """
     cur.execute(sql_evento, (id,))
     evento = cur.fetchone()
     if evento is None:
@@ -2656,12 +2709,16 @@ def get_evento(id):
     cur.execute(sql_presentaciones, (id,))
     presentaciones = cur.fetchall()
     
+    cur.execute(sql_costoentrada, (id,))
+    costoentrada = cur.fetchone()
+    
     cur.close()
 
     datos = jsonify({
         'evento': evento,
         'lugar': lugar,
-        'presentaciones': presentaciones
+        'presentaciones': presentaciones,
+        'costoentrada': costoentrada
     })
     
     pprint(datos)
@@ -2679,6 +2736,10 @@ def editar_evento(id):
     cupos = int(cupos)
     entradas = evento.get("entradas")
     entradas = int(entradas)
+    costoentrada = evento.get("costoentrada")
+    if costoentrada:
+        costoentrada = costoentrada.replace(",", ".")
+        costoentrada = float(costoentrada)
     fecha_inicio = evento.get("fechainicio")
     fecha_cierre = evento.get("fechacierre")
     presentaciones = evento.get("presentaciones")
@@ -2686,6 +2747,9 @@ def editar_evento(id):
     direccion = evento.get("direccion")
     parroquia = evento.get("parroquia")
     
+    sql_eliminar = """
+        DELETE FROM entrada WHERE fk_evento = %s;
+    """
     sql_evento = """
         UPDATE evento
         SET evento_nombre = %s, evento_descripcion = %s, evento_num_entradas = %s, evento_fecha_inicio = %s, evento_fecha_cierre = %s, evento_direccion = %s, evento_num_cupos = %s, fk_lugar = %s
@@ -2707,8 +2771,15 @@ def editar_evento(id):
         SET even_prod_precio_unitario = %s, even_prod_cantidad = %s
         WHERE fk_evento = %s AND fk_inventario_almacen_1 = %s AND fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s;
     """
+    sql_entrada = """
+        INSERT INTO entrada(
+            entrada_precio, fk_evento
+        )
+        VALUES (%s, %s);
+    """
     
     try:
+        cur.execute(sql_eliminar, (id,))
         cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia, id))
         cur.execute(sql_buscar_presentacion, (id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
         result = cur.fetchone()
@@ -2716,6 +2787,9 @@ def editar_evento(id):
             cur.execute(sql_registrar_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
         else:
             cur.execute(sql_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        if (entradas > 0):
+            for i in range(entradas):
+                cur.execute(sql_entrada, (costoentrada, id))
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -2727,6 +2801,24 @@ def editar_evento(id):
     cur.close()
     
     return Response(status=200, response="Evento editado exitosamente")
+
+# Ruta para eliminar un evento de la base de datos
+@app.route("/api/evento/eliminar/<int:id>", methods=["DELETE"])
+def eliminar_evento(id):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM evento WHERE evento_codigo = %s", (id,))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Evento eliminado exitosamente")
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL CARRITO (VENTA EN LINEA)
@@ -3740,3 +3832,32 @@ def obtener_detalle_factura(id):
     cur.close()
     
     return jsonify({'datos_factura': datos_factura, 'metodos_pago': metodos_pago,'presentaciones': presentaciones})
+
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# PEDIDOS
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# OBTENER INVENTARIOS
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener inventario tienda
+@app.route("/api/inventario/tienda", methods=["GET"])
+def obtener_inventario_tienda():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM GetInventarioTiendaData()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener inventario almacen
+@app.route("/api/inventario/almacen", methods=["GET"])
+def obtener_inventario_almacen():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM GetInventarioAlmacenData()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200

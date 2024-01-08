@@ -801,7 +801,7 @@ CREATE TABLE Cuerpo (
 
   CONSTRAINT pk_cuerpo PRIMARY KEY (cuerpo_codigo, fk_producto),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_cuerpo_producto_detalla FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_cuerpo_producto_detalla FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT ck_cuerpo_peso CHECK (cuerpo_peso IN ('Ligero', 'Medio', 'Pesado')),
   -- Constrain. Debe tener tres posibles valores: ligero, medio y pesado.
@@ -831,7 +831,7 @@ CREATE TABLE Regusto (
 
   CONSTRAINT pk_regusto PRIMARY KEY (regusto_codigo, fk_producto),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_regusto_producto_dejaun FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_regusto_producto_dejaun FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada = '' OR regusto_entrada ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
@@ -867,7 +867,7 @@ CREATE TABLE Producto_Aroma (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_aroma_aroma_atribuye FOREIGN KEY (fk_aroma) REFERENCES Aroma (aroma_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Aroma.
-  CONSTRAINT fk_producto_aroma_producto_seleatribuye FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_producto_aroma_producto_seleatribuye FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -893,7 +893,7 @@ CREATE TABLE Producto_Sabor (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_sabor_sabor_caracteriza FOREIGN KEY (fk_sabor) REFERENCES Sabor (sabor_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Sabor.
-  CONSTRAINT fk_producto_sabor_producto_caracterizadopor FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_producto_sabor_producto_caracterizadopor FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -923,7 +923,7 @@ CREATE TABLE Producto_Servido (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_servido_servido_metodo FOREIGN KEY (fk_servido) REFERENCES Servido (servido_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Servido.
-  CONSTRAINT fk_producto_servido_producto_esservido FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_producto_servido_producto_esservido FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -997,7 +997,7 @@ CREATE TABLE Mezclado (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Anejamiento.
   CONSTRAINT fk_mezclado_ingrediente_seagregan FOREIGN KEY (fk_ingrediente) REFERENCES Ingrediente (ingrediente_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Ingrediente.
-  CONSTRAINT fk_mezclado_producto_seaneja FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_mezclado_producto_seaneja FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -1109,7 +1109,7 @@ CREATE TABLE Presentacion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_presentacion_material_botella_contiene FOREIGN KEY (fk_material_botella_1,fk_material_botella_2) REFERENCES Material_Botella (fk_material,fk_botella),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Material_Botella.
-  CONSTRAINT fk_presentacion_producto_presentado FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_presentacion_producto_presentado FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT fk_presentacion_tapa_utiliza FOREIGN KEY (fk_tapa) REFERENCES Tapa (tapa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Tapa.
@@ -1143,7 +1143,7 @@ CREATE TABLE Descuento (
 
   CONSTRAINT pk_descuento PRIMARY KEY (fk_presentacion_1, fk_presentacion_2, fk_presentacion_3, fk_diario_ronero),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_descuento_presentacion_esseleccionado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_descuento_presentacion_esseleccionado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT fk_descuento_diario_ronero_selecciona FOREIGN KEY (fk_diario_ronero) REFERENCES Diario_Ronero (diario_edicion),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Diario_Ronero.
@@ -1231,7 +1231,7 @@ CREATE TABLE Entrada (
 
   CONSTRAINT pk_entrada_codigo PRIMARY KEY (entrada_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_entrada_evento_ofrece FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_entrada_evento_ofrece FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
   CONSTRAINT fk_entrada_pago_entrada_ocupa FOREIGN KEY (fk_pago_entrada) REFERENCES Pago_Entrada (pago_ent_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pago_Entrada.
@@ -1259,9 +1259,9 @@ CREATE TABLE Cata (
 
   CONSTRAINT pk_cata_codigo PRIMARY KEY (cata_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_cata_producto_cata FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_cata_producto_cata FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
-  CONSTRAINT fk_cata_evento_cata FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_cata_evento_cata FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
   CONSTRAINT ck_cata_nombre CHECK (cata_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
@@ -1305,7 +1305,7 @@ CREATE TABLE Producto_Premio (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_premio_premio_otorgado FOREIGN KEY (fk_premio) REFERENCES Premio (premio_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Premio.
-  CONSTRAINT fk_producto_premio_producto_obtuvo FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_producto_premio_producto_obtuvo FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT fk_producto_premio_evento_otorga FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
@@ -1329,9 +1329,9 @@ CREATE TABLE Imagen (
 
   CONSTRAINT pk_imagen_codigo PRIMARY KEY (imagen_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_imagen_evento_ilustra FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_imagen_evento_ilustra FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto)
+  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
 );                
 
@@ -1560,7 +1560,7 @@ CREATE TABLE Inventario_Almacen (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_inventario_almacen_almacen_almacena FOREIGN KEY (fk_almacen) REFERENCES Almacen (almacen_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Almacen.
-  CONSTRAINT fk_inventario_almacen_presentacion_esalmacenado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_inventario_almacen_presentacion_esalmacenado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_inventario_almacen_cantidad CHECK (inv_almacen_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
@@ -1600,7 +1600,7 @@ CREATE TABLE Inventario_Tienda (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_inventario_tienda_tienda_muestra FOREIGN KEY (fk_tienda) REFERENCES Tienda (tienda_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Tienda.
-  CONSTRAINT fk_inventario_tienda_presentacion_esmostrado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_inventario_tienda_presentacion_esmostrado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_inventario_tienda_cantidad CHECK (inv_tienda_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
@@ -1624,9 +1624,9 @@ CREATE TABLE Evento_Lista_Producto (
 
   CONSTRAINT pk_evento_lista_producto PRIMARY KEY (fk_evento, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_evento_lista_producto_evento_vende FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_evento_lista_producto_evento_vende FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_evento_lista_producto_inventario_almacen_vendidoen FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_evento_lista_producto_inventario_almacen_vendidoen FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
   CONSTRAINT ck_evento_lista_producto_precio_unitario CHECK (even_prod_precio_unitario > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1664,9 +1664,9 @@ CREATE TABLE Detalle_Orden_De_Reposicion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_detalle_orden_orden_especifica FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Orden_De_Reposicion.
-  CONSTRAINT fk_detalle_orden_inventario_almacen_compra FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_orden_inventario_almacen_compra FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_orden_inventario_tienda_repone FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_orden_inventario_tienda_repone FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
   CONSTRAINT ck_detalle_orden_cantidad CHECK (detalle_orden_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
@@ -1692,7 +1692,7 @@ CREATE TABLE Detalle_Pedido (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_detalle_pedido_pedido_esprocesado FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pedido.
-  CONSTRAINT fk_detalle_pedido_inventario_almacen_procesa FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_pedido_inventario_almacen_procesa FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
   CONSTRAINT ck_detalle_pedido_cantidad CHECK (detalle_pedido_cantidad > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1732,9 +1732,9 @@ CREATE TABLE Detalle_Factura(
   -- Clave primaria de la tabla.
   CONSTRAINT fk_detalle_factura_factura_precisa FOREIGN KEY (fk_factura) REFERENCES Factura (factura_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Factura.
-  CONSTRAINT fk_detalle_factura_inventario_tienda_expide FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_factura_inventario_tienda_expide FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_factura_evento_lista_producto_vende FOREIGN KEY (fk_evento_lista_producto_1,fk_evento_lista_producto_2,fk_evento_lista_producto_3,fk_evento_lista_producto_4,fk_evento_lista_producto_5) REFERENCES Evento_Lista_Producto (fk_evento,fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4),
+  CONSTRAINT fk_detalle_factura_evento_lista_producto_vende FOREIGN KEY (fk_evento_lista_producto_1,fk_evento_lista_producto_2,fk_evento_lista_producto_3,fk_evento_lista_producto_4,fk_evento_lista_producto_5) REFERENCES Evento_Lista_Producto (fk_evento,fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento_Lista_Producto.
   CONSTRAINT ck_detalle_factura_cantidad CHECK (detalle_factura_cantidad > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1804,7 +1804,7 @@ CREATE TABLE Historico_Precio_Compra (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_precio_compra_tasa_dolar_determina FOREIGN KEY (fk_historico_tasa_dolar) REFERENCES Historico_Tasa_Dolar (tasa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Historico_Tasa_Dolar.
-  CONSTRAINT fk_precio_compra_presentacion_implica FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_precio_compra_presentacion_implica FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_precio_compra_valor CHECK (precio_compra_valor > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1844,9 +1844,9 @@ CREATE TABLE Historico_Precio_Venta (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_precio_venta_tasa_dolar_establece FOREIGN KEY (fk_historico_tasa_dolar) REFERENCES Historico_Tasa_Dolar (tasa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Historico_Tasa_Dolar.
-  CONSTRAINT fk_precio_venta_inventario_almacen_asienta FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_precio_venta_inventario_almacen_asienta FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_precio_venta_inventario_tienda_consigna FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_precio_venta_inventario_tienda_consigna FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
   CONSTRAINT ck_precio_venta_valor CHECK (precio_venta_valor > 0),
   -- Constrain. Debe ser mayor que 0

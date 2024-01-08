@@ -5157,6 +5157,14 @@ VALUES
   ('Ron revelación del año', 'Un premio otorgado a un ron nuevo que ha tenido un impacto significativo en el mercado.'),
   ('Ron favorito del público', 'Un premio otorgado por votación popular.');
 
+INSERT INTO Producto_Premio (prod_prem_fecha, fk_premio, fk_producto, fk_evento)
+VALUES
+  ('2023-01-20', 1, 1, 1),
+  ('2023-02-01', 2, 2, 2),
+  ('2023-03-03', 3, 3, 3),
+  ('2023-04-05', 4, 4, 4),
+  ('2023-05-07', 5, 5, 5);
+
 INSERT INTO Imagen (imagen_nombre, imagen_principal, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3)
 VALUES 
   ('cacique_anejo.jpg', true, 6, 2, 5),

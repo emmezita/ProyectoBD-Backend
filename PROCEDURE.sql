@@ -9,7 +9,7 @@ RETURNS TABLE (codigo1 INT, codigo2 INT, codigo3 INT, nombre TEXT, grado NUMERIC
 BEGIN
     RETURN QUERY
     SELECT fk_presentacion_1, fk_presentacion_2, fk_presentacion_3,
-        producto_nombre, producto_grado_alcoholico, (botella_descripcion || ' de ' || material_nombre ),
+        producto_nombre::TEXT, producto_grado_alcoholico, (botella_descripcion || ' de ' || material_nombre )::TEXT,
         botella_capacidad, inv_tienda_cantidad,
         precio_venta_valor
     FROM inventario_tienda inv
@@ -34,7 +34,7 @@ RETURNS TABLE (codigo1 INT, codigo2 INT, codigo3 INT, nombre TEXT, grado NUMERIC
 BEGIN
     RETURN QUERY
     SELECT fk_presentacion_1, fk_presentacion_2, fk_presentacion_3,
-        producto_nombre, producto_grado_alcoholico, (botella_descripcion || ' de ' || material_nombre ),
+        producto_nombre::TEXT, producto_grado_alcoholico, (botella_descripcion || ' de ' || material_nombre )::TEXT,
         botella_capacidad, inv_almacen_cantidad,
         precio_venta_valor
     FROM inventario_almacen inv
