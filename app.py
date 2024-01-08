@@ -2,6 +2,7 @@ from calendar import c
 import datetime
 import os
 import json
+from re import sub
 from tkinter import N
 import traceback
 from flask import Flask, Response, request, jsonify, url_for
@@ -2929,6 +2930,34 @@ def obtener_tarjetas(id):
     pprint(rows)
     return jsonify(rows)
 
+# Obtener las tarjetas de un cliente (identificacion)
+@app.route("/api/cliente/<id>/tarjetas", methods=["GET"])
+def obtener_tarjetas_cliente(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+   # Obtenemos el codigo del cliente
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (id,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+    
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.execute('SELECT * FROM ObtenerTDCsCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    # codigo, numero, cvv, fechavencimiento, fk_banco
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
 # Ruta para pagar el pedido de un usuario (id de usuario)
 @app.route("/api/carrito/compra/<int:id>", methods=["POST"])
 def pagar_pedido(id):
@@ -3001,6 +3030,241 @@ def get_tasa():
     
     tasa = jsonify({"tasa": rows['obtenertasadolar']})
     return tasa, 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA LA VENTA FISICA
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para validar la identificacion de un cliente
+@app.route("/api/venta/validar", methods=["POST"])
+def validar_identificacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cliente = request.get_json()
+    pprint(cliente)
+    identificacion = cliente.get("identificacion")
+   
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (identificacion,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row is None:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+    
+    cliente = {
+        "codigo": row['codigo'],
+        "identificacion": identificacion,
+        "tipo": row['tipo'],
+    }
+    cliente = jsonify(cliente)
+    return cliente, 200
+
+# Ruta para obtener los datos de un cliente
+@app.route("/api/venta/cliente/<id>", methods=["GET"])
+def obtener_datos_cliente(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerDatosCliente(%s)', (id,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row is None:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+    
+    cliente = {
+        "nombre": row['nombre'],
+        "rif": row['rif'],
+    }
+    cliente = jsonify(cliente)
+    print(cliente)
+    return cliente, 200
+
+# Ruta para guardar todas las presentaciones elegidas en el detalle de la factura
+@app.route("/api/venta/presentaciones/<idUsuario>/<idCliente>", methods=["PUT"])
+def guardar_presentaciones(idUsuario, idCliente):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    presentaciones = request.get_json()
+    pprint(presentaciones)
+
+    # Tenemos la identificacion del cliente, buscamos su codigo
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (idCliente,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    cur.execute('SELECT * FROM ObtenerContratoDeEmpleo(%s)', (idUsuario,))
+    row = cur.fetchone()
+    
+    contrato_empleo = row['codigo'] if row is not None else None
+
+    # Al ser un pedido fisico, siempre se va a crear una factura nueva
+    cur.execute('SELECT * FROM CrearFactura(%s, %s, %s)', (codigo_persona_natural, codigo_persona_juridica, contrato_empleo))
+    row = cur.fetchone()
+
+    codigoFactura = row['crearfactura'] if row is not None else None
+
+    # Ahora ingresamos las presentaciones en el detalle de la factura
+    for presentacion in presentaciones:
+        ids = presentacion.get("ids")
+        id1 = ids.get("id1")
+        id2 = ids.get("id2")
+        id3 = ids.get("id3")
+        cantidad = presentacion.get("cantidad")
+        precio = presentacion.get("precio")
+        cur.execute('CALL AgregarProductoAFactura(%s, %s, %s, %s, %s, %s)', (codigoFactura, id1, id2, id3, cantidad, precio))
+
+    conn.commit()
+    cur.close()
+    return Response(status=200, response="Presentaciones guardadas exitosamente")
+
+# Ruta para obtener las presentaciones de la factura (identificacion del cliente)
+@app.route("/api/venta/presentaciones/<idUsuario>", methods=["GET"])
+def obtener_presentaciones(idUsuario):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Tenemos la identificacion del cliente, buscamos su codigo
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (idUsuario,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    # Obtenemos el codigo de la factura
+    cur.execute('SELECT * FROM ObtenerFacturaDeCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    row = cur.fetchone()
+
+    codigoFactura = row['codigo'] if row is not None else None
+
+    # Obtenemos las presentaciones de la factura
+    cur.execute('SELECT * FROM ObtenerPresentacionesDeFactura(%s)', (codigoFactura,))
+    rows = cur.fetchall()
+    cur.close()
+
+    if rows is None:
+        return Response(status=404, response="Factura no encontrada")
+    
+    presentaciones = jsonify(rows)
+    print(presentaciones)
+    return presentaciones, 200
+
+# Ruta para pagar la factura
+@app.route("/api/venta/factura/<idUsuario>/<idCliente>", methods=["POST"])
+def pagar_factura(idUsuario, idCliente):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    factura = request.get_json()
+    pprint(factura)
+
+    # Metodos de pago
+    puntosUsados = factura.get("puntosUsados")
+    if puntosUsados != "":
+        puntosUsados = int(puntosUsados)
+    else:
+        puntosUsados = 0
+    puntosGanados = factura.get("puntosGanados")
+    puntosGanados = int(puntosGanados)
+    cheque = factura.get("cheque")
+    numeroTDD =factura.get("numeroTDD")
+    cvvTDD = factura.get("cvvTDD")
+    fechaVencimientoTDD = factura.get("fechaVencimientoTDD")
+
+    idTDC = factura.get("idTDC")
+    try:
+        idTDC = int(idTDC) # id de la tarjeta
+    except:
+        idTDC = None
+    efectivo = factura.get("efectivo")
+    try:
+        efectivo = int(efectivo)
+    except:
+        efectivo = None
+
+    subTotal = factura.get("subTotal")
+    subTotal = float(subTotal)
+    total = factura.get("total")
+    total = float(total)
+
+    # Obtenemos el codigo del cliente
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (idCliente,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+    
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    # Obtenemos el codigo de la factura
+    cur.execute('SELECT * FROM ObtenerFacturaDeCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    row = cur.fetchone()
+
+    codigoFactura = row['codigo'] if row is not None else None
+
+    if (cheque is not None and cheque != ""):
+        try:
+            cur.execute('SELECT * FROM CrearCheque(%s)', (cheque,))
+            row = cur.fetchone()
+            idCheque = row['codigo'] if row is not None else None
+        except:
+            return Response(status=404, response="Cheque no valido")
+    else:
+        idCheque = None
+
+    if (numeroTDD is not None and numeroTDD != ""):
+        cur.execute('SELECT * FROM CrearTDD(%s, %s, %s)', (numeroTDD, cvvTDD, fechaVencimientoTDD))
+        row = cur.fetchone()
+        idTDD = row['creartdd'] if row is not None else None
+    else:
+        idTDD = None
+
+    cur.execute('CALL PagoFactura(%s, %s, %s, %s, %s, %s, %s, %s, %s)', (codigoFactura, idTDD, idCheque, idTDC, efectivo, subTotal, total, puntosUsados, puntosGanados))
+
+    # actualizamos los puntos de la persona
+    cur.execute('SELECT * FROM ActualizarPuntos(%s, %s, %s, %s)', (codigo_persona_natural, codigo_persona_juridica, puntosUsados, puntosGanados))
+    row = cur.fetchone()
+    puntosNat = row['cliente_nat_puntos_a'] if row is not None else None
+    puntosJur = row['cliente_jur_puntos_ac'] if row is not None else None
+
+    # Restamos el inventario de la tienda
+    cur.execute('call ActualizarTienda(%s)', (codigoFactura,))
+
+    conn.commit()
+    cur.close()
+
+    return Response(status=200, response="Factura pagada exitosamente")
+
+# Obtener metodos de pago en efectivo (catalogo)
+@app.route("/api/venta/efectivo", methods=["GET"])
+def obtener_efectivo():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM efectivo;")
+    rows = cur.fetchall()
+    cur.close()
+
+    if rows is None:
+        return Response(status=404, response="Metodos de pago no encontrados")
+    
+    metodos = jsonify(rows)
+    return metodos, 200
 
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -3362,6 +3626,35 @@ def obtener_puntos(id):
     codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
     codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
 
+
+    cur.execute('SELECT * FROM ObtenerPuntosCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    puntos = cur.fetchone()
+    print("Puntos: %s", puntos)
+
+    if puntos is None:
+        return Response(status=404, response="No hay puntos")
+    else:
+        cur.close()
+        return jsonify(puntos), 200
+
+# Ruta para obtener los puntos de una persona (identificacion)
+@app.route("/api/puntos/identificacion/<identificacion>", methods=["GET"])
+def obtener_puntos_identificacion(identificacion):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (identificacion,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
 
     cur.execute('SELECT * FROM ObtenerPuntosCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
     puntos = cur.fetchone()

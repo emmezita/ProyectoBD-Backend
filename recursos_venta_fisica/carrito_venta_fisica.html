@@ -110,7 +110,6 @@
         </div>
     </div>
             
-
 <script>
 
 var idUsuario = localStorage.getItem("idUsuario");
@@ -136,7 +135,7 @@ function addPresentacion(e, event){
         if (datap.c1 == presentacionId1 && datap.c2 == presentacionId2 && datap.c3 == presentacionId3){
             var row = $('<tr>');
             row.append('<td><button class="btn btn-danger" onclick=deletePresentacion(this)>X</button></td>');
-            row.append('<td idmaterial='+ datap.c1 +' idbotella=' + datap.c2 + ' idproducto=' + datap.c +'>' + datap.c1 + '-' + datap.c2 + '-' + datap.c3 +'</td>');
+            row.append('<td idmaterial='+ datap.c1 +' idbotella=' + datap.c2 + ' idproducto=' + datap.c3 +'>' + datap.c1 + '-' + datap.c2 + '-' + datap.c3 +'</td>');
 
             row.append('<td><input type="number" class="form-control cantidad" value="' + 1 + '"></td>');
 
@@ -163,7 +162,7 @@ function presentacionExists(presentacionId1, presentacionId2, presentacionId3, e
         var currentPresentacionId3 = $(this).find("td").eq(0).attr('idproducto');
         if (currentPresentacionId1 == presentacionId1 && currentPresentacionId2 == presentacionId2 && currentPresentacionId3 == presentacionId3) {
             exists = true;
-            return false; 
+            return exists;
         }
     });
     return exists;
@@ -172,6 +171,10 @@ function presentacionExists(presentacionId1, presentacionId2, presentacionId3, e
 function deletePresentacion(e){
     $(e).parent().parent().remove();
 }
+
+// obtener el id del url
+var urlParams = new URLSearchParams(window.location.search);
+var idCliente = urlParams.get('identificacion');
 
 $(document).ready(function() {
     $.ajax({
@@ -188,6 +191,24 @@ $(document).ready(function() {
         },
         error: function() {
             alert("Error al cargar los productos");
+        }
+    });
+
+    // Buscar la informacion de la persona
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:5000/api/venta/cliente/" + idCliente,
+        dataType: "json",
+        success: function(data) {
+            console.log(data);
+            var strong = $('<strong>').text("Cliente:");
+            $('#nombre-cliente').empty().append(strong).append(" " + data.nombre);
+
+            var strong = $('<strong>').text("CI/RIF:");
+            $('#identificacion-cliente').empty().append(strong).append(" " + data.rif);
+        },
+        error: function() {
+            alert("Error al cargar los datos del usuario");
         }
     });
 });
@@ -207,6 +228,61 @@ $('.body-carrito').on('input', '.cantidad, .precio', function() {
         total += subtotal;
     });
 });
+
+// Finalizar la compra
+function finalizarCompra() {
+    
+    // actualizamos la cantidad de cada presentacion
+    var presentaciones = $('.body-carrito').find('tr');
+    var data = [];
+    for (var i = 0; i < presentaciones.length; i++) {
+        var idPresentacion = $(presentaciones[i]).find('td').eq(1).text();
+        var cantidad = $(presentaciones[i]).find('td').eq(2).find('input').val();
+        var precio = $(presentaciones[i]).find('td').eq(4).find('input').val();
+
+        console.log(idPresentacion);
+        console.log(cantidad);
+        console.log(precio);
+
+        var pres = idPresentacion.split("-");
+        var id1 = pres[0];
+        var id2 = pres[1];
+        var id3 = pres[2];
+
+        var obj = {
+            "ids" : {
+                "id1" : id1,
+                "id2" : id2,
+                "id3" : id3
+            },
+            "cantidad" : cantidad,
+            "precio" : precio
+        }
+
+        data.push(obj);
+    }
+
+    data = JSON.stringify(data);
+    console.log(data);
+
+    $.ajax({
+        url: "http://localhost:5000/api/venta/presentaciones/"+idUsuario+"/"+idCliente,
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        data: data,
+        success: (data) => {
+            console.log(data);
+            alert("Factura generada exitosamente, redireccionando a la pestaña de pago");
+            // vamos a la pestaña de pago
+            window.location.href = "https://dilodev.co/finalizar-compra-en-fisico/?identificacion=" + idCliente;
+        },
+        error: (error) => {
+            console.log(error);
+        },
+    });
+}
 
 </script>
 

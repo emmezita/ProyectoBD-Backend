@@ -576,6 +576,261 @@ END;
 $$;
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Procedimienos para compra fisica
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Funcion para verificar si existe un cliente tanto natural como juridico (cedula o rif)
+CREATE OR REPLACE FUNCTION VerificarCliente(identificacion TEXT)
+RETURNS TABLE(codigo INT, tipo TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pn.persona_nat_codigo, 'natural'::TEXT
+    FROM persona_natural pn
+    JOIN cliente_natural cn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+    WHERE pn.persona_nat_cedula = identificacion OR pn.persona_nat_rif = identificacion
+    UNION
+    SELECT pj.persona_jur_codigo, 'juridico'::TEXT
+    FROM persona_juridica pj
+    JOIN cliente_juridico cj ON pj.persona_jur_codigo = cj.cliente_jur_codigo
+    WHERE pj.persona_jur_rif = identificacion;
+END;
+$$;
+
+-- Funcion para obtener los datos de un cliente
+CREATE OR REPLACE FUNCTION ObtenerDatosCliente(_codigo TEXT)
+RETURNS TABLE(nombre TEXT, rif TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido::TEXT, pn.persona_nat_rif::TEXT
+    FROM persona_natural pn
+    WHERE pn.persona_nat_cedula = _codigo OR pn.persona_nat_rif = _codigo
+    UNION
+    SELECT pj.persona_jur_razon_social::TEXT, pj.persona_jur_rif::TEXT
+    FROM persona_juridica pj
+    WHERE pj.persona_jur_rif = _codigo;
+END;
+$$;
+
+-- Funcion para buscar el contrato de empleo desde el id de usuario
+CREATE OR REPLACE FUNCTION ObtenerContratoDeEmpleo(_idUsuario INT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT contrato.contrato_codigo
+        FROM Contrato_De_Empleo contrato
+        INNER JOIN Empleado ON contrato.fk_empleado = Empleado.empleado_codigo
+        INNER JOIN Usuario ON Empleado.empleado_codigo = Usuario.fk_persona_natural
+        WHERE Usuario.usuario_codigo = _idUsuario AND contrato.contrato_fecha_salida IS NULL;
+END;
+$$;
+
+-- Funcion para crear factura y obtener el codigo de la factura
+CREATE OR REPLACE FUNCTION CrearFactura(_codigoClienteN INT, _CodigoClienteJ INT, _contratoEmpleo INT)
+RETURNS INT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _nuevaFacturaID INT;
+BEGIN
+    -- Insertar una nueva factura en Factura
+    INSERT INTO Factura (factura_fecha, factura_subtotal, factura_total, fk_cliente_natural, fk_cliente_juridico, fk_contrato_empleo)
+    VALUES (CURRENT_DATE, 1, 1, _codigoClienteN, _codigoClienteJ, _contratoEmpleo)
+    RETURNING factura_codigo INTO _nuevaFacturaID;
+    RETURN _nuevaFacturaID;
+END;
+$$;
+
+-- Procedure para agregar un producto a la factura
+CREATE OR REPLACE PROCEDURE AgregarProductoAFactura(_codigoFactura INT, _PC1 INT, _PC2 INT, _PC3 INT, _cantidad INT, _precio NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    INSERT INTO detalle_factura(fk_factura, detalle_factura_cantidad, detalle_factura_precio_unitario,
+    fk_inventario_tienda_1, fk_inventario_tienda_2, fk_inventario_tienda_3, fk_inventario_tienda_4)
+    VALUES (_codigoFactura, _cantidad, _precio, 1, _PC1, _PC2, _PC3);
+
+    -- Actualizar el subtotal y total de la factura
+    UPDATE Factura SET factura_subtotal = factura_subtotal + (_cantidad * _precio), factura_total = factura_total + (_cantidad * _precio)
+    WHERE factura_codigo = _codigoFactura;
+
+END;
+$$;
+
+-- Funcion para crear cheque
+CREATE OR REPLACE FUNCTION CrearCheque(_cheque TEXT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO Cheque (cheque_numero, fk_banco)
+    VALUES (_cheque, 1)
+    RETURNING cheque_codigo;
+END;
+$$;
+
+-- Funcion para crear la TDD si no existe
+CREATE OR REPLACE FUNCTION CrearTDD(_numero TEXT, _cvv TEXT, _fecha DATE)
+RETURNS INT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    codigo INT;
+BEGIN
+
+    SELECT tdd_codigo INTO codigo
+    FROM TDD
+    WHERE tdd_numero_tarjeta = _numero;
+
+    IF codigo IS NULL THEN
+        INSERT INTO TDD (tdd_numero_tarjeta, tdd_cvv, tdd_fecha_vencimiento, fk_banco)
+        VALUES (_numero, _cvv, _fecha, 1)
+        RETURNING tdd_codigo INTO codigo;
+    END IF;
+    RETURN codigo;
+
+END;
+$$;
+
+-- Funcion para obtener la factura
+CREATE OR REPLACE FUNCTION ObtenerFacturaDeCliente(_codigoClienteN INT, _codigoClienteJ INT)
+RETURNS TABLE(codigo INT, fecha DATE, subtotal NUMERIC, total NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT factura_codigo, factura_fecha, factura_subtotal, factura_total
+    FROM Factura
+    WHERE fk_cliente_natural = _codigoClienteN OR fk_cliente_juridico = _codigoClienteJ
+    ORDER BY factura_fecha DESC
+    LIMIT 1;
+END;
+$$;
+
+-- Funcion para pagar la factura y actualiza su monto
+CREATE OR REPLACE PROCEDURE PagoFactura(_codigoFactura INT, _codigoTDD INT, _codigoCheque INT, _codigoTDC INT, _codigoEfectivo INT, _subTotal NUMERIC, _total NUMERIC, _puntosUsados INT, _puntosGanados INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _nuevoPagoID INT;
+BEGIN
+
+    UPDATE Factura SET factura_subtotal = _subTotal, factura_total = _total,
+    fk_tdd = _codigoTDD, fk_cheque = _codigoCheque, fk_tdc = _codigoTDC, fk_efectivo = _codigoEfectivo,
+    factura_puntos_utilizados = _puntosUsados, factura_puntos_obtenidos = _puntosGanados
+    WHERE factura_codigo = _codigoFactura;
+
+END;
+$$;
+
+-- Actualizamos los puntos del cliente
+CREATE OR REPLACE FUNCTION ActualizarPuntos(_codigoPN INT, _codigoPJ INT, _puntosMenos INT, _puntosMas INT)
+RETURNS TABLE(cliente_nat_puntos_a INT, cliente_jur_puntos_ac INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    UPDATE cliente_natural
+    SET cliente_nat_puntos_acumulados = cliente_nat_puntos_acumulados + actualizarpuntos._puntosMas - actualizarpuntos._puntosMenos
+    WHERE cliente_nat_codigo = actualizarpuntos._codigoPN;
+
+    UPDATE cliente_juridico
+    SET cliente_jur_puntos_acumulados = cliente_jur_puntos_acumulados + actualizarpuntos._puntosMas - actualizarpuntos._puntosMenos
+    WHERE cliente_jur_codigo = actualizarpuntos._codigoPJ;
+    
+    RETURN QUERY
+    SELECT cliente_nat_puntos_acumulados, cliente_jur_puntos_acumulados
+    FROM cliente_natural cn, cliente_juridico cj
+    WHERE cn.cliente_nat_codigo = actualizarpuntos._codigoPN OR cliente_jur_codigo = actualizarpuntos._codigoPJ;
+
+END;
+$$;
+
+-- Funcion para restar los productos de la tienda
+CREATE OR REPLACE PROCEDURE ActualizarTienda(_codigoFactura INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    UPDATE inventario_tienda
+    SET inv_tienda_cantidad = inv_tienda_cantidad - detalle.detalle_factura_cantidad
+    FROM detalle_factura detalle
+    WHERE detalle.fk_factura = _codigoFactura
+    AND detalle.fk_inventario_tienda_1 = 1
+    AND detalle.fk_inventario_tienda_2 = fk_presentacion_1
+    AND detalle.fk_inventario_tienda_3 = fk_presentacion_2
+    AND detalle.fk_inventario_tienda_4 = fk_presentacion_3;
+
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION actualizarAlmacen() 
+DECLARE
+    detalle RECORD;
+BEGIN
+    -- Check if the new status is 'paid'
+    IF NEW.fk_estatus_pedido = 2 THEN
+        -- Debemos buscar el detalle del pedido y hacer un loop para restar el inventario
+        FOR detalle IN SELECT * FROM detalle_pedido WHERE fk_pedido = NEW.fk_pedido LOOP
+            UPDATE inventario_almacen
+            SET inv_almacen_cantidad = inv_almacen_cantidad - detalle.detalle_pedido_cantidad
+            WHERE fk_almacen = detalle.fk_inventario_almacen_1  AND fk_presentacion_1 = detalle.fk_inventario_almacen_2 
+            AND fk_presentacion_2 = detalle.fk_inventario_almacen_3 AND fk_presentacion_3 = detalle.fk_inventario_almacen_4;
+        END LOOP;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Funcion para obtener las presentaciones de una factura
+CREATE OR REPLACE FUNCTION ObtenerPresentacionesDeFactura(_codigoFactura INT)
+RETURNS TABLE(codigo TEXT, nombre TEXT, cantidad INT, precio NUMERIC, imagen TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT (d.fk_inventario_tienda_2 || '-' ||d.fk_inventario_tienda_3 || '-' ||d.fk_inventario_tienda_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_factura_cantidad as cantidad, d.detalle_factura_precio_unitario as precio, img.imagen_nombre::TEXT 
+    FROM Detalle_Factura d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_tienda_2 
+    AND img.fk_presentacion_2 = d.fk_inventario_tienda_3 
+    AND img.fk_presentacion_3 = d.fk_inventario_tienda_4)
+    JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
+    WHERE d.fk_factura = _codigoFactura;
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION ObtenerProductosDelPedido(_codigoPedido INT)
+RETURNS TABLE(codigo TEXT, nombre TEXT, cantidad INT, precio NUMERIC, imagen TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT (d.fk_inventario_almacen_2 || '-' ||d.fk_inventario_almacen_3 || '-' ||d.fk_inventario_almacen_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_pedido_cantidad as cantidad, d.detalle_pedido_precio_unitario as precio, img.imagen_nombre::TEXT 
+    FROM Detalle_Pedido d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_almacen_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_almacen_2 
+                        AND img.fk_presentacion_2 = d.fk_inventario_almacen_3 
+                        AND img.fk_presentacion_3 = d.fk_inventario_almacen_4)
+    JOIN botella bo ON d.fk_inventario_almacen_3 = bo.botella_codigo
+    WHERE d.fk_pedido = _codigoPedido;
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Historico de Punto
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
