@@ -103,7 +103,7 @@
             <button class="nav-link active" id="facturas-tab" data-bs-toggle="tab" data-bs-target="#facturas" type="button" role="tab" aria-controls="facturas" aria-selected="true">Facturas</button>
         </li>
         <li class="nav-item" role="productosvendidos">
-            <button class="nav-link active" id="productosvendidos-tab" data-bs-toggle="tab" data-bs-target="#productosvendidos" type="button" role="tab" aria-controls="productosvendidos" aria-selected="true">Productos Vendidos</button>
+            <button class="nav-link" id="productosvendidos-tab" data-bs-toggle="tab" data-bs-target="#productosvendidos" type="button" role="tab" aria-controls="productosvendidos" aria-selected="true">Productos Vendidos</button>
         </li>
     </ul>
 
@@ -129,16 +129,21 @@
                 </table>
             </div>
         </div>
-    </div>
 
-    <div class="tab-content" id="content">
-        <div class="tab-pane fade show active" id="productosvendidos" role="tabpanel" aria-labelledby="productosvendidos-tab">
+        <div class="tab-pane fade show" id="productosvendidos" role="tabpanel" aria-labelledby="productosvendidos-tab">
             <!-- Aquí van los campos de entrada de fecha -->
-            <div class="mt-4 mx-auto">
-                <label for="fecha-inicio">Fecha de inicio:</label>
-                <input type="date" id="fecha-inicio">
-                <label for="fecha-fin">Fecha de fin:</label>
-                <input type="date" id="fecha-fin">
+            <div class="row mt-4 g-0">
+                <div class="col-4">
+                    <label for="fecha-inicio">Fecha de inicio:</label>
+                    <input type="date" id="fecha-inicio">
+                </div>
+                <div class="col-4">
+                    <label for="fecha-fin">Fecha de fin:</label>
+                    <input type="date" id="fecha-fin">
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary" id="botonConsultar" onclick="productosVendidos()">Buscar</button>
+                </div>
             </div>
             <!-- Aquí va la tabla de órdenes de reposición -->
             <div class="mt-4 mx-auto">
@@ -210,6 +215,78 @@ $(document).ready(function() {
     });
     
 });
+
+
+function productosVendidos(){
+    var fechaInicio = $('#fecha-inicio').val()
+    var fechaFin = $('#fecha-fin').val()
+
+    var data = {
+        "fechaInicio": fechaInicio,
+        "fechaFin": fechaFin
+    }
+
+    data = JSON.stringify(data)
+
+    $.ajax({
+        url: 'http://localhost:5000/api/productos/vendidos',
+        type: 'POST',
+        dataType: 'json',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        data: data,
+        success: function(data) {
+            //resetear la tabla
+            
+            if ($.fn.DataTable.isDataTable('#table-productosvendidos')) {
+                console.log("true")
+                $('#table-productosvendidos').DataTable().clear().destroy();
+            } else {
+                console.log("false")
+            }
+
+            console.log(data.length)
+
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].codigo + '</td>');
+                row.append('<td>' + data[i].categoria + '</td>');
+                row.append('<td>' + data[i].clasificacion + '</td>');
+                row.append('<td>' + data[i].presentacion_nombre + '</td>');
+                row.append('<td>' + data[i].cantidad_vendida + '</td>');
+                row.append('<td>' + data[i].nombre_cliente + '</td>');
+                row.append('<td>' + data[i].identificacion_cliente + '</td>');
+                $('#body-productosvendidos').append(row);
+            }
+
+            // Check if the table is already initialized
+            if ($.fn.DataTable.isDataTable('#table-productosvendidos')) {
+                $('#table-productosvendidos').DataTable().draw();
+            } else {
+                $('#table-productosvendidos').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            }
+        },
+        error: function() {
+            alert('Error al obtener las facturas');
+        }
+    });
+}
 
 function formatDate(dateString) {
     var oldDate = new Date(dateString);
