@@ -102,6 +102,9 @@
         <li class="nav-item" role="facturas">
             <button class="nav-link active" id="facturas-tab" data-bs-toggle="tab" data-bs-target="#facturas" type="button" role="tab" aria-controls="facturas" aria-selected="true">Facturas</button>
         </li>
+        <li class="nav-item" role="productosvendidos">
+            <button class="nav-link active" id="productosvendidos-tab" data-bs-toggle="tab" data-bs-target="#productosvendidos" type="button" role="tab" aria-controls="productosvendidos" aria-selected="true">Productos Vendidos</button>
+        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -123,6 +126,36 @@
                         </tr>
                     </thead>
                     <tbody id="body-facturas"> </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="content">
+        <div class="tab-pane fade show active" id="productosvendidos" role="tabpanel" aria-labelledby="productosvendidos-tab">
+            <!-- Aquí van los campos de entrada de fecha -->
+            <div class="mt-4 mx-auto">
+                <label for="fecha-inicio">Fecha de inicio:</label>
+                <input type="date" id="fecha-inicio">
+                <label for="fecha-fin">Fecha de fin:</label>
+                <input type="date" id="fecha-fin">
+            </div>
+            <!-- Aquí va la tabla de órdenes de reposición -->
+            <div class="mt-4 mx-auto">
+                <table id="table-productosvendidos" class="table table-striped">
+                    <!-- Aquí va el encabezado y cuerpo de la tabla -->
+                    <thead>
+                        <tr>
+                            <th>Código Producto</th>
+                            <th>Categoría</th>
+                            <th>Clasificación</th>
+                            <th>Nombre del Producto</th>
+                            <th>Cantidad vendida</th>
+                            <th>Cliente</th>
+                            <th>Identificación del cliente</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-productosvendidos"> </tbody>
                 </table>
             </div>
         </div>
@@ -175,6 +208,7 @@ $(document).ready(function() {
             alert('Error al obtener las facturas');
         }
     });
+    
 });
 
 function formatDate(dateString) {

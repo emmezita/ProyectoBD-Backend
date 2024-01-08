@@ -1528,3 +1528,100 @@ $$;
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 -- Funcion para obtener las acciones de los usuarios
+DROP FUNCTION IF EXISTS ObtenerAccionesUsuarios();
+
+CREATE OR REPLACE FUNCTION ObtenerAccionesUsuarios()
+RETURNS TABLE(u_codigo INT, u_nombre VARCHAR(20), a_codigo INT, a_fecha TIMESTAMP, a_detalle VARCHAR(50))
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT usuario_codigo, usuario_nombre, ac.accion_codigo, ac.accion_fecha_hora, ac.accion_detalle
+    FROM accion ac 
+    INNER JOIN usuario u on u.usuario_codigo = ac.fk_usuario
+    ORDER BY usuario_codigo;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- LISTADO DE PRODUCTOS VENDIDOS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+CREATE OR REPLACE FUNCTION obtener_listado_productos_vendidos(fecha_inicio DATE, fecha_fin DATE)
+RETURNS TABLE (
+    codigo TEXT,
+    categoria TEXT,
+    clasificacion TEXT,
+    presentacion_nombre TEXT,
+    cantidad_vendida INTEGER,
+    nombre_cliente TEXT,
+    identificacion_cliente TEXT
+) AS $$
+BEGIN
+    RETURN QUERY 
+    SELECT 
+        (dp.fk_inventario_almacen_2 || '' || dp.fk_inventario_almacen_3 || '' || dp.fk_inventario_almacen_4) as codigo,
+        cat.categoria_nombre::TEXT as categoria, cl.clasificacion_nombre::TEXT as clasificacion, 
+        (prod.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT as presentacion_nombre,
+        dp.detalle_pedido_cantidad as cantidad_vendida,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente
+    FROM Pedido pe
+    JOIN Detalle_Pedido dp ON pe.pedido_codigo = dp.fk_pedido
+    JOIN Producto prod ON dp.fk_inventario_almacen_4 = prod.producto_codigo
+    JOIN botella bo ON dp.fk_inventario_almacen_3 = bo.botella_codigo
+    JOIN Categoria cat ON prod.fk_categoria = cat.categoria_codigo
+    JOIN Clasificacion cl ON prod.fk_clasificacion = cl.clasificacion_codigo
+    LEFT JOIN Cliente_Natural cn ON pe.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON pe.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE pe.pedido_fecha BETWEEN fecha_inicio AND fecha_fin
+
+    UNION
+
+    SELECT 
+        (df.fk_inventario_tienda_2 || '' || df.fk_inventario_tienda_3 || '' || df.fk_inventario_tienda_4) as codigo,
+        cat.categoria_nombre::TEXT as categoria, cl.clasificacion_nombre::TEXT as clasificacion, 
+        (prod.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT as presentacion_nombre,
+        df.detalle_factura_cantidad as cantidad_vendida,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente
+    FROM Factura fa
+    JOIN Detalle_Factura df ON fa.factura_codigo = df.fk_factura
+    JOIN Producto prod ON df.fk_inventario_tienda_4 = prod.producto_codigo
+    JOIN botella bo ON df.fk_inventario_tienda_3 = bo.botella_codigo
+    JOIN Categoria cat ON prod.fk_categoria = cat.categoria_codigo
+    JOIN Clasificacion cl ON prod.fk_clasificacion = cl.clasificacion_codigo
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE fa.factura_fecha BETWEEN fecha_inicio AND fecha_fin
+
+    UNION
+    SELECT 
+        (df.fk_evento_lista_producto_3 || '' || df.fk_evento_lista_producto_4 || '' || df.fk_evento_lista_producto_5) as codigo,
+        cat.categoria_nombre::TEXT as categoria, cl.clasificacion_nombre::TEXT as clasificacion, 
+        (prod.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT as presentacion_nombre,
+        df.detalle_factura_cantidad as cantidad_vendida,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente
+    FROM Factura fa
+    JOIN Detalle_Factura df ON fa.factura_codigo = df.fk_factura
+    JOIN Producto prod ON df.fk_evento_lista_producto_5 = prod.producto_codigo
+    JOIN botella bo ON df.fk_evento_lista_producto_4 = bo.botella_codigo
+    JOIN Categoria cat ON prod.fk_categoria = cat.categoria_codigo
+    JOIN Clasificacion cl ON prod.fk_clasificacion = cl.clasificacion_codigo
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE fa.factura_fecha BETWEEN fecha_inicio AND fecha_fin
+    ORDER BY 
+        categoria, 
+        clasificacion, 
+        cantidad_vendida DESC;
+END;
+$$ LANGUAGE plpgsql;

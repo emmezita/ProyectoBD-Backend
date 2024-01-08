@@ -3861,3 +3861,21 @@ def obtener_inventario_almacen():
     cur.close()
     pprint(rows)
     return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# LISTADO PRODUCTOS VENDIDOS POR UN PERIODO DE TIEMPO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener los productos vendidos por un periodo de tiempo
+@app.route("/api/productos/vendidos", methods=["POST"])
+def obtener_productos_vendidos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    periodo = request.get_json()
+    pprint(periodo)
+    fechaInicio = periodo.get("fechaInicio")
+    fechaFin = periodo.get("fechaFin")
+    cur.execute('SELECT * FROM obtener_listado_productos_vendidos(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
