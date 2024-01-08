@@ -1625,3 +1625,38 @@ BEGIN
         cantidad_vendida DESC;
 END;
 $$ LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- LISTADO DE PRODUCTOS VENDIDOS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+DROP FUNCTION IF EXISTS ObtenerPedidos();
+
+CREATE OR REPLACE FUNCTION ObtenerPedidos()
+RETURNS TABLE(
+    pedido_codigo INT,
+    pedido_fecha DATE,
+    pedido_total DECIMAL(10,2),
+    cliente_nombre TEXT,
+    codigo_estatus INT,
+    pedido_estatus TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        pe.pedido_codigo,
+        pe.pedido_fecha,
+        pe.pedido_total,
+		COALESCE(pn2.persona_nat_p_nombre || ' ' || pn2.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        est.estatus_pedido_codigo,
+        est.estatus_pedido_nombre::TEXT
+    FROM Pedido pe
+    JOIN Historico_Estatus_Pedido ep ON pe.pedido_codigo = ep.fk_pedido
+                                    AND ep.fecha_hora_fin_estatus IS NULL
+    JOIN Estatus_Pedido est ON ep.fk_estatus_pedido = est.estatus_pedido_codigo
+    LEFT JOIN Cliente_Natural cn ON pe.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn2 ON cn.cliente_nat_codigo = pn2.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON pe.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
+END; $$
+LANGUAGE plpgsql;

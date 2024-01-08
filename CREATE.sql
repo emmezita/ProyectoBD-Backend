@@ -1853,3 +1853,7 @@ CREATE TABLE Historico_Precio_Venta (
   CONSTRAINT ck_precio_venta_fecha_fin CHECK (precio_venta_fecha_fin IS NULL OR precio_venta_fecha_fin > precio_venta_fecha_inicio)
   -- Constrain. Debe ser mayor que la fecha de inicio
 );
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- PROCEDURES FUNCTIONS TRIGGERS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

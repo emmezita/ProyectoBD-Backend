@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Órdenes de Reposición y Compra</title>
+    <title>Lista Pedidos</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -105,9 +105,9 @@
                 <tr>
                     <th>Codigo Pedido</th>
                     <th>Fecha</th>
-                    <th>Empleado Responsable</th>
                     <th>Total</th>
                     <th>Cliente</th>
+                    <th>Estatus</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -133,24 +133,73 @@ function formatDate(dateString) {
         month = '0' + month;
 
     return [day, month, year].join('/');
-}    
+}
 
-// $('#table-ordenesCompra').DataTable({
-//     "language": {
-//         "lengthMenu": "Mostrar _MENU_ registros por página",
-//         "zeroRecords": "No se encontraron resultados",
-//         "info": "Mostrando página _PAGE_ de _PAGES_",
-//         "infoEmpty": "No hay registros disponibles",
-//         "infoFiltered": "(filtrado de _MAX_ registros totales)",
-//         "search": "Buscar:",
-//         "paginate": {
-//             "first": "Primero",
-//             "last": "Último",
-//             "next": "Siguiente",
-//             "previous": "Anterior"
-//         },
-//     }
-// });
+function verFactura(codigo) {
+    window.location.href = 'https://dilodev.co/factura-cliente-compra-en-linea?id=' + codigo;
+}
+
+https://dilodev.co/factura-cliente-compra-en-linea/
+
+$(document).ready(function() {
+    $.ajax({
+        url: 'http://localhost:5000/api/pedido/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].pedido_codigo + '</td>');
+                var fecha = formatDate(data[i].pedido_fecha);
+                row.append('<td>' + fecha + '</td>');
+                row.append('<td>' + data[i].pedido_total + '</td>');
+                row.append('<td>' + data[i].cliente_nombre + '</td>');
+                row.append('<td>' + data[i].pedido_estatus + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="verPedido(' + data[i].pedido_codigo + ')">Ver</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarPedido(' + data[i].pedido_codigo + ')">Eliminar</button></td>');
+                
+                $('#body-pedidos').append(row);
+            }
+
+            $('#table-pedidos').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Error al obtener las facturas');
+        }
+    });
+    
+});
+
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [day, month, year].join('/');
+}    
 
 </script>
 
