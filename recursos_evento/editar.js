@@ -101,6 +101,7 @@ function getEvento(){
             $("#form-field-nombre").val(data.evento.evento_nombre);
             $("#form-field-cupos").val(data.evento.evento_num_cupos);
             $("#form-field-entradas").val(data.evento.evento_num_entradas);
+            $("#form-field-costoentrada").val(data.costoentrada.entrada_precio);
             $("#form-field-fechainicio").val(formatDate(data.evento.evento_fecha_inicio));
             $("#form-field-fechacierre").val(formatDate(data.evento.evento_fecha_cierre));
             $("#form-field-direccion").val(data.evento.evento_direccion);

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roles</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+
+    <style>
+
+        .btn-primary {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #D1991A;
+            border-color: #D1991A;
+        }
+        .btn-primary:hover {
+            color: #F8F8F8;
+            background-color: #956d11;
+            border-color: #956d11;
+        }
+
+        /* Estilo para el botón de eliminar */
+        .btn-danger {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #FF0000;
+            border-color: #FF0000;
+        }
+        .btn-danger:hover {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            background-color: #b30000;
+            border-color: #b30000;
+        }
+
+        .column {
+            overflow-y: scroll;
+            height: 500px;
+        }
+        .lista-roles {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+        .lista-roles li {
+            padding: 8px;
+            margin-bottom: 8px;
+            background-color: #a5141a;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        .lista-roles li:hover {
+            background-color: #a54a4d;
+        }
+        .lista-roles li.active {
+            background-color: #FFB91A;
+            color: black;
+        }
+        .col-3 {
+            padding: 5px 3px;
+        }
+        #permisos {
+            overflow-y: scroll;
+            overflow-x: hidden;
+            height: 500px; 
+            padding-left: 10px !important;
+        }
+
+    </style>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="tabs" role="tablist">
+        <li class="nav-item" role="roles">
+        <button class="nav-link active" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab" aria-controls="roles" aria-selected="true">Roles</button>
+        </li>
+        <li class="nav-item" role="acciones">
+        <button class="nav-link" id="acciones-tab" data-bs-toggle="tab" data-bs-target="#acciones" type="button" role="tab" aria-controls="cargo" aria-selected="false">Acciones</button>
+        </li>
+    </ul>
+
+    <!-- Contenido -->
+    <div class="tab-content" id="content">
+        <div class="tab-pane fade show active" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+            <div class="container">
+                <div class="row px-0">
+                    <div class="col-4" id="roles">
+                        <!-- lista vertical de roles con scrollbar -->
+                        <div class="column">
+                            <ul class="lista-roles">
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-8 px-0" id="permisos">
+                        <!-- lista de permisos de filas de 4 (fila por tipo de permio) cada permiso es un checkbox -->
+                        <div class="row px-0" id="lista-permisos">
+                        </div>
+                    </div>
+                </div>
+                <!-- Fila de Botones -->
+                <div class="row px-0 mt-3 justify-content-between">
+                    <div class="col-3">
+                        <button class="btn btn-primary primary" id="button-nuevo" onclick="modalAgregarRol()">Nuevo</button>
+                        <button class="btn btn-danger primary" id="button-eliminar" onclick="eliminarRol()">Eliminar</button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-primary primary" id="button-guardar" onclick="guardarRoles()">Guardar</button>
+                        <button class="btn btn-primary primary" id="button-cancelar" onclick="reloadPage()">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="acciones" role="tabpanel" aria-labelledby="acciones-tab">
+            <div class="mt-4 mx-auto">
+                <table id="table-acciones" class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Código de Usuario</th>
+                            <th>Nombre de Usuario</th>
+                            <th>Código de Acción</th>
+                            <th>Fecha de la Acción</th>
+                            <th>Detalle de la Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-acciones"> </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+
+<script>
+
+var roles = ''
+var permisos = ''
+
+function clickLi(li) {
+    console.log('click en li')
+    limpiarActive();
+    $(li).addClass('active')
+    seleccionarRol($(li).attr('id'))
+}
+
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [day, month, year].join('/');
+}
+
+$(document).ready(function() {
+    console.log('ready')
+
+    $.ajax({
+        url: 'http://localhost:5000/api/rol/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            console.log(data)
+            roles = data
+            llenarRoles(data)
+
+            $('.lista-roles li').click(function() {
+                clickLi(this);
+            })
+        },
+        error: function(error) {
+            console.log(error)
+        }
+    })
+
+    $.ajax({
+        url: 'http://localhost:5000/api/permiso/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            console.log(data)
+            permisos = data
+            llenarPermiso(data)
+
+            // para actualizar los permisos de un rol
+            $('#lista-permisos input').click(function() {
+                console.log('click en input')
+                var permisoId = $(this).attr('id')
+                var rolId = $('.lista-roles li.active').attr('id')
+                if (rolId == undefined) {
+                    alert('Debe seleccionar un rol')
+                    $(this).prop('checked', false)
+                    return
+                }
+                console.log("permiso: " + permisoId + "- rol: " + rolId)
+
+                // actualizamos el rol (agregamos o quitamos el permiso)
+                var rol = roles.find(function(rol) {
+                    return rol.rol_codigo == rolId
+                })
+                var permiso = rol.permisos.find(function(permiso) {
+                    return permiso.permiso_codigo == permisoId
+                })
+                if (permiso == undefined) {
+                    // agregamos el permiso al rol
+                    rol.permisos.push(permisos.find(function(permiso) {
+                        return permiso.permiso_codigo == permisoId
+                    }))
+                } else {
+                    // quitamos el permiso del rol
+                    rol.permisos = rol.permisos.filter(function(permiso) {
+                        return permiso.permiso_codigo != permisoId
+                    })
+                }
+
+                // ponemos un flag para saber que el rol fue modificado
+                rol.modificado = true
+            })
+
+        },
+        error: function(error) {
+            console.log(error)
+        }
+    })
+
+    $.ajax({
+        url: 'http://localhost:5000/api/accion/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            console.log(data)
+            var acciones = data
+            var fila = ''
+            acciones.forEach(function(accion) {
+                fila += '<tr>'
+                fila += '<td>' + accion.u_codigo + '</td>'
+                fila += '<td>' + accion.u_nombre + '</td>'
+                fila += '<td>' + accion.a_codigo + '</td>'
+                var fecha = formatDate(accion.a_fecha)
+                fila += '<td>' + fecha + '</td>'
+                fila += '<td>' + accion.a_detalle + '</td>'
+                fila += '</tr>'
+            })
+            $('#body-acciones').append(fila)
+
+            $('#table-acciones').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            })
+        },
+        error: function(error) {
+            console.log(error)
+        }
+    })
+})
+
+
+function limpiarActive() {
+    $('.lista-roles li').each(function() {
+        $(this).removeClass('active')
+    })
+}
+
+function limpiarCheck() {
+    $('#lista-permisos input').each(function() {
+        $(this).prop('checked', false)
+    })
+}
+
+function llenarRoles(roles) {
+    var lista = $('.lista-roles')
+    roles.forEach(function(rol) {
+        lista.append('<li id='+rol.rol_codigo+'>' + rol.rol_nombre + '</li>')
+    })
+}
+
+function llenarPermiso(permisos) {
+    var lista = $('#lista-permisos')
+    var fila = ''
+    var contador = 0
+    permisos.forEach(function(permiso) {
+        fila += '<div class="col-3"> <input type="checkbox" id='+permiso.permiso_codigo+'>' + permiso.permiso_descripcion + '</div>'
+    })
+    lista.append(fila)
+}
+
+function seleccionarRol(id) {
+    var rol = roles.find(function(rol) {
+        return rol.rol_codigo == id
+    })
+    console.log(id)
+    // se activan todos los permisos del rol seleccionado
+    // se desactivan todos los permisos de los demas roles
+    limpiarCheck()
+    if (rol.permisos.length == 0) {
+        return
+    }
+    rol.permisos.forEach(function(permiso) {
+        $('input[id='+permiso.permiso_codigo+']').prop('checked', true)
+    })
+}
+
+function reloadPage() {
+    location.reload()
+}
+
+function eliminarRol() {
+    var rolId = $('.lista-roles li.active').attr('id')
+    if (rolId == undefined) {
+        alert('Debe seleccionar un rol')
+        return
+    }
+
+    // buscamos el rol en la lista de roles
+    var rol = roles.find(function(rol) {
+        return rol.rol_codigo == rolId
+    })
+
+    // si el rol es nuevo, se elimina de la lista de roles
+    if (rol.nuevo) {
+        roles = roles.filter(function(rol) {
+            return rol.rol_codigo != rolId
+        })
+        $('#'+rolId).remove()
+        return
+    }
+
+    console.log('eliminar rol: ' + rolId)
+
+    // preguntar si esta seguro de eliminar el rol
+    var opcion = confirm('¿Esta seguro de eliminar el rol? (Se eliminaran todos los permisos asociados al rol)')
+
+    $.ajax({
+        url: 'http://localhost:5000/api/rol/eliminar/' + rolId,
+        type: 'DELETE',
+        success: function(data) {
+            console.log(data)
+            alert('Rol eliminado')
+            reloadPage()
+        },
+        error: function(error) {
+            console.log(error)
+        }
+    })
+}
+
+function modalAgregarRol() {
+    var nombre = prompt('Ingrese el nombre del rol')
+    if (nombre == null || nombre == '') {
+        alert('Debe ingresar un nombre')
+        return
+    }
+    agregarRol(nombre)
+}
+
+function agregarRol(nombre) {
+    // obtenemos el ultimo codigo de rol
+    var rolId = roles[roles.length - 1].rol_codigo
+
+    var rol = {
+        rol_codigo: rolId + 1,
+        rol_nombre: nombre,
+        modificado: true,
+        nuevo: true,
+        permisos: []
+    }
+    roles.push(rol)
+    $('.lista-roles').append('<li id='+rol.rol_codigo+'>' + rol.rol_nombre + '</li>')
+    // se agrega el evento click al nuevo rol
+    $('.lista-roles li').click(function() {
+        clickLi(this);
+    })
+}
+
+function guardarRoles() {
+    // recorremos todos los roles y guardamos los que fueron modificados
+    var rolesModificados = [];
+    roles.forEach(function(rol) {
+        if (rol.modificado) {
+            console.log('guardar rol: ' + rol.rol_codigo)
+            rolesModificados.push(rol)
+        }
+    })
+
+    if (rolesModificados.length == 0) {
+        alert('No hay roles modificados')
+        return
+    }
+
+    $.ajax({
+        url: 'http://localhost:5000/api/rol/modificar',
+        type: 'PUT',
+        contentType: 'application/json',
+        data: JSON.stringify(rolesModificados),
+        success: function(data) {
+            console.log(data)
+            alert('Roles actualizados')
+            reloadPage()
+        },
+        error: function(error) {
+            console.log(error)
+        }
+    })
+}
+
+</script>
+
+</body>
+</html>
+

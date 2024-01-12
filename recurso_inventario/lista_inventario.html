@@ -127,8 +127,6 @@
                             <th>Capacidad</th>
                             <th>Cantidad</th>
                             <th>Precio unitario</th>
-                            <th></th> <!-- no ordenar estas columnas -->
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="body-inventariotienda"> </tbody>
@@ -147,8 +145,6 @@
                             <th>Capacidad</th>
                             <th>Cantidad</th>
                             <th>Precio unitario</th>
-                            <th></th> <!-- no ordenar estas columnas -->
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody id="body-inventarioalmacen"> </tbody>
@@ -221,9 +217,103 @@
         </div>
     </div>
 
+    <!-- Modal Eliminar Presentacion-->
+    <div class="modal fade" id="deletePreCostumerModal" tabindex="-1" aria-labelledby="deletePreCostumerModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePreModalLabel">Eliminar Presentacion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="delete-precostumer-button">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <script>
 $(document).ready(function() {
     var data = null;
+    $.ajax({
+        url: 'http://localhost:5000/api/inventario/tienda',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].codigo1 + '' + data[i].codigo2 + '' + data[i].codigo3 +'</td>');
+                row.append('<td>' + data[i].nombre + '</td>');
+                row.append('<td>' + data[i].grado + '</td>');
+                row.append('<td>' + data[i].botella + '</td>');
+                row.append('<td>' + data[i].capacidad + '</td>');
+                row.append('<td>' + data[i].cantidad + '</td>');
+                row.append('<td>' + data[i].precio_unitario + '</td>');
+
+                $('#body-inventariotienda').append(row);
+            }
+
+            $('#table-inventariotienda').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+    });
+
+    $.ajax({
+        url: 'http://localhost:5000/api/inventario/almacen',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].codigo1 + '' + data[i].codigo2 + '' + data[i].codigo3 +'</td>');
+                row.append('<td>' + data[i].nombre + '</td>');
+                row.append('<td>' + data[i].grado + '</td>');
+                row.append('<td>' + data[i].botella + '</td>');
+                row.append('<td>' + data[i].capacidad + '</td>');
+                row.append('<td>' + data[i].cantidad + '</td>');
+                row.append('<td>' + data[i].precio_unitario + '</td>');
+
+                $('#body-inventarioalmacen').append(row);
+            }
+
+            $('#table-inventarioalmacen').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+    });
+
     $.ajax({
         url: 'http://localhost:5000/api/producto/all',
         type: 'GET',
@@ -280,7 +370,7 @@ $(document).ready(function() {
                 row.append('<td>' + data[i].peso + '</td>');
                 row.append('<td>' + data[i].precio_compra + '</td>');
                 row.append('<td><button type="button" class="btn btn-warning" onclick="editarPresentacion(' + data[i].c1 + ',' + data[i].c2 +',' + data[i].c3 + ')">Editar</button></td>');
-                row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-precostumer-button" data-bs-toggle="modal" data-bs-target="#deletePreCostumerModal" data-precostumer-name="'+ data[i].nombre+'"  data-presentacion-id1="'+ data[i].c1 +'" data-presentacion-id2="'+ data[i].c2 +'" data-presentacion-id3="'+ data[i].c3 +'">Eliminar</button></td>');
 
                 $('#body-presentaciones').append(row);
             }               
@@ -305,7 +395,64 @@ $(document).ready(function() {
             alert('Hubo un error obteniendo a las presentaciones');
         }
     });
-});     
+}); 
+
+$('#deleteProCostumerModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var costumerId = button.data('procostumer-id') // Extract info from data-* attributes
+    var costumerName = button.data('procostumer-name') // Extract info from data-* attributes
+    var modal = $(this)
+    modal.find('.modal-body').text('¿Está seguro que desea eliminar a ' + costumerName + '?')
+    modal.find('#delete-procostumer-button').attr('data-procostumer-id', costumerId)
+})
+
+$('#delete-procostumer-button').click(function() {
+    console.log('delete');
+    var costumerId = $(this).data('procostumer-id');
+    $.ajax({
+        url: 'http://localhost:5000/api/producto/eliminar/' + costumerId,
+        type: 'DELETE',
+        success: function() {
+            alert('Producto eliminado exitosamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error eliminando el Producto');
+        }
+    });
+});
+
+$('#deletePreCostumerModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var costumerName = button.data('precostumer-name') // Extract info from data-* attributes
+    var presentacionId1 = button.data('presentacion-id1') // Extract info from data-* attributes
+    var presentacionId2 = button.data('presentacion-id2') // Extract info from data-* attributes
+    var presentacionId3 = button.data('presentacion-id3') // Extract info from data-* attributes
+    var modal = $(this)
+    modal.find('.modal-body').text('¿Está seguro que desea eliminar a ' + costumerName + '?')
+    modal.find('#delete-precostumer-button').attr('data-presentacion-id1', presentacionId1)
+    modal.find('#delete-precostumer-button').attr('data-presentacion-id2', presentacionId2)
+    modal.find('#delete-precostumer-button').attr('data-presentacion-id3', presentacionId3)
+})
+
+$('#delete-precostumer-button').click(function() {
+    console.log('delete');
+    var costumerId = $(this).data('precostumer-id');
+    var presentacionId1 = $(this).data('presentacion-id1');
+    var presentacionId2 = $(this).data('presentacion-id2');
+    var presentacionId3 = $(this).data('presentacion-id3');
+    $.ajax({
+        url: 'http://localhost:5000/api/presentacion/eliminar/' + presentacionId1 + '/' + presentacionId2 + '/' + presentacionId3,
+        type: 'DELETE',
+        success: function() {
+            alert('Presentacion eiminada exitosamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error eliminando la Presentación');
+        }
+    });
+});
 
 function editarProducto(id){
     console.log('editar Producto');

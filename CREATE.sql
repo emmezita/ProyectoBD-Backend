@@ -245,7 +245,7 @@ CREATE TABLE Rol_Permiso (
 
   CONSTRAINT pk_rol_permiso PRIMARY KEY (fk_rol, fk_permiso),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_rol_permiso_rol_ejecuta FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo),
+  CONSTRAINT fk_rol_permiso_rol_ejecuta FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Rol.
   CONSTRAINT fk_rol_permiso_permiso_ejecutadopor FOREIGN KEY (fk_permiso) REFERENCES Permiso (permiso_codigo)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Permiso.
@@ -262,7 +262,7 @@ CREATE TABLE Usuario (
   -- Relación con la entidad Persona Natural
   fk_persona_juridica integer,
   -- Relación con la entidad Persona Jurídica
-  fk_rol integer NOT NULL,
+  fk_rol integer, -- Cuando el rol que tenia el usuario se elimina, se debe activar un trigger que cambie el rol a 1 (algun rol basico)
   -- Relación con la entidad Rol
 
   CONSTRAINT pk_usuario_codigo PRIMARY KEY (usuario_codigo),
@@ -271,7 +271,7 @@ CREATE TABLE Usuario (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Natural.
   CONSTRAINT fk_usuario_persona_juridica_crea FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
-  CONSTRAINT fk_rol_seleasigna FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo),
+  CONSTRAINT fk_rol_seleasigna FOREIGN KEY (fk_rol) REFERENCES Rol (rol_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Rol.
   CONSTRAINT ck_usuario_nombre CHECK (usuario_nombre ~ '^[^\s]+$'),
   -- Constrain. No debe contener espacios en blanco
@@ -397,8 +397,14 @@ CREATE TABLE Punto (
   -- Clave primaria de la tabla.
 );
 
+CREATE SEQUENCE secuencia_ficha
+    INCREMENT BY 1
+    START WITH 1
+    MINVALUE 1
+    MAXVALUE 99999999;
+
 CREATE TABLE Ficha_Afiliacion (
-  afiliacion_numero serial,
+  afiliacion_numero varchar(8),
   -- Código identificador de la entidad Ficha de Afiliación
   afiliacion_fecha date NOT NULL,
   -- Fecha de afiliación del cliente.
@@ -411,7 +417,7 @@ CREATE TABLE Ficha_Afiliacion (
 
   CONSTRAINT pk_ficha_codigo PRIMARY KEY (afiliacion_numero),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_ficha_cliente_natural_matricula FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_ficha_cliente_natural_matricula FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente Natural.
   CONSTRAINT fk_ficha_persona_juridica_inscribe FOREIGN KEY (fk_persona_juridica) REFERENCES Persona_Juridica (persona_jur_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Persona Jurídica.
@@ -428,14 +434,14 @@ CREATE TABLE Pago_Afiliacion (
   -- Monto del pago de la afiliación. Debe ser mayor que 0
   pago_mes_pagado date NOT NULL,
   -- Mes que se está pagando.
-  fk_ficha_afiliacion integer NOT NULL,
+  fk_ficha_afiliacion varchar(8) NOT NULL,
   -- Relación con la entidad Ficha de Afiliación
   fk_tdc integer NOT NULL,
   -- Relación con la entidad TDC
 
   CONSTRAINT pk_pago_codigo PRIMARY KEY (pago_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_pago_ficha_afiliacion_conlleva FOREIGN KEY (fk_ficha_afiliacion) REFERENCES Ficha_Afiliacion (afiliacion_numero),
+  CONSTRAINT fk_pago_ficha_afiliacion_conlleva FOREIGN KEY (fk_ficha_afiliacion) REFERENCES Ficha_Afiliacion (afiliacion_numero) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Ficha de Afiliación.
   CONSTRAINT fk_pago_tdc_llevaacabo FOREIGN KEY (fk_tdc) REFERENCES TDC (tdc_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla TDC.
@@ -795,7 +801,7 @@ CREATE TABLE Cuerpo (
 
   CONSTRAINT pk_cuerpo PRIMARY KEY (cuerpo_codigo, fk_producto),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_cuerpo_producto_detalla FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_cuerpo_producto_detalla FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT ck_cuerpo_peso CHECK (cuerpo_peso IN ('Ligero', 'Medio', 'Pesado')),
   -- Constrain. Debe tener tres posibles valores: ligero, medio y pesado.
@@ -825,7 +831,7 @@ CREATE TABLE Regusto (
 
   CONSTRAINT pk_regusto PRIMARY KEY (regusto_codigo, fk_producto),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_regusto_producto_dejaun FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_regusto_producto_dejaun FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT ck_regusto_entrada CHECK (regusto_entrada = '' OR regusto_entrada ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
@@ -861,7 +867,7 @@ CREATE TABLE Producto_Aroma (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_aroma_aroma_atribuye FOREIGN KEY (fk_aroma) REFERENCES Aroma (aroma_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Aroma.
-  CONSTRAINT fk_producto_aroma_producto_seleatribuye FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_producto_aroma_producto_seleatribuye FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -887,7 +893,7 @@ CREATE TABLE Producto_Sabor (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_sabor_sabor_caracteriza FOREIGN KEY (fk_sabor) REFERENCES Sabor (sabor_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Sabor.
-  CONSTRAINT fk_producto_sabor_producto_caracterizadopor FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_producto_sabor_producto_caracterizadopor FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -917,7 +923,7 @@ CREATE TABLE Producto_Servido (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_servido_servido_metodo FOREIGN KEY (fk_servido) REFERENCES Servido (servido_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Servido.
-  CONSTRAINT fk_producto_servido_producto_esservido FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_producto_servido_producto_esservido FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -991,7 +997,7 @@ CREATE TABLE Mezclado (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Anejamiento.
   CONSTRAINT fk_mezclado_ingrediente_seagregan FOREIGN KEY (fk_ingrediente) REFERENCES Ingrediente (ingrediente_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Ingrediente.
-  CONSTRAINT fk_mezclado_producto_seaneja FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo)
+  CONSTRAINT fk_mezclado_producto_seaneja FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
 );
 
@@ -1103,7 +1109,7 @@ CREATE TABLE Presentacion (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_presentacion_material_botella_contiene FOREIGN KEY (fk_material_botella_1,fk_material_botella_2) REFERENCES Material_Botella (fk_material,fk_botella),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Material_Botella.
-  CONSTRAINT fk_presentacion_producto_presentado FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_presentacion_producto_presentado FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT fk_presentacion_tapa_utiliza FOREIGN KEY (fk_tapa) REFERENCES Tapa (tapa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Tapa.
@@ -1137,7 +1143,7 @@ CREATE TABLE Descuento (
 
   CONSTRAINT pk_descuento PRIMARY KEY (fk_presentacion_1, fk_presentacion_2, fk_presentacion_3, fk_diario_ronero),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_descuento_presentacion_esseleccionado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_descuento_presentacion_esseleccionado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT fk_descuento_diario_ronero_selecciona FOREIGN KEY (fk_diario_ronero) REFERENCES Diario_Ronero (diario_edicion),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Diario_Ronero.
@@ -1201,9 +1207,9 @@ CREATE TABLE Pago_Entrada (
 
   CONSTRAINT pk_pago_ent_codigo PRIMARY KEY (pago_ent_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_pago_ent_cliente_natural_concreta FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_pago_ent_cliente_natural_concreta FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
-  CONSTRAINT fk_pago_ent_cliente_juridico_efectua FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
+  CONSTRAINT fk_pago_ent_cliente_juridico_efectua FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
   CONSTRAINT fk_pago_ent_tdc_cubre FOREIGN KEY (fk_tdc) REFERENCES TDC (tdc_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla TDC.
@@ -1225,7 +1231,7 @@ CREATE TABLE Entrada (
 
   CONSTRAINT pk_entrada_codigo PRIMARY KEY (entrada_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_entrada_evento_ofrece FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_entrada_evento_ofrece FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
   CONSTRAINT fk_entrada_pago_entrada_ocupa FOREIGN KEY (fk_pago_entrada) REFERENCES Pago_Entrada (pago_ent_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pago_Entrada.
@@ -1236,15 +1242,15 @@ CREATE TABLE Entrada (
 CREATE TABLE Cata (
   cata_codigo serial,
   -- Código identificador de la entidad Cata
-  cata_nombre varchar(20) NOT NULL,
+  cata_nombre varchar(50) NOT NULL,
   -- Nombre de la persona que escribio la Cata.
-  cata_fase_visual varchar(50) NOT NULL,
+  cata_fase_visual varchar(100) NOT NULL,
   -- Fase visual de la Cata.
-  cata_fase_olfativa varchar(50) NOT NULL,
+  cata_fase_olfativa varchar(100) NOT NULL,
   -- Fase olfativa de la Cata.
-  cata_fase_gustativa varchar(50) NOT NULL,
+  cata_fase_gustativa varchar(100) NOT NULL,
   -- Fase gustativa de la Cata.
-  cata_nota varchar(50),
+  cata_nota varchar(100),
   -- Nota de la Cata.
   fk_producto integer NOT NULL,
   -- Relación con la entidad Producto
@@ -1253,9 +1259,9 @@ CREATE TABLE Cata (
 
   CONSTRAINT pk_cata_codigo PRIMARY KEY (cata_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_cata_producto_cata FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_cata_producto_cata FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
-  CONSTRAINT fk_cata_evento_cata FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_cata_evento_cata FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
   CONSTRAINT ck_cata_nombre CHECK (cata_nombre ~ '^[A-Za-z0-9áéíóúÁÉÍÓÚñÑ.,() ]+$'),
   -- Constrain. No debe contener números ni caracteres especiales
@@ -1272,9 +1278,9 @@ CREATE TABLE Cata (
 CREATE TABLE Premio (
   premio_codigo serial,
   -- Código identificador de la entidad Premio
-  premio_nombre varchar(20) NOT NULL,
+  premio_nombre varchar(50) NOT NULL,
   -- Nombre del premio.
-  premio_descripcion varchar(50) NOT NULL,
+  premio_descripcion varchar(150) NOT NULL,
   -- Descripción del premio.
 
   CONSTRAINT pk_premio_codigo PRIMARY KEY (premio_codigo),
@@ -1299,7 +1305,7 @@ CREATE TABLE Producto_Premio (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_producto_premio_premio_otorgado FOREIGN KEY (fk_premio) REFERENCES Premio (premio_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Premio.
-  CONSTRAINT fk_producto_premio_producto_obtuvo FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo),
+  CONSTRAINT fk_producto_premio_producto_obtuvo FOREIGN KEY (fk_producto) REFERENCES Producto (producto_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Producto.
   CONSTRAINT fk_producto_premio_evento_otorga FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo)
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
@@ -1323,18 +1329,18 @@ CREATE TABLE Imagen (
 
   CONSTRAINT pk_imagen_codigo PRIMARY KEY (imagen_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_imagen_evento_ilustra FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_imagen_evento_ilustra FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto)
+  CONSTRAINT fk_imagen_presentacion_refleja FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
 );                
 
 CREATE TABLE Estatus_Pedido (
   estatus_pedido_codigo serial,
   -- Código identificador de la entidad Estatus_Pedido
-  estatus_pedido_nombre varchar(20) NOT NULL UNIQUE,
+  estatus_pedido_nombre varchar(50) NOT NULL UNIQUE,
   -- Nombre del estatus del pedido.
-  estatus_pedido_descripcion varchar(50),
+  estatus_pedido_descripcion varchar(200),
   -- Descripción del estatus del pedido.
 
   CONSTRAINT pk_estatus_pedido_codigo PRIMARY KEY (estatus_pedido_codigo),
@@ -1350,11 +1356,11 @@ CREATE TABLE Pedido (
   -- Código identificador de la entidad Pedido
   pedido_fecha date NOT NULL,
   -- Fecha del pedido.
-  pedido_direccion varchar(100) NOT NULL,
+  pedido_direccion varchar(100),
   -- Dirección del pedido.
-  pedido_subtotal decimal(10,2) NOT NULL,
+  pedido_subtotal decimal(10,2),
   -- Subtotal del pedido. Debe ser mayor que 0
-  pedido_total decimal(10,2) NOT NULL,
+  pedido_total decimal(10,2),
   -- Total del pedido. Debe ser mayor que 0
   pedido_puntos_utilizados integer,
   -- Puntos utilizados en el pedido. Debe ser mayor o igual a 0
@@ -1366,8 +1372,6 @@ CREATE TABLE Pedido (
   -- Relación con la entidad Cliente_Natural
   fk_cliente_juridico integer,
   -- Relación con la entidad Cliente_Juridico
-  fk_contrato_empleo integer NOT NULL,
-  -- Relación con la entidad Contrato_Empleo
   fk_lugar integer NOT NULL,
   -- Relación con la entidad Lugar
 
@@ -1377,12 +1381,10 @@ CREATE TABLE Pedido (
   -- Clave foránea que hace referencia a la clave primaria de la tabla TDC.
   CONSTRAINT fk_pedido_punto_requerido FOREIGN KEY (fk_punto) REFERENCES Punto (punto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Punto.
-  CONSTRAINT fk_pedido_cliente_natural_confecciona FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_pedido_cliente_natural_confecciona FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
-  CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
+  CONSTRAINT fk_pedido_cliente_juridico_hace FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_pedido_contrato_empleo_entrega FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
-  -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT fk_pedido_lugar_enviadoa FOREIGN KEY (fk_lugar) REFERENCES Lugar (lugar_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Lugar.
   CONSTRAINT ck_pedido_subtotal CHECK (pedido_subtotal > 0),
@@ -1407,7 +1409,7 @@ CREATE TABLE Historico_Estatus_Pedido (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_historico_estatus_pedido_estatus_pedido FOREIGN KEY (fk_estatus_pedido) REFERENCES Estatus_Pedido (estatus_pedido_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Estatus_Pedido.
-  CONSTRAINT fk_historico_estatus_pedido_pedido FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo),
+  CONSTRAINT fk_historico_estatus_pedido_pedido FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pedido.
   CONSTRAINT ck_historico_estatus_pedido CHECK (fecha_hora_fin_estatus IS NULL OR fecha_hora_fin_estatus > fecha_hora_inicio_estatus)
   -- Constrain. Debe ser mayor que la fecha y hora de inicio
@@ -1443,7 +1445,7 @@ CREATE TABLE Orden_De_Reposicion (
 
   CONSTRAINT pk_orden_codigo PRIMARY KEY (orden_codigo),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION
+  CONSTRAINT fk_orden_contrato_empleo_solicita FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
 );
 
@@ -1461,7 +1463,7 @@ CREATE TABLE Historico_Estatus_Orden (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_historico_estatus_orden_estatus_orden FOREIGN KEY (fk_estatus_orden) REFERENCES Estatus_Orden (estatus_orden_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Estatus_Orden.
-  CONSTRAINT fk_historico_estatus_orden_orden FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo)
+  CONSTRAINT fk_historico_estatus_orden_orden FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo) ON DELETE CASCADE
   -- Clave foránea que hace referencia a la clave primaria de la tabla Orden_De_Reposicion.
 );
 
@@ -1508,11 +1510,11 @@ CREATE TABLE Factura (
   -- Clave foránea que hace referencia a la clave primaria de la tabla Efectivo.
   CONSTRAINT fk_factura_punto_genera FOREIGN KEY (fk_punto) REFERENCES Punto (punto_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Punto.
-  CONSTRAINT fk_factura_cliente_natural_contrae FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo),
+  CONSTRAINT fk_factura_cliente_natural_contrae FOREIGN KEY (fk_cliente_natural) REFERENCES Cliente_Natural (cliente_nat_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Natural.
-  CONSTRAINT fk_factura_cliente_juridico_adquiere FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo),
+  CONSTRAINT fk_factura_cliente_juridico_adquiere FOREIGN KEY (fk_cliente_juridico) REFERENCES Cliente_Juridico (cliente_jur_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Cliente_Juridico.
-  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE NO ACTION,
+  CONSTRAINT fk_factura_contrato_empleo_registra FOREIGN KEY (fk_contrato_empleo) REFERENCES Contrato_De_Empleo (contrato_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Contrato_De_Empleo.
   CONSTRAINT ck_factura_subtotal CHECK (factura_subtotal > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1558,7 +1560,7 @@ CREATE TABLE Inventario_Almacen (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_inventario_almacen_almacen_almacena FOREIGN KEY (fk_almacen) REFERENCES Almacen (almacen_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Almacen.
-  CONSTRAINT fk_inventario_almacen_presentacion_esalmacenado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_inventario_almacen_presentacion_esalmacenado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_inventario_almacen_cantidad CHECK (inv_almacen_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
@@ -1598,7 +1600,7 @@ CREATE TABLE Inventario_Tienda (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_inventario_tienda_tienda_muestra FOREIGN KEY (fk_tienda) REFERENCES Tienda (tienda_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Tienda.
-  CONSTRAINT fk_inventario_tienda_presentacion_esmostrado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_inventario_tienda_presentacion_esmostrado FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_inventario_tienda_cantidad CHECK (inv_tienda_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
@@ -1622,9 +1624,9 @@ CREATE TABLE Evento_Lista_Producto (
 
   CONSTRAINT pk_evento_lista_producto PRIMARY KEY (fk_evento, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_evento_lista_producto_evento_vende FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo),
+  CONSTRAINT fk_evento_lista_producto_evento_vende FOREIGN KEY (fk_evento) REFERENCES Evento (evento_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento.
-  CONSTRAINT fk_evento_lista_producto_inventario_almacen_vendidoen FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_evento_lista_producto_inventario_almacen_vendidoen FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
   CONSTRAINT ck_evento_lista_producto_precio_unitario CHECK (even_prod_precio_unitario > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1660,15 +1662,13 @@ CREATE TABLE Detalle_Orden_De_Reposicion (
 
   CONSTRAINT pk_detalle_orden PRIMARY KEY (detalle_orden_codigo, fk_orden),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_detalle_orden_orden_especifica FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo),
+  CONSTRAINT fk_detalle_orden_orden_especifica FOREIGN KEY (fk_orden) REFERENCES Orden_De_Reposicion (orden_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Orden_De_Reposicion.
-  CONSTRAINT fk_detalle_orden_inventario_almacen_compra FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_orden_inventario_almacen_compra FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_detalle_orden_inventario_tienda_repone FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_orden_inventario_tienda_repone FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT ck_detalle_orden_cantidad CHECK (detalle_orden_cantidad > 0),
-  -- Constrain. Debe ser mayor que 0
-  CONSTRAINT ck_detalle_orden_precio_unitario CHECK (detalle_orden_precio_unitario > 0)
+  CONSTRAINT ck_detalle_orden_cantidad CHECK (detalle_orden_cantidad > 0)
   -- Constrain. Debe ser mayor que 0
 );
 
@@ -1690,9 +1690,9 @@ CREATE TABLE Detalle_Pedido (
 
   CONSTRAINT pk_detalle_pedido PRIMARY KEY (fk_pedido, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_detalle_pedido_pedido_esprocesado FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo),
+  CONSTRAINT fk_detalle_pedido_pedido_esprocesado FOREIGN KEY (fk_pedido) REFERENCES Pedido (pedido_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Pedido.
-  CONSTRAINT fk_detalle_pedido_inventario_almacen_procesa FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_pedido_inventario_almacen_procesa FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
   CONSTRAINT ck_detalle_pedido_cantidad CHECK (detalle_pedido_cantidad > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1730,11 +1730,11 @@ CREATE TABLE Detalle_Factura(
 
   CONSTRAINT pk_detalle_factura PRIMARY KEY (detalle_factura_codigo, fk_factura),
   -- Clave primaria de la tabla.
-  CONSTRAINT fk_detalle_factura_factura_precisa FOREIGN KEY (fk_factura) REFERENCES Factura (factura_codigo),
+  CONSTRAINT fk_detalle_factura_factura_precisa FOREIGN KEY (fk_factura) REFERENCES Factura (factura_codigo) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Factura.
-  CONSTRAINT fk_detalle_factura_inventario_tienda_expide FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_detalle_factura_inventario_tienda_expide FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
-  CONSTRAINT fk_detalle_factura_evento_lista_producto_vende FOREIGN KEY (fk_evento_lista_producto_1,fk_evento_lista_producto_2,fk_evento_lista_producto_3,fk_evento_lista_producto_4,fk_evento_lista_producto_5) REFERENCES Evento_Lista_Producto (fk_evento,fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4),
+  CONSTRAINT fk_detalle_factura_evento_lista_producto_vende FOREIGN KEY (fk_evento_lista_producto_1,fk_evento_lista_producto_2,fk_evento_lista_producto_3,fk_evento_lista_producto_4,fk_evento_lista_producto_5) REFERENCES Evento_Lista_Producto (fk_evento,fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Evento_Lista_Producto.
   CONSTRAINT ck_detalle_factura_cantidad CHECK (detalle_factura_cantidad > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1804,7 +1804,7 @@ CREATE TABLE Historico_Precio_Compra (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_precio_compra_tasa_dolar_determina FOREIGN KEY (fk_historico_tasa_dolar) REFERENCES Historico_Tasa_Dolar (tasa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Historico_Tasa_Dolar.
-  CONSTRAINT fk_precio_compra_presentacion_implica FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto),
+  CONSTRAINT fk_precio_compra_presentacion_implica FOREIGN KEY (fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) REFERENCES Presentacion (fk_material_botella_1,fk_material_botella_2,fk_producto) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Presentación.
   CONSTRAINT ck_precio_compra_valor CHECK (precio_compra_valor > 0),
   -- Constrain. Debe ser mayor que 0
@@ -1844,12 +1844,1837 @@ CREATE TABLE Historico_Precio_Venta (
   -- Clave primaria de la tabla.
   CONSTRAINT fk_precio_venta_tasa_dolar_establece FOREIGN KEY (fk_historico_tasa_dolar) REFERENCES Historico_Tasa_Dolar (tasa_codigo),
   -- Clave foránea que hace referencia a la clave primaria de la tabla Historico_Tasa_Dolar.
-  CONSTRAINT fk_precio_venta_inventario_almacen_asienta FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_precio_venta_inventario_almacen_asienta FOREIGN KEY (fk_inventario_almacen_1,fk_inventario_almacen_2,fk_inventario_almacen_3,fk_inventario_almacen_4) REFERENCES Inventario_Almacen (fk_almacen,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Almacen.
-  CONSTRAINT fk_precio_venta_inventario_tienda_consigna FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3),
+  CONSTRAINT fk_precio_venta_inventario_tienda_consigna FOREIGN KEY (fk_inventario_tienda_1,fk_inventario_tienda_2,fk_inventario_tienda_3,fk_inventario_tienda_4) REFERENCES Inventario_Tienda (fk_tienda,fk_presentacion_1,fk_presentacion_2,fk_presentacion_3) ON DELETE CASCADE,
   -- Clave foránea que hace referencia a la clave primaria de la tabla Inventario_Tienda.
   CONSTRAINT ck_precio_venta_valor CHECK (precio_venta_valor > 0),
   -- Constrain. Debe ser mayor que 0
   CONSTRAINT ck_precio_venta_fecha_fin CHECK (precio_venta_fecha_fin IS NULL OR precio_venta_fecha_fin > precio_venta_fecha_inicio)
   -- Constrain. Debe ser mayor que la fecha de inicio
 );
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- PROCEDURES FUNCTIONS TRIGGERS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Procedimiento para obtener los datos del inventario
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+--Procedimiento para obtener los datos de la tabla inventario_tienda
+CREATE OR REPLACE FUNCTION GetInventarioTiendaData()
+RETURNS TABLE (codigo1 INT, codigo2 INT, codigo3 INT, nombre TEXT, grado NUMERIC, botella TEXT, capacidad NUMERIC, cantidad INT, precio_unitario NUMERIC
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT fk_presentacion_1, fk_presentacion_2, fk_presentacion_3,
+        producto_nombre::TEXT, producto_grado_alcoholico, (botella_descripcion || ' de ' || material_nombre )::TEXT,
+        botella_capacidad, inv_tienda_cantidad,
+        precio_venta_valor
+    FROM inventario_tienda inv
+    INNER JOIN
+        material ma ON inv.fk_presentacion_1 = ma.material_codigo
+    INNER JOIN
+        botella b ON inv.fk_presentacion_2 = b.botella_codigo
+    INNER JOIN
+        producto pr ON inv.fk_presentacion_3 = pr.producto_codigo
+    INNER JOIN
+        historico_precio_venta venta ON inv.fk_presentacion_1 = venta.fk_inventario_tienda_2
+                                    AND inv.fk_presentacion_2 = venta.fk_inventario_tienda_3
+                                    AND inv.fk_presentacion_3 = venta.fk_inventario_tienda_4
+                                    AND precio_venta_fecha_fin is null;
+END;
+$$ LANGUAGE plpgsql;
+
+--Procedimiento para obtener los datos de la tabla inventario_almacen
+CREATE OR REPLACE FUNCTION GetInventarioAlmacenData()
+RETURNS TABLE (codigo1 INT, codigo2 INT, codigo3 INT, nombre TEXT, grado NUMERIC, botella TEXT, capacidad NUMERIC, cantidad INT, precio_unitario NUMERIC
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT fk_presentacion_1, fk_presentacion_2, fk_presentacion_3,
+        producto_nombre::TEXT, producto_grado_alcoholico, (botella_descripcion || ' de ' || material_nombre )::TEXT,
+        botella_capacidad, inv_almacen_cantidad,
+        precio_venta_valor
+    FROM inventario_almacen inv
+    INNER JOIN
+        material ma ON inv.fk_presentacion_1 = ma.material_codigo
+    INNER JOIN
+        botella b ON inv.fk_presentacion_2 = b.botella_codigo
+    INNER JOIN
+        producto pr ON inv.fk_presentacion_3 = pr.producto_codigo
+    INNER JOIN
+        historico_precio_venta venta ON inv.fk_presentacion_1 = venta.fk_inventario_almacen_2
+                                    AND inv.fk_presentacion_2 = venta.fk_inventario_almacen_3
+                                    AND inv.fk_presentacion_3 = venta.fk_inventario_almacen_4
+                                    AND precio_venta_fecha_fin is null;
+END;
+$$ LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Orden de Reposicion Automatica
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para crear una orden de reposicion
+CREATE OR REPLACE PROCEDURE CrearOrdenDeReposicion(_estatus_id INT, _fkPresentacion1 INT, _fkPresentacion2 INT, _fkPresentacion3 INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+    _nuevaOrdenID INT;
+BEGIN
+    -- Insertar una nueva orden en Orden_De_Reposicion
+    INSERT INTO Orden_De_Reposicion (orden_fecha, orden_subtotal, orden_total)
+    VALUES (CURRENT_DATE, 0, 0)
+    RETURNING orden_codigo INTO _nuevaOrdenID;
+
+    -- Insertar un registro en Historico_Estatus_Orden para marcar el inicio del estatus "Pendiente"
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, _estatus_id, _nuevaOrdenID);
+
+    -- Llamar al procedimiento AsociarDetallesOrdenReposicion
+    CALL AsociarDetallesOrdenReposicion(_nuevaOrdenID, _fkPresentacion1, _fkPresentacion2, _fkPresentacion3);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error al crear la orden de reposicion: %', SQLERRM;
+END $$;
+
+-- Procedimiento para asociar los detalles de una orden de reposicion
+CREATE OR REPLACE PROCEDURE AsociarDetallesOrdenReposicion(_orden_codigo INT, _fkPresentacion1 INT, _fkPresentacion2 INT, _fkPresentacion3 INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    --Nos aseguramos de que existe un inventario correspondiente en el almacén
+    IF NOT EXISTS (
+        SELECT 1
+        FROM Inventario_Almacen
+        WHERE fk_presentacion_1 = _fkPresentacion1 AND
+            fk_presentacion_2 = _fkPresentacion2 AND
+            fk_presentacion_3 = _fkPresentacion3
+    )
+    THEN
+        RAISE 'No se encontró el inventario correspondiente en el almacén para la presentación dada.';
+        RETURN;
+    END IF;
+
+    -- Insertar el detalle de la orden en Detalle_Orden_De_Reposicion
+    INSERT INTO Detalle_Orden_De_Reposicion (
+        detalle_orden_cantidad,
+        fk_orden,
+        fk_inventario_tienda_1, -- ID de la tienda, que es 1 en este caso
+        fk_inventario_tienda_2, -- fkPresentacion1
+        fk_inventario_tienda_3, -- fkPresentacion2
+        fk_inventario_tienda_4  -- fkPresentacion3
+    )
+    VALUES (
+        50 , _orden_codigo, 1, _fkPresentacion1, _fkPresentacion2, _fkPresentacion3
+    );
+    CALL ProcesarOrdenDeReposicion(_orden_codigo, _fkPresentacion1, _fkPresentacion2, _fkPresentacion3);
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error al asociar los detalles de la orden de reposicion: %', SQLERRM;
+END $$;
+
+-- Procedimiento para procesar una orden de reposicion
+CREATE OR REPLACE PROCEDURE ProcesarOrdenDeReposicion(_orden_codigo INT, _fk_presentacion_1 INT, _fk_presentacion_2 INT, _fk_presentacion_3 INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE 
+    _cantidad_almacen INT;
+BEGIN
+    -- Instrucciones para actualizar el estatus de la orden a "En Proceso"
+    -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+    UPDATE Historico_Estatus_Orden
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, 2, _orden_codigo);
+
+    -- Verificar la disponibilidad en Inventario_Almacen
+    SELECT inv_almacen_cantidad INTO _cantidad_almacen FROM Inventario_Almacen WHERE fk_almacen = 1 AND fk_presentacion_1 = _fk_presentacion_1 AND fk_presentacion_2 = _fk_presentacion_2 AND fk_presentacion_3 = _fk_presentacion_3;
+
+    -- Si hay suficiente inventario, restar la cantidad 50 a la presentación que corresponde en Inventario_Almacen
+    -- y sumar la cantidad 50 a la presentación en Inventario_Tienda y se completa la orden
+    IF _cantidad_almacen >= 50 THEN
+        UPDATE Inventario_Almacen SET inv_almacen_cantidad = inv_almacen_cantidad - 50 WHERE fk_almacen = 1 AND fk_presentacion_1 = _fk_presentacion_1 AND fk_presentacion_2 = _fk_presentacion_2 AND fk_presentacion_3 = _fk_presentacion_3;
+        UPDATE Inventario_Tienda SET inv_tienda_cantidad = inv_tienda_cantidad + 50 WHERE fk_tienda = 1 AND fk_presentacion_1 = _fk_presentacion_1 AND fk_presentacion_2 = _fk_presentacion_2 AND fk_presentacion_3 = _fk_presentacion_3;
+
+        -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+        UPDATE Historico_Estatus_Orden
+        SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+        WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+        VALUES (CURRENT_TIMESTAMP, 3, _orden_codigo);
+
+    -- Si no hay suficiente inventario, cambiar el estatus a "Cancelada"
+    ELSE
+        UPDATE Historico_Estatus_Orden
+        SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+        WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+        -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+        VALUES (CURRENT_TIMESTAMP, 4, _orden_codigo);
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Error al procesar la orden de reposicion: %', SQLERRM;
+END $$;
+
+DROP FUNCTION IF EXISTS ObtenerTodasOrdenesDeReposicion();
+
+-- Procedimiento para obtener todas las ordenes de reposicion
+CREATE OR REPLACE FUNCTION ObtenerTodasOrdenesDeReposicion()
+RETURNS TABLE(codigo INT, fecha DATE, producto TEXT, cantidad INT, estatus TEXT) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT orden.orden_codigo, orden.orden_fecha,
+       (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT,
+        detalle.detalle_orden_cantidad,
+        est.estatus_orden_nombre::TEXT
+    FROM orden_de_reposicion orden
+    JOIN detalle_orden_de_reposicion detalle ON orden.orden_codigo = detalle.fk_orden
+                                            AND detalle.fk_inventario_almacen_1 is null 
+                                            AND detalle.fk_inventario_almacen_2 is null 
+                                            AND detalle.fk_inventario_almacen_3 is null 
+                                            AND detalle.fk_inventario_almacen_4 is null 
+    JOIN producto pro ON detalle.fk_inventario_tienda_4 = pro.producto_codigo
+    JOIN botella bo ON detalle.fk_inventario_tienda_3 = bo.botella_codigo
+    JOIN (
+        SELECT fk_orden, fk_estatus_orden,
+            ROW_NUMBER() OVER (PARTITION BY fk_orden ORDER BY fk_estatus_orden DESC) as rn
+        FROM historico_estatus_orden
+    ) historico ON orden.orden_codigo = historico.fk_orden AND historico.rn = 1
+    JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo;
+END;
+$$;
+
+DROP FUNCTION IF EXISTS ObtenerOrdenDeReposicion(INT);
+
+-- Procedimiento para obtener los datos de una orden de reposicion
+CREATE OR REPLACE FUNCTION ObtenerOrdenDeReposicion(codigo_orden INT)
+RETURNS TABLE(orden_codigo INT, orden_fecha DATE, producto_codigo TEXT, producto_nombre TEXT, cantidad INT, imagen_nombre TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT o.orden_codigo, o.orden_fecha, (d.fk_inventario_tienda_2 || '' ||d.fk_inventario_tienda_3 || '' ||d.fk_inventario_tienda_4)
+    as producto_codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT, 
+    d.detalle_orden_cantidad, img.imagen_nombre::TEXT
+    FROM Orden_De_Reposicion o
+    JOIN Detalle_Orden_De_Reposicion d ON o.orden_codigo = d.fk_orden
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_tienda_2 
+    AND img.fk_presentacion_2 = d.fk_inventario_tienda_3 
+    AND img.fk_presentacion_3 = d.fk_inventario_tienda_4)
+    JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
+    WHERE o.orden_codigo = codigo_orden;
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Orden de Compra a los Proveedores
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+--Procedimiento para generar una ordenes de compra
+CREATE OR REPLACE PROCEDURE GenerarOrdenesDeCompraPorProveedor()
+AS $$
+DECLARE
+    proveedor_id INT;
+    nueva_orden_id INT;
+    precio_total NUMERIC;
+    proveedor_record RECORD; -- Variable de tipo record para el primer bucle FOR
+    presentacion_record RECORD; -- Variable de tipo record para el segundo bucle FOR
+BEGIN
+    CALL EliminarOrdenesPendientes();
+
+    -- Crear una tabla temporal para presentaciones con bajo inventario y sus proveedores
+    CREATE TEMP TABLE BajoInventario AS
+    SELECT inv.fk_presentacion_1, inv.fk_presentacion_2, inv.fk_presentacion_3, inv.fk_almacen, pro.fk_proveedor, compra.precio_compra_valor
+    FROM Inventario_Almacen inv
+    JOIN Producto pro ON inv.fk_presentacion_3 = pro.producto_codigo
+    JOIN Historico_Precio_compra compra ON inv.fk_presentacion_1 = compra.fk_presentacion_1 
+                                    AND inv.fk_presentacion_2 = compra.fk_presentacion_2 
+                                    AND inv.fk_presentacion_3 = compra.fk_presentacion_3
+                                    AND precio_compra_fecha_fin is null
+    WHERE inv.inv_almacen_cantidad <= 100
+    AND NOT EXISTS (
+        SELECT 1
+        FROM Detalle_Orden_De_Reposicion d
+        JOIN Historico_Estatus_Orden h ON d.fk_orden = h.fk_orden
+        WHERE d.fk_inventario_almacen_2 = inv.fk_presentacion_1
+          AND d.fk_inventario_almacen_3 = inv.fk_presentacion_2
+          AND d.fk_inventario_almacen_4 = inv.fk_presentacion_3
+          AND h.fk_estatus_orden = 2
+          AND h.fecha_hora_fin_estatus IS NULL
+    );
+
+    -- Loop a través de cada proveedor para crear una orden de reposición
+    FOR proveedor_record IN SELECT DISTINCT fk_proveedor FROM BajoInventario
+    LOOP
+        proveedor_id := proveedor_record.fk_proveedor;
+        precio_total := 0;
+
+        -- Crear una nueva orden de reposición para el proveedor
+        INSERT INTO Orden_De_Reposicion (orden_fecha)
+        VALUES (CURRENT_DATE)
+        RETURNING orden_codigo INTO nueva_orden_id;
+
+        INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+        VALUES (CURRENT_TIMESTAMP, 1, nueva_orden_id);
+
+        -- Asociar las presentaciones con la orden de reposición
+        FOR presentacion_record IN SELECT * FROM BajoInventario WHERE fk_proveedor = proveedor_id
+        LOOP
+            precio_total := precio_total + presentacion_record.precio_compra_valor*100;
+            INSERT INTO Detalle_Orden_De_Reposicion (
+                detalle_orden_cantidad, detalle_orden_precio_unitario, fk_orden, fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+            VALUES (
+                100, -- Cantidad a reponer
+                presentacion_record.precio_compra_valor, -- Precio unitario de compra
+                nueva_orden_id,
+                1, -- Asumiendo que este es el ID del almacén
+                presentacion_record.fk_presentacion_1,
+                presentacion_record.fk_presentacion_2,
+                presentacion_record.fk_presentacion_3
+            );
+        END LOOP;
+
+        -- Actualizar el subtotal y total de la orden de reposición
+        UPDATE Orden_De_Reposicion
+        SET orden_subtotal = precio_total, orden_total = precio_total
+        WHERE orden_codigo = nueva_orden_id;
+        
+    END LOOP;
+
+    DROP TABLE BajoInventario; -- Eliminar la tabla temporal
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE; -- Propaga el error
+END;
+$$ LANGUAGE plpgsql;
+
+-- Procedimiento para procesar una orden de compra
+CREATE OR REPLACE PROCEDURE EliminarOrdenesPendientes()
+AS $$
+BEGIN
+    -- Creamos una tabla temporal para almacenar los fk_orden relevantes
+    CREATE TEMPORARY TABLE TempOrdenes (fk_orden INT);
+    INSERT INTO TempOrdenes
+    SELECT fk_orden FROM Historico_Estatus_Orden WHERE fecha_hora_fin_estatus IS NULL AND fk_estatus_orden = 1;
+
+    -- Ahora podemos usar esta tabla temporal en las siguientes consultas DELETE
+
+    -- Eliminar detalles de órdenes relacionados con órdenes con estatus 1 y fecha fin NULL
+    DELETE FROM Detalle_Orden_De_Reposicion
+    WHERE fk_orden IN (
+        SELECT fk_orden FROM TempOrdenes
+    );
+
+    -- Eliminar registros del histórico de estatus relacionados con órdenes con estatus 1 y fecha fin NULL
+    DELETE FROM Historico_Estatus_Orden
+    WHERE fk_orden IN (
+        SELECT fk_orden FROM TempOrdenes
+    );
+
+    -- Finalmente, eliminar las órdenes con estatus 1 y fecha fin NULL
+    DELETE FROM Orden_De_Reposicion
+    WHERE orden_codigo IN (
+        SELECT fk_orden FROM TempOrdenes
+    );
+
+    DROP TABLE TempOrdenes;
+
+    -- No es necesario eliminar la tabla temporal, ya que se eliminará automáticamente al final de la sesión
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE; -- Propaga el error
+END;
+$$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS ObtenerOrdenesDeCompra();
+
+-- Funcion para obtener las ordenes de compra
+CREATE OR REPLACE FUNCTION ObtenerOrdenesDeCompra()
+RETURNS TABLE(codigo INT, fecha DATE,  proveedor TEXT, total NUMERIC, empleado TEXT, estatus TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT orden.orden_codigo, orden.orden_fecha, 
+        (
+            SELECT pro.persona_jur_denom_comercial 
+            FROM detalle_orden_de_reposicion detalle 
+            JOIN producto ON detalle.fk_inventario_almacen_4 = producto.producto_codigo
+            JOIN persona_juridica pro ON producto.fk_proveedor = pro.persona_jur_codigo
+            WHERE detalle.fk_orden = orden.orden_codigo
+            LIMIT 1
+        )::TEXT,
+        orden.orden_total as total, 
+        (per.persona_nat_p_nombre || ' ' || per.persona_nat_p_apellido)::TEXT,
+        est.estatus_orden_nombre::TEXT
+    FROM orden_de_reposicion orden
+    LEFT JOIN contrato_de_empleo contrato ON orden.fk_contrato_empleo = contrato.fk_empleado
+    LEFT JOIN persona_natural per ON contrato.fk_empleado = per.persona_nat_codigo
+    JOIN (
+        SELECT fk_orden, fk_estatus_orden
+        FROM (
+            SELECT fk_orden, fk_estatus_orden,
+                ROW_NUMBER() OVER(PARTITION BY fk_orden ORDER BY fecha_hora_inicio_estatus DESC) as rn
+            FROM historico_estatus_orden
+        ) t
+        WHERE t.rn = 1
+    ) historico ON orden.orden_codigo = historico.fk_orden
+    JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo
+    WHERE EXISTS (
+        SELECT 1
+        FROM detalle_orden_de_reposicion detalle
+        WHERE detalle.fk_orden = orden.orden_codigo
+        AND detalle.fk_inventario_almacen_1 IS NOT NULL
+        AND detalle.fk_inventario_almacen_2 IS NOT NULL
+        AND detalle.fk_inventario_almacen_3 IS NOT NULL
+        AND detalle.fk_inventario_almacen_4 IS NOT NULL
+    );
+END;
+$$;
+
+-- Funcion para obtener los datos de una orden de compra
+
+DROP FUNCTION IF EXISTS ObtenerDatosOrdenDeCompra(INT);
+
+CREATE OR REPLACE FUNCTION ObtenerDatosOrdenDeCompra(orden_id INT)
+RETURNS SETOF refcursor
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    datos_orden_cursor refcursor := 'datos_orden_cursor';
+    presentaciones_cursor refcursor := 'presentaciones_cursor';
+BEGIN
+     -- Parte 1: Obtener datos de la orden, del proveedor y del empleado
+    OPEN datos_orden_cursor FOR
+    SELECT o.orden_codigo, o.orden_fecha, o.orden_subtotal, o.orden_total, 
+           pro.proveedor_codigo, pro.proveedor_razon_social, pro.proveedor_rif, 
+           pro.proveedor_direccion, pro.proveedor_numero, 
+           d.departamento_nombre, 
+           (per.persona_nat_p_nombre || ' ' || per.persona_nat_p_apellido) as empleado_nombre, 
+           per.persona_nat_cedula as empleado_cedula, 
+           est.estatus_orden_codigo,
+           est.estatus_orden_nombre
+    FROM Orden_De_Reposicion o
+    JOIN 
+    (
+        SELECT detalle.fk_orden,
+               pro.persona_jur_codigo as proveedor_codigo,
+               pro.persona_jur_razon_social as proveedor_razon_social,
+               pro.persona_jur_rif as proveedor_rif,
+               lugar.lugar_nombre as proveedor_direccion,
+               (SELECT (tel.telefono_codigo_area || ' ' || tel.telefono_numero)
+                FROM Telefono tel
+                WHERE fk_persona_juridica = pro.persona_jur_codigo
+                LIMIT 1) as proveedor_numero
+        FROM detalle_orden_de_reposicion detalle 
+        JOIN producto ON detalle.fk_inventario_almacen_4 = producto.producto_codigo
+        JOIN persona_juridica pro ON producto.fk_proveedor = pro.persona_jur_codigo
+        JOIN Lugar lugar ON pro.fk_lugar_fisica = lugar.lugar_codigo
+    ) pro ON o.orden_codigo = pro.fk_orden
+    LEFT JOIN contrato_de_empleo contrato ON o.fk_contrato_empleo = contrato.fk_empleado
+    LEFT JOIN contrato_departamento dep ON contrato.contrato_codigo = dep.fk_contrato_empleo
+                                        AND dep.cont_depart_fecha_cierre IS NULL
+    LEFT JOIN departamento d ON dep.fk_departamento = d.departamento_codigo
+    LEFT JOIN persona_natural per ON contrato.fk_empleado = per.persona_nat_codigo
+    JOIN (
+        SELECT fk_orden, fk_estatus_orden
+        FROM (
+            SELECT fk_orden, fk_estatus_orden,
+                ROW_NUMBER() OVER(PARTITION BY fk_orden ORDER BY fecha_hora_inicio_estatus DESC) as rn
+            FROM historico_estatus_orden
+        ) t
+        WHERE t.rn = 1
+    ) historico ON o.orden_codigo = historico.fk_orden
+    JOIN estatus_orden est ON historico.fk_estatus_orden = est.estatus_orden_codigo
+    WHERE o.orden_codigo = orden_id
+    LIMIT 1;
+
+    RETURN NEXT datos_orden_cursor;
+
+    -- Parte 2: Obtener detalles de las presentaciones
+    OPEN presentaciones_cursor FOR
+
+    SELECT (d.fk_inventario_almacen_2 || '-' ||d.fk_inventario_almacen_3 || '-' ||d.fk_inventario_almacen_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_orden_precio_unitario,
+        d.detalle_orden_cantidad as cantidad, img.imagen_nombre::TEXT 
+    FROM Detalle_Orden_De_Reposicion d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_almacen_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_almacen_2 
+    AND img.fk_presentacion_2 = d.fk_inventario_almacen_3 
+    AND img.fk_presentacion_3 = d.fk_inventario_almacen_4)
+    JOIN botella bo ON d.fk_inventario_almacen_3 = bo.botella_codigo
+    WHERE d.fk_orden = orden_id;
+
+    RETURN NEXT presentaciones_cursor;
+END;
+$$;
+
+DROP PROCEDURE procesarordendecompra(integer,json);
+
+-- Procedimiento para procesar una orden de compra (cambiar el estatus a "En Proceso")
+CREATE OR REPLACE PROCEDURE ProcesarOrdenDeCompra(_orden_codigo INT, datosOrden JSON)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    idUsuario INT;
+    presentacion RECORD;
+    nuevo_estatus_id INT := 2; -- Reemplaza con el ID de estatus correspondiente
+BEGIN
+
+    idUsuario := (datosOrden ->> 'idUsuario')::INT;    
+
+    --Asignar empleado a la orden
+    UPDATE Orden_De_Reposicion orden
+    SET fk_contrato_empleo = (
+        SELECT contrato.contrato_codigo
+        FROM Contrato_De_Empleo contrato
+        INNER JOIN Empleado ON contrato.fk_empleado = Empleado.empleado_codigo
+        INNER JOIN Usuario ON Empleado.empleado_codigo = Usuario.fk_persona_natural
+        WHERE Usuario.usuario_codigo = idUsuario  -- Reemplaza '_idUsuario' con el ID del usuario
+    ) 
+    WHERE orden_codigo = _orden_codigo;
+
+    -- Instrucciones para actualizar el estatus de la orden a "En Proceso"
+    -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+    UPDATE Historico_Estatus_Orden
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+
+    -- Loop a través de cada presentación en el JSON
+    FOR presentacion IN SELECT * FROM json_to_recordset(datosOrden -> 'presentaciones') AS x(cantidad INT, idb INT, idm INT, ido INT, precio DECIMAL)
+    LOOP
+        -- Actualizar Detalle_Orden_De_Reposicion
+        UPDATE Detalle_Orden_De_Reposicion
+        SET detalle_orden_cantidad = presentacion.cantidad,
+            detalle_orden_precio_unitario = presentacion.precio
+        WHERE fk_orden = _orden_codigo
+        AND fk_inventario_almacen_2 = presentacion.idm
+        AND fk_inventario_almacen_3 = presentacion.idb
+        AND fk_inventario_almacen_4 = presentacion.ido;
+    END LOOP;
+
+    -- Actualizar el subtotal y total de la orden de reposición
+    UPDATE Orden_De_Reposicion
+    SET orden_subtotal = (
+        SELECT SUM(detalle_orden_cantidad * detalle_orden_precio_unitario)
+        FROM Detalle_Orden_De_Reposicion
+        WHERE fk_orden = _orden_codigo
+    ),
+    orden_total = (
+        SELECT SUM(detalle_orden_cantidad * detalle_orden_precio_unitario)
+        FROM Detalle_Orden_De_Reposicion
+        WHERE fk_orden = _orden_codigo
+    )
+    WHERE orden_codigo = _orden_codigo;
+END;
+$$;
+
+-- Procedimiento para cancelar una orden de compra
+CREATE OR REPLACE PROCEDURE CancelarOrdenDeCompra(_orden_codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nuevo_estatus_id INT := 4; -- Reemplaza con el ID de estatus correspondiente
+BEGIN
+    -- Instrucciones para actualizar el estatus de la orden a "Cancelada"
+    -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+    UPDATE Historico_Estatus_Orden
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+END;
+$$;
+
+-- Procedimiento para completar una orden de compra
+CREATE OR REPLACE PROCEDURE CompletarOrdenDeCompra(_orden_codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nuevo_estatus_id INT := 3; -- Reemplaza con el ID de estatus correspondiente
+    presentacion RECORD;
+BEGIN
+    -- Instrucciones para actualizar el estatus de la orden a "Completada"
+    -- Insertar un nuevo registro en Historico_Estatus_Orden con la fecha y hora actual y el nuevo estatus
+    UPDATE Historico_Estatus_Orden
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_orden = _orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    INSERT INTO Historico_Estatus_Orden (fecha_hora_inicio_estatus, fk_estatus_orden, fk_orden)
+    VALUES (CURRENT_TIMESTAMP, nuevo_estatus_id, _orden_codigo);
+
+    -- Loop a través de cada presentación en la orden de compra
+    FOR presentacion IN SELECT * FROM Detalle_Orden_De_Reposicion WHERE fk_orden = _orden_codigo
+    LOOP
+        -- Actualizar Inventario_Almacen
+        UPDATE Inventario_Almacen
+        SET inv_almacen_cantidad = inv_almacen_cantidad + presentacion.detalle_orden_cantidad
+        WHERE fk_almacen = 1 -- Asumiendo que este es el ID del almacén
+        AND fk_presentacion_1 = presentacion.fk_inventario_almacen_2
+        AND fk_presentacion_2 = presentacion.fk_inventario_almacen_3
+        AND fk_presentacion_3 = presentacion.fk_inventario_almacen_4;
+    END LOOP;
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Procedimienos para compra fisica
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Funcion para verificar si existe un cliente tanto natural como juridico (cedula o rif)
+CREATE OR REPLACE FUNCTION VerificarCliente(identificacion TEXT)
+RETURNS TABLE(codigo INT, tipo TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pn.persona_nat_codigo, 'natural'::TEXT
+    FROM persona_natural pn
+    JOIN cliente_natural cn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+    WHERE pn.persona_nat_cedula = identificacion OR pn.persona_nat_rif = identificacion
+    UNION
+    SELECT pj.persona_jur_codigo, 'juridico'::TEXT
+    FROM persona_juridica pj
+    JOIN cliente_juridico cj ON pj.persona_jur_codigo = cj.cliente_jur_codigo
+    WHERE pj.persona_jur_rif = identificacion;
+END;
+$$;
+
+-- Funcion para obtener los datos de un cliente
+CREATE OR REPLACE FUNCTION ObtenerDatosCliente(_codigo TEXT)
+RETURNS TABLE(nombre TEXT, rif TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido::TEXT, pn.persona_nat_rif::TEXT
+    FROM persona_natural pn
+    WHERE pn.persona_nat_cedula = _codigo OR pn.persona_nat_rif = _codigo
+    UNION
+    SELECT pj.persona_jur_razon_social::TEXT, pj.persona_jur_rif::TEXT
+    FROM persona_juridica pj
+    WHERE pj.persona_jur_rif = _codigo;
+END;
+$$;
+
+-- Funcion para buscar el contrato de empleo desde el id de usuario
+CREATE OR REPLACE FUNCTION ObtenerContratoDeEmpleo(_idUsuario INT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+        SELECT contrato.contrato_codigo
+        FROM Contrato_De_Empleo contrato
+        INNER JOIN Empleado ON contrato.fk_empleado = Empleado.empleado_codigo
+        INNER JOIN Usuario ON Empleado.empleado_codigo = Usuario.fk_persona_natural
+        WHERE Usuario.usuario_codigo = _idUsuario AND contrato.contrato_fecha_salida IS NULL;
+END;
+$$;
+
+-- Funcion para crear factura y obtener el codigo de la factura
+CREATE OR REPLACE FUNCTION CrearFactura(_codigoClienteN INT, _CodigoClienteJ INT, _contratoEmpleo INT)
+RETURNS INT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _nuevaFacturaID INT;
+BEGIN
+    -- Insertar una nueva factura en Factura
+    INSERT INTO Factura (factura_fecha, factura_subtotal, factura_total, fk_cliente_natural, fk_cliente_juridico, fk_contrato_empleo)
+    VALUES (CURRENT_DATE, 1, 1, _codigoClienteN, _codigoClienteJ, _contratoEmpleo)
+    RETURNING factura_codigo INTO _nuevaFacturaID;
+    RETURN _nuevaFacturaID;
+END;
+$$;
+
+-- Procedure para agregar un producto a la factura
+CREATE OR REPLACE PROCEDURE AgregarProductoAFactura(_codigoFactura INT, _PC1 INT, _PC2 INT, _PC3 INT, _cantidad INT, _precio NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    INSERT INTO detalle_factura(fk_factura, detalle_factura_cantidad, detalle_factura_precio_unitario,
+    fk_inventario_tienda_1, fk_inventario_tienda_2, fk_inventario_tienda_3, fk_inventario_tienda_4)
+    VALUES (_codigoFactura, _cantidad, _precio, 1, _PC1, _PC2, _PC3);
+
+    -- Actualizar el subtotal y total de la factura
+    UPDATE Factura SET factura_subtotal = factura_subtotal + (_cantidad * _precio), factura_total = factura_total + (_cantidad * _precio)
+    WHERE factura_codigo = _codigoFactura;
+
+END;
+$$;
+
+-- Funcion para crear cheque
+CREATE OR REPLACE FUNCTION CrearCheque(_cheque TEXT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    INSERT INTO Cheque (cheque_numero, fk_banco)
+    VALUES (_cheque, 1)
+    RETURNING cheque_codigo;
+END;
+$$;
+
+-- Funcion para crear la TDD si no existe
+CREATE OR REPLACE FUNCTION CrearTDD(_numero TEXT, _cvv TEXT, _fecha DATE)
+RETURNS INT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    codigo INT;
+BEGIN
+
+    SELECT tdd_codigo INTO codigo
+    FROM TDD
+    WHERE tdd_numero_tarjeta = _numero;
+
+    IF codigo IS NULL THEN
+        INSERT INTO TDD (tdd_numero_tarjeta, tdd_cvv, tdd_fecha_vencimiento, fk_banco)
+        VALUES (_numero, _cvv, _fecha, 1)
+        RETURNING tdd_codigo INTO codigo;
+    END IF;
+    RETURN codigo;
+
+END;
+$$;
+
+-- Funcion para obtener la factura
+CREATE OR REPLACE FUNCTION ObtenerFacturaDeCliente(_codigoClienteN INT, _codigoClienteJ INT)
+RETURNS TABLE(codigo INT, fecha DATE, subtotal NUMERIC, total NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT factura_codigo, factura_fecha, factura_subtotal, factura_total
+    FROM Factura
+    WHERE fk_cliente_natural = _codigoClienteN OR fk_cliente_juridico = _codigoClienteJ
+    ORDER BY factura_fecha DESC
+    LIMIT 1;
+END;
+$$;
+
+-- Funcion para pagar la factura y actualiza su monto
+CREATE OR REPLACE PROCEDURE PagoFactura(_codigoFactura INT, _codigoTDD INT, _codigoCheque INT, _codigoTDC INT, _codigoEfectivo INT, _subTotal NUMERIC, _total NUMERIC, _puntosUsados INT, _puntosGanados INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _nuevoPagoID INT;
+BEGIN
+
+    UPDATE Factura SET factura_subtotal = _subTotal, factura_total = _total,
+    fk_tdd = _codigoTDD, fk_cheque = _codigoCheque, fk_tdc = _codigoTDC, fk_efectivo = _codigoEfectivo,
+    factura_puntos_utilizados = _puntosUsados, factura_puntos_obtenidos = _puntosGanados
+    WHERE factura_codigo = _codigoFactura;
+
+END;
+$$;
+
+-- Actualizamos los puntos del cliente
+CREATE OR REPLACE FUNCTION ActualizarPuntos(_codigoPN INT, _codigoPJ INT, _puntosMenos INT, _puntosMas INT)
+RETURNS TABLE(cliente_nat_puntos_a INT, cliente_jur_puntos_ac INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    UPDATE cliente_natural
+    SET cliente_nat_puntos_acumulados = cliente_nat_puntos_acumulados + actualizarpuntos._puntosMas - actualizarpuntos._puntosMenos
+    WHERE cliente_nat_codigo = actualizarpuntos._codigoPN;
+
+    UPDATE cliente_juridico
+    SET cliente_jur_puntos_acumulados = cliente_jur_puntos_acumulados + actualizarpuntos._puntosMas - actualizarpuntos._puntosMenos
+    WHERE cliente_jur_codigo = actualizarpuntos._codigoPJ;
+    
+    RETURN QUERY
+    SELECT cliente_nat_puntos_acumulados, cliente_jur_puntos_acumulados
+    FROM cliente_natural cn, cliente_juridico cj
+    WHERE cn.cliente_nat_codigo = actualizarpuntos._codigoPN OR cliente_jur_codigo = actualizarpuntos._codigoPJ;
+
+END;
+$$;
+
+-- Funcion para restar los productos de la tienda
+CREATE OR REPLACE PROCEDURE ActualizarTienda(_codigoFactura INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    UPDATE inventario_tienda
+    SET inv_tienda_cantidad = inv_tienda_cantidad - detalle.detalle_factura_cantidad
+    FROM detalle_factura detalle
+    WHERE detalle.fk_factura = _codigoFactura
+    AND detalle.fk_inventario_tienda_1 = 1
+    AND detalle.fk_inventario_tienda_2 = fk_presentacion_1
+    AND detalle.fk_inventario_tienda_3 = fk_presentacion_2
+    AND detalle.fk_inventario_tienda_4 = fk_presentacion_3;
+
+END;
+$$;
+
+-- Funcion para obtener las presentaciones de una factura
+CREATE OR REPLACE FUNCTION ObtenerPresentacionesDeFactura(_codigoFactura INT)
+RETURNS TABLE(codigo TEXT, nombre TEXT, cantidad INT, precio NUMERIC, imagen TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT (d.fk_inventario_tienda_2 || '-' ||d.fk_inventario_tienda_3 || '-' ||d.fk_inventario_tienda_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_factura_cantidad as cantidad, d.detalle_factura_precio_unitario as precio, img.imagen_nombre::TEXT 
+    FROM Detalle_Factura d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_tienda_2 
+    AND img.fk_presentacion_2 = d.fk_inventario_tienda_3 
+    AND img.fk_presentacion_3 = d.fk_inventario_tienda_4)
+    JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
+    WHERE d.fk_factura = _codigoFactura;
+END;
+$$;
+
+
+CREATE OR REPLACE FUNCTION ObtenerProductosDelPedido(_codigoPedido INT)
+RETURNS TABLE(codigo TEXT, nombre TEXT, cantidad INT, precio NUMERIC, imagen TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT (d.fk_inventario_almacen_2 || '-' ||d.fk_inventario_almacen_3 || '-' ||d.fk_inventario_almacen_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_pedido_cantidad as cantidad, d.detalle_pedido_precio_unitario as precio, img.imagen_nombre::TEXT 
+    FROM Detalle_Pedido d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_almacen_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_almacen_2 
+                        AND img.fk_presentacion_2 = d.fk_inventario_almacen_3 
+                        AND img.fk_presentacion_3 = d.fk_inventario_almacen_4)
+    JOIN botella bo ON d.fk_inventario_almacen_3 = bo.botella_codigo
+    WHERE d.fk_pedido = _codigoPedido;
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Historico de Punto
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para obtener el historico del valor del punto
+CREATE OR REPLACE FUNCTION ObtenerHistoricoPunto()
+RETURNS TABLE(fechaInicio DATE, fechaFin DATE, valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT h.punto_fecha_inicio, h.punto_fecha_fin, h.punto_valor
+    FROM Historico_Punto h
+    ORDER BY punto_fecha_inicio DESC;
+END;
+$$;
+
+-- Procedimiento para actualizar el valor del punto
+CREATE OR REPLACE PROCEDURE ActualizarValorPunto(_valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualizar el registro anterior en Historico_Punto con la fecha y hora actual
+    UPDATE Historico_Punto
+    SET punto_fecha_fin = CURRENT_DATE
+    WHERE punto_fecha_fin IS NULL;
+
+    -- Insertar un nuevo registro en Historico_Punto con la fecha y hora actual y el nuevo valor
+    INSERT INTO Historico_Punto (punto_fecha_inicio, punto_valor, fk_tienda)
+    VALUES (CURRENT_DATE, _valor, 1);
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Historico de Tasa del Dolar
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para obtener el historico de la tasa del dolar
+CREATE OR REPLACE FUNCTION ObtenerHistoricoTasaDolar()
+RETURNS TABLE(fechaInicio DATE, fechaFin DATE, valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT h.tasa_fecha_inicio, h.tasa_fecha_fin, h.tasa_valor
+    FROM Historico_Tasa_Dolar h
+    ORDER BY tasa_fecha_inicio DESC;
+END;
+$$;
+
+-- Procedimiento para actualizar la tasa del dolar
+CREATE OR REPLACE PROCEDURE ActualizarTasaDolar(_valor NUMERIC)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Actualizar el registro anterior en Historico_Tasa_Dolar con la fecha y hora actual
+    UPDATE Historico_Tasa_Dolar
+    SET tasa_fecha_fin = CURRENT_DATE
+    WHERE tasa_fecha_fin IS NULL;
+
+    -- Insertar un nuevo registro en Historico_Tasa_Dolar con la fecha y hora actual y el nuevo valor
+    INSERT INTO Historico_Tasa_Dolar (tasa_fecha_inicio, tasa_valor)
+    VALUES (CURRENT_DATE, _valor);
+END;
+$$;
+
+-- Obtener el valor de la tasa del dolar
+CREATE OR REPLACE FUNCTION ObtenerTasaDolar()
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN (
+        SELECT tasa_valor
+        FROM Historico_Tasa_Dolar
+        WHERE tasa_fecha_fin IS NULL
+    );
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Cliente
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para obtener una el codigo del cliente
+CREATE OR REPLACE FUNCTION ObtenerCodigoCliente(_idUsuario INT)
+RETURNS TABLE(fk_persona_natural INT, fk_persona_juridica INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT u.fk_persona_natural, u.fk_persona_juridica
+    FROM usuario u
+    WHERE u.usuario_codigo = _idUsuario AND (u.fk_rol=8 OR u.fk_rol=9); 
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Pedido de Productos
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Procedimiento para buscar un pedido de productos
+CREATE OR REPLACE FUNCTION BuscarCarritoDeCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pedido_codigo
+    FROM pedido p
+    JOIN historico_estatus_pedido hep ON p.pedido_codigo = hep.fk_pedido
+    JOIN estatus_pedido ep ON hep.fk_estatus_pedido = ep.estatus_pedido_codigo
+    WHERE (p.fk_cliente_juridico = _codigoPJ OR p.fk_cliente_juridico IS NULL)
+    AND (p.fk_cliente_natural = _codigoPN OR p.fk_cliente_natural IS NULL)
+    AND ep.estatus_pedido_codigo = 1 AND hep.fecha_hora_fin_estatus IS NULL;
+END;
+$$;
+
+-- Procedimiento para crear un pedido
+CREATE OR REPLACE FUNCTION CrearPedidoDeCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _nuevoPedidoID INT;
+    _codigoLugar INT;
+BEGIN
+
+    -- Buscamos el codigo de lugar del cliente
+    SELECT fk_lugar INTO _codigoLugar
+    FROM (
+        SELECT pn.fk_lugar 
+        FROM persona_natural pn
+        WHERE pn.persona_nat_codigo = _codigoPN
+        UNION
+        SELECT pj.fk_lugar_fisica
+        FROM persona_juridica pj
+        WHERE pj.persona_jur_codigo = _codigoPJ
+    ) AS subquery;
+
+    -- Insertar un nuevo pedido en la tabla Pedido
+    INSERT INTO Pedido (fk_cliente_natural, fk_cliente_juridico, pedido_fecha, fk_lugar)
+    VALUES (_codigoPN, _codigoPJ, CURRENT_DATE, _codigoLugar)
+    RETURNING pedido_codigo INTO _nuevoPedidoID;
+
+    -- Insertar un registro en Historico_Estatus_Pedido para marcar el inicio del estatus "Pendiente" (carrrito)
+    INSERT INTO Historico_Estatus_Pedido (fecha_hora_inicio_estatus, fk_estatus_pedido, fk_pedido)
+    VALUES (CURRENT_TIMESTAMP, 1, _nuevoPedidoID);
+
+    RETURN QUERY
+    SELECT _nuevoPedidoID;
+END;
+$$;
+
+-- Procedimiento para saber si un producto ya esta en el pedido
+CREATE OR REPLACE FUNCTION BuscarProductoEnPedido(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_exists BOOLEAN;
+BEGIN
+    SELECT EXISTS (
+        SELECT 1
+        FROM detalle_pedido
+        WHERE fk_pedido = _codigoPedido AND fk_inventario_almacen_1 = 1 AND 
+        fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3
+    ) INTO v_exists;
+
+    RETURN v_exists;
+END;
+$$;
+
+-- Procedimiento para agregar un producto al pedido (carrito)
+CREATE OR REPLACE PROCEDURE AgregarProductoAlPedido(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    _precioPresentacion NUMERIC;
+BEGIN
+
+    -- Buscamos el precio de la presentacion
+    SELECT precio_venta_valor INTO _precioPresentacion
+    FROM historico_precio_venta
+    WHERE fk_inventario_almacen_1 = 1 AND fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3 AND precio_venta_fecha_fin IS NULL;
+
+    INSERT INTO detalle_pedido(fk_pedido, detalle_pedido_cantidad, detalle_pedido_precio_unitario,
+    fk_inventario_almacen_1, fk_inventario_almacen_2, fk_inventario_almacen_3, fk_inventario_almacen_4)
+    VALUES (_codigoPedido, 1, _precioPresentacion, 1, _PC1, _PC2, _PC3);
+
+END;
+$$;
+
+-- Procedimiento para obtener los productos del pedido
+CREATE OR REPLACE FUNCTION ObtenerProductosDelPedido(_codigoPedido INT)
+RETURNS TABLE(codigo TEXT, nombre TEXT, cantidad INT, precio NUMERIC, imagen TEXT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT (d.fk_inventario_almacen_2 || '-' ||d.fk_inventario_almacen_3 || '-' ||d.fk_inventario_almacen_4)
+        as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+        d.detalle_pedido_cantidad as cantidad, d.detalle_pedido_precio_unitario as precio, img.imagen_nombre::TEXT 
+    FROM Detalle_Pedido d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_almacen_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_almacen_2 
+                        AND img.fk_presentacion_2 = d.fk_inventario_almacen_3 
+                        AND img.fk_presentacion_3 = d.fk_inventario_almacen_4)
+    JOIN botella bo ON d.fk_inventario_almacen_3 = bo.botella_codigo
+    WHERE d.fk_pedido = _codigoPedido;
+END;
+$$;
+
+-- Procedimiento para eliminar un producto del pedido
+CREATE OR REPLACE PROCEDURE EliminarProductoDelPedido(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    DELETE FROM detalle_pedido
+    WHERE fk_pedido = _codigoPedido AND fk_inventario_almacen_1 = 1 AND 
+    fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3;
+END;
+$$;
+
+-- Procedimiento para actualizar la cantidad de un producto del pedido
+CREATE OR REPLACE PROCEDURE ActualizarCantidadProducto(_codigoPedido INT, _PC1 INT, _PC2 INT, _PC3 INT, _cantidad INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE detalle_pedido
+    SET detalle_pedido_cantidad = _cantidad
+    WHERE fk_pedido = _codigoPedido AND fk_inventario_almacen_1 = 1 AND 
+    fk_inventario_almacen_2 = _PC1 AND fk_inventario_almacen_3 = _PC2 AND fk_inventario_almacen_4 = _PC3;
+END;
+$$;
+
+-- Funcion para obtener los puntos de un cliente
+CREATE OR REPLACE FUNCTION ObtenerPuntosCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(puntosTotal INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT puntos
+    FROM (
+        SELECT cn.cliente_nat_puntos_acumulados as puntos
+        FROM cliente_natural cn
+        WHERE cn.cliente_nat_codigo = _codigoPN
+        UNION
+        SELECT cj.cliente_jur_puntos_acumulados as puntos
+        FROM cliente_juridico cj
+        WHERE cj.cliente_jur_codigo = _codigoPJ
+    ) AS subquery;
+END;
+$$;
+
+-- Procedimiento para obtener las TDCs de un cliente
+CREATE OR REPLACE FUNCTION ObtenerTDCsCliente(_codigoPN INT, _codigoPJ INT)
+RETURNS TABLE(codigo INT, numero character varying(16), cvv character varying(3), fechaVencimiento DATE, fk_banco INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT tdc.tdc_codigo, tdc.tdc_numero_tarjeta, tdc.tdc_cvv, tdc.tdc_fecha_vencimiento, tdc.fk_banco
+    FROM tdc
+    WHERE tdc.fk_persona_natural = _codigoPN
+    UNION
+    SELECT tdc.tdc_codigo, tdc.tdc_numero_tarjeta, tdc.tdc_cvv, tdc.tdc_fecha_vencimiento, tdc.fk_banco
+    FROM tdc
+    WHERE tdc.fk_persona_juridica = _codigoPJ;
+END;
+$$;
+
+-- Procedimiento para restar los puntos de un cliente
+CREATE OR REPLACE PROCEDURE RestarPuntosCliente(_codigoPN INT, _codigoPJ INT, _puntos INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE cliente_natural
+    SET cliente_nat_puntos_acumulados = cliente_nat_puntos_acumulados - _puntos
+    WHERE cliente_nat_codigo = _codigoPN;
+
+    UPDATE cliente_juridico
+    SET cliente_jur_puntos_acumulados = cliente_jur_puntos_acumulados - _puntos
+    WHERE cliente_jur_codigo = _codigoPJ;
+END;
+$$;
+
+-- Procedimiento para cambiar el estatus de un pedido (Se le suma 1 al codigo del estatus)
+CREATE OR REPLACE FUNCTION CambiarEstatusPedido(_codigoPedido INT, _nuevoEstatus INT)
+RETURNS TABLE(estatus_codigo INT, estatus_nombre character varying(50), estatus_descripcion character varying(200))
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    -- Actualizamos el estatus actual
+    UPDATE historico_estatus_pedido
+    SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP
+    WHERE fk_pedido = _codigoPedido AND fecha_hora_fin_estatus IS NULL;
+
+    -- Insertamos el nuevo estatus
+    INSERT INTO historico_estatus_pedido(fecha_hora_inicio_estatus, fk_estatus_pedido, fk_pedido)
+    VALUES (CURRENT_TIMESTAMP, _nuevoEstatus, _codigoPedido);
+
+    -- Buscamos el nombre y la descripcion del nuevo estatus
+    RETURN QUERY
+        SELECT estatus_pedido_codigo, estatus_pedido_nombre, estatus_pedido_descripcion
+        FROM estatus_pedido
+        WHERE estatus_pedido_codigo = _nuevoEstatus;
+
+END;
+$$;
+
+-- Procedimiento para actualizar un pedido (direccion, luagar, subtotal, total, puntos)
+CREATE OR REPLACE PROCEDURE ActualizarPedido(_codigoTarjeta INT,_codigoPedido INT, _direccion character varying(200), _lugar INT, _subtotal NUMERIC, _total NUMERIC, _puntos INT, _fk_punto INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE pedido
+    SET pedido_direccion = _direccion, fk_lugar = _lugar, pedido_subtotal = _subtotal, 
+    pedido_total = _total, pedido_puntos_utilizados = _puntos, fk_punto = _fk_punto, fk_tdc = _codigoTarjeta
+    WHERE pedido_codigo = _codigoPedido;
+END;
+$$;
+
+-- Trigger para restar el inventario del almacen cuando el pedido pasa a pagado (estatus 2 | pendiente)
+CREATE OR REPLACE FUNCTION actualizarAlmacen() RETURNS TRIGGER AS $$
+DECLARE
+    detalle RECORD;
+BEGIN
+    -- Check if the new status is 'paid'
+    IF NEW.fk_estatus_pedido = 2 THEN
+        -- Debemos buscar el detalle del pedido y hacer un loop para restar el inventario
+        FOR detalle IN SELECT * FROM detalle_pedido WHERE fk_pedido = NEW.fk_pedido LOOP
+            UPDATE inventario_almacen
+            SET inv_almacen_cantidad = inv_almacen_cantidad - detalle.detalle_pedido_cantidad
+            WHERE fk_almacen = detalle.fk_inventario_almacen_1  AND fk_presentacion_1 = detalle.fk_inventario_almacen_2 
+            AND fk_presentacion_2 = detalle.fk_inventario_almacen_3 AND fk_presentacion_3 = detalle.fk_inventario_almacen_4;
+        END LOOP;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_inventory_trigger
+AFTER INSERT ON historico_estatus_pedido
+FOR EACH ROW
+EXECUTE FUNCTION actualizarAlmacen();
+
+-- Funcion para obtener la tasa del punto
+CREATE OR REPLACE FUNCTION ObtenerTasaPunto()
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN (
+        SELECT punto_valor as tasa_punto
+        FROM Historico_Punto
+        WHERE punto_fecha_fin IS NULL
+    );
+END;
+$$;
+
+-- Funcion para obtener la tasa del dolar
+CREATE OR REPLACE FUNCTION ObtenerTasaDolar()
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN (
+        SELECT tasa_valor as tasa_dolar
+        FROM Historico_Tasa_Dolar
+        WHERE tasa_fecha_fin IS NULL
+    );
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Afiliacion
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+DROP FUNCTION IF EXISTS ObtenerFichasAfiliacion();
+
+-- Obtener fichas de afiliacion
+CREATE OR REPLACE FUNCTION ObtenerFichasAfiliacion()
+RETURNS TABLE(codigo TEXT, fecha DATE, nombre TEXT, cedulaRif TEXT, montoMensual NUMERIC, puntos INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT af.afiliacion_numero::TEXT as codigo, af.afiliacion_fecha::DATE as fecha,
+        (pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido)::TEXT as nombre,
+        pn.persona_nat_cedula::TEXT as cedula_rif, af.afiliacion_monto_mensual as monto_mensual,
+        cn.cliente_nat_puntos_acumulados as puntos
+    FROM Ficha_Afiliacion af
+    JOIN cliente_natural cn ON cn.cliente_nat_codigo = af.fk_cliente_natural
+    JOIN persona_natural pn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+    UNION
+    SELECT af.afiliacion_numero::TEXT as codigo,  af.afiliacion_fecha::DATE as fecha,
+        pj.persona_jur_razon_social::TEXT as nombre,
+        pj.persona_jur_rif::TEXT as cedula_rif, af.afiliacion_monto_mensual as monto_mensual,
+        cj.cliente_jur_puntos_acumulados as puntos
+    FROM Ficha_Afiliacion af
+    JOIN persona_juridica pj ON pj.persona_jur_codigo = af.fk_persona_juridica
+    LEFT JOIN cliente_juridico cj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    ORDER BY codigo;
+END;
+$$;
+
+-- Registrar ficha de afiliacion
+CREATE OR REPLACE PROCEDURE RegistrarFichaAfiliacion(_codigoPN INT, _codigoPJ INT)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Insertar un nuevo registro en Ficha_Afiliacion si el usuario tiene el rol adecuado
+    INSERT INTO Ficha_Afiliacion (afiliacion_numero, afiliacion_fecha, afiliacion_monto_mensual, fk_cliente_natural, fk_persona_juridica)
+    VALUES (LPAD(nextval('secuencia_ficha')::text, 8, '0'), CURRENT_DATE, 15, _codigoPN, _codigoPJ);
+   
+END;
+$$;
+
+-- Procedimiento para obtener los datos de un perfil
+CREATE OR REPLACE FUNCTION ObtenerDatosPerfilUsuario(_usuario_id INT)
+RETURNS TABLE (datos_perfil TEXT) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT row_to_json(pn.*)::text FROM Persona_Natural pn
+    JOIN Usuario u ON pn.persona_nat_codigo = u.fk_persona_natural
+    WHERE u.usuario_codigo = _usuario_id AND u.fk_persona_natural IS NOT NULL
+    UNION ALL
+    SELECT row_to_json(pj.*)::text FROM Persona_Juridica pj
+    JOIN Usuario u ON pj.persona_jur_codigo = u.fk_persona_juridica
+    WHERE u.usuario_codigo = _usuario_id AND u.fk_persona_juridica IS NOT NULL;
+END;
+$$;
+
+DROP FUNCTION IF EXISTS ObtenerCarnet(INT);
+
+CREATE OR REPLACE FUNCTION ObtenerCarnet(_usuario_id INT)
+RETURNS TABLE (
+    afiliacion_numero VARCHAR(8),
+    nombre_completo VARCHAR(255),
+    identificacion VARCHAR(11)
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT fa.afiliacion_numero,
+           COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::VARCHAR(255) AS nombre_completo,
+           COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::VARCHAR(11) AS identificacion
+    FROM Usuario u
+    LEFT JOIN Persona_Natural pn ON u.fk_persona_natural = pn.persona_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON u.fk_persona_juridica = pj.persona_jur_codigo
+    LEFT JOIN Cliente_Natural cn ON pn.persona_nat_codigo = cn.cliente_nat_codigo
+    LEFT JOIN Ficha_Afiliacion fa ON (cn.cliente_nat_codigo = fa.fk_cliente_natural OR pj.persona_jur_codigo = fa.fk_persona_juridica)
+    WHERE u.usuario_codigo = _usuario_id AND fa.afiliacion_numero IS NOT NULL;
+END;
+$$;
+
+--Funcion para buscar el mes que debe pagar el cliente
+CREATE OR REPLACE FUNCTION ProximoMesPago(_ficha_numero VARCHAR(8))
+RETURNS DATE
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    ultimo_pago DATE;
+    fecha_afiliacion DATE;
+    proximo_pago DATE;
+BEGIN
+    -- Buscar el último mes pagado
+    SELECT MAX(pago_mes_pagado) INTO ultimo_pago
+    FROM Pago_Afiliacion
+    WHERE fk_ficha_afiliacion = _ficha_numero;
+
+    -- Si no hay pagos, usar la fecha de afiliación
+    IF ultimo_pago IS NULL THEN
+        SELECT afiliacion_fecha INTO fecha_afiliacion
+        FROM Ficha_Afiliacion
+        WHERE afiliacion_numero = _ficha_numero;
+        
+        proximo_pago := (fecha_afiliacion + INTERVAL '1 MONTH')::DATE;
+    ELSE
+        -- Calcular el próximo mes después del último pago
+        proximo_pago := (ultimo_pago + INTERVAL '1 MONTH')::DATE;
+    END IF;
+
+    RETURN proximo_pago;
+END;
+$$;
+
+DROP FUNCTION IF EXISTS ObtenerMontoYTDC(INT);
+
+--Funcion que devuelve las tarjetas del afiliado y el monto a pagar
+CREATE OR REPLACE FUNCTION ObtenerMontoYTDC(_usuario_id INT)
+RETURNS TABLE (monto DECIMAL, tdcs TEXT[]) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT fa.afiliacion_monto_mensual,
+           array_agg(td.tdc_codigo || ':' || td.tdc_numero_tarjeta) AS tdcs
+    FROM Usuario u
+    LEFT JOIN Cliente_Natural cn ON u.fk_persona_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON u.fk_persona_juridica = pj.persona_jur_codigo
+    LEFT JOIN Ficha_Afiliacion fa ON (cn.cliente_nat_codigo = fa.fk_cliente_natural OR pj.persona_jur_codigo = fa.fk_persona_juridica)
+    LEFT JOIN TDC td ON (cn.cliente_nat_codigo = td.fk_persona_natural OR pj.persona_jur_codigo = td.fk_persona_juridica)
+    WHERE u.usuario_codigo = _usuario_id
+    GROUP BY fa.afiliacion_monto_mensual;
+END;
+$$;
+
+--Procedimiento para registrar un pago de afiliacion
+CREATE OR REPLACE PROCEDURE RegistrarPagoAfiliacion(_ficha_numero VARCHAR(8), _monto DECIMAL, _tdc_codigo INT)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    mes_pago DATE;
+BEGIN
+    -- Obtener el próximo mes que se debe pagar
+    mes_pago := ProximoMesPago(_ficha_numero);
+
+    -- Registrar el pago en la tabla Pago_Afiliacion
+    INSERT INTO Pago_Afiliacion (pago_fecha, pago_afiliacion_total, pago_mes_pagado, fk_ficha_afiliacion, fk_tdc)
+    VALUES (CURRENT_DATE, _monto, mes_pago, _ficha_numero, _tdc_codigo);
+END;
+$$;
+
+
+-- Funcion para devolver los pagos de afiliacion
+CREATE OR REPLACE FUNCTION ObtenerPagosAfiliacion()
+RETURNS TABLE (
+    pago_codigo INT,
+    pago_fecha DATE,
+    pago_mes DATE,
+    nombre_cliente TEXT,
+    codigo_afiliacion VARCHAR(8),
+    monto_pago DECIMAL
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pa.pago_codigo, 
+           pa.pago_fecha, 
+           pa.pago_mes_pagado, 
+           COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social) AS nombre_cliente,
+           pa.fk_ficha_afiliacion, 
+           pa.pago_afiliacion_total
+    FROM Pago_Afiliacion pa
+    JOIN Ficha_Afiliacion fa ON pa.fk_ficha_afiliacion = fa.afiliacion_numero
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_persona_juridica = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
+END;
+$$;
+
+-- Funcion para obtener los detalles de un pago de afiliacion
+CREATE OR REPLACE FUNCTION ObtenerDetallesPagoPorCodigo(_pago_codigo INT)
+RETURNS TABLE (
+    pago_fecha DATE,
+    pago_mes DATE,
+    nombre_cliente TEXT,
+    identificacion_cliente TEXT,
+    codigo_afiliacion VARCHAR(8),
+    monto_pago DECIMAL
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT pa.pago_fecha, 
+           pa.pago_mes_pagado, 
+           COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+           COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente,
+           pa.fk_ficha_afiliacion, 
+           pa.pago_afiliacion_total
+    FROM Pago_Afiliacion pa
+    JOIN Ficha_Afiliacion fa ON pa.fk_ficha_afiliacion = fa.afiliacion_numero
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_persona_juridica = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE pa.pago_codigo = _pago_codigo;
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Facturas
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Funcion para obtener todas las facturas
+
+DROP FUNCTION IF EXISTS ObtenerFacturas();
+
+CREATE OR REPLACE FUNCTION ObtenerFacturas()
+RETURNS TABLE(
+    factura_codigo INT,
+    factura_fecha DATE,
+    empleado_nombre TEXT,
+    factura_total DECIMAL(10,2),
+    cliente_nombre TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        f.factura_codigo,
+        f.factura_fecha,
+        CONCAT(pn.persona_nat_p_nombre, ' ', pn.persona_nat_p_apellido)::TEXT AS empleado_nombre,
+        f.factura_total,
+		COALESCE(pn2.persona_nat_p_nombre || ' ' || pn2.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente
+    FROM Factura f
+    LEFT JOIN Contrato_De_Empleo ce ON f.fk_contrato_empleo = ce.contrato_codigo
+    LEFT JOIN Empleado e ON ce.fk_empleado = e.empleado_codigo
+    LEFT JOIN Persona_Natural pn ON e.empleado_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Natural cn ON f.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn2 ON cn.cliente_nat_codigo = pn2.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON f.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
+END; $$
+LANGUAGE plpgsql;
+
+
+-- Funcion para obtener los detalles de una factura
+
+DROP FUNCTION IF EXISTS ObtenerDetallesFactura(INT);
+
+CREATE OR REPLACE FUNCTION ObtenerDetallesFactura(factura_id INT)
+RETURNS SETOF refcursor
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    datos_factura_cursor REFCURSOR:= 'datos_factura_cursor';
+    presentaciones_cursor REFCURSOR:= 'presentaciones_cursor';
+	metodos_pago_cursor REFCURSOR := 'metodos_pago_cursor'; -- Nuevo cursor
+    metodos_pago TEXT;
+BEGIN
+    -- Parte 1: Obtener datos de la factura, del cliente y del empleado
+    OPEN datos_factura_cursor FOR
+    SELECT 
+        f.factura_codigo,
+        f.factura_fecha,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente,
+        f.factura_subtotal,
+        f.factura_total,
+        e.empleado_codigo,
+        CONCAT(pn2.persona_nat_p_nombre, ' ', pn2.persona_nat_p_apellido) as empleado_nombre,
+        f.factura_puntos_obtenidos,
+        f.factura_puntos_utilizados
+    FROM Factura f
+    LEFT JOIN Cliente_Natural cn ON f.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON f.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    LEFT JOIN Contrato_De_Empleo ce ON f.fk_contrato_empleo = ce.contrato_codigo
+    LEFT JOIN Empleado e ON ce.fk_empleado = e.empleado_codigo
+    LEFT JOIN Persona_Natural pn2 ON e.empleado_codigo = pn2.persona_nat_codigo
+    WHERE f.factura_codigo = factura_id;
+
+    RETURN NEXT datos_factura_cursor;
+
+    -- Parte 2: Determinar los métodos de pago utilizados
+    OPEN metodos_pago_cursor FOR
+
+    SELECT 'TDC' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_tdc IS NOT NULL
+    UNION
+    SELECT 'TDD' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_tdd IS NOT NULL
+    UNION
+    SELECT 'Cheque' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_cheque IS NOT NULL
+    UNION
+    SELECT 'Efectivo' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_efectivo IS NOT NULL
+    UNION
+    SELECT 'Punto' AS metodo FROM Factura WHERE factura_codigo = factura_id AND fk_punto IS NOT NULL;
+
+    RETURN NEXT metodos_pago_cursor;
+
+    -- Parte 3: Obtener detalles de las presentaciones
+    OPEN presentaciones_cursor FOR
+
+    SELECT (d.fk_inventario_tienda_2 || '-' ||d.fk_inventario_tienda_3 || '-' ||d.fk_inventario_tienda_4)
+            as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+            d.detalle_factura_precio_unitario,
+            d.detalle_factura_cantidad as cantidad, img.imagen_nombre::TEXT 
+    FROM Detalle_Factura d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_inventario_tienda_2 
+        AND img.fk_presentacion_2 = d.fk_inventario_tienda_3 
+        AND img.fk_presentacion_3 = d.fk_inventario_tienda_4)
+    JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
+    WHERE d.fk_factura = factura_id
+    UNION
+    SELECT (d.fk_evento_lista_producto_3 || '-' ||d.fk_evento_lista_producto_4 || '-' ||d.fk_evento_lista_producto_5)
+            as codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT  ,
+            d.detalle_factura_precio_unitario,
+            d.detalle_factura_cantidad as cantidad, img.imagen_nombre::TEXT
+    FROM Detalle_Factura d
+    JOIN Producto pro ON pro.producto_codigo = d.fk_evento_lista_producto_5
+    JOIN Imagen img on (img.fk_presentacion_1 = d.fk_evento_lista_producto_3
+        AND img.fk_presentacion_2 = d.fk_evento_lista_producto_4 
+        AND img.fk_presentacion_3 = d.fk_evento_lista_producto_5)
+    JOIN botella bo ON d.fk_evento_lista_producto_4 = bo.botella_codigo
+    WHERE d.fk_factura = factura_id;
+
+    RETURN NEXT presentaciones_cursor;
+END;
+$$;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- LISTADO DE ACCIONES DE LOS USUARIOS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Funcion para obtener las acciones de los usuarios
+DROP FUNCTION IF EXISTS ObtenerAccionesUsuarios();
+
+CREATE OR REPLACE FUNCTION ObtenerAccionesUsuarios()
+RETURNS TABLE(u_codigo INT, u_nombre VARCHAR(20), a_codigo INT, a_fecha TIMESTAMP, a_detalle VARCHAR(50))
+AS
+$$
+BEGIN
+    RETURN QUERY
+    SELECT usuario_codigo, usuario_nombre, ac.accion_codigo, ac.accion_fecha_hora, ac.accion_detalle
+    FROM accion ac 
+    INNER JOIN usuario u on u.usuario_codigo = ac.fk_usuario
+    ORDER BY usuario_codigo;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- LISTADO DE PRODUCTOS VENDIDOS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+CREATE OR REPLACE FUNCTION obtener_listado_productos_vendidos(fecha_inicio DATE, fecha_fin DATE)
+RETURNS TABLE (
+    codigo TEXT,
+    categoria TEXT,
+    clasificacion TEXT,
+    presentacion_nombre TEXT,
+    cantidad_vendida INTEGER,
+    nombre_cliente TEXT,
+    identificacion_cliente TEXT
+) AS $$
+BEGIN
+    RETURN QUERY 
+    SELECT 
+        (dp.fk_inventario_almacen_2 || '' || dp.fk_inventario_almacen_3 || '' || dp.fk_inventario_almacen_4) as codigo,
+        cat.categoria_nombre::TEXT as categoria, cl.clasificacion_nombre::TEXT as clasificacion, 
+        (prod.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT as presentacion_nombre,
+        dp.detalle_pedido_cantidad as cantidad_vendida,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente
+    FROM Pedido pe
+    JOIN Detalle_Pedido dp ON pe.pedido_codigo = dp.fk_pedido
+    JOIN Producto prod ON dp.fk_inventario_almacen_4 = prod.producto_codigo
+    JOIN botella bo ON dp.fk_inventario_almacen_3 = bo.botella_codigo
+    JOIN Categoria cat ON prod.fk_categoria = cat.categoria_codigo
+    JOIN Clasificacion cl ON prod.fk_clasificacion = cl.clasificacion_codigo
+    LEFT JOIN Cliente_Natural cn ON pe.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON pe.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE pe.pedido_fecha BETWEEN fecha_inicio AND fecha_fin
+
+    UNION
+
+    SELECT 
+        (df.fk_inventario_tienda_2 || '' || df.fk_inventario_tienda_3 || '' || df.fk_inventario_tienda_4) as codigo,
+        cat.categoria_nombre::TEXT as categoria, cl.clasificacion_nombre::TEXT as clasificacion, 
+        (prod.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT as presentacion_nombre,
+        df.detalle_factura_cantidad as cantidad_vendida,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente
+    FROM Factura fa
+    JOIN Detalle_Factura df ON fa.factura_codigo = df.fk_factura
+    JOIN Producto prod ON df.fk_inventario_tienda_4 = prod.producto_codigo
+    JOIN botella bo ON df.fk_inventario_tienda_3 = bo.botella_codigo
+    JOIN Categoria cat ON prod.fk_categoria = cat.categoria_codigo
+    JOIN Clasificacion cl ON prod.fk_clasificacion = cl.clasificacion_codigo
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE fa.factura_fecha BETWEEN fecha_inicio AND fecha_fin
+
+    UNION
+    SELECT 
+        (df.fk_evento_lista_producto_3 || '' || df.fk_evento_lista_producto_4 || '' || df.fk_evento_lista_producto_5) as codigo,
+        cat.categoria_nombre::TEXT as categoria, cl.clasificacion_nombre::TEXT as clasificacion, 
+        (prod.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT as presentacion_nombre,
+        df.detalle_factura_cantidad as cantidad_vendida,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente
+    FROM Factura fa
+    JOIN Detalle_Factura df ON fa.factura_codigo = df.fk_factura
+    JOIN Producto prod ON df.fk_evento_lista_producto_5 = prod.producto_codigo
+    JOIN botella bo ON df.fk_evento_lista_producto_4 = bo.botella_codigo
+    JOIN Categoria cat ON prod.fk_categoria = cat.categoria_codigo
+    JOIN Clasificacion cl ON prod.fk_clasificacion = cl.clasificacion_codigo
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE fa.factura_fecha BETWEEN fecha_inicio AND fecha_fin
+    ORDER BY 
+        categoria, 
+        clasificacion, 
+        cantidad_vendida DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- LISTADO DE PRODUCTOS VENDIDOS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+DROP FUNCTION IF EXISTS ObtenerPedidos();
+
+CREATE OR REPLACE FUNCTION ObtenerPedidos()
+RETURNS TABLE(
+    pedido_codigo INT,
+    pedido_fecha DATE,
+    pedido_total DECIMAL(10,2),
+    cliente_nombre TEXT,
+    codigo_estatus INT,
+    pedido_estatus TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        pe.pedido_codigo,
+        pe.pedido_fecha,
+        pe.pedido_total,
+		COALESCE(pn2.persona_nat_p_nombre || ' ' || pn2.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        est.estatus_pedido_codigo,
+        est.estatus_pedido_nombre::TEXT
+    FROM Pedido pe
+    JOIN Historico_Estatus_Pedido ep ON pe.pedido_codigo = ep.fk_pedido
+                                    AND ep.fecha_hora_fin_estatus IS NULL
+    JOIN Estatus_Pedido est ON ep.fk_estatus_pedido = est.estatus_pedido_codigo
+    LEFT JOIN Cliente_Natural cn ON pe.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn2 ON cn.cliente_nat_codigo = pn2.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON pe.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
+END; $$
+LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Ordenes de Reposicion (Automatica y de Compra a los proveedores)
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Funcion para verificar el inventario de la tienda y crear una orden de reposicion si es necesario
+CREATE OR REPLACE FUNCTION verificar_inventario_tienda() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.inv_tienda_cantidad <= 20 THEN
+        -- Llamamos al procedimiento CrearOrdenDeReposicion
+        CALL CrearOrdenDeReposicion( 1, NEW.fk_presentacion_1, NEW.fk_presentacion_2, NEW.fk_presentacion_3);
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger para verificar el inventario de la tienda y crear una orden de reposicion si es necesario
+--DROP TRIGGER VerificarInventarioTienda ON Inventario_Tienda;
+
+CREATE TRIGGER VerificarInventarioTienda
+AFTER UPDATE ON Inventario_Tienda
+FOR EACH ROW
+EXECUTE FUNCTION verificar_inventario_tienda();
+
+-- Funcion para actualizar inventario despues de eliminar una orden de reposicion
+CREATE OR REPLACE FUNCTION restar_inventario() RETURNS TRIGGER AS $$
+DECLARE
+    ultimo_estatus INTEGER;
+BEGIN
+    -- Obtener el último estatus de la orden desde la tabla temporal
+    SELECT ultimo INTO ultimo_estatus
+    FROM ultimo_estatus_orden
+    WHERE orden_id = OLD.fk_orden;
+
+    -- Verificar si el último estatus es 'Completada' (ID 3)
+    IF ultimo_estatus = 3 THEN
+        -- Restar del inventario de la tienda si las fk_inventario_tienda están llenas
+        IF OLD.fk_inventario_tienda_1 IS NOT NULL AND OLD.fk_inventario_tienda_2 IS NOT NULL AND OLD.fk_inventario_tienda_3 IS NOT NULL AND OLD.fk_inventario_tienda_4 IS NOT NULL THEN
+            UPDATE Inventario_Tienda
+            SET inv_tienda_cantidad = inv_tienda_cantidad - OLD.detalle_orden_cantidad
+            WHERE fk_tienda = OLD.fk_inventario_tienda_1 AND fk_presentacion_1 = OLD.fk_inventario_tienda_2 AND fk_presentacion_2 = OLD.fk_inventario_tienda_3 AND fk_presentacion_3 = OLD.fk_inventario_tienda_4;
+        END IF;
+
+        -- Restar del inventario del almacén si las fk_inventario_almacen están llenas
+        IF OLD.fk_inventario_almacen_1 IS NOT NULL AND OLD.fk_inventario_almacen_2 IS NOT NULL AND OLD.fk_inventario_almacen_3 IS NOT NULL AND OLD.fk_inventario_almacen_4 IS NOT NULL THEN
+            UPDATE Inventario_Almacen
+            SET inv_almacen_cantidad = inv_almacen_cantidad - OLD.detalle_orden_cantidad
+            WHERE fk_almacen = OLD.fk_inventario_almacen_1 AND fk_presentacion_1 = OLD.fk_inventario_almacen_2 AND fk_presentacion_2 = OLD.fk_inventario_almacen_3 AND fk_presentacion_3 = OLD.fk_inventario_almacen_4;
+        END IF;
+    END IF;
+
+    DELETE FROM ultimo_estatus_orden WHERE orden_id = OLD.fk_orden;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+-- El trigger se mantiene igual
+--DROP TRIGGER tr_restar_inventario ON Detalle_Orden_De_Reposicion;
+
+CREATE TRIGGER tr_restar_inventario
+BEFORE DELETE ON Detalle_Orden_De_Reposicion
+FOR EACH ROW EXECUTE FUNCTION restar_inventario();
+
+--DROP TABLE ultimo_estatus_orden;
+
+CREATE TABLE ultimo_estatus_orden (
+    orden_id INT PRIMARY KEY,
+    ultimo INT
+);
+
+CREATE OR REPLACE FUNCTION almacenar_ultimo_estatus() RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO ultimo_estatus_orden (orden_id, ultimo)
+    SELECT OLD.orden_codigo, fk_estatus_orden
+    FROM Historico_Estatus_Orden
+    WHERE fk_orden = OLD.orden_codigo AND fecha_hora_fin_estatus IS NULL;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+--DROP TRIGGER tr_almacenar_ultimo_estatus ON Orden_De_Reposicion;
+
+CREATE TRIGGER tr_almacenar_ultimo_estatus
+BEFORE DELETE ON Orden_De_Reposicion
+FOR EACH ROW EXECUTE FUNCTION almacenar_ultimo_estatus();
+
+CREATE OR REPLACE FUNCTION sumar_inventario_factura() RETURNS TRIGGER AS $$
+BEGIN
+    -- Sumar al inventario de la tienda
+    UPDATE Inventario_Tienda
+    SET inv_tienda_cantidad = inv_tienda_cantidad + detalle.detalle_factura_cantidad
+    FROM Detalle_Factura detalle
+    WHERE detalle.fk_factura = OLD.factura_codigo
+    AND detalle.fk_inventario_tienda_1 IS NOT NULL
+    AND detalle.fk_inventario_tienda_2 IS NOT NULL
+    AND detalle.fk_inventario_tienda_3 IS NOT NULL
+    AND detalle.fk_inventario_tienda_4 IS NOT NULL
+    AND Inventario_Tienda.fk_tienda = detalle.fk_inventario_tienda_1
+    AND Inventario_Tienda.fk_presentacion_1 = detalle.fk_inventario_tienda_2
+    AND Inventario_Tienda.fk_presentacion_2 = detalle.fk_inventario_tienda_3
+    AND Inventario_Tienda.fk_presentacion_3 = detalle.fk_inventario_tienda_4;
+
+    -- Sumar al inventario del almacén
+    UPDATE Inventario_Almacen
+    SET inv_almacen_cantidad = inv_almacen_cantidad + detalle.detalle_factura_cantidad
+    FROM Detalle_Factura detalle
+    WHERE detalle.fk_factura = OLD.factura_codigo
+    AND detalle.fk_evento_lista_producto_1 IS NOT NULL
+    AND detalle.fk_evento_lista_producto_2 IS NOT NULL
+    AND detalle.fk_evento_lista_producto_3 IS NOT NULL
+    AND detalle.fk_evento_lista_producto_4 IS NOT NULL
+    AND detalle.fk_evento_lista_producto_5 IS NOT NULL
+    AND Inventario_Almacen.fk_almacen = detalle.fk_evento_lista_producto_2
+    AND Inventario_Almacen.fk_presentacion_1 = detalle.fk_evento_lista_producto_3
+    AND Inventario_Almacen.fk_presentacion_2 = detalle.fk_evento_lista_producto_4
+    AND Inventario_Almacen.fk_presentacion_3 = detalle.fk_evento_lista_producto_5;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_sumar_inventario_factura
+BEFORE DELETE ON Factura
+FOR EACH ROW EXECUTE FUNCTION sumar_inventario_factura();
+
+CREATE OR REPLACE FUNCTION reponer_inventario_pedido() RETURNS TRIGGER AS $$
+DECLARE
+    ultimo_estatus INT;
+BEGIN
+    -- Obtener el último estatus del pedido
+    SELECT fk_estatus_pedido INTO ultimo_estatus
+    FROM Historico_Estatus_Pedido
+    WHERE fk_pedido = OLD.pedido_codigo
+    ORDER BY fecha_hora_inicio_estatus DESC
+    LIMIT 1;
+
+    -- Verificar si el último estatus no es 1
+    IF ultimo_estatus != 1 THEN
+        -- Reponer el inventario del almacén
+        UPDATE Inventario_Almacen
+        SET inv_almacen_cantidad = inv_almacen_cantidad + detalle.detalle_pedido_cantidad
+        FROM Detalle_Pedido detalle
+        WHERE detalle.fk_pedido = OLD.pedido_codigo
+        AND Inventario_Almacen.fk_almacen = detalle.fk_inventario_almacen_1
+        AND Inventario_Almacen.fk_presentacion_1 = detalle.fk_inventario_almacen_2
+        AND Inventario_Almacen.fk_presentacion_2 = detalle.fk_inventario_almacen_3
+        AND Inventario_Almacen.fk_presentacion_3 = detalle.fk_inventario_almacen_4;
+    END IF;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tr_reponer_inventario_pedido
+BEFORE DELETE ON Pedido
+FOR EACH ROW EXECUTE FUNCTION reponer_inventario_pedido();

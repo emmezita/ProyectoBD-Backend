@@ -56,10 +56,6 @@
 var urlParams = new URLSearchParams(window.location.search);
 var idOrden = urlParams.get('id');
 
-$('#save-pdf').click(() => {
-    const doc = new jsPDF();
-    doc.save('page.pdf');
-});
 
     $(document).ready(() => {
         $.ajax({
@@ -80,10 +76,7 @@ $('#save-pdf').click(() => {
                 $('.body-ordenes').append(row);
 
                 $('.table-ordenes').DataTable({
-                    paging: false,
-                    searching: false,
-                    info: false,
-                    ordering: false,
+                    c
                     columns: [
                         { width: "12%" },
                         { width: "12%" },

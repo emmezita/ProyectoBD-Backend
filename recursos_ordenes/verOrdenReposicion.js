@@ -30,7 +30,7 @@ $(document).ready(function() {
             $('#orden-fecha').text(formatDate(data.orden_fecha));
         },
         error: function() {
-            alert('Error obteniendo empleado');
+            alert('Error obteniendo orden de reposicion');
         }
     });
 });

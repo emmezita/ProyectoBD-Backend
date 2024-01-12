@@ -1,0 +1,102 @@
+<script>
+// obtener el id del url
+var urlParams = new URLSearchParams(window.location.search);
+var idCliente = urlParams.get('identificacion');
+
+    // obtener las tarjetas de credito guardadas del usuario
+    $.ajax({
+        url: "http://localhost:5000/api/cliente/" + idCliente + "/tarjetas",
+        method: "GET",
+        dataType: "json",
+        success: (data) => {
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var option = $('<option value="' + data[i].codigo + '">');
+                option.text(data[i].numero);
+                $('#form-field-TDCs').append(option);
+            }
+        },
+        error: (error) => {
+            console.log(error);
+            alert("Error al cargar las tarjetas de credito");
+        },
+    });
+
+    // obtener tipos de pago en efectivo
+    $.ajax({
+        url: "http://localhost:5000/api/venta/efectivo",
+        method: "GET",
+        dataType: "json",
+        success: (data) => {
+            console.log(data);
+            for (var i = 0; i < data.length; i++) {
+                var option = $('<option value="' + data[i].efectivo_codigo + '">');
+                option.text(data[i].efectivo_denominacion);
+                $('#form-field-efectivo').append(option);
+            }
+        },
+        error: (error) => {
+            console.log(error);
+            alert("Error al cargar los tipos de pago");
+        },
+    });
+
+    // finalizar la compra, evento de form
+    $('#finalizarCompra').submit((e) => {
+        e.preventDefault();
+        var ff = '#form-field-'
+
+        var tdc = $(ff+'TDCs').val();
+        var subTotal = $('#subTotal').text().substring(1);
+        var total = $('#total b').text().substring(1);
+        var puntosUsados = $('#inputPuntos').val();
+        var cheque = $(ff+'cheque').val();
+        var efectivo = $(ff+'efectivo').val();
+        var numeroTDD = $(ff+'numeroTDD').val();
+        var cvvTDD = $(ff+'CVV').val();
+        var fechaVencimientoTDD = $(ff+'fechaTDD').val();
+
+        //obtener puntos ganados (un producto = 1 punto)
+        var puntosGanados = 0;
+        $('.body-carrito tr').each(function() {
+            var puntos = $(this).find('td').eq(0).text();
+            puntosGanados += parseInt(puntos);
+            console.log(puntosGanados);
+        });
+
+        var data = {
+            "idTDC": tdc,
+            "puntosUsados": puntosUsados,
+            "puntosGanados": puntosGanados,
+            "cheque": cheque,
+            "efectivo": efectivo,
+            "numeroTDD": numeroTDD,
+            "cvvTDD": cvvTDD,
+            "fechaVencimientoTDD": fechaVencimientoTDD,
+            "tasaPunto": tasaPunto,
+            "subTotal": subTotal,
+            "total": total,
+        }
+
+        data = JSON.stringify(data);
+
+        $.ajax({
+            url: "http://localhost:5000/api/venta/factura/" + idUsuario + "/" + idCliente,
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: data,
+            success: (data) => {
+                console.log(data);
+                alert("Compra realizada con exito. Se han agregado " + puntosGanados + " puntos a su cuenta");
+                window.location.href = "http://dilodev.co/";
+            },
+            error: (error) => {
+                console.log(error);
+                alert("Error al realizar la compra");
+            },
+        });
+    });
+
+</script>

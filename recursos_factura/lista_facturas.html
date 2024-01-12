@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Órdenes de Reposición y Compra</title>
+    <title>Facturas</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -99,60 +99,68 @@
 
     <!-- Tabs -->
     <ul class="nav nav-tabs" id="tabs" role="tablist">
-        <li class="nav-item" role="ordenesReposicion">
-            <button class="nav-link active" id="ordenesReposicion-tab" data-bs-toggle="tab" data-bs-target="#ordenesReposicion" type="button" role="tab" aria-controls="ordenesReposicion" aria-selected="true">Órdenes de Reposición</button>
+        <li class="nav-item" role="facturas">
+            <button class="nav-link active" id="facturas-tab" data-bs-toggle="tab" data-bs-target="#facturas" type="button" role="tab" aria-controls="facturas" aria-selected="true">Facturas</button>
         </li>
-        <li class="nav-item" role="ordenesCompra">
-            <button class="nav-link" id="ordenesCompra-tab" data-bs-toggle="tab" data-bs-target="#ordenesCompra" type="button" role="tab" aria-controls="ordenesCompra" aria-selected="false">Órdenes de Compra</button>
+        <li class="nav-item" role="productosvendidos">
+            <button class="nav-link" id="productosvendidos-tab" data-bs-toggle="tab" data-bs-target="#productosvendidos" type="button" role="tab" aria-controls="productosvendidos" aria-selected="true">Productos Vendidos</button>
         </li>
     </ul>
 
     <!-- Tab panes -->
     <div class="tab-content" id="content">
-        <div class="tab-pane fade show active" id="ordenesReposicion" role="tabpanel" aria-labelledby="ordenesReposicion-tab">
+        <div class="tab-pane fade show active" id="facturas" role="tabpanel" aria-labelledby="facturas-tab">
             <!-- Aquí va la tabla de órdenes de reposición -->
             <div class="mt-4 mx-auto">
-                <table id="table-ordenesReposicion" class="table table-striped">
+                <table id="table-facturas" class="table table-striped">
                     <!-- Aquí va el encabezado y cuerpo de la tabla -->
                     <thead>
                         <tr>
-                            <th>ID Orden</th>
-                            <th>Fecha de Solicitud</th>
-                            <th>Producto</th>
-                            <th>Cantidad</th>
-                            <th>Estatus</th>
+                            <th>Código Factura</th>
+                            <th>Fecha</th>
+                            <th>Empleado responsable</th>
+                            <th>Total</th>
+                            <th>Cliente</th>
                             <th></th>
                             <th></th>
                         </tr>
                     </thead>
-                    <tbody id="body-ordenesReposicion"> </tbody>
+                    <tbody id="body-facturas"> </tbody>
                 </table>
             </div>
         </div>
-        <div class="tab-pane fade" id="ordenesCompra" role="tabpanel" aria-labelledby="ordenesCompra-tab">
-            <!-- Aquí va la tabla de órdenes de compra -->
-            <div class="mt-4 mx-auto">
-                
-                <div class="d-flex justify-content-end align-items-center">
-                    <!-- Botón para añadir orden de compra -->
-                    <button type="button" class="btn btn-primary mb-3" id="add-orden-button" onclick="GenerarOrdenes()">Generar Órdenes</button>
-                </div>
 
-                <table id="table-ordenesCompra" class="table table-striped">
+        <div class="tab-pane fade show" id="productosvendidos" role="tabpanel" aria-labelledby="productosvendidos-tab">
+            <!-- Aquí van los campos de entrada de fecha -->
+            <div class="row mt-4 g-0">
+                <div class="col-4">
+                    <label for="fecha-inicio">Fecha de inicio:</label>
+                    <input type="date" id="fecha-inicio">
+                </div>
+                <div class="col-4">
+                    <label for="fecha-fin">Fecha de fin:</label>
+                    <input type="date" id="fecha-fin">
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary" id="botonConsultar" onclick="productosVendidos()">Buscar</button>
+                </div>
+            </div>
+            <!-- Aquí va la tabla de órdenes de reposición -->
+            <div class="mt-4 mx-auto">
+                <table id="table-productosvendidos" class="table table-striped">
                     <!-- Aquí va el encabezado y cuerpo de la tabla -->
                     <thead>
                         <tr>
-                            <th>ID Orden</th>
-                            <th>Fecha de Solicitud</th>
-                            <th>Proveedor</th>
-                            <th>Costo total</th>
-                            <th>Empleado</th>
-                            <th>Estatus</th>
-                            <th></th>
-                            <th></th>
+                            <th>Código Producto</th>
+                            <th>Categoría</th>
+                            <th>Clasificación</th>
+                            <th>Nombre del Producto</th>
+                            <th>Cantidad vendida</th>
+                            <th>Cliente</th>
+                            <th>Identificación del cliente</th>
                         </tr>
                     </thead>
-                    <tbody id="body-ordenesCompra"> </tbody>
+                    <tbody id="body-productosvendidos"> </tbody>
                 </table>
             </div>
         </div>
@@ -160,52 +168,31 @@
 
 <script>
 
-function GenerarOrdenes() {
-    $.ajax({
-        url: 'http://localhost:5000/api/orden/compra/generar',
-        type: 'POST',
-        dataType: 'json',
-        success: function(data) {
-            alert('Se han generado las órdenes de compra');
-            location.reload();
-        },
-        error: function() {
-            alert('Error al generar las órdenes de compra');
-        }
-    });        
-}
-
-function verOrdenReposicion(id){
-    console.log('ver Orden de Reposicion');
-    window.location.href = 'https://dilodev.co/orden-de-reposicion?id=' + id;
-}
-
-function verOrdenCompra(id){
-    console.log('ver Orden de Compra');
-    window.location.href = 'https://dilodev.co/orden-de-compra?id=' + id;
+function verFactura(codigo) {
+    window.location.href = 'https://dilodev.co/factura-cliente-compra-fisica?id=' + codigo;
 }
 
 $(document).ready(function() {
     $.ajax({
-        url: 'http://localhost:5000/api/orden/reposicion/all',
+        url: 'http://localhost:5000/api/factura/all',
         type: 'GET',
         dataType: 'json',
         success: function(data) {
             for (var i = 0; i < data.length; i++) {
                 var row = $('<tr>');
-                row.append('<td>' + data[i].codigo + '</td>');
-                var fecha = formatDate(data[i].fecha);
+                row.append('<td>' + data[i].factura_codigo + '</td>');
+                var fecha = formatDate(data[i].factura_fecha);
                 row.append('<td>' + fecha + '</td>');
-                row.append('<td>' + data[i].producto + '</td>');
-                row.append('<td>' + data[i].cantidad + '</td>');
-                row.append('<td>' + data[i].estatus + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="verOrdenReposicion(' + data[i].codigo + ')">Ver</button></td>');
-                row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarOrdenReposicion(' + data[i].codigo + ')">Eliminar</button></td>');
+                row.append('<td>' + data[i].empleado_nombre + '</td>');
+                row.append('<td>' + data[i].factura_total + '</td>');
+                row.append('<td>' + data[i].cliente_nombre + '</td>');
+                row.append('<td><button type="button" class="btn btn-warning" onclick="verFactura(' + data[i].factura_codigo + ')">Ver</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarFactura(' + data[i].factura_codigo + ')">Eliminar</button></td>');
                 
-                $('#body-ordenesReposicion').append(row);
+                $('#body-facturas').append(row);
             }
 
-            $('#table-ordenesReposicion').DataTable({
+            $('#table-facturas').DataTable({
                 "language": {
                     "lengthMenu": "Mostrar _MENU_ registros por página",
                     "zeroRecords": "No se encontraron resultados",
@@ -223,52 +210,83 @@ $(document).ready(function() {
             });
         },
         error: function() {
-            alert('Error al obtener las órdenes de reposición');
+            alert('Error al obtener las facturas');
         }
     });
+    
+});
+
+
+function productosVendidos(){
+    var fechaInicio = $('#fecha-inicio').val()
+    var fechaFin = $('#fecha-fin').val()
+
+    var data = {
+        "fechaInicio": fechaInicio,
+        "fechaFin": fechaFin
+    }
+
+    data = JSON.stringify(data)
 
     $.ajax({
-        url: 'http://localhost:5000/api/orden/compra/all',
-        type: 'GET',
+        url: 'http://localhost:5000/api/productos/vendidos',
+        type: 'POST',
         dataType: 'json',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        data: data,
         success: function(data) {
+            //resetear la tabla
+            
+            if ($.fn.DataTable.isDataTable('#table-productosvendidos')) {
+                console.log("true")
+                $('#table-productosvendidos').DataTable().clear().destroy();
+            } else {
+                console.log("false")
+            }
+
+            console.log(data.length)
+
             for (var i = 0; i < data.length; i++) {
                 var row = $('<tr>');
                 row.append('<td>' + data[i].codigo + '</td>');
-                var fecha = formatDate(data[i].fecha);
-                row.append('<td>' + fecha + '</td>');
-                row.append('<td>' + data[i].proveedor + '</td>');
-                row.append('<td>' + data[i].total + '</td>');
-                row.append('<td>' + data[i].empleado + '</td>');
-                row.append('<td>' + data[i].estatus + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="verOrdenCompra(' + data[i].codigo + ')">Ver</button></td>');
-                row.append('<td><button type="button" class="btn btn-danger" onclick="eliminarOrdenCompra(' + data[i].codigo + ')">Eliminar</button></td>');
-                
-                $('#body-ordenesCompra').append(row);
+                row.append('<td>' + data[i].categoria + '</td>');
+                row.append('<td>' + data[i].clasificacion + '</td>');
+                row.append('<td>' + data[i].presentacion_nombre + '</td>');
+                row.append('<td>' + data[i].cantidad_vendida + '</td>');
+                row.append('<td>' + data[i].nombre_cliente + '</td>');
+                row.append('<td>' + data[i].identificacion_cliente + '</td>');
+                $('#body-productosvendidos').append(row);
             }
 
-            $('#table-ordenesCompra').DataTable({
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron resultados",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "No hay registros disponibles",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    },
-                }
-            });
+            // Check if the table is already initialized
+            if ($.fn.DataTable.isDataTable('#table-productosvendidos')) {
+                $('#table-productosvendidos').DataTable().draw();
+            } else {
+                $('#table-productosvendidos').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            }
         },
         error: function() {
-            alert('Error al obtener las órdenes de compra');
+            alert('Error al obtener las facturas');
         }
     });
-});
+}
 
 function formatDate(dateString) {
     var oldDate = new Date(dateString);

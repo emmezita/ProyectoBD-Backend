@@ -18,5 +18,5 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
-
+DROP SEQUENCE IF EXISTS secuencia_ficha CASCADE;
 SELECT borrar_tablas();

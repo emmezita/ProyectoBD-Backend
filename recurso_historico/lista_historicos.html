@@ -95,6 +95,13 @@
         } .nav-link:hover {
             color: #A5141A !important;
         }
+
+        #nuevoPunto::placeholder {
+            font-size: 14px;
+        }
+        #nuevaTasa::placeholder {
+            font-size: 14px;
+        }
     </style>
 
     <!-- Tabs -->
@@ -104,6 +111,10 @@
         </li>
         <li class="nav-item" role="historicotasadolar">
             <button class="nav-link" id="historicotasadolar-tab" data-bs-toggle="tab" data-bs-target="#historicotasadolar" type="button" role="tab" aria-controls="historicotasadolar" aria-selected="false">Historico Tasa Dolar</button>
+            <button class="nav-link active" id="historicopunto-tab" data-bs-toggle="tab" data-bs-target="#historicopunto" type="button" role="tab" aria-controls="historicopunto" aria-selected="true">Histórico Punto</button>
+        </li>
+        <li class="nav-item" role="historicotasadolar">
+            <button class="nav-link" id="historicotasadolar-tab" data-bs-toggle="tab" data-bs-target="#historicotasadolar" type="button" role="tab" aria-controls="historicotasadolar" aria-selected="false">Histórico Tasa Dólar</button>
         </li>
     </ul>
 
@@ -111,13 +122,17 @@
     <div class="tab-content" id="content">
         <div class="tab-pane fade show active" id="historicopunto" role="tabpanel" aria-labelledby="historicopunto-tab">
             <div class="mt-4 mx-auto">
+
+                <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px;">
+                    <input type="text" id="nuevoPunto" placeholder="Introduce nuevo valor" style="width: 200px; margin-right: 10px; font-size: 14px;">
+                    <button id="botonAnadirPunto" onclick="addValorPunto()">Añadir</button>
+                </div>
+
                 <table id="table-historicopunto" class="table table-striped ">
                     <thead>
                         <th>Valor del Punto</th>
                         <th>Fecha inicio</th>
-                        <th>Tienda</th> 
-                        <th></th>
-                        <th></th>
+                        <th>Fecha Fin</th>
                     </thead>
                     <tbody id="body-historicopunto">
                     </tbody>
@@ -126,100 +141,180 @@
         </div>
         <div class="tab-pane fade" id="historicotasadolar" role="tabpanel" aria-labelledby="historicotasadolar">
             <div class="mt-4 mx-auto">
+
+                <div style="display: flex; align-items: center; justify-content: flex-end; margin-bottom: 20px;">
+                    <input type="text" id="nuevaTasa" placeholder="Introduce nuevo valor" style="width: 200px; margin-right: 10px; font-size: 14px;">
+                    <button id="botonAnadirTasa" onclick="addValorTasa()">Añadir</button>
+                </div>
+
                 <table id="table-historicotasadolar" class="table table-striped ">
                     <thead>
                         <th>Valor</th>
                         <th>Fecha inicio</th>
                         <th>Fecha fin</th>
-                        <th></th> 
-                        <th></th>
                     </thead>
                     <tbody id="body-historicotasadolar">
                     </tbody>
                 </table>
             </div>
         </div>
-    <!-- Modales -->
-    <!-- Modal Eliminar Producto-->
-        <div class="modal fade" id="deleteProCostumerModal" tabindex="-1" aria-labelledby="deleteProCostumerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteProModalLabel">Eliminar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="delete-procostumer-button">Eliminar</button>
-                </div>
-            </div>
-        </div>
     </div>
 
+    <script>
 
-<script>
+    function formatDate(dateString) {
+        var oldDate = new Date(dateString);
+        var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
 
-function formatDate(dateString) {
-    var oldDate = new Date(dateString);
-    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+        var day = '' + date.getDate(),
+            month = '' + (date.getMonth() + 1), 
+            year = date.getFullYear();
 
-    var day = '' + date.getDate(),
-        month = '' + (date.getMonth() + 1), 
-        year = date.getFullYear();
+        if (day.length < 2) 
+            day = '0' + day;
+        if (month.length < 2) 
+            month = '0' + month;
 
-    if (day.length < 2) 
-        day = '0' + day;
-    if (month.length < 2) 
-        month = '0' + month;
+        return [year, month, day].join('-');
+    }
 
-    return [year, month, day].join('-');
-}
-    
-$(document).ready(function() {
-    var data = null;
-    $.ajax({
-        url: 'http://localhost:5000/historicos/historico_punto',
-        type: 'GET',
-        dataType: 'json',
-        success: function(d) {
-            data = d;
-            console.log(data);
-            for (var i = 0; i < data.length; i++) {
-                var row = $('<tr>');
-                row.append('<td>' + data[i].punto_valor + '</td>');
-                var fecha = formatDate(data[i].punto_fecha_inicio);
-                row.append('<td>' + fecha + '</td>');
-                row.append('<td>' + data[i].tienda_direccion + '</td>');
-                row.append('<td><button type="button" class="btn btn-warning" onclick="editarn(' + data[i].codigo + ')">Editar</button></td>');
-                row.append('<td><button type="button" class="btn btn-danger" id="delete-procostumer-button" data-bs-toggle="modal" data-bs-target="#deleteProCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
-
-                $('#body-historicopunto').append(row);
+    function addValorPunto(){
+        var valor = $('#nuevoPunto').val();
+        var data = {
+            "valor": valor
+        };
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:5000/api/historico/punto/actualizar',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(data),
+            success: function(d) {
+                alert('Se ha añadido el valor correctamente');
+                location.reload();
+            },
+            error: function() {
+                alert('Hubo un error añadiendo el valor');
             }
+        });
 
-            $('#table-historicopunto').DataTable({
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
-                    "zeroRecords": "No se encontraron resultados",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "No hay registros disponibles",
-                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
-                    "search": "Buscar:",
-                    "paginate": {
-                        "first": "Primero",
-                        "last": "Último",
-                        "next": "Siguiente",
-                        "previous": "Anterior"
-                    },
+    }
+
+    function addValorTasa(){
+        var valor = $('#nuevaTasa').val();
+        var data = {
+            "valor": valor
+        };
+        $.ajax({
+            type: "POST",
+            url: 'http://localhost:5000/api/historico/tasa/actualizar',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(data),
+            success: function(d) {
+                alert('Se ha añadido el valor correctamente');
+                location.reload();
+            },
+            error: function() {
+                alert('Hubo un error añadiendo el valor');
+            }
+        });
+    }
+        
+    $(document).ready(function() {
+        var data = null;
+        $.ajax({
+            url: 'http://localhost:5000/api/historico/punto/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var row = $('<tr>');
+                    row.append('<td>' + data[i].valor + '</td>');
+                    var fechaInicio = formatDate(data[i].fechainicio);
+                    row.append('<td>' + fechaInicio + '</td>');
+                    if (data[i].fechafin == null) {
+                        row.append('<td>Actual</td>');
+                    } else {
+                        var fechaFin = formatDate(data[i].fechafin);
+                        row.append('<td>' + fechaFin + '</td>');
+                    }
+
+                    $('#body-historicopunto').append(row);
                 }
-            });
-        },
-        error: function() {
-            alert('Hubo un error obteniendo a los historicos');
-        }
-    });
 
-       
-});   
+                $('#table-historicopunto').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            },
+            error: function() {
+                alert('Hubo un error obteniendo a los valores del punto');
+            }
+        });
+
+        $.ajax({
+            url: 'http://localhost:5000/api/historico/tasa/all',
+            type: 'GET',
+            dataType: 'json',
+            success: function(d) {
+                data = d;
+                console.log(data);
+                for (var i = 0; i < data.length; i++) {
+                    var row = $('<tr>');
+                    row.append('<td>' + data[i].valor + ' Bs.</td>');
+                    var fechaInicio = formatDate(data[i].fechainicio);
+                    row.append('<td>' + fechaInicio + '</td>');
+                    if (data[i].fechafin == null) {
+                        row.append('<td>Actual</td>');
+                    } else {
+                        var fechaFin = formatDate(data[i].fechafin);
+                        row.append('<td>' + fechaFin + '</td>');
+                    }
+
+                    $('#body-historicotasadolar').append(row);
+                }
+
+                $('#table-historicotasadolar').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            },
+            error: function() {
+                alert('Hubo un error obteniendo a los valores del dólar');
+            }
+        });
+        
+    });   
 </script>
+    
+</body>
+</html>

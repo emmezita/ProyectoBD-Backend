@@ -1,0 +1,96 @@
+<style>
+    #procesar:hover {
+        background-color: #6e0d10 !important;
+    }
+    #completar:hover {
+        background-color: #085523 !important;
+    }
+    #cancelar:hover {
+        background-color: #5f450c !important;
+    }
+</style>
+
+<div class="botones" style="text-align: right;">
+    <button id="procesar" onclick="procesarOrden()" style="font-size: 18px; background-color:#A5141A;">Procesar</button>
+    <button id="completar" onclick="completarOrden()" style="font-size: 18px; background-color: #21834A;">Completar</button>
+    <button id="cancelar" onclick="cancelarOrden()" style="font-size: 18px; background-color: #D1991A;">Cancelar</button>
+</div>
+
+<script>   
+    var urlParams = new URLSearchParams(window.location.search);
+    var idOrden = urlParams.get('id');
+
+    function procesarOrden() {
+        var detalleOrden = {
+            idUsuario: 1, // TODO: Cambiar por el id del usuario
+            presentaciones: [],
+        };
+        $('.body-ordenes tr').each(function(i, e) {
+            var idm = $(e).find('td').eq(0).attr('idm');
+            var idb = $(e).find('td').eq(0).attr('idb');
+            var ido = $(e).find('td').eq(0).attr('ido');
+            var cantidad = $(e).find('.cantidad').val();
+            var precio = $(e).find('.precio').val();
+            var datos = {
+                idm: idm,
+                idb: idb,
+                ido: ido,
+                cantidad: cantidad,
+                precio: precio,
+            };
+            detalleOrden.presentaciones.push(datos);
+        });      
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:5000/api/orden/compra/procesar/"+ idOrden,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(detalleOrden),
+            success: function (data) {
+                location.reload();
+                console.log(data);
+                alert("Órden procesada exitosamente");
+            },
+            error: function (data) {
+                alert(data.responseText);
+            }
+        });
+    }
+
+    function completarOrden() {
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:5000/api/orden/compra/completar/" + idOrden,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (data) => {
+                location.reload();
+                console.log(data);
+                alert("Órden completada exitosamente");              
+            },
+            error: (error) => {
+                console.log(error)
+            }
+        });
+    }
+
+    function cancelarOrden() {
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:5000/api/orden/compra/cancelar/" + idOrden,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            success: (data) => {
+                location.reload();
+                console.log(data);
+                alert("Órden cancelada exitosamente");
+            },
+            error: (error) => {
+                console.log(error)
+            }
+        });
+    }
+</script>

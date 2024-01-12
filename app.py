@@ -1,6 +1,8 @@
 from calendar import c
 import datetime
 import os
+import json
+from re import sub
 from tkinter import N
 import traceback
 from flask import Flask, Response, request, jsonify, url_for
@@ -27,6 +29,23 @@ conn = psycopg2.connect(database=db_name, user=db_user, password=db_pass, host=d
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS GENERALES
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para Inciar Sesion 
+@app.route("/api/login", methods=["POST"])
+def login():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    data = request.get_json()
+    pprint(data)
+    usuario = data.get("usuario")
+    contrasena = data.get("contrasena")
+    cur.execute("SELECT * FROM Usuario WHERE usuario_nombre = %s AND usuario_contrasena = %s", (usuario, contrasena))
+    usuario = cur.fetchone()
+    cur.close()
+
+    if usuario is None:
+        return Response(status=404, response="Usuario no encontrado")
+    
+    return jsonify(usuario), 200
 
 # Ruta para obtener todas las ubicaciones de la base de datos (JSON)
 @app.route("/api/usuario/ubicaciones/all", methods=["GET"])
@@ -432,7 +451,7 @@ def get_empleado(id):
     
     cur.close()
 
-    datos = jsonify({
+    datos = {
         'persona': persona,
         'correos': correos,
         'telefonos': telefonos,
@@ -441,11 +460,11 @@ def get_empleado(id):
         'beneficios': beneficios,
         'horarios': horarios,
         'lugar': lugar
-    })
+    }
     
     pprint(datos)
 
-    return datos
+    return jsonify(datos)
 
 # Ruta para editar los datos de un empleado de la base de datos
 @app.route("/api/empleado/editar/<int:id>", methods=["PUT"])
@@ -921,7 +940,7 @@ def get_cliente_natural(id):
 # Ruta para editar los datos de un cliente natural de la base de datos
 @app.route("/api/cliente/natural/editar/<int:id>", methods=["PUT"])
 def editar_cliente_natural(id):
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
     cliente = request.get_json()
     pprint(cliente)
     p_nombre = cliente.get("pnombre")
@@ -1013,8 +1032,8 @@ def editar_cliente_natural(id):
 def delete_cliente_natural(id):
     cur = conn.cursor()
 
-    # cur.execute("DELETE FROM cliente_natural WHERE cliente_nat_codigo = %s", (id,))
-    print("entra n")
+    cur.execute("DELETE FROM cliente_natural WHERE cliente_nat_codigo = %s", (id,))
+    
     conn.commit()
     cur.close()
 
@@ -1405,12 +1424,155 @@ def editar_cliente_juridico(id):
 def delete_cliente_juridico(id):
     cur = conn.cursor()
 
-    # cur.execute("DELETE FROM cliente_juridico WHERE cliente_jur_codigo = %s", (id,))
+    cur.execute("DELETE FROM cliente_juridico WHERE cliente_jur_codigo = %s", (id,))
     print("entra j")
     conn.commit()
     cur.close()
 
     return "Cliente Eliminado"
+
+
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA REALIZAR EL CRUD DE ROLES
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+def reformat_data(data):
+    result = {}
+    for item in data:
+        rol_codigo = item['rol_codigo']
+        rol_nombre = item['rol_nombre']
+        permiso = {
+            'permiso_codigo': item['permiso_codigo'],
+            'permiso_descripcion': item['permiso_descripcion'],
+            'permiso_tipo': item['permiso_tipo']
+        }
+        if rol_codigo not in result:
+            result[rol_codigo] = {
+                'rol_codigo': rol_codigo,
+                'rol_nombre': rol_nombre,
+                'permisos': [permiso]
+            }
+        else:
+            result[rol_codigo]['permisos'].append(permiso)
+    return list(result.values())
+
+@app.route("/api/rol/all", methods=["GET"])
+def get_all_roles():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    sql_roles = """
+        SELECT r.rol_codigo, r.rol_nombre, p.permiso_codigo, p.permiso_descripcion, p.permiso_tipo
+        FROM Rol r, rol_permiso rp, permiso p
+        WHERE r.rol_codigo = rp.fk_rol AND rp.fk_permiso = p.permiso_codigo
+        ORDER BY r.rol_codigo
+    """
+    cur.execute(sql_roles)
+    rows = cur.fetchall()
+    cur.close()
+
+    formated_rows = reformat_data(rows)
+
+    pprint(formated_rows)
+    return jsonify(formated_rows)
+
+@app.route("/api/permiso/all", methods=["GET"])
+def get_all_permisos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    sql_permisos = """
+        SELECT * FROM Permiso
+    """
+    cur.execute(sql_permisos)
+    rows = cur.fetchall()
+    cur.close()
+
+    pprint(rows)
+    return jsonify(rows)
+
+# Modificar y crear roles en grupo (batch)
+@app.route("/api/rol/modificar", methods=["PUT"])
+def modificar_roles():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    roles = request.get_json()
+    pprint(roles)
+
+    for rol in roles:
+        rol_codigo = rol['rol_codigo']
+        rol_nombre = rol['rol_nombre']
+        permisos = rol['permisos']
+
+        if (rol.get('nuevo')): # rol nuevo
+            sql_rol = """
+                INSERT INTO Rol (rol_nombre) VALUES (%s) RETURNING rol_codigo
+            """
+            try:
+                cur.execute(sql_rol, (rol_nombre,))
+                result = cur.fetchone()
+                rol_codigo = result['rol_codigo'] if result is not None else None
+                sql_rol_permiso = """
+                    INSERT INTO Rol_Permiso (fk_rol, fk_permiso) VALUES (%s, %s)
+                """
+                for permiso in permisos:
+                    cur.execute(sql_rol_permiso, (rol_codigo, permiso['permiso_codigo']))
+                conn.commit()
+            except Exception as e:
+                tb = traceback.format_exc()
+                print(f"An error occurred: {e}\n{tb}")
+                conn.rollback()   
+                cur.close()
+                return Response(status=500, response=str(e))
+        else: # rol existente
+            sql_rol = """
+                UPDATE Rol SET rol_nombre = %s WHERE rol_codigo = %s
+            """
+            sql_rol_permiso = """
+                INSERT INTO Rol_Permiso (fk_rol, fk_permiso) VALUES (%s, %s)
+            """
+            sql_delete_rol_permiso = """
+                DELETE FROM Rol_Permiso WHERE fk_rol = %s AND fk_permiso = %s
+            """
+            try:
+                cur.execute(sql_rol, (rol_nombre, rol_codigo))
+                cur.execute("SELECT fk_permiso FROM Rol_Permiso WHERE fk_rol = %s", (rol_codigo,))
+                existing_permisos = cur.fetchall()
+                existing_permisos = set(permiso['fk_permiso'] for permiso in existing_permisos)
+                for permiso in permisos:
+                    if permiso['permiso_codigo'] not in existing_permisos:
+                        cur.execute(sql_rol_permiso, (rol_codigo, permiso['permiso_codigo']))
+                for permiso in existing_permisos:
+                    if permiso not in set(permiso['permiso_codigo'] for permiso in permisos):
+                        cur.execute(sql_delete_rol_permiso, (rol_codigo, permiso))
+                conn.commit()
+            except Exception as e:
+                tb = traceback.format_exc()
+                print(f"An error occurred: {e}\n{tb}")
+                conn.rollback()   
+                cur.close()
+                return Response(status=500, response=str(e))
+    
+    cur.close()
+    print('responde 200')
+    return "Roles modificados exitosamente", 200
+
+# Ruta para eliminar un rol de la base de datos
+# ponerle cascade a rol_permiso
+@app.route("/api/rol/eliminar/<int:id>", methods=["DELETE"])
+def eliminar_rol(id):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM Rol WHERE rol_codigo = %s", (id,))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Rol eliminado exitosamente")
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRODUCTO
@@ -2008,6 +2170,24 @@ def editar_producto(id):
     cur.close()
     
     return Response(status=200, response="Producto editado exitosamente")
+
+# Ruta para eliminar un producto de la base de datos
+@app.route("/api/producto/eliminar/<int:id>", methods=["DELETE"])
+def eliminar_producto(id):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM producto WHERE producto_codigo = %s", (id,))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Producto eliminado exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA REALIZAR EL CRUD DE PRESENTACION
@@ -2166,6 +2346,40 @@ def get_all_presentaciones():
                                                     AND pre.fk_material_botella_2 = hpv.fk_inventario_almacen_3
                                                     AND pre.fk_producto = hpv.fk_inventario_almacen_4
                                                     AND hpv.precio_venta_fecha_fin is null)
+                ''')
+    rows = cur.fetchall()
+    cur.close()
+
+    # cambiar la imagen por la ruta de la imagen
+    for row in rows:
+        # filename = row['imagen']
+        # row['imagen'] = os.path.join(app.root_path, 'static', 'img', filename)
+        row['imagen'] = "https://asoronucab.blob.core.windows.net/images/" + row['imagen']
+
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para obtener todas las presentaciones de un producto
+@app.route("/api/presentacion/tienda/all", methods=["GET"])
+def get_all_presentaciones_tienda():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('''
+                SELECT ma.material_codigo as c1, bo.botella_codigo as c2, pro.producto_codigo as c3, pro.producto_nombre as nombre,
+                        (bo.botella_descripcion || ' de ' || ma.material_nombre) as botella, bo.botella_capacidad as capacidad,
+                        pre.presentacion_peso as peso, i.imagen_nombre as imagen,
+                        hpv.precio_venta_valor as precio_venta_tienda
+                FROM presentacion pre
+                JOIN material ma ON pre.fk_material_botella_1 = ma.material_codigo
+                JOIN botella bo ON pre.fk_material_botella_2 = bo.botella_codigo
+                JOIN producto pro ON pre.fk_producto = pro.producto_codigo
+                JOIN imagen i ON (pre.fk_material_botella_1 = i.fk_presentacion_1
+                                AND pre.fk_material_botella_2 = i.fk_presentacion_2
+                                AND pre.fk_producto = i.fk_presentacion_3)
+                JOIN historico_precio_venta hpv ON (hpv.fk_inventario_tienda_1 = 1
+												AND pre.fk_material_botella_1 = hpv.fk_inventario_tienda_2
+												AND pre.fk_material_botella_2 = hpv.fk_inventario_tienda_3
+												AND pre.fk_producto = hpv.fk_inventario_tienda_4
+												AND hpv.precio_venta_fecha_fin is null)
                 ''')
     rows = cur.fetchall()
     cur.close()
@@ -2341,6 +2555,24 @@ def editar_presentacion(id1, id2, id3):
     cur.close()
     
     return Response(status=200, response="Presentacion editada exitosamente")
+
+# Ruta para eliminar una presentacion de la base de datos
+@app.route("/api/presentacion/eliminar/<int:id1>/<int:id2>/<int:id3>", methods=["DELETE"])
+def eliminar_presentacion(id1, id2, id3):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM presentacion WHERE fk_material_botella_1 = %s AND fk_material_botella_2 = %s AND fk_producto = %s", (id1, id2, id3))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Presentacion eliminada exitosamente")
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL CRUD DE EVENTOS
@@ -2401,6 +2633,10 @@ def registrar_evento():
     cupos = int(cupos)
     entradas = evento.get("entradas")
     entradas = int(entradas)
+    costoentrada = evento.get("costoentrada")
+    if costoentrada:
+        costoentrada = costoentrada.replace(",", ".")
+        costoentrada = float(costoentrada)
     fecha_inicio = evento.get("fechainicio")
     fecha_cierre = evento.get("fechacierre")
     presentaciones = evento.get("presentaciones")
@@ -2420,12 +2656,22 @@ def registrar_evento():
         VALUES (%s, %s, %s, %s, %s, %s, %s);
     """
     
+    sql_entrada = """
+        INSERT INTO entrada(
+            entrada_precio, fk_evento
+        )
+        VALUES (%s, %s);
+    """
+    
     try:
         cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia))
         result = cur.fetchone()
         evento_codigo = result[0] if result is not None else None
         for presentacion in presentaciones:
             cur.execute(sql_presentacion, (presentacion['precio'], presentacion['cantidad'], evento_codigo, 1, presentacion['material'], presentacion['botella'], presentacion['producto']))
+        if (entradas > 0):
+            for i in range(entradas):
+                cur.execute(sql_entrada, (costoentrada, evento_codigo))
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -2463,6 +2709,9 @@ def get_evento(id):
         JOIN producto pro ON lista.fk_inventario_almacen_4 = pro.producto_codigo
         WHERE fk_evento = %s
     """
+    sql_costoentrada = """
+        SELECT entrada_precio FROM entrada WHERE fk_evento = %s LIMIT 1
+    """
     cur.execute(sql_evento, (id,))
     evento = cur.fetchone()
     if evento is None:
@@ -2474,12 +2723,16 @@ def get_evento(id):
     cur.execute(sql_presentaciones, (id,))
     presentaciones = cur.fetchall()
     
+    cur.execute(sql_costoentrada, (id,))
+    costoentrada = cur.fetchone()
+    
     cur.close()
 
     datos = jsonify({
         'evento': evento,
         'lugar': lugar,
-        'presentaciones': presentaciones
+        'presentaciones': presentaciones,
+        'costoentrada': costoentrada
     })
     
     pprint(datos)
@@ -2497,6 +2750,10 @@ def editar_evento(id):
     cupos = int(cupos)
     entradas = evento.get("entradas")
     entradas = int(entradas)
+    costoentrada = evento.get("costoentrada")
+    if costoentrada:
+        costoentrada = costoentrada.replace(",", ".")
+        costoentrada = float(costoentrada)
     fecha_inicio = evento.get("fechainicio")
     fecha_cierre = evento.get("fechacierre")
     presentaciones = evento.get("presentaciones")
@@ -2504,6 +2761,9 @@ def editar_evento(id):
     direccion = evento.get("direccion")
     parroquia = evento.get("parroquia")
     
+    sql_eliminar = """
+        DELETE FROM entrada WHERE fk_evento = %s;
+    """
     sql_evento = """
         UPDATE evento
         SET evento_nombre = %s, evento_descripcion = %s, evento_num_entradas = %s, evento_fecha_inicio = %s, evento_fecha_cierre = %s, evento_direccion = %s, evento_num_cupos = %s, fk_lugar = %s
@@ -2525,8 +2785,15 @@ def editar_evento(id):
         SET even_prod_precio_unitario = %s, even_prod_cantidad = %s
         WHERE fk_evento = %s AND fk_inventario_almacen_1 = %s AND fk_inventario_almacen_2 = %s AND fk_inventario_almacen_3 = %s AND fk_inventario_almacen_4 = %s;
     """
+    sql_entrada = """
+        INSERT INTO entrada(
+            entrada_precio, fk_evento
+        )
+        VALUES (%s, %s);
+    """
     
     try:
+        cur.execute(sql_eliminar, (id,))
         cur.execute(sql_evento, (nombre, descripcion, entradas, fecha_inicio, fecha_cierre, direccion, cupos, parroquia, id))
         cur.execute(sql_buscar_presentacion, (id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
         result = cur.fetchone()
@@ -2534,6 +2801,9 @@ def editar_evento(id):
             cur.execute(sql_registrar_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
         else:
             cur.execute(sql_presentacion, (presentaciones[0]['precio'], presentaciones[0]['cantidad'], id, 1, presentaciones[0]['material'], presentaciones[0]['botella'], presentaciones[0]['producto']))
+        if (entradas > 0):
+            for i in range(entradas):
+                cur.execute(sql_entrada, (costoentrada, id))
         conn.commit()
     except Exception as e:
         tb = traceback.format_exc()
@@ -2546,12 +2816,31 @@ def editar_evento(id):
     
     return Response(status=200, response="Evento editado exitosamente")
 
+# Ruta para eliminar un evento de la base de datos
+@app.route("/api/evento/eliminar/<int:id>", methods=["DELETE"])
+def eliminar_evento(id):
+    cur = conn.cursor()
+    try:
+        cur.execute("DELETE FROM evento WHERE evento_codigo = %s", (id,))
+        conn.commit()
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"An error occurred: {e}\n{tb}")
+        conn.rollback()   
+        cur.close()
+        return Response(status=500, response=str(e))
+    
+    cur.close()
+    
+    return Response(status=200, response="Evento eliminado exitosamente")
+
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-# RUTAS PARA EL CARRITO
+# RUTAS PARA EL CARRITO (VENTA EN LINEA)
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-@app.route("/api/carrito/add", methods=["POST"])
-def add_product():
+# Ruta para agregar un producto al carrito de un usuario (id de usuario)
+@app.route("/api/carrito/<int:id>/add", methods=["POST"])
+def add_product(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     producto = request.get_json()
     pprint(producto)
@@ -2560,15 +2849,529 @@ def add_product():
     id2 = ids.get("c2")
     id3 = ids.get("c3")
 
-    print(id1, id2, id3)
+    print(id1, id2, id3) # id de la presentacion que se desea agregar
 
-    usuario = producto.get("usuario")
+    # Buscamos los pedidos de la persona que no han sido realizados, si no hay ninguno, se crea uno
+    # Si hay uno, se verifica si el producto que se quiere agregar ya esta en el pedido y se informa al usuario
+    # Si no esta, se agrega el producto al pedido
 
-    sql_algo = """ """
+    # Puede retornar un cliente natural o juridico 
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    print(codigo_persona_natural, codigo_persona_juridica)
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        cur.callproc('CrearPedidoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+        codigoCarrito = cur.fetchone()
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    cur.callproc('BuscarProductoEnPedido', (pedido_codigo, id1, id2, id3))
+    result = cur.fetchone()
+    print(result)
+
+    if result is not None:
+        exists = result['buscarproductoenpedido']
+    else:
+        exists = False
+
+    if exists:
+            return Response(status=404, response="Producto ya agregado al carrito")
+    else:
+        cur.execute('CALL AgregarProductoAlPedido(%s, %s, %s, %s)', (pedido_codigo, id1, id2, id3))
+        conn.commit()
 
     cur.close()
     
     return Response(status=200, response="Producto agregado exitosamente")
+
+# Cuando la persona agrega por primera vez un producto al carrito, se debe crear un pedido y un detalle de pedido
+# este funcionara como un carrito de compras (Pedido que no se ha realizado)
+
+# Ruta para conocer los productos que hay en el carrito de un usuario (id de usuario)
+@app.route("/api/carrito/<int:id>", methods=["GET"])
+def ver_carrito(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    cur.callproc('ObtenerProductosDelPedido', (pedido_codigo,))
+    productos = cur.fetchall()
+    print(productos)
+
+    if productos is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        cur.close()
+        return jsonify(productos), 200
+    
+# Ruta para eliminar un producto del carrito de un usuario (id de usuario)
+@app.route("/api/carrito/<int:id>/presentacion", methods=["DELETE"])
+def eliminar_presentacion_carrito(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    producto = request.get_json()
+    pprint(producto)
+    # ids de la presentacion que se desea eliminar
+    ids = producto.get("ids")
+    id1 = ids.get("id1")
+    id2 = ids.get("id2")
+    id3 = ids.get("id3")
+
+    print(id1, id2, id3)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    cur.execute(' CALL EliminarProductoDelPedido(%s, %s, %s, %s) ', (pedido_codigo, id1, id2, id3))
+    conn.commit()
+
+    cur.close()
+
+    return Response(status=200, response="Producto eliminado exitosamente")
+
+# Ruta para guardar las cantidades de los productos del carrito de un usuario (id de usuario)
+# y luego proceder a realizar el pedido
+@app.route("/api/carrito/<int:id>/cantidades", methods=["PUT"])
+def guardar_cantidades_carrito(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    productos = request.get_json()
+    pprint(productos)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay productos en el carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    for producto in productos:
+        ids = producto.get("ids")
+        id1 = ids.get("id1")
+        id2 = ids.get("id2")
+        id3 = ids.get("id3")
+        cantidad = producto.get("cantidad")
+        cur.execute(' CALL ActualizarCantidadProducto(%s, %s, %s, %s, %s) ', (pedido_codigo, id1, id2, id3, cantidad))
+        conn.commit()
+
+    cur.close()
+
+    return Response(status=200, response="Cantidades guardadas exitosamente")
+
+# Obtener las tarjetas de credito de un usuario (id de usuario)
+@app.route("/api/usuario/<int:id>/tarjetas", methods=["GET"])
+def obtener_tarjetas(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.execute('SELECT * FROM ObtenerTDCsCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    # codigo, numero, cvv, fechavencimiento, fk_banco
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Obtener las tarjetas de un cliente (identificacion)
+@app.route("/api/cliente/<id>/tarjetas", methods=["GET"])
+def obtener_tarjetas_cliente(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+   # Obtenemos el codigo del cliente
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (id,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+    
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.execute('SELECT * FROM ObtenerTDCsCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    # codigo, numero, cvv, fechavencimiento, fk_banco
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows)
+
+# Ruta para pagar el pedido de un usuario (id de usuario)
+@app.route("/api/carrito/compra/<int:id>", methods=["POST"])
+def pagar_pedido(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    pedido = request.get_json()
+    pprint(pedido)
+    # ids de la presentacion que se desea eliminar
+    tarjeta = pedido.get("idTarjeta")
+    tarjeta = int(tarjeta) # id de la tarjeta
+    puntosUsados = pedido.get("puntosUsados")
+    puntosUsados = int(puntosUsados)
+
+    fk_punto = 1
+    if puntosUsados == 0:
+        fk_punto = None
+
+    tasaPunto = pedido.get("tasaPunto")
+    subTotal = pedido.get("subTotal")
+    subTotal = float(subTotal)
+    total = pedido.get("total")
+    total = float(total)
+    parroquia = pedido.get("parroquia") # id de la parroquia
+    parroquia = int(parroquia)
+    direccion = pedido.get("direccion")
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+    cur.callproc('BuscarCarritoDeCliente', ( codigo_persona_natural, codigo_persona_juridica))
+    codigoCarrito = cur.fetchone()
+    print(codigoCarrito)
+
+    if codigoCarrito is None:
+        return Response(status=404, response="No hay carrito")
+    else:
+        pedido_codigo = codigoCarrito['codigo'] if codigoCarrito is not None else None
+
+    # Actualizamos el pedido
+    cur.execute('CALL ActualizarPedido(%s, %s, %s, %s, %s, %s, %s, %s)', (tarjeta, pedido_codigo, direccion, parroquia, subTotal, total, puntosUsados, fk_punto))
+
+    # cambiamos el historico
+    cur.execute('SELECT * FROM CambiarEstatusPedido(%s, %s)', (pedido_codigo, 2))
+    estatus = cur.fetchone()
+
+    # restamos los puntos de la persona
+    cur.execute('CALL RestarPuntosCliente(%s, %s, %s)', (codigo_persona_natural, codigo_persona_juridica, puntosUsados))
+
+    conn.commit()
+    cur.close()
+
+    return Response(status=200, response="Pedido pagado exitosamente")
+
+# Ruta para obtener la tasa del dia
+@app.route("/api/tasa", methods=["GET"])
+def get_tasa():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerTasaDolar()')
+    rows = cur.fetchone()
+    cur.close()
+
+    if rows is None:
+        return Response(status=404, response="Tasa no encontrada")
+    
+    tasa = jsonify({"tasa": rows['obtenertasadolar']})
+    return tasa, 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA LA VENTA FISICA
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para validar la identificacion de un cliente
+@app.route("/api/venta/validar", methods=["POST"])
+def validar_identificacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cliente = request.get_json()
+    pprint(cliente)
+    identificacion = cliente.get("identificacion")
+   
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (identificacion,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row is None:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+    
+    cliente = {
+        "codigo": row['codigo'],
+        "identificacion": identificacion,
+        "tipo": row['tipo'],
+    }
+    cliente = jsonify(cliente)
+    return cliente, 200
+
+# Ruta para obtener los datos de un cliente
+@app.route("/api/venta/cliente/<id>", methods=["GET"])
+def obtener_datos_cliente(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerDatosCliente(%s)', (id,))
+    row = cur.fetchone()
+    cur.close()
+
+    if row is None:
+        return jsonify({"error": "Cliente no encontrado"}), 404
+    
+    cliente = {
+        "nombre": row['nombre'],
+        "rif": row['rif'],
+    }
+    cliente = jsonify(cliente)
+    print(cliente)
+    return cliente, 200
+
+# Ruta para guardar todas las presentaciones elegidas en el detalle de la factura
+@app.route("/api/venta/presentaciones/<idUsuario>/<idCliente>", methods=["PUT"])
+def guardar_presentaciones(idUsuario, idCliente):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    presentaciones = request.get_json()
+    pprint(presentaciones)
+
+    # Tenemos la identificacion del cliente, buscamos su codigo
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (idCliente,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    cur.execute('SELECT * FROM ObtenerContratoDeEmpleo(%s)', (idUsuario,))
+    row = cur.fetchone()
+    
+    contrato_empleo = row['codigo'] if row is not None else None
+
+    # Al ser un pedido fisico, siempre se va a crear una factura nueva
+    cur.execute('SELECT * FROM CrearFactura(%s, %s, %s)', (codigo_persona_natural, codigo_persona_juridica, contrato_empleo))
+    row = cur.fetchone()
+
+    codigoFactura = row['crearfactura'] if row is not None else None
+
+    # Ahora ingresamos las presentaciones en el detalle de la factura
+    for presentacion in presentaciones:
+        ids = presentacion.get("ids")
+        id1 = ids.get("id1")
+        id2 = ids.get("id2")
+        id3 = ids.get("id3")
+        cantidad = presentacion.get("cantidad")
+        precio = presentacion.get("precio")
+        cur.execute('CALL AgregarProductoAFactura(%s, %s, %s, %s, %s, %s)', (codigoFactura, id1, id2, id3, cantidad, precio))
+
+    conn.commit()
+    cur.close()
+    return Response(status=200, response="Presentaciones guardadas exitosamente")
+
+# Ruta para obtener las presentaciones de la factura (identificacion del cliente)
+@app.route("/api/venta/presentaciones/<idUsuario>", methods=["GET"])
+def obtener_presentaciones(idUsuario):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Tenemos la identificacion del cliente, buscamos su codigo
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (idUsuario,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    # Obtenemos el codigo de la factura
+    cur.execute('SELECT * FROM ObtenerFacturaDeCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    row = cur.fetchone()
+
+    codigoFactura = row['codigo'] if row is not None else None
+
+    # Obtenemos las presentaciones de la factura
+    cur.execute('SELECT * FROM ObtenerPresentacionesDeFactura(%s)', (codigoFactura,))
+    rows = cur.fetchall()
+    cur.close()
+
+    if rows is None:
+        return Response(status=404, response="Factura no encontrada")
+    
+    presentaciones = jsonify(rows)
+    print(presentaciones)
+    return presentaciones, 200
+
+# Ruta para pagar la factura
+@app.route("/api/venta/factura/<idUsuario>/<idCliente>", methods=["POST"])
+def pagar_factura(idUsuario, idCliente):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    factura = request.get_json()
+    pprint(factura)
+
+    # Metodos de pago
+    puntosUsados = factura.get("puntosUsados")
+    if puntosUsados != "":
+        puntosUsados = int(puntosUsados)
+    else:
+        puntosUsados = 0
+    puntosGanados = factura.get("puntosGanados")
+    puntosGanados = int(puntosGanados)
+    cheque = factura.get("cheque")
+    numeroTDD =factura.get("numeroTDD")
+    cvvTDD = factura.get("cvvTDD")
+    fechaVencimientoTDD = factura.get("fechaVencimientoTDD")
+
+    idTDC = factura.get("idTDC")
+    try:
+        idTDC = int(idTDC) # id de la tarjeta
+    except:
+        idTDC = None
+    efectivo = factura.get("efectivo")
+    try:
+        efectivo = int(efectivo)
+    except:
+        efectivo = None
+
+    subTotal = factura.get("subTotal")
+    subTotal = float(subTotal)
+    total = factura.get("total")
+    total = float(total)
+
+    # Obtenemos el codigo del cliente
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (idCliente,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+    
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    # Obtenemos el codigo de la factura
+    cur.execute('SELECT * FROM ObtenerFacturaDeCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    row = cur.fetchone()
+
+    codigoFactura = row['codigo'] if row is not None else None
+
+    if (cheque is not None and cheque != ""):
+        try:
+            cur.execute('SELECT * FROM CrearCheque(%s)', (cheque,))
+            row = cur.fetchone()
+            idCheque = row['codigo'] if row is not None else None
+        except:
+            return Response(status=404, response="Cheque no valido")
+    else:
+        idCheque = None
+
+    if (numeroTDD is not None and numeroTDD != ""):
+        cur.execute('SELECT * FROM CrearTDD(%s, %s, %s)', (numeroTDD, cvvTDD, fechaVencimientoTDD))
+        row = cur.fetchone()
+        idTDD = row['creartdd'] if row is not None else None
+    else:
+        idTDD = None
+
+    cur.execute('CALL PagoFactura(%s, %s, %s, %s, %s, %s, %s, %s, %s)', (codigoFactura, idTDD, idCheque, idTDC, efectivo, subTotal, total, puntosUsados, puntosGanados))
+
+    # actualizamos los puntos de la persona
+    cur.execute('SELECT * FROM ActualizarPuntos(%s, %s, %s, %s)', (codigo_persona_natural, codigo_persona_juridica, puntosUsados, puntosGanados))
+    row = cur.fetchone()
+    puntosNat = row['cliente_nat_puntos_a'] if row is not None else None
+    puntosJur = row['cliente_jur_puntos_ac'] if row is not None else None
+
+    # Restamos el inventario de la tienda
+    cur.execute('call ActualizarTienda(%s)', (codigoFactura,))
+
+    conn.commit()
+    cur.close()
+
+    return Response(status=200, response="Factura pagada exitosamente")
+
+# Obtener metodos de pago en efectivo (catalogo)
+@app.route("/api/venta/efectivo", methods=["GET"])
+def obtener_efectivo():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM efectivo;")
+    rows = cur.fetchall()
+    cur.close()
+
+    if rows is None:
+        return Response(status=404, response="Metodos de pago no encontrados")
+    
+    metodos = jsonify(rows)
+    return metodos, 200
+
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA LAS ORDENES DE REPOSICION  
@@ -2590,18 +3393,527 @@ def obtener_orden(id):
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('SELECT * FROM ObtenerOrdenDeReposicion(%s)', (id,))
 
-    # SELECT o.orden_codigo, o.orden_fecha, (d.fk_inventario_tienda_2 || '' ||d.fk_inventario_tienda_3 || '' ||d.fk_inventario_tienda_4) as producto_codigo, (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT, d.detalle_orden_cantidad
-    # FROM Orden_De_Reposicion o
-    # JOIN Detalle_Orden_De_Reposicion d ON o.orden_codigo = d.fk_orden
-    # JOIN Producto pro ON pro.producto_codigo = d.fk_inventario_tienda_4
-    # JOIN botella bo ON d.fk_inventario_tienda_3 = bo.botella_codigo
-    # WHERE o.orden_codigo = codigo_orden;
-
     rows = cur.fetchone()
 
     if rows is not None:
         rows['imagen_nombre'] = "https://asoronucab.blob.core.windows.net/images/" + rows['imagen_nombre']
 
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA LAS ORDENES DE COMPRA
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Generar orden de compra
+@app.route("/api/orden/compra/generar", methods=["POST"])
+def generar_orden_compra():
+    cur = conn.cursor()
+    try:
+        cur.execute('CALL GenerarOrdenesDeCompraPorProveedor()')
+        conn.commit()
+        return jsonify({"message": "Ordenes de compra generadas exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+
+# Ruta para obtener todas las ordenes de compra de la base de datos
+@app.route("/api/orden/compra/all", methods=["GET"])
+def obtener_ordenes_compra():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerOrdenesDeCompra()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+
+# Ruta para obtener los datos de una orden de compra de la base de datos
+@app.route("/api/orden/compra/<int:id>", methods=["GET"])
+def obtener_orden_compra(id):
+    cur = conn.cursor()
+    # Intentar cerrar el cursor antes de abrirlo de nuevo
+    
+    datos_orden = []
+    presentaciones = []
+    
+    try:
+        cur.callproc('ObtenerDatosOrdenDeCompra', (id,))
+        # Obtener los cursores de resultado
+        datos_orden_cursor_name = cur.fetchone()[0]
+        presentaciones_cursor_name = cur.fetchone()[0]
+
+        # Obtener los resultados de los cursores
+        cur.execute(f'FETCH ALL FROM "{datos_orden_cursor_name}";')
+        datos_orden = cur.fetchall()
+
+        cur.execute(f'FETCH ALL FROM "{presentaciones_cursor_name}";')
+        presentaciones = cur.fetchall()
+        
+        cur.execute('CLOSE datos_orden_cursor;')
+        cur.execute('CLOSE presentaciones_cursor;')
+        
+        base_url = "https://asoronucab.blob.core.windows.net/images/"
+
+        for i in range(len(presentaciones)):
+            presentacion = list(presentaciones[i])
+            presentacion[-1] = base_url + presentacion[-1]
+            presentaciones[i] = tuple(presentacion)
+        
+        pprint(datos_orden)
+        pprint(presentaciones)
+        
+    except Exception as e:
+        print(e)
+
+    # Cerrar la conexión
+    cur.close()
+    
+    return jsonify({'datos_orden': datos_orden, 'presentaciones': presentaciones})
+
+# Ruta para procesar orden de compra
+@app.route("/api/orden/compra/procesar/<int:id>", methods=["PUT"])
+def procesar_orden_compra(id):
+    cur = conn.cursor()
+    try:
+        orden = request.get_json()
+        pprint(orden)
+        orden = json.dumps(orden)
+        
+        cur.execute('CALL ProcesarOrdenDeCompra(%s,%s)', (id,orden))
+        conn.commit()
+        return jsonify({"message": "Orden de compra procesada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# Ruta para completar orden de compra
+@app.route("/api/orden/compra/completar/<int:id>", methods=["PUT"])
+def completar_orden_compra(id):
+    cur = conn.cursor()
+    try:
+        cur.execute('CALL CompletarOrdenDeCompra(%s)', (id,))
+        conn.commit()
+        return jsonify({"message": "Orden de compra completada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# Ruta para cancelar orden de compra
+@app.route("/api/orden/compra/cancelar/<int:id>", methods=["PUT"])
+def cancelar_orden_compra(id):
+    cur = conn.cursor()
+    try:
+        cur.execute('CALL CancelarOrdenDeCompra(%s)', (id,))
+        conn.commit()
+        return jsonify({"message": "Orden de compra cancelada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# HISTORICO DEL VALOR DEL PUNTO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el historico del valor del punto
+@app.route("/api/historico/punto/all", methods=["GET"])
+def obtener_historico_punto():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerHistoricoPunto()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para actualizar el valor del punto
+@app.route("/api/historico/punto/actualizar", methods=["POST"])
+def actualizar_punto():
+    cur = conn.cursor()
+    try:
+        punto = request.get_json()
+        pprint(punto)
+        punto = float(punto.get('valor'))
+        
+        cur.execute('CALL ActualizarValorPunto(%s)', (punto,))
+        conn.commit()
+        return jsonify({"message": "Valor del punto actualizado exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# HISTORICO DE LA TASA DEL DOLAR
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el historico de la tasa del dolar
+@app.route("/api/historico/tasa/all", methods=["GET"])
+def obtener_historico_tasa():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerHistoricoTasaDolar()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para actualizar la tasa del dolar
+@app.route("/api/historico/tasa/actualizar", methods=["POST"])
+def actualizar_tasa():
+    cur = conn.cursor()
+    try:
+        tasa = request.get_json()
+        pprint(tasa)
+        tasa = float(tasa.get('valor'))
+        
+        cur.execute('CALL ActualizarTasaDolar(%s)', (tasa,))
+        conn.commit()
+        return jsonify({"message": "Tasa del dolar actualizada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# AFILIACION
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todas las afiliaciones de la base de datos
+@app.route("/api/afiliacion/all", methods=["GET"])
+def obtener_afiliaciones():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerFichasAfiliacion()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para afiliar a una persona en la base de datos
+@app.route("/api/afiliacion/registrar/<int:id>", methods=["PUT"])
+def registrar_afiliacion(id):
+    cur = conn.cursor()
+    try:
+        cur.callproc('ObtenerCodigoCliente', (id,))
+        personas = cur.fetchone()
+        codigo_persona_natural, codigo_persona_juridica = personas 
+        
+        cur.execute('CALL RegistrarFichaAfiliacion(%s, %s)', (codigo_persona_natural,codigo_persona_juridica))
+        conn.commit()
+        return jsonify({"message": "Afiliacion registrada exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# PERFIL
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener los datos de una persona
+@app.route("/api/perfil/<int:id>", methods=["GET"])
+def obtener_perfil(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ObtenerDatosPerfilUsuario', (id,))  # Pasar los argumentos como una tupla
+    rows = cur.fetchone()
+    cur.close()
+    if rows is None:
+        return Response(status=404, response="Usuario no encontrado")
+    rows = rows.get ('datos_perfil')
+    data = json.loads(rows)
+    data = jsonify(data)
+    return data, 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# CARNET
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el carnet de una persona 
+@app.route("/api/carnet/<int:id>", methods=["GET"])
+def obtener_carnet(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ObtenerCarnet', (id,))
+    rows = cur.fetchone()
+    cur.close()
+    if rows is None:
+        return Response(status=404, response="Persona no Afiliada")
+    return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# PAGO AFILIACION
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el siguiente pago de afiliacion de una persona
+@app.route("/api/pago/afiliacion/<codigo>", methods=["GET"])
+def obtener_pago_afiliacion(codigo):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ProximoMesPago', (codigo,))
+    rows = cur.fetchone()
+    cur.close()
+    if rows is None:
+        return Response(status=404, response="Persona No Afiliada")
+    return jsonify(rows), 200
+
+# Ruta para obtener monto de pago de afiliacion y tarjetas de credito de una persona
+@app.route("/api/pago/afiliacion/monto/<int:id>", methods=["GET"])
+def obtener_monto_pago_afiliacion(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.callproc('ObtenerMontoYTDC', (id,))
+    rows = cur.fetchone()
+    cur.close()
+    if rows is None:
+        return Response(status=404, response="Persona No Afiliada")
+    return jsonify(rows), 200
+
+# Ruta para procesar pago de afiliacion
+@app.route("/api/pago/afiliacion/procesar/<codigo>", methods=["POST"])
+def procesar_pago_afiliacion(codigo):
+    cur = conn.cursor()
+    try:
+        pago = request.get_json()
+        monto = pago.get('montopagado')
+        tdc = pago.get('tdc')
+        
+        cur.execute('CALL RegistrarPagoAfiliacion(%s,%s,%s)', (codigo,monto,tdc))
+        conn.commit()
+        return jsonify({"message": "Pago de afiliacion procesado exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+        
+# Ruta para obtener todos los pagos de afiliacion de la base de datos
+@app.route("/api/pago/afiliacion/all", methods=["GET"])
+def obtener_pagos_afiliacion():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerPagosAfiliacion()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener los detalles de un pago por afiliacion
+@app.route("/api/pago/afiliacion/detalle/<int:id>", methods=["GET"])
+def obtener_detalle_pago_afiliacion(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerDetallesPagoPorCodigo(%s)', (id,))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+    
+# >>>>>>>>>>>>>>>>>>>>>>
+# RUTAS PARA PUNTOS
+# >>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener los puntos de una persona
+@app.route("/api/puntos/<int:id>", methods=["GET"])
+def obtener_puntos(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    # Buscamos la persona que esta realizando el pedido
+    cur.callproc('ObtenerCodigoCliente', (id,))
+    personas = cur.fetchone()
+    print(personas)
+
+    if personas is None:
+        return Response(status=404, response="Usuario no encontrado")
+    codigo_persona_natural = personas['fk_persona_natural'] if personas['fk_persona_natural'] is not None else None
+    codigo_persona_juridica = personas['fk_persona_juridica'] if personas['fk_persona_juridica'] is not None else None
+
+
+    cur.execute('SELECT * FROM ObtenerPuntosCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    puntos = cur.fetchone()
+    print("Puntos: %s", puntos)
+
+    if puntos is None:
+        return Response(status=404, response="No hay puntos")
+    else:
+        cur.close()
+        return jsonify(puntos), 200
+
+# Ruta para obtener los puntos de una persona (identificacion)
+@app.route("/api/puntos/identificacion/<identificacion>", methods=["GET"])
+def obtener_puntos_identificacion(identificacion):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+
+    cur.execute('SELECT * FROM VerificarCliente(%s)', (identificacion,))
+    row = cur.fetchone()
+
+    codigoCliente = row['codigo'] if row is not None else None
+    tipoCliente = row['tipo'] if row is not None else None
+
+    codigo_persona_natural = None
+    codigo_persona_juridica = None
+
+    if tipoCliente == 'natural':
+        codigo_persona_natural = codigoCliente
+    else:
+        codigo_persona_juridica = codigoCliente
+
+    cur.execute('SELECT * FROM ObtenerPuntosCliente(%s, %s)', (codigo_persona_natural, codigo_persona_juridica))
+    puntos = cur.fetchone()
+    print("Puntos: %s", puntos)
+
+    if puntos is None:
+        return Response(status=404, response="No hay puntos")
+    else:
+        cur.close()
+        return jsonify(puntos), 200
+
+# Ruta para obtener la tasa del punto
+@app.route("/api/puntos/tasa", methods=["GET"])
+def obtener_tasa_punto():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT obtenertasapunto as tasa_punto FROM ObtenerTasaPunto()')
+    rows = cur.fetchone()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener la tasa del dolar
+@app.route("/api/dolar/tasa", methods=["GET"])
+def obtener_tasa_dolar():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT obtenertasadolar as tasa_dolar FROM ObtenerTasaDolar()')
+    rows = cur.fetchone()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# FACTURAS
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todas las facturas de la base de datos
+@app.route("/api/factura/all", methods=["GET"])
+def obtener_facturas():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerFacturas()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener los detalles de una factura
+@app.route("/api/factura/detalle/<int:id>", methods=["GET"])
+def obtener_detalle_factura(id):
+    cur = conn.cursor()
+    
+    datos_factura = []
+    presentaciones = []
+    metodos_pago = []
+    
+    try:
+        cur.execute ('SELECT * FROM ObtenerDetallesFactura(%s)',(id,))
+        # Obtener los resultados de los cursores
+        
+        cur.execute(f'FETCH ALL FROM datos_factura_cursor;')
+        datos_factura = cur.fetchall()
+        
+        cur.execute(f'FETCH ALL FROM metodos_pago_cursor;')
+        metodos_pago = cur.fetchall()
+        
+        cur.execute(f'FETCH ALL FROM presentaciones_cursor;')
+        presentaciones = cur.fetchall()
+        
+        cur.execute('CLOSE datos_factura_cursor;')
+        cur.execute('CLOSE metodos_pago_cursor;')
+        cur.execute('CLOSE presentaciones_cursor;')
+        
+        base_url = "https://asoronucab.blob.core.windows.net/images/"
+
+        for i in range(len(presentaciones)):
+            presentacion = list(presentaciones[i])
+            presentacion[-1] = base_url + presentacion[-1]
+            presentaciones[i] = tuple(presentacion)
+
+    except Exception as e:
+            print(e)
+
+    # Cerrar la conexión
+    cur.close()
+    
+    return jsonify({'datos_factura': datos_factura, 'metodos_pago': metodos_pago,'presentaciones': presentaciones})
+
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# PEDIDOS
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener todos los pedidos de la base de datos
+@app.route("/api/pedido/all", methods=["GET"])
+def obtener_pedidos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerPedidos()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# OBTENER INVENTARIOS
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener inventario tienda
+@app.route("/api/inventario/tienda", methods=["GET"])
+def obtener_inventario_tienda():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM GetInventarioTiendaData()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener inventario almacen
+@app.route("/api/inventario/almacen", methods=["GET"])
+def obtener_inventario_almacen():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM GetInventarioAlmacenData()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# LISTADO PRODUCTOS VENDIDOS POR UN PERIODO DE TIEMPO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener los productos vendidos por un periodo de tiempo
+@app.route("/api/productos/vendidos", methods=["POST"])
+def obtener_productos_vendidos():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    periodo = request.get_json()
+    pprint(periodo)
+    fechaInicio = periodo.get("fechaInicio")
+    fechaFin = periodo.get("fechaFin")
+    cur.execute('SELECT * FROM obtener_listado_productos_vendidos(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# LISTADO DE ACCIONES DE UN USUARIO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener las acciones de todos los usuarios
+@app.route("/api/accion/all", methods=["GET"])
+def obtener_acciones():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerAccionesUsuarios()')
+    rows = cur.fetchall()
     cur.close()
     pprint(rows)
     return jsonify(rows), 200

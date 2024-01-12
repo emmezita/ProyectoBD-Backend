@@ -176,6 +176,24 @@
     </div>
 </div>
 
+<!-- Modal Delete Evento -->
+<div class="modal fade" id="deleteEventoModal" tabindex="-1" aria-labelledby="deleteEventoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteEventoModalLabel">Eliminar Evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="delete-evento-button">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 $(document).ready(function() {
     var data = null;
@@ -202,7 +220,7 @@ $(document).ready(function() {
                 } else {
                     row.append('<td><button type="button" class="btn btn-success" onclick="editarEvento(' + data[i].codigo + ')" disabled>Editar</button></td>');
                 }
-                row.append('<td><button type="button" class="btn btn-danger" id="delete-evencostumer-button" data-bs-toggle="modal" data-bs-target="#deleteEvenCostumerModal" data-procostumer-name="'+ data[i].nombre+'" data-procostumer-id="'+ data[i].codigo+'">Eliminar</button></td>');
+                row.append('<td><button type="button" class="btn btn-danger" id="delete-evento-button" data-bs-toggle="modal" data-bs-target="#deleteEventoModal" data-evento-name="'+ data[i].nombre+'" data-evento-id="'+ data[i].codigo+'">Eliminar</button></td>');
                 
                 $('#body-eventos').append(row);
             }
@@ -250,5 +268,30 @@ function formatDate(dateString) {
 function editarEvento(id) {
     window.location.href = 'https://dilodev.co/formulario-editar-evento/?id=' + id;
 }
+
+$('#deleteEventoModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var costumerId = button.data('evento-id') // Extract info from data-* attributes
+    var costumerName = button.data('evento-name') // Extract info from data-* attributes
+    var modal = $(this)
+    modal.find('.modal-body').text('¿Está seguro que desea eliminar a ' + costumerName + '?')
+    modal.find('#delete-evento-button').attr('data-evento-id', costumerId)
+})
+
+$('#delete-evento-button').click(function() {
+    console.log('delete');
+    var costumerId = $(this).data('evento-id');
+    $.ajax({
+        url: 'http://localhost:5000/api/evento/eliminar/' + costumerId,
+        type: 'DELETE',
+        success: function() {
+            alert('Evento eliminado exitosamente');
+            location.reload();
+        },
+        error: function() {
+            alert('Hubo un error eliminando al Evento');
+        }
+    });
+});
 
 </script>

@@ -17,6 +17,7 @@ function save() {
         nombre : $(ff+"nombre").val(),
         cupos : $(ff+"cupos").val(),
         entradas : $(ff+"entradas").val(),
+        costoentrada : $(ff+"costoentrada").val(),
         fechainicio : $(ff+"fechainicio").val(),
         fechacierre : $(ff+"fechacierre").val(),
         parroquia : $(ff+"parroquia option:selected ").attr('value'),
