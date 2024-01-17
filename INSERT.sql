@@ -5194,25 +5194,25 @@ INSERT INTO Pedido(
 	pedido_fecha, pedido_direccion, pedido_subtotal, pedido_total, pedido_puntos_utilizados, fk_tdc, fk_punto, fk_cliente_natural, fk_cliente_juridico, fk_lugar)
 VALUES 
   ('2023-01-05', 'Calle Empresarial, Edif. Residencial', 585.5, 575.5, 5, 1, 1, 21, NULL, 721), --1
-  ('2023-01-06', 'Av. Principal, Edificio Comercial', 680.43, 680.43, 0, 2, NULL, 22, NULL, 722), --2
-  ('2023-01-07', 'Ruta Empresarial, Edif. Plaza', 400.0, 390.0, 2, 3, 1, 23, NULL, 723), --3
-  ('2023-01-08', 'Calle de Negocios, Torre A', 683.65, 683.65, 4, 4, 1, 24, NULL, 724), --4
+  ('2023-01-06', 'Av. Principal, Edificio Comercial', 680.43, 680.43, 0, 2, NULL, 22, NULL, 721), --2
+  ('2023-01-07', 'Ruta Empresarial, Edif. Plaza', 400.0, 390.0, 2, 3, 1, 23, NULL, 721), --3
+  ('2023-01-08', 'Calle de Negocios, Torre A', 683.65, 683.65, 4, 4, 1, 24, NULL, 721), --4
   ('2023-01-09', 'Zona Industrial, Edif. Central', 292.05, 287.05, 3, 5, 1, 25, NULL, 725), --5
-  ('2023-01-10', 'Calle Real de Catia, Edif. La Torre, Piso 10, Apto. 1001', 568.2, 568.2, 0, 6, NULL, 26, NULL, 726), --6
-  ('2023-01-11', 'Av. Francisco de Miranda, Edif. Torre Británica, Piso 20', 450.05, 450.05, 0, 7, NULL, 27, NULL, 727), --7
+  ('2023-01-10', 'Calle Real de Catia, Edif. La Torre, Piso 10, Apto. 1001', 568.2, 568.2, 0, 6, NULL, 26, NULL, 725), --6
+  ('2023-01-11', 'Av. Francisco de Miranda, Edif. Torre Británica, Piso 20', 450.05, 450.05, 0, 7, NULL, 27, NULL, 725), --7
   ('2023-01-12', 'Calle Urdaneta, Edif. El Capitolio, Piso 30, Apto. 3003', 475.46, 475.46, 0, 8, NULL, 28, NULL, 728), --8
   ('2023-01-13', 'Calle Bolívar, Edif. La Catedral, Piso 40, Apto. 4004', 67.15, 67.15, 0, 9, NULL, 29, NULL, 729), --9
   ('2023-01-14', 'Calle Sucre, Edif. El Palacio de Miraflores, Piso 50, Apto. 5005', 431.9, 421.9, 4, 10, 1, 30, NULL, 730), --10
-  ('2023-01-15', 'Av. Principal, Edificio Central', 2130.25, 2125.25, 5, 11, 1, NULL, 1, 1004), --11
+  ('2023-01-15', 'Av. Principal, Edificio Central', 2130.25, 2125.25, 5, 11, 1, NULL, 1, 695), --11
   ('2023-01-16', 'Calle Empresarial, Torre A', 1503.75, 1495.75, 8, 12, 1, NULL, 2, 695), --12
   ('2023-01-17', 'Ruta Empresarial, Edif. Central', 7122.25, 7120.25, 2, 13, 1, NULL, 3, 697), --13
-  ('2023-01-18', 'Calle de Negocios, Centro Ejecutivo', 5742.25, 5740.25, 2, 14, 1, NULL, 4, 702), --14
-  ('2023-01-19', 'Zona Industrial, Bloque 7', 1515.6, 1515.6, 0, 15, NULL, NULL, 5, 707), --15
-  ('2023-01-20', 'Avenida Principal, Edificio Ejecutivo', 9011.75, 9011.75, 0, 16, NULL, NULL, 6, 709), --16
-  ('2023-01-21', 'Ruta Empresarial, Edif. Plaza', 4436.24, 4436.24, 0, 17, NULL, NULL, 7, 714), --17
+  ('2023-01-18', 'Calle de Negocios, Centro Ejecutivo', 5742.25, 5740.25, 2, 14, 1, NULL, 4, 695), --14
+  ('2023-01-19', 'Zona Industrial, Bloque 7', 1515.6, 1515.6, 0, 15, NULL, NULL, 5, 716), --15
+  ('2023-01-20', 'Avenida Principal, Edificio Ejecutivo', 9011.75, 9011.75, 0, 16, NULL, NULL, 6, 695), --16
+  ('2023-01-21', 'Ruta Empresarial, Edif. Plaza', 4436.24, 4436.24, 0, 17, NULL, NULL, 7, 716), --17
   ('2023-01-22', 'Calle de Negocios, Edif. Ejecutivo', 6962.05, 6962.05, 0, 18, NULL, NULL, 8, 716), --18
-  ('2023-01-23', 'Zona Industrial, Bloque 5', 10904.55, 10904.55, 0, 19, NULL, NULL, 9, 719), --19
-  ('2023-01-24', 'Calle Empresarial, Edif. Central', 4057.5, 4057.5, 0, 20, NULL, NULL, 10, 1016); --20
+  ('2023-01-23', 'Zona Industrial, Bloque 5', 10904.55, 10904.55, 0, 19, NULL, NULL, 9, 716), --19
+  ('2023-01-24', 'Calle Empresarial, Edif. Central', 4057.5, 4057.5, 0, 20, NULL, NULL, 10, 716); --20
 
 INSERT INTO Historico_Estatus_Pedido (fecha_hora_inicio_estatus, fecha_hora_fin_estatus, fk_estatus_pedido, fk_pedido)
 VALUES

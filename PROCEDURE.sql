@@ -1932,3 +1932,24 @@ BEGIN
     );
 END;
 $$ LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS obtenerTopParroquias(date, date);
+
+-- Funcion para obtener el top 10 de parroquias con mas compras en linea
+CREATE OR REPLACE FUNCTION obtenerTopParroquias(fecha_inicio date, fecha_cierre date)
+RETURNS TABLE (parroquia varchar(50), cantidad_compras_en_linea bigint)
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        l.lugar_nombre AS parroquia,
+        COUNT(pe.pedido_codigo) AS cantidad_compras_en_linea
+    FROM Pedido pe
+    JOIN Lugar l ON pe.fk_lugar = l.lugar_codigo
+    WHERE l.lugar_tipo = 'parroquia'
+    AND pe.pedido_fecha BETWEEN fecha_inicio AND fecha_cierre
+    GROUP BY l.lugar_nombre
+    ORDER BY cantidad_compras_en_linea DESC
+    LIMIT 10;
+END;
+$$ LANGUAGE plpgsql;
