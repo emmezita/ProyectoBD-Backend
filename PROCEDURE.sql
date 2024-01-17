@@ -1907,7 +1907,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Funcion para obtener el total de compras
-CREATE OR REPLACE FUNCTION obtener_total_compras(
+CREATE OR REPLACE FUNCTION obtenerTotalCompras(
     fecha_inicio date,
     fecha_cierre date
 )
@@ -2001,6 +2001,21 @@ BEGIN
     GROUP BY nombre_presentacion
     ORDER BY total_vendido DESC
     LIMIT 10;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Funcion para obtener el total de puntos otorgados en un tiempo determinado
+CREATE OR REPLACE FUNCTION obtenerPuntosOtorgados(fecha_inicio date, fecha_cierre date)
+RETURNS bigint
+AS $$
+DECLARE
+    suma_puntos bigint;
+BEGIN
+    SELECT SUM(factura_puntos_obtenidos) INTO suma_puntos
+    FROM Factura
+    WHERE factura_fecha BETWEEN fecha_inicio AND fecha_cierre;
+
+    RETURN COALESCE(suma_puntos, 0);
 END;
 $$ LANGUAGE plpgsql;
 
