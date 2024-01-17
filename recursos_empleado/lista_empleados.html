@@ -82,10 +82,10 @@
             background-color: #f2f2f2;
         } .dataTables_filter {
             margin-bottom: 20px;
-        } #table-empleados {
+        } table {
         border-collapse: collapse;
         }
-        #table-empleados, #table-empleados th, #table-empleados td {
+        table, table th, table td {
             border: none;
         } .nav-link {
             color: #7a7a7a;
@@ -111,8 +111,8 @@
         <li class="nav-item" role="beneficios">
           <button class="nav-link" id="beneficios-tab" data-bs-toggle="tab" data-bs-target="#beneficios" type="button" role="tab" aria-controls="beneficios" aria-selected="false">Beneficios</button>
         </li>
-        <li class="nav-item" role="es">
-          <button class="nav-link" id="es-tab" data-bs-toggle="tab" data-bs-target="#es" type="button" role="tab" aria-controls="es" aria-selected="false">Entradas/Salidas</button>
+        <li class="nav-item" role="entradasalida">
+          <button class="nav-link" id="entradasalida-tab" data-bs-toggle="tab" data-bs-target="#entradasalida" type="button" role="tab" aria-controls="entradasalida" aria-selected="false">Entradas/Salidas</button>
         </li>
     </ul>
 
@@ -158,8 +158,39 @@
         <div class="tab-pane fade" id="beneficios" role="tabpanel" aria-labelledby="beneficios-tab">
             sexo
         </div>
-        <div class="tab-pane fade" id="es" role="tabpanel" aria-labelledby="es-tab">
-            por hacer
+        <div class="tab-pane fade" id="entradasalida" role="tabpanel" aria-labelledby="es-tab">
+            <!-- Aquí van los campos de entrada de fecha -->
+            <div class="row mt-4 g-0">
+                <div class="col-4">
+                    <label for="fecha-inicio">Fecha de inicio:</label>
+                    <input type="date" id="fecha-inicio">
+                </div>
+                <div class="col-4">
+                    <label for="fecha-fin">Fecha de fin:</label>
+                    <input type="date" id="fecha-fin">
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary" id="botonConsultar" onclick="asistenciaEmpleados()">Buscar</button>
+                </div>
+            </div>
+            <!-- Aquí va la tabla de órdenes de reposición -->
+            <div class="mt-4 mx-auto">
+                <table id="table-entradasalida" class="table table-striped">
+                    <!-- Aquí va el encabezado y cuerpo de la tabla -->
+                    <thead>
+                        <tr>
+                            <th>Nombre del Empleado</th>
+                            <th>Cédula</th>
+                            <th>Día asignado</th>
+                            <th>Horario asignado</th>
+                            <th>Fecha y Hora de entrada</th>
+                            <th>Fecha y Hora de salida</th>
+                            <th>Cumplimiento</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-entradasalida"> </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -292,7 +323,80 @@ $(document).ready(function() {
             alert('Hubo un error obteniendo los empleados');
         }
     });
-});       
+});
+
+function asistenciaEmpleados(){
+    var fechaInicio = $('#fecha-inicio').val()
+    var fechaFin = $('#fecha-fin').val()
+
+    var data = {
+        "fechaInicio": fechaInicio,
+        "fechaFin": fechaFin
+    }
+
+    data = JSON.stringify(data)
+
+    $.ajax({
+        url: 'http://localhost:5000/api/asistencia/all',
+        type: 'POST',
+        dataType: 'json',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        data: data,
+        success: function(data) {
+            //resetear la tabla
+            
+            if ($.fn.DataTable.isDataTable('#table-entradasalida')) {
+                console.log("true")
+                $('#table-entradasalida').DataTable().clear().destroy();
+            } else {
+                console.log("false")
+            }
+
+            console.log(data.length)
+
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].nombre + '</td>');
+                row.append('<td>' + data[i].cedula + '</td>');
+                row.append('<td>' + data[i].dia + '</td>');
+                row.append('<td>' + data[i].horario + '</td>');
+                var fechaEntrada = formatDatetime(data[i].fechaEntrada);
+                row.append('<td>' + fechaEntrada + '</td>');
+                var fechaSalida = formatDatetime(data[i].fechaSalida);
+                row.append('<td>' + fechaSalida + '</td>');
+                row.append('<td>' + data[i].cumplimiento + '</td>');
+                $('#body-entradasalida').append(row);
+            }
+
+            // Check if the table is already initialized
+            if ($.fn.DataTable.isDataTable('#table-entradasalida')) {
+                $('#table-entradasalida').DataTable().draw();
+            } else {
+                $('#table-entradasalida').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            }
+        },
+        error: function() {
+            alert('Error al obtener las facturas');
+        }
+    });
+}
 
 function filtrarActivos() {
     var table = $('#table-empleados').DataTable();
@@ -402,6 +506,31 @@ function formatDate(dateString) {
         month = '0' + month;
 
     return [day, month, year].join('/');
+}
+
+function formatDatetime(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear(),
+        hours = '' + date.getHours(),
+        minutes = '' + date.getMinutes(),
+        seconds = '' + date.getSeconds();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+    if (hours.length < 2) 
+        hours = '0' + hours;
+    if (minutes.length < 2) 
+        minutes = '0' + minutes;
+    if (seconds.length < 2) 
+        seconds = '0' + seconds;
+
+    return [day, month, year].join('/') + ' ' + [hours, minutes, seconds].join(':');
 }
 
 </script>

@@ -1707,15 +1707,17 @@ $$;
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Listado de empleados y sus asistencias
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DROP FUNCTION IF EXISTS obtenerAsistenciaEmpleados(fecha_inicio DATE, fecha_fin DATE);
+
 CREATE OR REPLACE FUNCTION obtenerAsistenciaEmpleados(fecha_inicio DATE, fecha_fin DATE)
 RETURNS TABLE(
-    "Nombre del Empleado" TEXT,
-    "Cédula" VARCHAR,
-    "Día Horario Asignado" VARCHAR,
-    "Horario Asignado" TEXT,
-    "Fecha Hora Entrada" TIMESTAMP,
-    "Fecha Hora Salida" TIMESTAMP,
-    "Cumplimiento" TEXT
+    "nombre" TEXT,
+    "cedula" VARCHAR,
+    "dia" VARCHAR,
+    "horario" TEXT,
+    "fechaEntrada" TIMESTAMP,
+    "fechaSalida" TIMESTAMP,
+    "cumplimiento" TEXT
 ) AS $$
 BEGIN
     RETURN QUERY

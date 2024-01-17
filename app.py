@@ -3946,3 +3946,21 @@ def upload_file():
   
     cur.close()
     return jsonify({"error": "Error en el procesamiento del archivo"}), 500
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# REPORTE DE ASISTENCIA
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener las asistencias de los empleados
+@app.route("/api/asistencia/all", methods=["POST"])
+def obtener_asistencias():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    periodo = request.get_json()
+    pprint(periodo)
+    fechaInicio = periodo.get("fechaInicio")
+    fechaFin = periodo.get("fechaFin")
+    cur.execute('SELECT * FROM obtenerAsistenciaEmpleados(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
