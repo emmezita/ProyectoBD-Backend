@@ -1829,10 +1829,13 @@ $$ LANGUAGE plpgsql;
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
--- Producto mas Vendido
+-- Dashboard
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
 DROP FUNCTION IF EXISTS obtenerProductoMasVendido(date, date);
 
+-- Funcion para obtener el producto mas vendido
 CREATE OR REPLACE FUNCTION obtenerProductoMasVendido(fecha_inicio date, fecha_cierre date)
 RETURNS TABLE (
     nombre_presentacion text,
@@ -1900,5 +1903,32 @@ BEGIN
     ORDER BY total_vendido DESC
     LIMIT 1;
 
+END;
+$$ LANGUAGE plpgsql;
+
+-- Funcion para obtener el total de compras
+CREATE OR REPLACE FUNCTION obtener_total_compras(
+    fecha_inicio date,
+    fecha_cierre date
+)
+RETURNS TABLE (total_compras_numero bigint, total_compras_monto decimal(10,2)) AS $$
+BEGIN
+    RETURN QUERY (
+        WITH TotalPedido AS (
+            SELECT COUNT(*) AS total_compras_pedido, SUM(pedido_total) AS total_monto_pedido
+            FROM Pedido
+            WHERE pedido_fecha BETWEEN fecha_inicio AND fecha_cierre
+        ),
+        TotalFactura AS (
+            SELECT COUNT(*) AS total_compras_factura, SUM(factura_total) AS total_monto_factura
+            FROM Factura
+            WHERE factura_fecha BETWEEN fecha_inicio AND fecha_cierre
+        )
+        SELECT 
+            COALESCE(total_compras_pedido, 0) + COALESCE(total_compras_factura, 0) AS total_compras_numero,
+            COALESCE(total_monto_pedido, 0) + COALESCE(total_monto_factura, 0) AS total_compras_monto
+        FROM TotalPedido
+        FULL JOIN TotalFactura ON 1=1
+    );
 END;
 $$ LANGUAGE plpgsql;
