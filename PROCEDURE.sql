@@ -1769,3 +1769,136 @@ BEGIN
                                                                     END;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Listado de ventas que usaron punto como metodo de pago
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+DROP FUNCTION IF EXISTS obtenerVentasPunto();
+
+CREATE OR REPLACE FUNCTION obtenerVentasPunto()
+RETURNS TABLE(
+    "tipoVenta" TEXT,
+    "codigoVenta" INT,
+    "fecha" DATE,
+    "nombreCliente" TEXT,
+    "identificacionCliente" TEXT,
+    "puntosUtilizados" INT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        'Pedido' AS Tipo_Venta,
+        pe.pedido_codigo AS Codigo_Venta,
+        pe.pedido_fecha AS Fecha,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente,
+        pe.pedido_puntos_utilizados AS Puntos_Utilizados
+    FROM 
+        Pedido pe
+    LEFT JOIN Cliente_Natural cn ON pe.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON pe.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE 
+        pe.pedido_puntos_utilizados > 0
+
+    UNION ALL
+
+    SELECT 
+        'Factura' AS tipo_Venta,
+        fa.factura_codigo AS codigo_Venta,
+        fa.factura_fecha AS Fecha,
+        COALESCE(pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido, pj.persona_jur_razon_social)::TEXT AS nombre_cliente,
+        COALESCE(pn.persona_nat_cedula, pj.persona_jur_rif)::TEXT AS identificacion_cliente,
+        fa.factura_puntos_utilizados AS Puntos_Utilizados
+    FROM 
+        Factura fa
+    LEFT JOIN Cliente_Natural cn ON fa.fk_cliente_natural = cn.cliente_nat_codigo
+    LEFT JOIN Persona_Natural pn ON cn.cliente_nat_codigo = pn.persona_nat_codigo
+    LEFT JOIN Cliente_Juridico cj ON fa.fk_cliente_juridico = cj.cliente_jur_codigo
+    LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo
+    WHERE 
+        fa.factura_puntos_utilizados > 0;
+END;
+$$ LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Ficha de Producto 
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Producto mas Vendido
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+DROP FUNCTION IF EXISTS obtenerProductoMasVendido(date, date);
+
+CREATE OR REPLACE FUNCTION obtenerProductoMasVendido(fecha_inicio date, fecha_cierre date)
+RETURNS TABLE (
+    nombre_presentacion text,
+    imagen text,
+    total_vendido numeric
+)
+AS $$
+BEGIN
+    RETURN QUERY 
+    WITH VentasTotales AS (
+        SELECT
+            dep.fk_inventario_almacen_2 AS presentacion_1,
+            dep.fk_inventario_almacen_3 AS presentacion_2,
+            dep.fk_inventario_almacen_4 AS presentacion_3,
+            SUM(dep.detalle_pedido_cantidad) AS cantidad_vendida
+        FROM Detalle_Pedido dep
+        JOIN Pedido ped ON dep.fk_pedido = ped.pedido_codigo
+        WHERE ped.pedido_fecha BETWEEN fecha_inicio AND fecha_cierre
+        GROUP BY presentacion_1, presentacion_2, presentacion_3
+
+        UNION ALL
+
+        SELECT
+            dp.fk_inventario_tienda_2 AS presentacion_1,
+            dp.fk_inventario_tienda_3 AS presentacion_2,
+            dp.fk_inventario_tienda_4 AS presentacion_3,
+            SUM(dp.detalle_factura_cantidad) AS cantidad_vendida
+        FROM Detalle_Factura dp
+        JOIN Factura fac ON dp.fk_factura = fac.factura_codigo
+        WHERE dp.fk_inventario_tienda_2 IS NOT NULL
+          AND dp.fk_inventario_tienda_3 IS NOT NULL
+          AND dp.fk_inventario_tienda_4 IS NOT NULL
+          AND fac.factura_fecha BETWEEN fecha_inicio AND fecha_cierre
+        GROUP BY presentacion_1, presentacion_2, presentacion_3
+
+        UNION ALL
+
+        SELECT
+            elp.fk_evento_lista_producto_3 AS presentacion_1,
+            elp.fk_evento_lista_producto_4 AS presentacion_2,
+            elp.fk_evento_lista_producto_5 AS presentacion_3,
+            SUM(elp.detalle_factura_cantidad) AS cantidad_vendida
+        FROM Detalle_Factura elp
+        JOIN Factura fac ON elp.fk_factura = fac.factura_codigo
+        WHERE elp.fk_evento_lista_producto_3 IS NOT NULL
+          AND elp.fk_evento_lista_producto_4 IS NOT NULL
+          AND elp.fk_evento_lista_producto_5 IS NOT NULL
+          AND fac.factura_fecha BETWEEN fecha_inicio AND fecha_cierre
+        GROUP BY presentacion_1, presentacion_2, presentacion_3
+    )
+    SELECT 
+        (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT AS nombre_presentacion,
+        img.imagen_nombre::TEXT as imagen,
+        SUM(vt.cantidad_vendida) AS total_vendido
+    FROM VentasTotales vt
+    JOIN Presentacion pt ON vt.presentacion_1 = pt.fk_material_botella_1
+                        AND vt.presentacion_2 = pt.fk_material_botella_2
+                        AND vt.presentacion_3 = pt.fk_producto
+    JOIN Producto pro ON pro.producto_codigo = pt.fk_producto
+    JOIN botella bo ON bo.botella_codigo = pt.fk_material_botella_2
+    JOIN Imagen img on (img.fk_presentacion_1 = pt.fk_material_botella_1
+                    AND img.fk_presentacion_2 = pt.fk_material_botella_2
+                    AND img.fk_presentacion_3 = pt.fk_producto)
+    GROUP BY nombre_presentacion, imagen
+    ORDER BY total_vendido DESC
+    LIMIT 1;
+
+END;
+$$ LANGUAGE plpgsql;
