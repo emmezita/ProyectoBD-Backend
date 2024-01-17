@@ -4100,17 +4100,6 @@ VALUES
   ('2024-02-26', '2024-03-04', 7, 8),
   ('2024-03-05', '2024-03-11', 7, 9);
 
-INSERT INTO Empleado_Entrada_Salida (emp_ent_sal_fecha_hora_entrada, emp_ent_sal_fecha_hora_salida, fk_contrato_empleo)
-VALUES
-  ('2023-05-9 10:30:00', '2023-05-9 19:00:00', 15),
-  ('2023-05-10 09:00:00', '2023-05-10 18:00:00', 6),
-  ('2023-05-8 08:00:00', '2023-05-8 16:30:00', 20),
-  ('2023-05-12 07:00:00', '2023-05-12 16:30:00', 15),
-  ('2023-05-17 10:00:00', '2023-05-17 18:00:00', 16),
-  ('2023-05-15 8:30:00', '2023-05-15 16:30:00', 20),
-  ('2023-05-16 10:15:00', '2023-05-16 18:15:00', 15);
-
-
 INSERT INTO Beneficio (beneficio_nombre, beneficio_descripcion, beneficio_tipo)
 VALUES
   ('Bono por hijos', 'Beneficio dado para los trabajadores que tienen hijos', 'semestral'),

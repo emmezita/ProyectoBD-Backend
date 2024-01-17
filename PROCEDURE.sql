@@ -1660,3 +1660,110 @@ BEGIN
     LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
 END; $$
 LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- CARGAR ARCHIVO DE EXCEL
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+CREATE OR REPLACE FUNCTION buscarContratoPorCedula(cedula VARCHAR)
+RETURNS INTEGER AS $$
+DECLARE
+    id_contrato INTEGER;
+BEGIN
+    SELECT contrato_codigo INTO id_contrato
+    FROM Contrato_De_Empleo, Empleado, Persona_Natural
+    WHERE fk_empleado = empleado_codigo
+	AND empleado_codigo = persona_nat_codigo
+	AND persona_nat_cedula = cedula;
+
+    RETURN id_contrato;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE registrarAsistencia(cedula VARCHAR, fecha_hora_entrada VARCHAR, fecha_hora_salida VARCHAR)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    contrato_id INTEGER;
+BEGIN
+    -- Llamar a la función para obtener el id del contrato
+    contrato_id := buscarContratoPorCedula(cedula);
+
+    IF contrato_id IS NOT NULL THEN
+        IF NOT EXISTS (
+            SELECT 1 FROM Empleado_Entrada_Salida 
+            WHERE emp_ent_sal_fecha_hora_entrada::DATE = TO_TIMESTAMP(fecha_hora_entrada, 'YYYY-MM-DD HH24:MI:SS')::DATE 
+            AND fk_contrato_empleo = contrato_id
+        ) THEN
+            -- Insertar los datos en la tabla Empleado_Entrada_Salida
+            INSERT INTO Empleado_Entrada_Salida (emp_ent_sal_fecha_hora_entrada, emp_ent_sal_fecha_hora_salida, fk_contrato_empleo)
+            VALUES (TO_TIMESTAMP(fecha_hora_entrada, 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP(fecha_hora_salida, 'YYYY-MM-DD HH24:MI:SS'), contrato_id);
+        END IF;
+    END IF;
+END;
+$$;
+
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Listado de empleados y sus asistencias
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+CREATE OR REPLACE FUNCTION obtenerAsistenciaEmpleados(fecha_inicio DATE, fecha_fin DATE)
+RETURNS TABLE(
+    "Nombre del Empleado" TEXT,
+    "Cédula" VARCHAR,
+    "Día Horario Asignado" VARCHAR,
+    "Horario Asignado" TEXT,
+    "Fecha Hora Entrada" TIMESTAMP,
+    "Fecha Hora Salida" TIMESTAMP,
+    "Cumplimiento" TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        pn.persona_nat_p_nombre || ' ' || pn.persona_nat_p_apellido,
+        pn.persona_nat_cedula,
+        h.horario_dia,
+        h.horario_hora_entrada || ' - ' || h.horario_hora_salida,
+        ees.emp_ent_sal_fecha_hora_entrada,
+        ees.emp_ent_sal_fecha_hora_salida,
+        CASE 
+            WHEN EXTRACT(DOW FROM ees.emp_ent_sal_fecha_hora_entrada) = CASE
+                                                                            WHEN h.horario_dia = 'Lunes' THEN 1
+                                                                            WHEN h.horario_dia = 'Martes' THEN 2
+                                                                            WHEN h.horario_dia = 'Miércoles' THEN 3
+                                                                            WHEN h.horario_dia = 'Jueves' THEN 4
+                                                                            WHEN h.horario_dia = 'Viernes' THEN 5
+                                                                            WHEN h.horario_dia = 'Sábado' THEN 6
+                                                                            WHEN h.horario_dia = 'Domingo' THEN 0
+                                                                        END
+            AND ees.emp_ent_sal_fecha_hora_entrada::time <= h.horario_hora_entrada
+            AND ees.emp_ent_sal_fecha_hora_salida::time >= h.horario_hora_salida
+            THEN 'Cumple'
+            ELSE 'No Cumple'
+        END
+    FROM 
+        Persona_Natural pn
+    JOIN 
+        Empleado e ON pn.persona_nat_codigo = e.empleado_codigo
+    JOIN 
+        Contrato_De_Empleo cde ON e.empleado_codigo = cde.fk_empleado
+    JOIN 
+        Contrato_Horario ch ON cde.contrato_codigo = ch.fk_contrato_empleo
+    JOIN 
+        Horario h ON ch.fk_horario = h.horario_codigo
+    JOIN 
+        Empleado_Entrada_Salida ees ON cde.contrato_codigo = ees.fk_contrato_empleo
+    WHERE 
+        ees.emp_ent_sal_fecha_hora_entrada::date BETWEEN fecha_inicio AND fecha_fin
+        AND ees.emp_ent_sal_fecha_hora_salida::date BETWEEN fecha_inicio AND fecha_fin
+        AND EXTRACT(DOW FROM ees.emp_ent_sal_fecha_hora_entrada) = CASE
+                                                                        WHEN h.horario_dia = 'Lunes' THEN 1
+                                                                        WHEN h.horario_dia = 'Martes' THEN 2
+                                                                        WHEN h.horario_dia = 'Miércoles' THEN 3
+                                                                        WHEN h.horario_dia = 'Jueves' THEN 4
+                                                                        WHEN h.horario_dia = 'Viernes' THEN 5
+                                                                        WHEN h.horario_dia = 'Sábado' THEN 6
+                                                                        WHEN h.horario_dia = 'Domingo' THEN 0
+                                                                    END;
+END;
+$$ LANGUAGE plpgsql;

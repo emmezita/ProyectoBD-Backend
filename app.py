@@ -10,6 +10,7 @@ import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de 
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
 from flask_cors import CORS # se utiliza la libreria flask_cors para evitar problemas de CORS (Cross Origin Resource Sharing)
 from pprint import pprint # se utiliza la libreria pprint para imprimir los datos de una forma mas legible
+import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
@@ -3903,3 +3904,45 @@ def obtener_acciones():
     cur.close()
     pprint(rows)
     return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# CARGAR ARCHIVO DE EXCEL
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    cur = conn.cursor()
+    # Comprobar si el archivo está presente en la solicitud
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['file']
+
+    # Si el usuario no selecciona un archivo, el navegador envía un archivo vacío sin nombre
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file:
+        # Leer el archivo de Excel en un DataFrame de pandas
+        df = pd.read_excel(file)
+
+        # Procesar cada fila del DataFrame
+        for index, row in df.iterrows():
+            # Lógica para enviar datos a la base de datos
+            cedula = str(row['Cédula'])
+
+            fecha_entrada = str(row['Fecha']) + ' '+ str(row['Hora Entrada'])
+            fecha_salida = str(row['Fecha']) + ' '+ str(row['Hora Salida'])
+            
+            pprint(cedula)
+            pprint(fecha_entrada)
+            pprint(fecha_salida)
+            
+            
+            cur.execute('CALL registrarAsistencia(%s, %s, %s)', (cedula, fecha_entrada, fecha_salida))
+            conn.commit()
+
+        return jsonify({"message": "Archivo procesado con éxito"}), 200
+  
+    cur.close()
+    return jsonify({"error": "Error en el procesamiento del archivo"}), 500
