@@ -1953,3 +1953,54 @@ BEGIN
     LIMIT 10;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Funcion para obtener el top 10 de productos mas vendidos en fisico
+CREATE OR REPLACE FUNCTION obtenerTopProductos(fecha_inicio date, fecha_cierre date)
+RETURNS TABLE (nombre_presentacion text, total_vendido numeric)
+AS $$
+BEGIN
+    RETURN QUERY
+    WITH VentasTotales AS (
+        SELECT
+            dp.fk_inventario_tienda_2 AS presentacion_1,
+            dp.fk_inventario_tienda_3 AS presentacion_2,
+            dp.fk_inventario_tienda_4 AS presentacion_3,
+            SUM(dp.detalle_factura_cantidad) AS cantidad_vendida
+        FROM Detalle_Factura dp
+        JOIN Factura fac ON dp.fk_factura = fac.factura_codigo
+        WHERE dp.fk_inventario_tienda_2 IS NOT NULL
+          AND dp.fk_inventario_tienda_3 IS NOT NULL
+          AND dp.fk_inventario_tienda_4 IS NOT NULL
+          AND fac.factura_fecha BETWEEN fecha_inicio AND fecha_cierre
+        GROUP BY presentacion_1, presentacion_2, presentacion_3
+
+        UNION ALL
+
+        SELECT
+            elp.fk_evento_lista_producto_3 AS presentacion_1,
+            elp.fk_evento_lista_producto_4 AS presentacion_2,
+            elp.fk_evento_lista_producto_5 AS presentacion_3,
+            SUM(elp.detalle_factura_cantidad) AS cantidad_vendida
+        FROM Detalle_Factura elp
+        JOIN Factura fac ON elp.fk_factura = fac.factura_codigo
+        WHERE elp.fk_evento_lista_producto_3 IS NOT NULL
+          AND elp.fk_evento_lista_producto_4 IS NOT NULL
+          AND elp.fk_evento_lista_producto_5 IS NOT NULL
+          AND fac.factura_fecha BETWEEN fecha_inicio AND fecha_cierre
+        GROUP BY presentacion_1, presentacion_2, presentacion_3
+    )
+    SELECT 
+        (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT AS nombre_presentacion,
+        SUM(vt.cantidad_vendida) AS total_vendido
+    FROM VentasTotales vt
+    JOIN Presentacion pt ON vt.presentacion_1 = pt.fk_material_botella_1
+                        AND vt.presentacion_2 = pt.fk_material_botella_2
+                        AND vt.presentacion_3 = pt.fk_producto
+    JOIN Producto pro ON pro.producto_codigo = pt.fk_producto
+    JOIN botella bo ON bo.botella_codigo = pt.fk_material_botella_2
+    GROUP BY nombre_presentacion
+    ORDER BY total_vendido DESC
+    LIMIT 10;
+END;
+$$ LANGUAGE plpgsql;
+
