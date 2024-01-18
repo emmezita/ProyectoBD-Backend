@@ -2019,3 +2019,26 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Funcion para obtener el total de puntos canjeados en un tiempo determinado
+CREATE OR REPLACE FUNCTION obtenerPuntosCanjeados(fecha_inicio date, fecha_cierre date)
+RETURNS bigint
+AS $$
+DECLARE
+    total_puntos bigint;
+BEGIN
+    WITH TotalPedido AS (
+        SELECT SUM(pedido_puntos_utilizados) AS total_puntos_pedido
+        FROM Pedido
+        WHERE pedido_fecha BETWEEN fecha_inicio AND fecha_cierre
+    ),
+    TotalFactura AS (
+        SELECT SUM(factura_puntos_utilizados) AS total_puntos_factura
+        FROM Factura
+        WHERE factura_fecha BETWEEN fecha_inicio AND fecha_cierre
+    )
+    SELECT COALESCE(total_puntos_pedido, 0) + COALESCE(total_puntos_factura, 0) INTO total_puntos
+    FROM TotalPedido
+    FULL JOIN TotalFactura ON 1=1;
+
+    RETURN COALESCE(total_puntos, 0);
+END;
