@@ -1556,7 +1556,7 @@ RETURNS TABLE (
     presentacion_nombre TEXT,
     cantidad_vendida INTEGER,
     nombre_cliente TEXT,
-    identificacion_cliente TEXT
+    identificacion_cliente TEXT 
 ) AS $$
 BEGIN
     RETURN QUERY 
@@ -2042,3 +2042,29 @@ BEGIN
 
     RETURN COALESCE(total_puntos, 0);
 END;
+$$ LANGUAGE plpgsql;
+
+-- Funcion para obtener el total de pedidos por estatus en un tiempo determinado
+
+DROP FUNCTION IF EXISTS obtenerTotalPedidosPorEstatus(date, date);
+
+CREATE OR REPLACE FUNCTION ObtenerTotalPedidosPorEstatus(fecha_inicio DATE, fecha_fin DATE)
+RETURNS TABLE(
+    estatus_pedido_codigo INT,
+    estatus_pedido_nombre TEXT,
+    total_pedidos BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        est.estatus_pedido_codigo,
+        est.estatus_pedido_nombre::TEXT,
+        COALESCE(COUNT(pe.pedido_codigo), 0) AS total_pedidos
+    FROM Estatus_Pedido est
+    LEFT JOIN Historico_Estatus_Pedido ep ON est.estatus_pedido_codigo = ep.fk_estatus_pedido
+                                         AND ep.fecha_hora_fin_estatus IS NULL
+    LEFT JOIN Pedido pe ON ep.fk_pedido = pe.pedido_codigo
+                        AND pe.pedido_fecha BETWEEN fecha_inicio AND fecha_fin
+    GROUP BY est.estatus_pedido_codigo, est.estatus_pedido_nombre;
+END; $$
+LANGUAGE plpgsql;
