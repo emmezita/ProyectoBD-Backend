@@ -1712,3 +1712,55 @@ BEGIN
     LEFT JOIN Persona_Juridica pj ON cj.cliente_jur_codigo = pj.persona_jur_codigo;
 END; $$
 LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- PRODUCTO MAS VENDIDO
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+--DROP FUNCTION IF EXIST producto_mas_vendido(date,date)
+
+CREATE OR REPLACE FUNCTION producto_mas_vendido(fecha_inicio DATE, fecha_fin DATE)
+RETURNS TABLE(
+    codigo TEXT,
+    categoria TEXT,
+    clasificacion TEXT,
+    presentacion_nombre TEXT, 
+    cantidad_vendida INTEGER,
+    nombre_cliente TEXT,
+    identificacion_cliente TEXT,
+    total_vendido bigint
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT obt.codigo, obt.categoria, obt.clasificacion, obt.presentacion_nombre, obt.cantidad_vendida AS cantidad_vendida_subquery,
+    obt.nombre_cliente, obt.identificacion_cliente, SUM(obt.cantidad_vendida) as total_vendido
+    FROM obtener_listado_productos_vendidos(fecha_inicio, fecha_fin) obt
+    GROUP BY obt.codigo, obt.categoria, obt.clasificacion, obt.presentacion_nombre, cantidad_vendida_subquery, obt.nombre_cliente, obt.identificacion_cliente
+    ORDER BY total_vendido DESC
+    LIMIT 1;
+END; $$
+LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- TOTAL DE ORDENES POR ESTATUS
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+--DROP FUNCTION IF EXIST ordenes_por_estatus(date,date)
+
+CREATE OR REPLACE FUNCTION ordenes_por_estatus(fecha_inicio DATE, fecha_fin DATE)
+RETURNS TABLE(
+    estatus_orden_nombre character varying(20),
+	cuenta bigint
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT eo.estatus_orden_nombre, COUNT(*) AS cuenta
+    FROM historico_estatus_orden heo
+    JOIN estatus_orden eo ON eo.estatus_orden_codigo = heo.fk_estatus_orden
+    JOIN orden_de_reposicion odr ON odr.orden_codigo = heo.fk_orden
+    WHERE heo.fecha_hora_fin_estatus IS NULL
+        AND odr.orden_fecha BETWEEN fecha_inicio AND fecha_fin
+    GROUP BY eo.estatus_orden_codigo;
+END; $$
+LANGUAGE plpgsql;
+
