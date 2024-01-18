@@ -1735,7 +1735,8 @@ BEGIN
     SELECT obt.codigo, obt.categoria, obt.clasificacion, obt.presentacion_nombre, obt.cantidad_vendida AS cantidad_vendida_subquery,
     obt.nombre_cliente, obt.identificacion_cliente, SUM(obt.cantidad_vendida) as total_vendido
     FROM obtener_listado_productos_vendidos(fecha_inicio, fecha_fin) obt
-    GROUP BY obt.codigo, obt.categoria, obt.clasificacion, obt.presentacion_nombre, cantidad_vendida_subquery, obt.nombre_cliente, obt.identificacion_cliente
+    GROUP BY obt.codigo, obt.categoria, obt.clasificacion, obt.presentacion_nombre, cantidad_vendida_subquery, obt.nombre_cliente,
+    obt.identificacion_cliente
     ORDER BY total_vendido DESC
     LIMIT 1;
 END; $$
@@ -1764,3 +1765,27 @@ BEGIN
 END; $$
 LANGUAGE plpgsql;
 
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- funcion para obtener la ficha de una sola presentacion
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
+--DROP FUNCTION obtener_ficha_del_producto(integer,integer,integer)
+
+CREATE OR REPLACE FUNCTION obtener_ficha_del_producto(_codigoMB1 int, _codigoMB2 int, _codigoPRO int)
+RETURNS SETOF ficha_producto AS $$
+BEGIN
+    RETURN QUERY
+	
+	SELECT  ficha.descripcion as descripcion, ficha.elaboracion, ficha.anejamiento_producto, ficha.mezclado_producto, 
+	ficha.notas_de_catado, ficha.como_servir, ficha.capacidad_producto, ficha.alcohol, ficha.descripcion_presentacion,
+	ficha.segmento, ficha.pallet, ficha.botella_producto, ficha.tapa_presentacion, ficha.alto, ficha.ancho, ficha.peso, ficha.empaque
+	FROM ficha_producto as ficha
+	JOIN presentacion pre ON pre.presentacion_peso = ficha.peso
+	WHERE pre.fk_producto = _codigoPRO and pre.fk_material_botella_1 = _codigoMB1 and pre.fk_material_botella_2 = _codigoMB2 
+	OFFSET 0 ROWS FETCH FIRST 1 ROWS ONLY;
+    
+END; $$
+LANGUAGE plpgsql;
+
+--select * from obtener_ficha_del_producto(6,2,5)

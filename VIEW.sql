@@ -1,4 +1,4 @@
-CREATE VIEW ficha_producto
+CREATE OR REPLACE VIEW ficha_producto
 AS
 	SELECT
 		pro.producto_descripcion as descripcion, cla.clasificacion_descripcion as elaboracion, 
@@ -29,5 +29,4 @@ AS
 	JOIN caja caj ON caj.caja_codigo = pre.fk_caja
 	JOIN tapa tap ON tap.tapa_codigo = pre.fk_tapa
 	JOIN material mat ON mat.material_codigo = mbot.fk_material
-	WHERE pre.fk_producto = 5 and pre.fk_material_botella_1 = 6 and pre.fk_material_botella_2 = 2
 
