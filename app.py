@@ -5,6 +5,7 @@ import json
 from re import sub
 from tkinter import N
 import traceback
+from xml.dom.minidom import Element
 from flask import Flask, Response, request, jsonify, url_for
 import psycopg2 # se utiliza la libreria psycopg2 para la conexion a la base de datos
 from psycopg2.extras import RealDictCursor # se utiliza la libreria psycopg2.extras para poder obtener los datos de la base de datos como un diccionario
@@ -3888,22 +3889,57 @@ def obtener_dashboard():
     rows = cur.fetchone()
     if rows is not None:
         datos['producto_mas_vendido'] = rows
+    else:
+        datos['producto_mas_vendido'] = None
 
     cur.execute('SELECT * FROM obtener_total_compras(%s, %s)', (fechaInicio, fechaFin))
     rows = cur.fetchone()
     if rows is not None:
         datos['total_compras'] = rows
+    else:
+        datos['total_compras'] = None
 
     cur.execute('SELECT * FROM obtenerTopParroquias(%s, %s)', (fechaInicio, fechaFin))
     rows = cur.fetchall()
     if rows is not None:
         datos['topParroquias'] = rows
+    else:
+        datos['topParroquias'] = None
 
     cur.execute('SELECT * FROM obtenerTopProductos(%s, %s)', (fechaInicio, fechaFin))
     rows = cur.fetchall()
     if rows is not None:
         datos['topProductos'] = rows
+    else:
+        datos['topProductos'] = None
 
+    cur.execute('SELECT * FROM obtenerPuntosOtorgados(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchone()
+    if rows is not None:
+        datos['puntosOtorgados'] = rows
+    else:
+        datos['puntosOtorgados'] = None
+
+    cur.execute('SELECT * FROM obtenerPuntosCanjeados(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchone()
+    if rows is not None:
+        datos['puntosCanjeados'] = rows
+    else:
+            datos['puntosCanjeados'] = None
+
+    cur.execute('SELECT * FROM obtenerTotalPedidosPorEstatus(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchall()
+    if rows is not None:
+        datos['pedidosPorEstatus'] = rows
+    else:
+        datos['pedidosPorEstatus'] = None
+
+    cur.execute('SELECT * FROM ObtenerTotalPedidosEnRetraso(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchone()
+    if rows is not None:
+        datos['pedidosEnRetraso'] = rows
+    else:
+        datos['pedidosEnRetraso'] = None
 
 
     cur.close()
