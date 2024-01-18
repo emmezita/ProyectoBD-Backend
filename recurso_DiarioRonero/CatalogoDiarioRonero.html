@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogo Diario Ronero</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+    <style>
+        li.product{
+            max-height: 450px;
+        }
+        li.product img{
+            max-height: 250px;
+        }
+    </style>
+
+
+    <ul id="ul-prueba"> <!-- Eliminar ul al copiar -->
+
+
+        <li id="producto-card" class="entry content-bg loop-entry product type-product status-publish first instock product_cat-ron has-post-thumbnail shipping-taxable purchasable product-type-simple" style="display: none;">
+            <a title="Ver Producto" href="" class="woocommerce-loop-image-link woocommerce-LoopProduct-link woocommerce-loop-product__link">
+                <span class="onsale" style="display:none;">¡Oferta!</span>
+                <img width="300" height="300" src="" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt="" decoding="async">
+            </a>
+            <div class="product-details content-bg entry-content-wrap">
+                <h2 class="woocommerce-loop-product__title">
+                    <a href="" class="woocommerce-LoopProduct-link-title woocommerce-loop-product__title_ink">
+                        <!--Nombre-->
+                    </a>
+                </h2>
+                <i class="capacidad">
+                    <!--Ml-->
+                </i>
+                <span class="price">
+                    <del aria-hidden="true">
+                        <span class="woocommerce-Price-amount amount">
+                            <bdi>
+                                <span class="woocommerce-Price-currencySymbol">
+                                    $
+                                </span>
+                                <!--Precio-->
+                            </bdi>
+                        </span>
+                    </del>
+                    <!-- si tiene oferta -->
+                    <ins>
+                        <span class="woocommerce-Price-amount amount">
+                            <bdi>
+                                <span class="woocommerce-Price-currencySymbol">
+                                    $
+                                </span>
+                                <!--Precio oferta-->
+                            </bdi>
+                        </span>
+                    </ins>
+                </span>
+                <div class="product-action-wrap">
+                    <a data-quantity="1" class="button product_type_simple add_to_cart_button ajax_add_to_cart"
+                        data-product_sku="" aria-label="Añade “RON PAMPERO ANIVERSARIO” a tu carrito" aria-describedby=""
+                        rel="nofollow" style="cursor: pointer;">Añadir al carrito
+                        <span class="kadence-svg-iconset svg-baseline">
+                            <svg aria-hidden="true" class="kadence-svg-icon kadence-arrow-right-alt-svg" fill="currentColor" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" width="27" height="28" viewBox="0 0 27 28">
+                                <title>Continuar</title>
+                                <path
+                                    d="M27 13.953c0 0.141-0.063 0.281-0.156 0.375l-6 5.531c-0.156 0.141-0.359 0.172-0.547 0.094-0.172-0.078-0.297-0.25-0.297-0.453v-3.5h-19.5c-0.281 0-0.5-0.219-0.5-0.5v-3c0-0.281 0.219-0.5 0.5-0.5h19.5v-3.5c0-0.203 0.109-0.375 0.297-0.453s0.391-0.047 0.547 0.078l6 5.469c0.094 0.094 0.156 0.219 0.156 0.359v0z">
+                                </path>
+                            </svg>
+                        </span>
+                        <span class="kadence-svg-iconset svg-baseline">
+                            <svg class="kadence-svg-icon kadence-spinner-svg" fill="currentColor" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                                <title>Cargando</title>
+                                <path
+                                    d="M16 6h-6l2.243-2.243c-1.133-1.133-2.64-1.757-4.243-1.757s-3.109 0.624-4.243 1.757c-1.133 1.133-1.757 2.64-1.757 4.243s0.624 3.109 1.757 4.243c1.133 1.133 2.64 1.757 4.243 1.757s3.109-0.624 4.243-1.757c0.095-0.095 0.185-0.192 0.273-0.292l1.505 1.317c-1.466 1.674-3.62 2.732-6.020 2.732-4.418 0-8-3.582-8-8s3.582-8 8-8c2.209 0 4.209 0.896 5.656 2.344l2.343-2.344v6z">
+                                </path>
+                            </svg>
+                        </span>
+                        <span class="kadence-svg-iconset svg-baseline">
+                            <svg class="kadence-svg-icon kadence-check-svg" fill="currentColor" version="1.1"
+                                xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                            <title>Hecho</title>
+                            <path d="M14 2.5l-8.5 8.5-3.5-3.5-1.5 1.5 5 5 10-10z"></path>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </li>
+    </ul>
+
+<script>
+
+$(document).ready(function() {
+
+    var idUsuario = localStorage.getItem('idUsuario');
+
+    // limpiamos los productos que vienen de la plantilla
+    $('ul.products').html('');
+
+    var data = null;
+    $.ajax({
+        url: 'http://localhost:5000/api/diario/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(d) {
+            data = d;
+            var verPresentacionUrl = 'https://dilodev.co/presentacion';
+
+            for (var i = 0; i < data.length; i++) {
+
+                // Create a new li element with the same structure
+                var newLi = $('#producto-card').first().clone().css('display', 'block').attr('id', 'producto-card-' + i);
+
+                var url = verPresentacionUrl + "?id1=" + data[i].c1 + "&id2=" + data[i].c2 + "&id3=" + data[i].c3;
+                newLi.find('a.woocommerce-loop-image-link').attr('href', url);
+                newLi.find('img').attr('src', data[i].imagen);
+                newLi.find('h2 a').text(data[i].nombre).attr('href', url);
+                newLi.find('.capacidad').text(data[i].capacidad + ' L');
+
+                if (data[i].oferta) {
+                    newLi.find('.onsale').show();
+                    newLi.find('.price del .woocommerce-Price-amount bdi').text('$' + data[i].precio_venta_almacen);
+                    newLi.find('.price ins .woocommerce-Price-amount bdi').text('$' + data[i].precio_descuento);
+                } else {
+                    var precioOG = newLi.find('.price del .woocommerce-Price-amount bdi').first().clone();
+                    newLi.find('.price').html(newLi.find('.woocommerce-Price-amount bdi').first().clone().text('$' + data[i].precio_venta_almacen));
+                    newLi.find('.price ins').remove();
+                }
+
+                newLi.find('.add_to_cart_button').data('id1', data[i].c1);
+                newLi.find('.add_to_cart_button').data('id2', data[i].c2);
+                newLi.find('.add_to_cart_button').data('id3', data[i].c3);
+
+                newLi.find('.add_to_cart_button').on('click', function() {
+                    var id1 = $(this).data('id1');
+                    var id2 = $(this).data('id2');
+                    var id3 = $(this).data('id3');
+
+                    data = {
+                        id: {
+                            c1: id1,
+                            c2: id2,
+                            c3: id3
+                        },
+                    };
+
+                    $.ajax({
+                        url: 'http://localhost:5000/api/carrito/add',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function() {
+                            alert('Presentacion agregado al carrito exitosamente');
+                        },
+                        error: function(r) {
+                            var text = r.responseText;
+                            if (text != null && text != '') {
+                                alert(text);
+                            } else {
+                                alert('Hubo un error agregando el producto al carrito');
+                            }
+                        }
+                    });
+                });
+
+                $('ul.products').append(newLi);  
+            }
+        },
+        error: function() {
+            alert('Hubo un error obteniendo los productos');
+        }
+    });
+});       
+
+// como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
+//le sumamos 5 horas por para pasar de dia al correcto
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [day, month, year].join('/');
+}
+</script>
+
+
+</body>
+</html>

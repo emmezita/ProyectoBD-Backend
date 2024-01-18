@@ -3834,6 +3834,82 @@ def obtener_detalle_factura(id):
     
     return jsonify({'datos_factura': datos_factura, 'metodos_pago': metodos_pago,'presentaciones': presentaciones})
 
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# DIARIO RONERO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el diario ronero
+@app.route("/api/diario/all", methods=["GET"])
+def obtener_diario_ronero():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerDiarioRonero()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para guardar el diario ronero
+@app.route("/api/diario/nuevo", methods=["POST"])
+def guardar_diario_ronero():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    try:
+        diario = request.get_json()
+        pprint(diario)
+        diario = json.dumps(diario)
+        
+        # cur.execute('CALL GuardarDiarioRonero(%s)', (diario,))
+        conn.commit()
+        return jsonify({"message": "Diario ronero guardado exitosamente"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cur.close()
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# DASHBOARD
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el dashboard
+@app.route("/api/dashboard/all", methods=["PUT"])
+def obtener_dashboard():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    periodo = request.get_json()
+    pprint(periodo)
+    fechaInicio = periodo.get("fechaInicio")
+    fechaFin = periodo.get("fechaFin")
+
+    print(fechaInicio)
+    print(fechaFin)
+
+    datos = {}
+
+    cur.execute('SELECT * FROM obtenerProductoMasVendido(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchone()
+    if rows is not None:
+        datos['producto_mas_vendido'] = rows
+
+    cur.execute('SELECT * FROM obtener_total_compras(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchone()
+    if rows is not None:
+        datos['total_compras'] = rows
+
+    cur.execute('SELECT * FROM obtenerTopParroquias(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchall()
+    if rows is not None:
+        datos['topParroquias'] = rows
+
+    cur.execute('SELECT * FROM obtenerTopProductos(%s, %s)', (fechaInicio, fechaFin))
+    rows = cur.fetchall()
+    if rows is not None:
+        datos['topProductos'] = rows
+
+
+
+    cur.close()
+    
+    pprint(datos)
+    return jsonify(datos), 200
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # PEDIDOS

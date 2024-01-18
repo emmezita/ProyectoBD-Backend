@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalogo Diario Ronero</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+</head>
+<body>
+
+    <style>   
+        
+        /* Estilo para el botón de añadir */
+        .btn-primary {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #D1991A;
+            border-color: #D1991A;
+        }
+        .btn-primary:hover {
+            background-color: #956d11;
+            border-color: #956d11;
+        }
+
+        /* Estilo para el botón de eliminar */
+        .btn-danger {
+            font-family: 'Hind', sans-serif;
+            color: #F8F8F8;
+            font-size: 15px;
+            font-weight: 600;
+            background-color: #FF0000;
+            border-color: #FF0000;
+        }
+        .btn-danger:hover {
+            background-color: #b30000;
+            border-color: #b30000;
+        }
+
+        table {
+            font-family: 'Hind', sans-serif;
+            color: #202020;
+            font-size: 14px;
+            font-weight: 400;
+            width: 96%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+    
+        th, td {
+            border: 1px solid #999;
+            padding: 0.5rem;
+            text-align: left;
+        }
+    
+        th {
+            background-color: #f3f3f3;
+        }
+    
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .container>.row>div {
+            border: 2px solid #b28f26;
+        }
+    </style>
+
+    <style>
+        li.product{
+            max-height: 450px;
+        }
+        li.product img{
+            max-height: 250px;
+        }
+        .chartHolder {
+            height: 250px;
+        }
+        .chartHolderBig {
+            height: 350px;
+        }
+    </style>
+
+    <!-- formato de dashboard -->
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-3">
+                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
+            </div>
+            <div class="col-3">
+                <input type="date" class="form-control" id="fechaFin" name="fechaFin">
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-primary" id="btnFiltrar" onclick="filtrar()">Filtrar</button>
+            </div>
+        </div>
+
+        <div class="row g-3 mt-4">
+           <div class="col-4 py-0 chartHolder">
+            <div id="chart1" style="height: 250px; width: 100%;">
+                <div class="row g-0 justify-content-center align-items-center" style="height: 100%; width: 100%;">
+                    <div class="col-7">
+                        <img src="" alt="Imagen" id="imgProductoMasVendido" style="height: 240px; width: 100%;">
+                    </div>
+                    <div class="col-5">
+                        <h6 class="mb-1">
+                            <b>Producto Mas Vendido:</b>
+                        </h6>
+                        <p id="nombreProductoMasVendido">
+                        </p>
+                        <h6 class="mt-3 mb-1">
+                            <b>Cantidad:</b>
+                        </h6>
+                        <p id="totalProductoMasVendido">
+                        </p>
+                    </div>
+                </div>
+            </div>
+           </div>
+            <div class="col-4 py-0 chartHolder"> 
+                <div id="chart2" class="h-100">
+                    <div class="row g-0 justify-content-center align-items-center h-100">
+                        <div class="col-12">
+                            <h6 class="mb-1">
+                                <b>Numero Total de Compras:</b>
+                            </h6>
+                            <p id="numeroTotalDeCompras">
+                            </p>
+                            <h6 class="mt-3 mb-1">
+                                <b>Monto Total de Compras:</b>
+                            </h6>
+                            <p id="montoTotalDeCompras">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 py-0 chartHolder">
+                <!-- falta -->
+            </div>
+            <div class="col-6 py-0 chartHolderBig"> 
+                <div id="chart3" class="h-100">
+                    <canvas id="canvasTopParroquias" style="height:100%"></canvas>
+                </div>
+            </div>
+            <div class="col-6 py-0 chartHolderBig"> <!-- Placeholder 5 -->
+                <div id="chart4" class="h-100">
+                    <canvas id="canvasTopProductos" style="height:100%"></canvas>
+                </div>
+            </div>
+            <div class="col-4 py-0 chartHolder"> <!-- Placeholder 6 -->
+                dadasd
+            </div>
+            <div class="col-4 py-0 chartHolder"> <!-- Placeholder 7 -->
+                adasdas
+            </div>
+            <div class="col-4 py-0 chartHolder"> <!-- Placeholder 8 -->
+                dafggg
+            </div>
+        </div>
+    </div>
+</div>
+    
+
+<script>
+
+$(document).ready(function() {
+
+    // buscar la fecha de inicio del mes actual y la fecha de fin del mes actual
+    var date = new Date();
+    // var fechaInicio = new Date(date.getFullYear(), date.getMonth(), 1);
+    // var fechaFin = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    // var data = {
+    //     fechaInicio: formatDate(fechaInicio),
+    //     fechaFin: formatDate(fechaFin)
+    // };
+    var data = {
+        fechaInicio: "01/01/2023",
+        fechaFin: "31/01/2023"
+    };
+
+    data = JSON.stringify(data);
+
+    console.log(data);
+
+    // Obtenemos todos los datos de una vez
+    $.ajax({
+        url: "http://localhost:5000/api/dashboard/all",
+        type: "PUT",
+        dataType: "json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        data: data,
+        success: function(data) {
+            console.log(data);
+
+            // Producto Mas Vendido
+            var productoMasVendido = data.producto_mas_vendido;
+            $('#nombreProductoMasVendido').text(productoMasVendido.nombre_presentacion);
+            $('#totalProductoMasVendido').text(productoMasVendido.total_vendido);
+            $('#imgProductoMasVendido').attr('src', "https://asoronucab.blob.core.windows.net/images/"+productoMasVendido.imagen);
+
+            // Total de Compras
+            var totalCompras = data.total_compras;
+            $('#numeroTotalDeCompras').text(totalCompras.total_compras_numero);
+            $('#montoTotalDeCompras').text(totalCompras.total_compras_monto);
+
+            // Top 10 Parroquias
+            var topParroquias = data.topParroquias;
+            var xValues = [];
+            var yValues = [];
+
+            for (var i = 0; i < topParroquias.length; i++) {
+                xValues.push(topParroquias[i].parroquia);
+                yValues.push(topParroquias[i].cantidad_compras_en_linea);
+            } 
+
+            var barColors = [
+                "#b91d47",
+                "#00aba9",
+                "#2b5797",
+                "#e8c3b9",
+                "#1e7145",
+                "#f09609",
+                "#f26522",
+                "#fde101",
+                "#f26522",
+                "#f09609"
+            ];
+
+            new Chart("canvasTopParroquias", {
+            type: "pie",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                title: {
+                display: true,
+                text: "Top Ventas por Parroquias"
+                }
+            }
+            });
+
+            // Top 10 Productos
+            var topProductos = data.topProductos;
+            var xValues = [];
+            var yValues = [];
+
+            for (var i = 0; i < topProductos.length; i++) {
+                xValues.push(topProductos[i].nombre_presentacion);
+                yValues.push(topProductos[i].total_vendido);
+            }
+
+            var barColors = [
+                "#b91d47",
+                "#00aba9",
+                "#2b5797",
+                "#e8c3b9",
+                "#1e7145",
+                "#f09609",
+                "#f26522",
+                "#fde101",
+                "#f5a522",
+                "#f0s609"
+            ];
+
+            new Chart("canvasTopProductos", {
+            type: "bar",
+            data: {
+                labels: xValues,
+                datasets: [{
+                backgroundColor: barColors,
+                data: yValues
+                }]
+            },
+            options: {
+                title: {
+                display: true,
+                text: "Top Productos por Ventas"
+                }
+            }
+            });
+
+        },
+        error: function(error_msg) {
+            console.log(error_msg);
+        }
+    });
+    
+
+});
+
+function filtrar() {
+    // Obtenemos las fechas
+    var fechaInicio = $('#fechaInicio').val();
+    var fechaFin = $('#fechaFin').val();
+
+    // Obtenemos todos los datos de una vez
+
+}
+
+// como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
+//le sumamos 5 horas por para pasar de dia al correcto
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [day, month, year].join('/');
+}
+</script>
+
+
+</body>
+</html>
