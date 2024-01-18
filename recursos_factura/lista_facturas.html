@@ -105,6 +105,9 @@
         <li class="nav-item" role="productosvendidos">
             <button class="nav-link" id="productosvendidos-tab" data-bs-toggle="tab" data-bs-target="#productosvendidos" type="button" role="tab" aria-controls="productosvendidos" aria-selected="true">Productos Vendidos</button>
         </li>
+        <li class="nav-item" role="ventasporpunto">
+            <button class="nav-link" id="ventasporpunto-tab" data-bs-toggle="tab" data-bs-target="#ventasporpunto" type="button" role="tab" aria-controls="ventasporpunto" aria-selected="true">Ventas que usaron Punto</button>
+        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -161,6 +164,41 @@
                         </tr>
                     </thead>
                     <tbody id="body-productosvendidos"> </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="tab-pane fade show" id="ventasporpunto" role="tabpanel" aria-labelledby="ventasporpunto-tab">
+            <!-- Aquí van los campos de entrada de fecha -->
+            <div class="row mt-4 g-0">
+                <div class="col-4">
+                    <label for="fecha-inicio">Fecha de inicio:</label>
+                    <input type="date" id="fecha-inicio">
+                </div>
+                <div class="col-4">
+                    <label for="fecha-fin">Fecha de fin:</label>
+                    <input type="date" id="fecha-fin">
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary" id="botonConsultar" onclick="ventasPorPunto()">Buscar</button>
+                </div>
+            </div>
+            <!-- Aquí va la tabla de órdenes de reposición -->
+            <div class="mt-4 mx-auto">
+                <table id="table-ventasporpunto" class="table table-striped">
+                    <!-- Aquí va el encabezado y cuerpo de la tabla -->
+                    <thead>
+                        <tr>
+                            <th>Código Producto</th>
+                            <th>Categoría</th>
+                            <th>Clasificación</th>
+                            <th>Nombre del Producto</th>
+                            <th>Cantidad vendida</th>
+                            <th>Cliente</th>
+                            <th>Identificación del cliente</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-ventasporpunto"> </tbody>
                 </table>
             </div>
         </div>

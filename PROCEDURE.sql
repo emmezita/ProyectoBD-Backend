@@ -1828,10 +1828,261 @@ $$ LANGUAGE plpgsql;
 -- Ficha de Producto 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
+DROP VIEW IF EXISTS FichaProducto;
+
+CREATE VIEW FichaProducto AS
+WITH Ingredientes AS (
+    SELECT 
+        mez.fk_producto,
+        STRING_AGG(ing.ingrediente_nombre, ', ') AS ingredientes
+    FROM Mezclado mez
+    JOIN Ingrediente ing ON mez.fk_ingrediente = ing.ingrediente_codigo
+    GROUP BY mez.fk_producto
+),
+Sabores AS (
+    SELECT 
+        prosa.fk_producto,
+        STRING_AGG(sab.sabor_descripcion, ', ') AS sabores
+    FROM Producto_Sabor prosa
+    JOIN Sabor sab ON prosa.fk_sabor = sab.sabor_codigo
+    GROUP BY prosa.fk_producto
+),
+Aromas AS (
+	SELECT 
+        proar.fk_producto,
+        STRING_AGG(aro.aroma_descripcion, ', ') AS aromas
+    FROM Producto_Aroma proar
+    JOIN Aroma aro ON proar.fk_aroma = aro.aroma_codigo
+    GROUP BY proar.fk_producto	
+),
+Servidos AS (
+	SELECT
+		proser.fk_producto,
+		STRING_AGG(ser.servido_nombre || ': ' || ser.servido_descripcion, ', ') as servidos
+	FROM Producto_Servido proser
+	JOIN Servido ser ON proser.fk_servido = ser.servido_codigo
+	GROUP BY proser.fk_producto
+),
+Anejamientos AS (
+    SELECT 
+        mez.fk_producto,
+        STRING_AGG(DISTINCT CONCAT(ane.anejamiento_descripcion, ' durante ', ane.anejamiento_tiempo, ' años en ', bar.barrica_nombre,
+               COALESCE(' y luego en ' || ane_padre.anejamiento_descripcion || ' por ' || ane_padre.anejamiento_tiempo || ' años', '')), ', ') AS anejamiento
+    FROM Mezclado mez
+    LEFT JOIN Anejamiento ane ON mez.fk_anejamiento = ane.anejamiento_codigo
+    LEFT JOIN Barrica bar ON ane.fk_barrica = bar.barrica_codigo
+    LEFT JOIN Anejamiento ane_padre ON ane.fk_anejamiento = ane_padre.anejamiento_codigo
+    GROUP BY mez.fk_producto
+)
+SELECT 
+    pre.fk_material_botella_1 as material_id,
+    pre.fk_material_botella_2 as botella_id,
+    pre.fk_producto as producto_id,
+    pro.producto_nombre::TEXT  as nombre, 
+    ('Es un ' || cla_hijo.clasificacion_nombre || ' del ' || cla_padre.clasificacion_nombre || '. ' || pro.producto_descripcion)::TEXT as descripcion,
+    (fer.fermentacion_metodo || ' y ' || de.destilacion_metodo)::TEXT as elaboracion,
+    (ane.anejamiento_descripcion || ' durante ' || ane.anejamiento_tiempo || ' años' || ' en ' || bar.barrica_nombre)::TEXT as anejamiento,
+    CONCAT('Con un mezcla de ',ingre.ingredientes, ', en un ', anej.anejamiento)::TEXT AS mezclado,
+	CONCAT_WS('',
+		CASE WHEN sabo.sabores IS NOT NULL THEN 'Encontramos los siguientes sabores: ' || sabo.sabores || '. ' ELSE '' END,
+		CASE WHEN arom.aromas IS NOT NULL THEN 'Además, encontramos los siguientes aromas: ' || arom.aromas || '. ' ELSE '' END,
+		CASE WHEN cu.cuerpo_peso IS NOT NULL THEN 'Su peso es ' || LOWER(cu.cuerpo_peso) || '. ' ELSE '' END,
+		CASE WHEN cu.cuerpo_textura IS NOT NULL THEN 'Su textura es ' || LOWER(cu.cuerpo_textura) || '. ' ELSE '' END,
+		CASE WHEN cu.cuerpo_densidad IS NOT NULL THEN 'Su densidad es ' || LOWER(cu.cuerpo_densidad) || '. ' ELSE '' END,
+		CASE WHEN cu.cuerpo_descripcion IS NOT NULL THEN 'Se percibe ' || LOWER(cu.cuerpo_descripcion) || '. ' ELSE '' END,
+		CASE WHEN re.regusto_entrada IS NOT NULL THEN 'De entrada ' || LOWER(re.regusto_entrada) || ', ' ELSE '' END,
+		CASE WHEN re.regusto_evolucion IS NOT NULL THEN 'Evoluciona ' || LOWER(re.regusto_evolucion) || ', ' ELSE '' END,
+		CASE WHEN re.regusto_persistencia IS NOT NULL THEN 'Persiste ' || LOWER(re.regusto_persistencia) || ', ' ELSE '' END,
+		CASE WHEN re.regusto_acabado IS NOT NULL THEN 'Acaba ' || LOWER(re.regusto_acabado) || ', ' ELSE '' END,
+		CASE WHEN re.regusto_descripcion IS NOT NULL THEN 'Concluimos que tiene ' || LOWER(re.regusto_descripcion) || '.' ELSE '' END
+	) AS notas_catado,
+	serv.servidos,
+	(bot.botella_capacidad || ' lt')::TEXT as capacidad, 
+	(pro.producto_grado_alcoholico || '°GL')::TEXT as grado_alcohol,
+	('Ron '|| cat.categoria_nombre || ' con ' || re.regusto_descripcion ||' envejecido por '|| ane.anejamiento_tiempo || ' años en ' || bar.barrica_nombre ) as descripcion_presentacion,
+	('Ron proveniente de la parroquia ' || INITCAP(parroquia.lugar_nombre) || ', municipio ' || municipio.lugar_nombre
+	|| ', estado '|| estado.lugar_nombre)::TEXT as origen,
+	cat.categoria_nombre::TEXT as segmento,
+	caja_lote.caja_descripcion::TEXT as caja_lote,
+	(caja_lote.caja_capacidad || ' cajas')::TEXT as pallet,
+	(bot.botella_descripcion || ' de ' || mat.material_nombre)::TEXT as botella,
+	tap.tapa_descripcion::TEXT as tapa,
+	(bot.botella_altura || ' cm')::TEXT as alto, 
+	(bot.botella_ancho || ' cm')::TEXT as ancho,
+	(pre.presentacion_peso || ' Kg')::TEXT as peso, 
+	caja_individual.caja_descripcion::TEXT as caja_individual
+FROM Presentacion pre 
+JOIN Material_Botella mabo ON pre.fk_material_botella_1 = mabo.fk_material 
+						  AND pre.fk_material_botella_2 = mabo.fk_botella
+JOIN Botella bot ON bot.botella_codigo = mabo.fk_botella
+JOIN Material mat ON mat.material_codigo = mabo.fk_material
+JOIN Caja caja_individual ON pre.fk_caja = caja_individual.caja_codigo
+JOIN Caja caja_lote ON caja_individual.fk_caja = caja_lote.caja_codigo
+JOIN Tapa tap ON pre.fk_tapa = tap.tapa_codigo
+JOIN Producto pro ON pre.fk_producto = pro.producto_codigo
+JOIN Lugar parroquia ON pro.fk_lugar = parroquia.lugar_codigo
+JOIN Lugar municipio ON parroquia.fk_lugar = municipio.lugar_codigo
+JOIN Lugar estado ON municipio.fk_lugar = estado.lugar_codigo
+JOIN Clasificacion cla_hijo ON pro.fk_clasificacion = cla_hijo.clasificacion_codigo
+JOIN Clasificacion cla_padre ON cla_hijo.fk_clasificacion = cla_padre.clasificacion_codigo
+JOIN Categoria cat ON pro.fk_categoria = cat.categoria_codigo
+JOIN Fermentacion fer ON pro.fk_fermentacion = fer.fermentacion_codigo
+JOIN Destilacion de ON pro.fk_destilacion = de.destilacion_codigo
+JOIN Mezclado mez ON pro.producto_codigo = mez.fk_producto
+JOIN Anejamiento ane ON mez.fk_anejamiento = ane.anejamiento_codigo
+JOIN Barrica bar ON ane.fk_barrica = bar.barrica_codigo
+LEFT JOIN Ingredientes ingre ON pro.producto_codigo = ingre.fk_producto
+LEFT JOIN Anejamientos anej ON pro.producto_codigo = anej.fk_producto
+LEFT JOIN Sabores sabo ON pro.producto_codigo = sabo.fk_producto
+LEFT JOIN Aromas arom ON pro.producto_codigo = arom.fk_producto
+LEFT JOIN Servidos serv ON pro.producto_codigo = serv.fk_producto
+LEFT JOIN Cuerpo cu ON pro.producto_codigo = cu.fk_producto
+LEFT JOIN Regusto re ON pro.producto_codigo = re.fk_producto
+GROUP BY
+    material_id, botella_id, producto_id,
+    nombre, descripcion, elaboracion, ane.anejamiento_descripcion, ane.anejamiento_tiempo, bar.barrica_nombre,
+	anejamiento, ingre.ingredientes, sabo.sabores, arom.aromas, serv.servidos,
+	capacidad, grado_alcohol, descripcion_presentacion, origen, segmento, caja_lote, pallet, botella, tapa,
+	alto, ancho, peso, caja_individual, cu.cuerpo_peso, cu.cuerpo_textura, cu.cuerpo_densidad, cu.cuerpo_descripcion,
+    re.regusto_entrada, re.regusto_evolucion, re.regusto_persistencia, re.regusto_acabado, re.regusto_descripcion;
+
+CREATE OR REPLACE FUNCTION obtenerFichaProducto(presentacion_1 INT, presentacion_2 INT, presentacion_3 INT) 
+RETURNS TABLE (
+    material_id INT,
+    botella_id INT,
+    producto_id INT,
+    nombre TEXT,
+    descripcion TEXT,
+    elaboracion TEXT,
+    anejamiento TEXT,
+    mezclado TEXT,
+    notas_catado TEXT,
+    servidos TEXT,
+    capacidad TEXT,
+    grado_alcohol TEXT,
+    descripcion_presentacion TEXT,
+    origen TEXT,
+    segmento TEXT,
+    caja_lote TEXT,
+    pallet TEXT,
+    botella TEXT,
+    tapa TEXT,
+    alto TEXT,
+    ancho TEXT,
+    peso TEXT,
+    caja_individual TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM FichaProducto fp
+    WHERE fp.material_id = presentacion_1
+    AND fp.botella_id = presentacion_2
+    AND fp.producto_id = presentacion_3;
+END;
+$$ LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Detalle de Movimiento
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+DROP FUNCTION IF EXISTS DetalleMovimientoInventarioPorMes(INT, INT);
+
+CREATE OR REPLACE FUNCTION DetalleMovimientoInventarioPorMes(mes INT, anio INT)
+RETURNS TABLE(
+    tipo_movimiento TEXT,
+    fecha_movimiento DATE,
+    codigo_presentacion TEXT,
+    nombre_presentacion TEXT,
+    cantidad INT,
+    origen_destino TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    -- Entradas por Ordenes de Compra o Reposicion
+    SELECT 
+        'Entrada' AS tipo_movimiento,
+        orp.orden_fecha AS fecha_movimiento,
+        CASE
+            WHEN dor.fk_inventario_almacen_1 IS NOT NULL THEN
+                (dor.fk_inventario_almacen_2 || '' || dor.fk_inventario_almacen_3 || '' || dor.fk_inventario_almacen_4)::TEXT
+            ELSE
+                (dor.fk_inventario_tienda_2 || '' || dor.fk_inventario_tienda_3 || '' || dor.fk_inventario_tienda_4)::TEXT
+        END AS codigo_presentacion,
+        CASE
+            WHEN dor.fk_inventario_almacen_1 IS NOT NULL THEN
+                (pro_almacen.producto_nombre || ' de ' || bo_almacen.botella_capacidad || ' lt.')::TEXT
+            ELSE
+                (pro_tienda.producto_nombre || ' de ' || bo_tienda.botella_capacidad || ' lt.')::TEXT
+        END AS nombre_presentacion,
+        dor.detalle_orden_cantidad AS cantidad,
+        CASE
+            WHEN dor.fk_inventario_almacen_1 IS NOT NULL THEN 'Proveedor a Almacen'
+            ELSE 'Almacen a Tienda'
+        END AS origen_destino
+    FROM Detalle_Orden_De_Reposicion dor
+    JOIN Orden_De_Reposicion orp ON dor.fk_orden = orp.orden_codigo
+    LEFT JOIN Producto pro_almacen ON pro_almacen.producto_codigo = dor.fk_inventario_almacen_4
+    LEFT JOIN Botella bo_almacen ON bo_almacen.botella_codigo = dor.fk_inventario_almacen_3
+    LEFT JOIN Producto pro_tienda ON pro_tienda.producto_codigo = dor.fk_inventario_tienda_4
+    LEFT JOIN Botella bo_tienda ON bo_tienda.botella_codigo = dor.fk_inventario_tienda_3
+    WHERE EXTRACT(MONTH FROM orp.orden_fecha) = mes
+      AND EXTRACT(YEAR FROM orp.orden_fecha) = anio
+
+    UNION ALL
+
+    -- Salidas por Pedidos
+    SELECT 
+        'Salida' AS tipo_movimiento,
+        pe.pedido_fecha AS fecha_movimiento,
+        (dp.fk_inventario_almacen_2 || '' || dp.fk_inventario_almacen_3 || '' || dp.fk_inventario_almacen_4)::TEXT as codigo_presentacion,
+        (pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.')::TEXT AS nombre_presentacion,
+        dp.detalle_pedido_cantidad AS cantidad,
+        'Pedido a Cliente' AS origen_destino
+    FROM Detalle_Pedido dp
+    JOIN Pedido pe ON dp.fk_pedido = pe.pedido_codigo
+    JOIN Producto pro ON pro.producto_codigo = dp.fk_inventario_almacen_4
+    JOIN botella bo ON bo.botella_codigo = dp.fk_inventario_almacen_3
+    WHERE EXTRACT(MONTH FROM pe.pedido_fecha) = mes
+      AND EXTRACT(YEAR FROM pe.pedido_fecha) = anio
+
+    UNION ALL
+
+    -- Salidas por Facturas (Tienda o Evento)
+    SELECT 
+        'Salida' AS tipo_movimiento,
+        fa.factura_fecha AS fecha_movimiento,
+        CASE
+            WHEN df.fk_evento_lista_producto_1 IS NOT NULL THEN
+                (df.fk_evento_lista_producto_3 || '' || df.fk_evento_lista_producto_4 || '' || df.fk_evento_lista_producto_5)::TEXT
+            ELSE
+                (df.fk_inventario_tienda_2 || '' || df.fk_inventario_tienda_3 || '' || df.fk_inventario_tienda_4)::TEXT
+        END AS codigo_presentacion,
+        CASE
+            WHEN df.fk_evento_lista_producto_1 IS NOT NULL THEN
+                (pro_evento.producto_nombre || ' de ' || bo_evento.botella_capacidad || ' lt.')::TEXT
+            ELSE
+                (pro_tienda.producto_nombre || ' de ' || bo_tienda.botella_capacidad || ' lt.')::TEXT
+        END AS nombre_presentacion,
+        df.detalle_factura_cantidad AS cantidad,
+        CASE
+            WHEN df.fk_inventario_tienda_1 IS NOT NULL THEN 'Tienda a Cliente'
+            ELSE 'Evento a Cliente'
+        END AS origen_destino
+    FROM Detalle_Factura df
+    JOIN Factura fa ON df.fk_factura = fa.factura_codigo
+    LEFT JOIN Producto pro_evento ON pro_evento.producto_codigo = df.fk_evento_lista_producto_5
+    LEFT JOIN Botella bo_evento ON bo_evento.botella_codigo = df.fk_evento_lista_producto_4
+    LEFT JOIN Producto pro_tienda ON pro_tienda.producto_codigo = df.fk_inventario_tienda_4
+    LEFT JOIN Botella bo_tienda ON bo_tienda.botella_codigo = df.fk_inventario_tienda_3
+    WHERE EXTRACT(MONTH FROM fa.factura_fecha) = mes
+      AND EXTRACT(YEAR FROM fa.factura_fecha) = anio;
+END; $$
+LANGUAGE plpgsql;
+
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 -- Dashboard
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
 
 DROP FUNCTION IF EXISTS obtenerProductoMasVendido(date, date);
 

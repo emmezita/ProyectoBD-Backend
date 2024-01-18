@@ -4424,7 +4424,7 @@ VALUES
   ('Pesado', 'Cremoso', 'Alta', 'Sensación alcohólica intensa y untuosa', 21), --CARUPANO 21
   ('Pesado', 'Cremoso', 'Alta', 'Composición persistente con final meloso', 22), --CARUPANO 18
   ('Pesado', 'Cremoso', 'Alta', 'Composición untuosa pero equilibrada', 23), --CARUPANO 12
-  ('Medio', 'Cremoso', 'Media', 'Equilibrado con toques de melaza', 23), --CARUPANO 6
+  ('Medio', 'Cremoso', 'Media', 'Equilibrado con toques de melaza', 24), --CARUPANO 6
   ('Pesado', 'Viscoso', 'Alta', 'Composición compleja y pesada', 1), --PAMPERO ANIVERSARIO
   ('Medio', 'Viscoso', 'Media', 'Seco pero equilibrado', 2), --PAMPERO SELECCIÓN
   ('Ligero', 'Sedoso', 'Baja', 'De carácter ligero y persistente', 3), --PAMPERO ESPECIAL
@@ -4440,30 +4440,30 @@ VALUES
 
 INSERT INTO Regusto (regusto_entrada, regusto_evolucion, regusto_persistencia, regusto_acabado, regusto_descripcion, fk_producto) 
 VALUES
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque afrutado', 5), --CACIQUE AÑEJO
-  (' ', ' ', ' ', ' ', 'Matices de frutos secos con toque de vainilla', 6), --CACIQUE 500
-  (' ', ' ', ' ', ' ', 'Matiz dulce con toque de vainilla', 7), --CACIQUE ANTIGUO
-  (' ', ' ', ' ', ' ', 'Matiz dulce de frutos tropicales', 8), --CACIQUE ORIGEN
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque de vainilla', 9), --CACIQUE LEYENDA
-  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos secos', 18), --CARUPANO LEGENDARIO
-  (' ', ' ', ' ', ' ', 'Matiz seca y sobria con toque de frutos negros', 19), --CARUPANO X.O.
-  (' ', ' ', ' ', ' ', 'Matiz seca y elegante con toque de café y tabaco', 20), --CARUPANO 1996
-  (' ', ' ', ' ', ' ', 'Matices de frutas maceradas y tabaco', 21), --CARUPANO 21
-  (' ', ' ', ' ', ' ', 'Matices dulces con entrada vigorosa', 22), --CARUPANO 18
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque de maple', 23), --CARUPANO 12
-  (' ', ' ', ' ', ' ', 'Matices dulces con toque de frutos secos', 24), --CARUPANO 6
-  (' ', ' ', ' ', ' ', 'Matices cítricas con toque dulce', 1), --PAMPERO ANIVERSARIO
-  (' ', ' ', ' ', ' ', 'Matices dulces y amargas', 2), --PAMPERO SELECCIÓN
-  (' ', ' ', ' ', ' ', 'Matices dulces con notas de barrica', 3), --PAMPERO ESPECIAL
-  (' ', ' ', ' ', ' ', 'Matices dulces con frutos tropicales', 4), --PAMPERO BLANCO
-  (' ', ' ', ' ', ' ', 'Matiz seca con notas dulces y meladas', 10), --ROBLE MAESTRO
-  (' ', ' ', ' ', ' ', 'Matiz dulce con frutos secos', 11), --ROBLE EXTRA AÑEJO
-  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos', 12), --ROBLE ULTRA AÑEJO
-  (' ', ' ', ' ', ' ', 'Matices de múltiples tipos de frutos y madera', 13), --ROBLE ZAFRA
-  (' ', ' ', ' ', ' ', 'Matices de frutos rojos y chocolate', 14), --SANTA TERESA 1796
-  (' ', ' ', ' ', ' ', 'Matices de chocolate y caña dulce', 15), --SANTA TERESA G. RESERVA
-  (' ', ' ', ' ', ' ', 'Matices de frutos secos y almendra', 16), --SANTA TERESA LINAJE
-  (' ', ' ', ' ', ' ', 'Matices de ron e infusión de café molido', 17); --SANTA TERESA ARAKÚ
+  (NULL, NULL, NULL, NULL, 'Matices dulces con toque afrutado', 5), --CACIQUE AÑEJO
+  (NULL, NULL, NULL, NULL, 'Matices de frutos secos con toque de vainilla', 6), --CACIQUE 500
+  (NULL, NULL, NULL, NULL, 'Matiz dulce con toque de vainilla', 7), --CACIQUE ANTIGUO
+  (NULL, NULL, NULL, NULL, 'Matiz dulce de frutos tropicales', 8), --CACIQUE ORIGEN
+  (NULL, NULL, NULL, NULL, 'Matices dulces con toque de vainilla', 9), --CACIQUE LEYENDA
+  (NULL, NULL, NULL, NULL, 'Matiz seca y sobria con toque de frutos secos', 18), --CARUPANO LEGENDARIO
+  (NULL, NULL, NULL, NULL, 'Matiz seca y sobria con toque de frutos negros', 19), --CARUPANO X.O.
+  (NULL, NULL, NULL, NULL, 'Matiz seca y elegante con toque de café y tabaco', 20), --CARUPANO 1996
+  (NULL, NULL, NULL, NULL, 'Matices de frutas maceradas y tabaco', 21), --CARUPANO 21
+  (NULL, NULL, NULL, NULL, 'Matices dulces con entrada vigorosa', 22), --CARUPANO 18
+  (NULL, NULL, NULL, NULL, 'Matices dulces con toque de maple', 23), --CARUPANO 12
+  (NULL, NULL, NULL, NULL, 'Matices dulces con toque de frutos secos', 24), --CARUPANO 6
+  (NULL, NULL, NULL, NULL, 'Matices cítricas con toque dulce', 1), --PAMPERO ANIVERSARIO
+  (NULL, NULL, NULL, NULL, 'Matices dulces y amargas', 2), --PAMPERO SELECCIÓN
+  (NULL, NULL, NULL, NULL, 'Matices dulces con notas de barrica', 3), --PAMPERO ESPECIAL
+  (NULL, NULL, NULL, NULL, 'Matices dulces con frutos tropicales', 4), --PAMPERO BLANCO
+  (NULL, NULL, NULL, NULL, 'Matiz seca con notas dulces y meladas', 10), --ROBLE MAESTRO
+  (NULL, NULL, NULL, NULL, 'Matiz dulce con frutos secos', 11), --ROBLE EXTRA AÑEJO
+  (NULL, NULL, NULL, NULL, 'Matices de múltiples tipos de frutos', 12), --ROBLE ULTRA AÑEJO
+  (NULL, NULL, NULL, NULL, 'Matices de múltiples tipos de frutos y madera', 13), --ROBLE ZAFRA
+  (NULL, NULL, NULL, NULL, 'Matices de frutos rojos y chocolate', 14), --SANTA TERESA 1796
+  (NULL, NULL, NULL, NULL, 'Matices de chocolate y caña dulce', 15), --SANTA TERESA G. RESERVA
+  (NULL, NULL, NULL, NULL, 'Matices de frutos secos y almendra', 16), --SANTA TERESA LINAJE
+  (NULL, NULL, NULL, NULL, 'Matices de ron e infusión de café molido', 17); --SANTA TERESA ARAKÚ
 
 INSERT INTO Aroma (aroma_descripcion) 
 VALUES
@@ -4879,11 +4879,11 @@ VALUES
   (18, 3, 3), --PAMPERO ESPECIAL
   (18, 6, 3), --PAMPERO ESPECIAL
   (18, 13, 3), --PAMPERO ESPECIAL
-  (19, 1, 3), --PAMPERO BLANCO
-  (19, 2, 3), --PAMPERO BLANCO
-  (19, 4, 3), --PAMPERO BLANCO
-  (19, 6, 3), --PAMPERO BLANCO
-  (19, 14, 3), --PAMPERO BLANCO
+  (19, 1, 4), --PAMPERO BLANCO
+  (19, 2, 4), --PAMPERO BLANCO
+  (19, 4, 4), --PAMPERO BLANCO
+  (19, 6, 4), --PAMPERO BLANCO
+  (19, 14, 4), --PAMPERO BLANCO
   (4, 1, 10), --ROBLE MAESTRO
   (4, 2, 10), --ROBLE MAESTRO
   (4, 3, 10), --ROBLE MAESTRO
