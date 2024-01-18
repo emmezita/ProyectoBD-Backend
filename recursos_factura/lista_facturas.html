@@ -169,33 +169,18 @@
         </div>
 
         <div class="tab-pane fade show" id="ventasporpunto" role="tabpanel" aria-labelledby="ventasporpunto-tab">
-            <!-- Aquí van los campos de entrada de fecha -->
-            <div class="row mt-4 g-0">
-                <div class="col-4">
-                    <label for="fecha-inicio">Fecha de inicio:</label>
-                    <input type="date" id="fecha-inicio">
-                </div>
-                <div class="col-4">
-                    <label for="fecha-fin">Fecha de fin:</label>
-                    <input type="date" id="fecha-fin">
-                </div>
-                <div class="col-3">
-                    <button class="btn btn-primary" id="botonConsultar" onclick="ventasPorPunto()">Buscar</button>
-                </div>
-            </div>
             <!-- Aquí va la tabla de órdenes de reposición -->
             <div class="mt-4 mx-auto">
                 <table id="table-ventasporpunto" class="table table-striped">
                     <!-- Aquí va el encabezado y cuerpo de la tabla -->
                     <thead>
                         <tr>
-                            <th>Código Producto</th>
-                            <th>Categoría</th>
-                            <th>Clasificación</th>
-                            <th>Nombre del Producto</th>
-                            <th>Cantidad vendida</th>
-                            <th>Cliente</th>
+                            <th>Tipo de Venta</th>
+                            <th>Codigo</th>
+                            <th>Fecha</th>
+                            <th>Nombre del Cliente</th>
                             <th>Identificación del cliente</th>
+                            <th>Total de Puntos Canjeados</th>
                         </tr>
                     </thead>
                     <tbody id="body-ventasporpunto"> </tbody>
@@ -251,7 +236,46 @@ $(document).ready(function() {
             alert('Error al obtener las facturas');
         }
     });
-    
+
+    $.ajax({
+        url: 'http://localhost:5000/api/ventas/punto/all',
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].tipoVenta + '</td>');
+                row.append('<td>' + data[i].codigoVenta + '</td>');
+                var fecha = formatDate(data[i].fecha);
+                row.append('<td>' + fecha + '</td>');
+                row.append('<td>' + data[i].nombreCliente + '</td>');
+                row.append('<td>' + data[i].identificacionCliente + '</td>');
+                row.append('<td>' + data[i].puntosUtilizados + '</td>');
+                $('#body-ventasporpunto').append(row);
+            }
+
+
+            $('#table-ventasporpunto').DataTable({
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron resultados",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        },
+        error: function() {
+            alert('Error al obtener las ventas por punto');
+        }
+    });
 });
 
 
