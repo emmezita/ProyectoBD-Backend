@@ -2068,3 +2068,21 @@ BEGIN
     GROUP BY est.estatus_pedido_codigo, est.estatus_pedido_nombre;
 END; $$
 LANGUAGE plpgsql;
+
+-- Funcion para obtener el total de pedidos en retraso en un tiempo determinado
+CREATE OR REPLACE FUNCTION ObtenerTotalPedidosEnRetraso(fecha_inicio DATE, fecha_fin DATE)
+RETURNS INTEGER AS $$
+DECLARE
+    total_pedidos_retraso INT;
+BEGIN
+    SELECT COUNT(*)
+    INTO total_pedidos_retraso
+    FROM Pedido pe
+    JOIN Historico_Estatus_Pedido ep ON pe.pedido_codigo = ep.fk_pedido
+                                    AND ep.fecha_hora_fin_estatus IS NULL
+									AND ep.fk_estatus_pedido = 5
+    WHERE pe.pedido_fecha BETWEEN fecha_inicio AND fecha_fin;
+
+    RETURN COALESCE(total_pedidos_retraso, 0);
+END; $$
+LANGUAGE plpgsql;
