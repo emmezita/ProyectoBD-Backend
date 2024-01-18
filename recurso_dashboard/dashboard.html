@@ -205,10 +205,11 @@ $(document).ready(function() {
     // Obtenemos todos los datos de una vez
     $.ajax({
         url: "http://localhost:5000/api/dashboard/all",
-        type: "PUT",
+        type: "POST",
         dataType: "json",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "access-control-allow-origin": "*"
         },
         data: data,
         success: function(data) {
@@ -233,10 +234,11 @@ function filtrar() {
     // Obtenemos todos los datos de una vez
     $.ajax({
         url: "http://localhost:5000/api/dashboard/all",
-        type: "PUT",
+        type: "POST",
         dataType: "json",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "access-control-allow-origin": "*"
         },
         data: JSON.stringify({
             fechaInicio: fechaInicio,

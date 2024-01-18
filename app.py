@@ -3872,7 +3872,7 @@ def guardar_diario_ronero():
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 # Ruta para obtener el dashboard
-@app.route("/api/dashboard/all", methods=["PUT"])
+@app.route("/api/dashboard/all", methods=["POST"])
 def obtener_dashboard():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     periodo = request.get_json()
@@ -3925,7 +3925,7 @@ def obtener_dashboard():
     if rows is not None:
         datos['puntosCanjeados'] = rows
     else:
-            datos['puntosCanjeados'] = None
+        datos['puntosCanjeados'] = None
 
     cur.execute('SELECT * FROM obtenerTotalPedidosPorEstatus(%s, %s)', (fechaInicio, fechaFin))
     rows = cur.fetchall()
@@ -3940,7 +3940,6 @@ def obtener_dashboard():
         datos['pedidosEnRetraso'] = rows
     else:
         datos['pedidosEnRetraso'] = None
-
 
     cur.close()
     
