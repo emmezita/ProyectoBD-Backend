@@ -111,6 +111,9 @@
         <li class="nav-item" role="presentaciones">
             <button class="nav-link" id="presentaciones-tab" data-bs-toggle="tab" data-bs-target="#presentaciones" type="button" role="tab" aria-controls="presentaciones" aria-selected="false">Presentaciones</button>
         </li>
+        <li class="nav-item" role="detallemovimiento">
+            <button class="nav-link" id="detallemovimiento-tab" data-bs-toggle="tab" data-bs-target="#detallemovimiento" type="button" role="tab" aria-controls="detallemovimiento" aria-selected="false">Detalle del Movimeinto de Inventario</button>
+        </li>
     </ul>
 
     <!-- Tab panes -->
@@ -196,6 +199,35 @@
                     <tbody id="body-presentaciones"> </tbody>
                 </table>
             </div>
+        </div>
+        <div class="tab-pane fade" id="detallemovimiento" role="tabpanel" aria-labelledby="detallemovimiento-tab">
+            <!-- Aquí van los campos de entrada de fecha -->
+            <div class="row mt-4 g-0">
+                <div class="col-4">
+                    <label for="fecha-movimiento">Fecha del Movimiento:</label>
+                    <input type="date" id="fecha-movimiento">
+                </div>
+                <div class="col-3">
+                    <button class="btn btn-primary" id="botonConsultar" onclick="detalleMovimiento()">Buscar</button>
+                </div>
+            </div>
+            
+            <div class="mt-4 mx-auto">
+                <table id="table-detallemovimiento" class="table table-striped ">
+                    <thead>
+                        <tr>
+                            <th>Tipo de Movimiento</th>
+                            <th>Fecha</th>
+                            <th>Código del Producto</th>
+                            <th>Nombre del Producto</th>
+                            <th>Cantidad</th>
+                            <th>Origen a Destino</th>
+                        </tr>
+                    </thead>
+                    <tbody id="body-detallemovimiento"> </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Modales -->
@@ -397,6 +429,73 @@ $(document).ready(function() {
     });
 }); 
 
+function detalleMovimiento(){
+    var fechaMov = $('#fecha-movimiento').val()
+    var data = {
+        "fechaMovimiento": fechaMov
+    }
+
+    data = JSON.stringify(data)
+
+    $.ajax({
+        url: 'http://localhost:5000/api/detalle/movimiento',
+        type: 'POST',
+        dataType: 'json',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        data: data,
+        success: function(d) {
+
+            if ($.fn.DataTable.isDataTable('#table-detallemovimiento')) {
+                console.log("true")
+                $('#table-detallemovimiento').DataTable().clear().destroy();
+            } else {
+                console.log("false")
+            }
+
+            data = d;
+            for (var i = 0; i < data.length; i++) {
+                var row = $('<tr>');
+                row.append('<td>' + data[i].tipo_movimiento + '</td>');
+                fecha_movimiento = formatDate(data[i].fecha_movimiento)
+                row.append('<td>' + fecha_movimiento + '</td>');
+                row.append('<td>' + data[i].codigo_presentacion + '</td>');
+                row.append('<td>' + data[i].nombre_presentacion + '</td>');
+                row.append('<td>' + data[i].cantidad + '</td>');
+                row.append('<td>' + data[i].origen_destino + '</td>');
+
+                $('#body-detallemovimiento').append(row);
+            }
+
+            if ($.fn.DataTable.isDataTable('#table-detallemovimiento')) {
+                $('#table-detallemovimiento').DataTable().draw();
+            } else {
+                $('#table-detallemovimiento').DataTable({
+                    "language": {
+                        "lengthMenu": "Mostrar _MENU_ registros por página",
+                        "zeroRecords": "No se encontraron resultados",
+                        "info": "Mostrando página _PAGE_ de _PAGES_",
+                        "infoEmpty": "No hay registros disponibles",
+                        "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                        "search": "Buscar:",
+                        "paginate": {
+                            "first": "Primero",
+                            "last": "Último",
+                            "next": "Siguiente",
+                            "previous": "Anterior"
+                        },
+                    }
+                });
+            }
+        },
+        error: function() {
+            alert('Hubo un error obteniendo el detalle del movimiento');
+        }
+    });
+}
+
+
 $('#deleteProCostumerModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget) // Button that triggered the modal
     var costumerId = button.data('procostumer-id') // Extract info from data-* attributes
@@ -453,6 +552,24 @@ $('#delete-precostumer-button').click(function() {
         }
     });
 });
+
+// como lo formatea al huso horario de venezuela y orginialmente es GMT 0, resta 4 horas
+//le sumamos 5 horas por para pasar de dia al correcto
+function formatDate(dateString) {
+    var oldDate = new Date(dateString);
+    var date = new Date(oldDate.getTime() + 5 * 60 * 60 * 1000);
+
+    var day = '' + date.getDate(),
+        month = '' + (date.getMonth() + 1), 
+        year = date.getFullYear();
+
+    if (day.length < 2) 
+        day = '0' + day;
+    if (month.length < 2) 
+        month = '0' + month;
+
+    return [day, month, year].join('/');
+}
 
 function editarProducto(id){
     console.log('editar Producto');

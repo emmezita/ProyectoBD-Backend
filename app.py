@@ -1,5 +1,6 @@
 from calendar import c
 import datetime
+from datetime import datetime
 import os
 import json
 from re import sub
@@ -4085,6 +4086,32 @@ def obtener_asistencias():
 def obtener_ventas_punto():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     cur.execute('SELECT * FROM obtenerVentasPunto()')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+# REPORTE DEL DETALLE DEL MOVIMIENTO DE INVENTARIO
+# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+# Ruta para obtener el detalle del movimiento de inventario por mes
+@app.route("/api/detalle/movimiento", methods=["POST"])
+def obtener_detalle_movimiento():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    periodo = request.get_json()
+    pprint(periodo)
+    fechaMovimiento = periodo.get("fechaMovimiento")
+    
+    # Asegurarse de que fechaMovimiento es un objeto datetime
+    if isinstance(fechaMovimiento, str):
+        fechaMovimiento = datetime.strptime(fechaMovimiento, '%Y-%m-%d')  # Ajusta el formato de la fecha según sea necesario
+
+    # Extraer el mes y el año
+    mes = fechaMovimiento.month
+    anio = fechaMovimiento.year
+    
+    cur.execute('SELECT * FROM DetalleMovimientoInventarioPorMes(%s,%s)', (mes, anio))
     rows = cur.fetchall()
     cur.close()
     pprint(rows)
