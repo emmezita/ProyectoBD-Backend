@@ -1828,7 +1828,7 @@ $$ LANGUAGE plpgsql;
 -- Ficha de Producto 
 -- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-DROP VIEW IF EXISTS FichaProducto;
+--DROP VIEW IF EXISTS FichaProducto;
 
 CREATE OR REPLACE VIEW FichaProducto AS
 WITH Ingredientes AS (
@@ -2390,6 +2390,8 @@ SELECT
     Des.fk_presentacion_2,
     Des.fk_presentacion_3,
 	(pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.') AS nombre_presentacion,
+    hpva.precio_venta_valor as precio_almacen,
+    hpvt.precio_venta_valor as precio_tienda,
 	(hpva.precio_venta_valor - (hpva.precio_venta_valor * (Des.descuento_porcentaje/100)))::NUMERIC(10,2) as precio_almacen_descuento,
 	(hpvt.precio_venta_valor - (hpvT.precio_venta_valor * (Des.descuento_porcentaje/100)))::NUMERIC(10,2) as precio_tienda_descuento,
 	i.imagen_nombre as imagen
@@ -2423,6 +2425,8 @@ RETURNS TABLE(
     fk_presentacion_2 INT,
     fk_presentacion_3 INT,
     nombre_presentacion TEXT,
+    precio_almacen NUMERIC(10,2),
+    precio_tienda NUMERIC(10,2),
     precio_almacen_descuento NUMERIC(10,2),
     precio_tienda_descuento NUMERIC(10,2),
     imagen VARCHAR(100)
@@ -2439,6 +2443,8 @@ BEGIN
         D.fk_presentacion_2,
         D.fk_presentacion_3,
         D.nombre_presentacion,
+        D.precio_almacen,
+        D.precio_tienda,
         D.precio_almacen_descuento,
         D.precio_tienda_descuento,
         D.imagen
