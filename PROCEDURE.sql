@@ -2413,6 +2413,8 @@ JOIN historico_precio_venta hpvt ON (hpvt.fk_inventario_tienda_1 = 1
 								AND hpvt.precio_venta_fecha_fin is null);
 
 -- Funcion para obtener los detalles de un Diario Ronero
+DROP FUNCTION IF EXISTS ObtenerDatosDiarioRonero(INT);
+
 CREATE OR REPLACE FUNCTION ObtenerDatosDiarioRonero(diario_id INT)
 RETURNS TABLE(
     diario_edicion INT,
@@ -2424,7 +2426,7 @@ RETURNS TABLE(
     nombre_presentacion TEXT,
     precio_almacen_descuento NUMERIC(10,2),
     precio_tienda_descuento NUMERIC(10,2),
-    imagen TEXT
+    imagen VARCHAR(100)
 ) 
 LANGUAGE plpgsql
 AS $$
