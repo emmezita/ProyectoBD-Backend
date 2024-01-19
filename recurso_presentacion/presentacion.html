@@ -33,6 +33,9 @@
         .fichaProducto h6 span{
             font-weight: normal;
         }
+        .indent {
+            text-indent: 20px;
+        }
     </style>
 
     <div class="container" style="overflow-y: scroll;">
@@ -51,28 +54,28 @@
                             </h1>
                             <h4 class="" id="descripcionProducto"></h4>
                         </div>
-                        <h5 class="mt-3">Elaboracion:</h5>
+                        <h5 class="mt-3"><strong>ELABORACIÓN: </strong></h5>
                         <p id="elaboracionProducto" class="mb-2"></p>
-                        <h6>Anejamiento: <span id="anejamientoProducto"></span></h5>
-                        <h6>Mezclado: <span id="mezcladoProducto"></span></h6>
-                        <h5>Nota de Cata:</h5>
+                        <h6 class="indent"><strong>Añejamiento: </strong><span id="anejamientoProducto"></span></h6>
+                        <h6 class="indent"><strong>Mezclado: </strong><span id="mezcladoProducto"></span></h6>
+                        <h5><strong>NOTAS DE CATADO</strong>:</h5>
                         <p id="notaCataProducto" class="mb-2"></p>
-                        <h5>Servidos:</h5>
+                        <h5><strong>CÓMO SERVIR:</strong></h5>
                         <p id="servidosProducto" class="mb-2"></p>
-                        <h5>DataSheet</h5>
-                        <h6>Capacidad: <span id="capcidadProducto"></span></h6>
-                        <h6>Grado Alcoholico: <span id="gradoProducto"></span></h6>
-                        <h6>Descripcion: <span id="descripcion2Producto"></span></h6> 
-                        <h6>Origen: <span id="origenProducto"></span></h6>
-                        <h6>Segmento: <span id="categoriaPresentacion"></span></h6>
-                        <h6>Caja Lote: <span id="cajaProducto"></span></h6>
-                        <h6>Pallet: <span id="palletProducto"></span></h6>
-                        <h6>Botella: <span id="botellaProducto"></span></h6>
-                        <h6>Tapa: <span id="tapaProducto"></span></h6>
-                        <h6>Alto: <span id="altoProducto"></span></h6>
-                        <h6>Ancho: <span id="anchoProducto"></span></h6>
-                        <h6>Peso: <span id="pesoProducto"></span></h6>
-                        <h6>Caja Individual: <span id="cajaIndividualProducto"></span></h6>
+                        <h5><strong>DATASHEET</strong></h5>
+                        <h6><strong>Capacidad: </strong><span id="capcidadProducto"></span></h6>
+                        <h6><strong>Grado Alcohólico: </strong><span id="gradoProducto"></span></h6>
+                        <h6><strong>Descripción del producto:</strong> <span id="descripcion2Producto"></span></h6> 
+                        <h6><strong>Denominación de Origen: </strong><span id="origenProducto"></span></h6>
+                        <h6><strong>Segmento: </strong><span id="categoriaPresentacion"></span></h6>
+                        <h6><strong>Caja Lote: </strong><span id="cajaProducto"></span></h6>
+                        <h6><strong>Pallet: </strong><span id="palletProducto"></span></h6>
+                        <h6><strong>Botella: </strong><span id="botellaProducto"></span></h6>
+                        <h6><strong>Tapa: </strong><span id="tapaProducto"></span></h6>
+                        <h6><strong>Alto: </strong><span id="altoProducto"></span></h6>
+                        <h6><strong>Ancho: </strong><span id="anchoProducto"></span></h6>
+                        <h6><strong>Peso: </strong><span id="pesoProducto"></span></h6>
+                        <h6><strong>Caja Individual: </strong><span id="cajaIndividualProducto"></span></h6>
                     </div>
                 </div>
             </div>
@@ -82,11 +85,9 @@
         </div>
     </div>
 
-    <script>
+<script>
 
         $(document).ready(function() {
-
-        
 
         //Obtenemos los id del producto desde la url y hacemos ajax para obtener la informacion del producto
         var urlParams = new URLSearchParams(window.location.search);
@@ -136,7 +137,7 @@
         });
     })
 
-    </script>
+</script>
     
 </body>
 </html>
