@@ -2377,7 +2377,6 @@ BEGIN
         );
     END LOOP;
 
-    COMMIT;
 END;
 $$;
 

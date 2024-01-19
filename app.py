@@ -3864,17 +3864,16 @@ def obtener_diario_ronero():
     pprint(rows)
     return jsonify(rows), 200
 
+from psycopg2.extras import Json
+
 # Ruta para guardar el diario ronero
 @app.route("/api/diario/nuevo", methods=["POST"])
 def guardar_diario_ronero():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     try:
         diarios = request.get_json()
-        
-        for diario in diarios:
-            cur.execute('''
-                INSERT INTO diario_ronero (fecha, codigo_producto, cantidad, precio, costo, ganancia)
-                VALUES (%s, %s, %s, %s, %s, %s)''')
+        diarios = json.dumps(diarios)
+        cur.execute('CALL CrearDiarioConPresentaciones(%s)', (diarios,))
 
         conn.commit()
         return jsonify({"message": "Diario ronero guardado exitosamente"}), 200
@@ -3883,6 +3882,26 @@ def guardar_diario_ronero():
         return jsonify({"error": str(e)}), 500
     finally:
         cur.close()
+
+# Ruta para obtener todos los diarios roneros de la base de datos 
+@app.route("/api/diario/<int:id>", methods=["GET"])
+def obtener_diario(id):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT * FROM ObtenerDatosDiarioRonero(%s)', (id,))
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
+
+# Ruta para obtener los id de los diarios
+@app.route("/api/diario/id", methods=["GET"])
+def obtener_id_diario():
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute('SELECT diario_edicion as id FROM DiarioRonero GROUP BY diario_edicion ORDER BY diario_edicion DESC')
+    rows = cur.fetchall()
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
 
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # DASHBOARD
