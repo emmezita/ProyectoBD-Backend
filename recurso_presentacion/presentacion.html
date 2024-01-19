@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Presentacion</title>
+</head>
+<body>
+
+    <style>
+        .productoImg {
+            border: 2px solid #D1991A;
+            border-radius: 10px;
+        }
+        .productoImg img {
+            width: 100%;
+            height: 100%;
+        }
+        .Producto {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        #nombrePresentacion {
+            color: #1b4e92;
+        }
+        .fichaProducto h5, .fichaProducto h6 {
+            font-weight: bold;
+        }
+        .fichaProducto h5 span{
+            font-weight: normal;
+        }
+        .fichaProducto h6 span{
+            font-weight: normal;
+        }
+    </style>
+
+    <div class="container">
+        <div class="row w-100 justify-content-center align-items-center">
+            <div class="Producto col-12">
+                <div class="row justify-content-center">
+                    <div class="col-5 productoImg p-1">
+                        <img src="" alt="Imagen del producto">
+                    </div>
+                    <div class="col-6">
+                        <div>
+                            <h1 class="" id="nombrePresentacion">
+                                <b></b>
+                            </h1>
+                            <p class="">
+                                <i>Categoria: <span id="categoriaPresentacion"></span></i>
+                            </p>
+                            <h4 class="" id="descripcionProducto"></h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fichaProducto col-12 p-0">
+                <h2>
+                    <b>Informacion Adicional:</b>
+                </h2>
+                <h5 class="mt-3">Elaboracion:</h5>
+                <p id="elaboracionProducto"></p>
+                <h5>Anejamiento:</h5>
+                <p id="anejamientoProducto"></p>
+                <h5>Mezclado:</h5>
+                <p id="mezcladoProducto"></p>
+                <h5>Nota de Cata:</h5>
+                <p id="notaCataProducto"></p>
+                <h5>Servidos:</h5>
+                <p id="servidosProducto"></p>
+                <h6>Capacidad: <span id="capcidadProducto"></span></h6>
+                <h6>Grado Alcoholico: <span id="gradoProducto"></span></h6>
+                <h5 class="mt-3">Descripcion:</h5>
+                <p id="descripcion2Producto"></p>
+                <h6>Origen: <span id="origenProducto"></span></h6>
+                <h6>Caja Lote: <span id="cajaProducto"></span></h6>
+                <h6>Pallet: <span id="palletProducto"></span></h6>
+                <h6>Botella: <span id="botellaProducto"></span></h6>
+                <h6>Tapa: <span id="tapaProducto"></span></h6>
+                <h6>Alto: <span id="altoProducto"></span></h6>
+                <h6>Ancho: <span id="anchoProducto"></span></h6>
+                <h6>Peso: <span id="pesoProducto"></span></h6>
+                <h6>Caja Individual: <span id="cajaIndividualProducto"></span></h6>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        $(document).ready(function() {
+
+        
+
+        //Obtenemos los id del producto desde la url y hacemos ajax para obtener la informacion del producto
+        var urlParams = new URLSearchParams(window.location.search);
+        var id1 = urlParams.get('id1');
+        var id2 = urlParams.get('id2');
+        var id3 = urlParams.get('id3');
+
+        $.ajax({
+            url: "http://localhost:5000/api/producto/ficha/" + id1 + "/" + id2 + "/" + id3,
+            type: "GET",
+            dataType: 'json',
+            success: function(data, textStatus, jqXHR) {
+
+                console.log(data);
+
+                var producto = data;
+
+                $('#nombrePresentacion b').text(producto.nombre);
+                $('#categoriaPresentacion').text(producto.segmento);
+                $('#descripcionProducto').text(producto.descripcion);
+                $('#elaboracionProducto').text(producto.elaboracion);
+                $('#anejamientoProducto').text(producto.anejamiento);
+                $('#mezcladoProducto').text(producto.mezclado);
+                $('#notaCataProducto').text(producto.notas_catado);
+                $('#servidosProducto').text(producto.servidos);
+                $('#capcidadProducto').text(producto.capacidad);
+                $('#gradoProducto').text(producto.grado_alcohol);
+                $('#descripcion2Producto').text(producto.descripcion_presentacion);
+                $('#origenProducto').text(producto.origen);
+                $('#cajaProducto').text(producto.caja_lote);
+                $('#palletProducto').text(producto.pallet);
+                $('#botellaProducto').text(producto.botella);
+                $('#tapaProducto').text(producto.tapa);
+                $('#altoProducto').text(producto.alto);
+                $('#anchoProducto').text(producto.ancho);
+                $('#pesoProducto').text(producto.peso);
+                $('#cajaIndividualProducto').text(producto.caja_individual);
+
+                var img = producto.imagen;
+                var rutaImg = "https://asoronucab.blob.core.windows.net/images/" + img;
+                $('.productoImg img').attr('src', rutaImg);
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                
+            }
+        });
+    })
+
+    </script>
+    
+</body>
+</html>

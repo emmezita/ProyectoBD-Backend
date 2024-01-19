@@ -1,3 +1,4 @@
+from ast import For
 from calendar import c
 import datetime
 from datetime import datetime
@@ -2576,6 +2577,20 @@ def eliminar_presentacion(id1, id2, id3):
     cur.close()
     
     return Response(status=200, response="Presentacion eliminada exitosamente")
+
+#  Ruta para obtener la Ficha de un Producto
+@app.route("/api/producto/ficha/<int:id1>/<int:id2>/<int:id3>", methods=["GET"])
+def get_ficha_producto(id1, id2, id3):
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT * FROM obtenerFichaProducto(%s, %s, %s)", (id1, id2, id3))
+    rows = cur.fetchone()
+
+    if rows is None:
+        return Response(status=404, response="Producto no encontrado")
+
+    cur.close()
+    pprint(rows)
+    return jsonify(rows), 200
     
 # >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 # RUTAS PARA EL CRUD DE EVENTOS
@@ -3855,11 +3870,13 @@ def obtener_diario_ronero():
 def guardar_diario_ronero():
     cur = conn.cursor(cursor_factory=RealDictCursor)
     try:
-        diario = request.get_json()
-        pprint(diario)
-        diario = json.dumps(diario)
+        diarios = request.get_json()
         
-        # cur.execute('CALL GuardarDiarioRonero(%s)', (diario,))
+        for diario in diarios:
+            cur.execute('''
+                INSERT INTO diario_ronero (fecha, codigo_producto, cantidad, precio, costo, ganancia)
+                VALUES (%s, %s, %s, %s, %s, %s)''')
+
         conn.commit()
         return jsonify({"message": "Diario ronero guardado exitosamente"}), 200
     except Exception as e:
