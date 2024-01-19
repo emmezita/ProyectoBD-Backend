@@ -202,7 +202,7 @@
     });
 </script>
    
-    <!-- Guardar  -->
+<!-- Guardar  -->
 <script>
     var reset = false;
     
@@ -225,6 +225,10 @@
         // producto: "2"
     
         var data = presentaciones;
+        data = {
+            presentaciones: data,
+            fecha: new Date().toISOString().slice(0, 10).replace('T', ' '),
+        }
         console.log(data);
     
         $.ajax({
