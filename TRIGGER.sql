@@ -156,37 +156,37 @@ CREATE TRIGGER tr_reponer_inventario_pedido
 BEFORE DELETE ON Pedido
 FOR EACH ROW EXECUTE FUNCTION reponer_inventario_pedido();
 
--- -- Funcion para actualizar el estatus de pedido si lleva 2 horas o mas en estatus 'Pendiente'
--- CREATE OR REPLACE FUNCTION actualizarEstatusPedidoRetraso()
--- RETURNS void
--- LANGUAGE plpgsql
--- AS $$
--- DECLARE
---     pedido_id integer;
--- BEGIN
---     -- Buscar pedidos en estatus 'Pendiente' que han superado las 2 horas
---     FOR pedido_id IN (
---         SELECT DISTINCT HEP.fk_pedido
---         FROM Historico_Estatus_Pedido HEP
---         JOIN Pedido P ON HEP.fk_pedido = P.pedido_codigo
---         WHERE HEP.fk_estatus_pedido = 2 -- ID de estatus 'Pendiente'
---             AND HEP.fecha_hora_fin_estatus IS NULL
---             AND HEP.fecha_hora_inicio_estatus <= CURRENT_TIMESTAMP - INTERVAL '2 hours'
---     )
---     LOOP
---         -- Colocar fecha de fin en el estatus 'Pendiente'
---         UPDATE Historico_Estatus_Pedido
---         SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP 
---         WHERE fk_pedido = pedido_id
---             AND fk_estatus_pedido = 2 -- ID de estatus 'Pendiente'
---             AND fecha_hora_fin_estatus IS NULL;
+-- Funcion para actualizar el estatus de pedido si lleva 2 horas o mas en estatus 'Pendiente'
+CREATE OR REPLACE FUNCTION actualizarEstatusPedidoRetraso()
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    pedido_id integer;
+BEGIN
+    -- Buscar pedidos en estatus 'Pendiente' que han superado las 2 horas
+    FOR pedido_id IN (
+        SELECT DISTINCT HEP.fk_pedido
+        FROM Historico_Estatus_Pedido HEP
+        JOIN Pedido P ON HEP.fk_pedido = P.pedido_codigo
+        WHERE HEP.fk_estatus_pedido = 2 -- ID de estatus 'Pendiente'
+            AND HEP.fecha_hora_fin_estatus IS NULL
+            AND HEP.fecha_hora_inicio_estatus <= CURRENT_TIMESTAMP - INTERVAL '2 hours'
+    )
+    LOOP
+        -- Colocar fecha de fin en el estatus 'Pendiente'
+        UPDATE Historico_Estatus_Pedido
+        SET fecha_hora_fin_estatus = CURRENT_TIMESTAMP 
+        WHERE fk_pedido = pedido_id
+            AND fk_estatus_pedido = 2 -- ID de estatus 'Pendiente'
+            AND fecha_hora_fin_estatus IS NULL;
 
---         -- Insertar un nuevo registro en Historico_Estatus_Pedido con estatus 'En Retraso'
---         INSERT INTO Historico_Estatus_Pedido (fecha_hora_inicio_estatus, fk_estatus_pedido, fk_pedido)
---         VALUES (CURRENT_TIMESTAMP, 5, pedido_id); -- ID de estatus 'En Retraso'
---     END LOOP;
--- END;
--- $$;
+        -- Insertar un nuevo registro en Historico_Estatus_Pedido con estatus 'En Retraso'
+        INSERT INTO Historico_Estatus_Pedido (fecha_hora_inicio_estatus, fk_estatus_pedido, fk_pedido)
+        VALUES (CURRENT_TIMESTAMP, 5, pedido_id); -- ID de estatus 'En Retraso'
+    END LOOP;
+END;
+$$;
 
 -- -- Funcion para registrar la accion de un usuario
 -- CREATE OR REPLACE FUNCTION registrar_accion(table_name VARCHAR) RETURNS TRIGGER AS $$
