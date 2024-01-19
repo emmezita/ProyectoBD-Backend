@@ -1830,7 +1830,7 @@ $$ LANGUAGE plpgsql;
 
 DROP VIEW IF EXISTS FichaProducto;
 
-CREATE VIEW FichaProducto AS
+CREATE OR REPLACE VIEW FichaProducto AS
 WITH Ingredientes AS (
     SELECT 
         mez.fk_producto,
@@ -2344,3 +2344,106 @@ BEGIN
     RETURN COALESCE(total_pedidos_retraso, 0);
 END; $$
 LANGUAGE plpgsql;
+
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+-- Creacion de un Diario
+-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+-- Crear un diario ronero con presentaciones y descuentos
+CREATE OR REPLACE PROCEDURE CrearDiarioConPresentaciones(data JSON)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    nuevo_diario_id INT;
+    fecha_diario DATE;
+    detalles JSON;
+BEGIN
+    -- Extraer la fecha del diario del JSON
+    fecha_diario := (data ->> 'fecha')::DATE;
+
+    -- Insertar un nuevo diario ronero
+    INSERT INTO Diario_Ronero (diario_fecha) VALUES (fecha_diario) RETURNING diario_edicion INTO nuevo_diario_id;
+
+    -- Iterar sobre el array de presentaciones y descuentos
+    FOR detalles IN SELECT * FROM json_array_elements(data -> 'presentaciones')
+    LOOP
+        INSERT INTO Descuento (descuento_porcentaje, fk_presentacion_1, fk_presentacion_2, fk_presentacion_3, fk_diario_ronero)
+        VALUES (
+            (detalles ->> 'descuento')::NUMERIC,
+            (detalles ->> 'material')::INT,
+            (detalles ->> 'botella')::INT,
+            (detalles ->> 'producto')::INT,
+            nuevo_diario_id
+        );
+    END LOOP;
+
+    COMMIT;
+END;
+$$;
+
+-- Vista para obtener los diarios roneros
+CREATE OR REPLACE VIEW DiarioRonero AS
+SELECT 
+    D.diario_edicion,
+    D.diario_fecha,
+    Des.descuento_porcentaje,
+    Des.fk_presentacion_1,
+    Des.fk_presentacion_2,
+    Des.fk_presentacion_3,
+	(pro.producto_nombre || ' de ' || bo.botella_capacidad || ' lt.') AS nombre_presentacion,
+	(hpva.precio_venta_valor - (hpva.precio_venta_valor * (Des.descuento_porcentaje/100)))::NUMERIC(10,2) as precio_almacen_descuento,
+	(hpvt.precio_venta_valor - (hpvT.precio_venta_valor * (Des.descuento_porcentaje/100)))::NUMERIC(10,2) as precio_tienda_descuento,
+	i.imagen_nombre as imagen
+FROM Diario_Ronero D
+JOIN Descuento Des ON D.diario_edicion = Des.fk_diario_ronero
+JOIN Producto pro ON pro.producto_codigo = Des.fk_presentacion_3
+JOIN botella bo ON bo.botella_codigo = Des.fk_presentacion_2
+JOIN imagen i ON (Des.fk_presentacion_1 = i.fk_presentacion_1
+			AND Des.fk_presentacion_2 = i.fk_presentacion_2
+			AND Des.fk_presentacion_3 = i.fk_presentacion_3)
+JOIN historico_precio_venta hpva ON (hpva.fk_inventario_almacen_1 = 1
+								AND Des.fk_presentacion_1 = hpva.fk_inventario_almacen_2
+								AND Des.fk_presentacion_2 = hpva.fk_inventario_almacen_3
+								AND Des.fk_presentacion_3 = hpva.fk_inventario_almacen_4
+								AND hpva.precio_venta_fecha_fin is null)
+JOIN historico_precio_venta hpvt ON (hpvt.fk_inventario_tienda_1 = 1
+								AND Des.fk_presentacion_1 = hpvt.fk_inventario_tienda_2
+								AND Des.fk_presentacion_2 = hpvt.fk_inventario_tienda_3
+								AND Des.fk_presentacion_3 = hpvt.fk_inventario_tienda_4
+								AND hpvt.precio_venta_fecha_fin is null);
+
+-- Funcion para obtener los detalles de un Diario Ronero
+CREATE OR REPLACE FUNCTION ObtenerDatosDiarioRonero(diario_id INT)
+RETURNS TABLE(
+    diario_edicion INT,
+    diario_fecha DATE,
+    descuento_porcentaje NUMERIC,
+    fk_presentacion_1 INT,
+    fk_presentacion_2 INT,
+    fk_presentacion_3 INT,
+    nombre_presentacion TEXT,
+    precio_almacen_descuento NUMERIC(10,2),
+    precio_tienda_descuento NUMERIC(10,2),
+    imagen TEXT
+) 
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    RETURN QUERY 
+    SELECT 
+        D.diario_edicion,
+        D.diario_fecha,
+        D.descuento_porcentaje,
+        D.fk_presentacion_1,
+        D.fk_presentacion_2,
+        D.fk_presentacion_3,
+        D.nombre_presentacion,
+        D.precio_almacen_descuento,
+        D.precio_tienda_descuento,
+        D.imagen
+    FROM 
+        DiarioRonero D
+    WHERE 
+        D.diario_edicion = diario_id;
+END;
+$$;
