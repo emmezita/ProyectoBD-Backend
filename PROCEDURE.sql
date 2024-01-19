@@ -1910,7 +1910,8 @@ SELECT
 	(bot.botella_altura || ' cm')::TEXT as alto, 
 	(bot.botella_ancho || ' cm')::TEXT as ancho,
 	(pre.presentacion_peso || ' Kg')::TEXT as peso, 
-	caja_individual.caja_descripcion::TEXT as caja_individual
+	caja_individual.caja_descripcion::TEXT as caja_individual,
+    img.imagen_nombre::TEXT as imagen
 FROM Presentacion pre 
 JOIN Material_Botella mabo ON pre.fk_material_botella_1 = mabo.fk_material 
 						  AND pre.fk_material_botella_2 = mabo.fk_botella
@@ -1919,6 +1920,9 @@ JOIN Material mat ON mat.material_codigo = mabo.fk_material
 JOIN Caja caja_individual ON pre.fk_caja = caja_individual.caja_codigo
 JOIN Caja caja_lote ON caja_individual.fk_caja = caja_lote.caja_codigo
 JOIN Tapa tap ON pre.fk_tapa = tap.tapa_codigo
+JOIN Imagen img on img.fk_presentacion_1 = pre.fk_material_botella_1
+                    AND img.fk_presentacion_2 = pre.fk_material_botella_2
+                    AND img.fk_presentacion_3 = pre.fk_producto
 JOIN Producto pro ON pre.fk_producto = pro.producto_codigo
 JOIN Lugar parroquia ON pro.fk_lugar = parroquia.lugar_codigo
 JOIN Lugar municipio ON parroquia.fk_lugar = municipio.lugar_codigo
@@ -1944,8 +1948,10 @@ GROUP BY
 	anejamiento, ingre.ingredientes, sabo.sabores, arom.aromas, serv.servidos,
 	capacidad, grado_alcohol, descripcion_presentacion, origen, segmento, caja_lote, pallet, botella, tapa,
 	alto, ancho, peso, caja_individual, cu.cuerpo_peso, cu.cuerpo_textura, cu.cuerpo_densidad, cu.cuerpo_descripcion,
-    re.regusto_entrada, re.regusto_evolucion, re.regusto_persistencia, re.regusto_acabado, re.regusto_descripcion;
+    re.regusto_entrada, re.regusto_evolucion, re.regusto_persistencia, re.regusto_acabado, re.regusto_descripcion, imagen;
 
+
+DROP FUNCTION IF EXISTS obtenerFichaProducto(INT, INT, INT);
 CREATE OR REPLACE FUNCTION obtenerFichaProducto(presentacion_1 INT, presentacion_2 INT, presentacion_3 INT) 
 RETURNS TABLE (
     material_id INT,
@@ -1970,7 +1976,8 @@ RETURNS TABLE (
     alto TEXT,
     ancho TEXT,
     peso TEXT,
-    caja_individual TEXT
+    caja_individual TEXT,
+    imagen TEXT
 ) AS $$
 BEGIN
     RETURN QUERY
