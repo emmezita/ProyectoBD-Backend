@@ -1,8 +1,7 @@
 from ast import For
 from calendar import c
 import datetime
-from datetime import datetime
-import os
+from datetime import datetime as dt
 import json
 from re import sub
 from tkinter import N
@@ -3900,6 +3899,16 @@ def obtener_dashboard():
 
     print(fechaInicio)
     print(fechaFin)
+    
+    # Asegurarse de que fechaInicio y fechaFin son objetos datetime
+    if isinstance(fechaInicio, str):
+        fechaInicio = dt.strptime(fechaInicio, '%d/%m/%Y')  # Ajusta el formato de la fecha según sea necesario
+    if isinstance(fechaFin, str):
+        fechaFin = dt.strptime(fechaFin, '%d/%m/%Y')  # Ajusta el formato de la fecha según sea necesario
+
+    # Convertir las fechas al formato 'YYYY-MM-DD'
+    fechaInicio = fechaInicio.strftime('%Y-%m-%d')
+    fechaFin = fechaFin.strftime('%Y-%m-%d')
 
     datos = {}
 
@@ -4122,7 +4131,7 @@ def obtener_detalle_movimiento():
     
     # Asegurarse de que fechaMovimiento es un objeto datetime
     if isinstance(fechaMovimiento, str):
-        fechaMovimiento = datetime.strptime(fechaMovimiento, '%Y-%m-%d')  # Ajusta el formato de la fecha según sea necesario
+        fechaMovimiento = dt.strptime(fechaMovimiento, '%Y-%m-%d')  # Ajusta el formato de la fecha según sea necesario
 
     # Extraer el mes y el año
     mes = fechaMovimiento.month
