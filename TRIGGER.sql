@@ -188,46 +188,46 @@ BEGIN
 END;
 $$;
 
--- -- Funcion para registrar la accion de un usuario
--- CREATE OR REPLACE FUNCTION registrar_accion(table_name VARCHAR) RETURNS TRIGGER AS $$
--- DECLARE
---   id_usuario integer;
---   fecha_hora timestamp;
---   detalle varchar(50);
--- BEGIN
---   -- Obtenemos el ID del usuario que realizó la acción.
---   id_usuario := NEW.usuario_codigo;
---   IF TG_OP = 'INSERT' THEN
---     fecha_hora := CURRENT_TIMESTAMP;
---     detalle := 'Creación de ' || table_name;
---   ELSIF TG_OP = 'UPDATE' THEN
---     fecha_hora := CURRENT_TIMESTAMP;
---     detalle := 'Actualización de ' || table_name;
---   ELSE
---     fecha_hora := CURRENT_TIMESTAMP;
---     detalle := 'Eliminación de ' || table_name;
---   END IF;
+-- Funcion para registrar la accion de un usuario
+CREATE OR REPLACE FUNCTION registrar_accion(table_name VARCHAR) RETURNS TRIGGER AS $$
+DECLARE
+  id_usuario integer;
+  fecha_hora timestamp;
+  detalle varchar(50);
+BEGIN
+  -- Obtenemos el ID del usuario que realizó la acción.
+  id_usuario := NEW.usuario_codigo;
+  IF TG_OP = 'INSERT' THEN
+    fecha_hora := CURRENT_TIMESTAMP;
+    detalle := 'Creación de ' || table_name;
+  ELSIF TG_OP = 'UPDATE' THEN
+    fecha_hora := CURRENT_TIMESTAMP;
+    detalle := 'Actualización de ' || table_name;
+  ELSE
+    fecha_hora := CURRENT_TIMESTAMP;
+    detalle := 'Eliminación de ' || table_name;
+  END IF;
 
---   -- Insertamos la acción en la tabla Acciones.
---   INSERT INTO Acciones (accion_fecha_hora, accion_detalle, fk_usuario)
---   VALUES (fecha_hora, detalle, id_usuario);
+  -- Insertamos la acción en la tabla Acciones.
+  INSERT INTO Acciones (accion_fecha_hora, accion_detalle, fk_usuario)
+  VALUES (fecha_hora, detalle, id_usuario);
 
---   RETURN NULL;
--- END; $$
--- LANGUAGE plpgsql;
+  RETURN NULL;
+END; $$
+LANGUAGE plpgsql;
 
--- -- Procedimiento para crear un trigger a cada tabla de la base de datos para guardar las acciones de los usuarios.
--- DO $$
--- DECLARE
---    table_name text;
--- BEGIN
---    FOR table_name IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public')
---    LOOP
---       EXECUTE format('CREATE TRIGGER tr_registrar_accion_%s 
---                       AFTER INSERT OR UPDATE OR DELETE 
---                       ON %s 
---                       FOR EACH ROW 
---                       EXECUTE PROCEDURE registrar_accion(%s);', table_name, table_name, table_name);
---    END LOOP;
--- END;
--- $$;
+-- Procedimiento para crear un trigger a cada tabla de la base de datos para guardar las acciones de los usuarios.
+DO $$
+DECLARE
+   table_name text;
+BEGIN
+   FOR table_name IN (SELECT tablename FROM pg_tables WHERE schemaname = 'public')
+   LOOP
+      EXECUTE format('CREATE TRIGGER tr_registrar_accion_%s 
+                      AFTER INSERT OR UPDATE OR DELETE 
+                      ON %s 
+                      FOR EACH ROW 
+                      EXECUTE PROCEDURE registrar_accion(%s);', table_name, table_name, table_name);
+   END LOOP;
+END;
+$$;
